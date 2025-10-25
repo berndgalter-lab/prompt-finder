@@ -1,0 +1,13 @@
+# WordPress
+wp-config.php
+.htaccess
+
+# Uploads
+wp-content/uploads/
+
+# Cache & Logs
+*.log
+.cache/
+
+# System
+.DS_Store

@@ -1,0 +1,379 @@
+/*
+Theme Name: Prompt Finder
+Description: A WordPress theme for Prompt Finder workflows and content management
+Version: 1.0.0
+Author: Prompt Finder Team
+Template: generatepress
+Text Domain: prompt-finder
+*/
+
+/* ============================================================
+   Prompt Finder – Global Design Tokens
+   Centralized design system for consistent styling across all components
+   ============================================================ */
+
+:root {
+  /* ============================================================
+     Layout & Spacing
+     ============================================================ */
+  --pf-wrap: 1100px;
+  --pf-radius: 14px;
+  --pf-space: 72px;
+  --pf-space-sm: 24px;
+  --pf-space-md: 48px;
+  --pf-space-lg: 72px;
+  --pf-space-xl: 96px;
+
+  /* ============================================================
+     Surfaces & Backgrounds (Dark Mode Default)
+     ============================================================ */
+  --pf-bg: #0b0c10;
+  --pf-bg-soft: #111217;
+  --pf-surface-soft: #0e1015;
+  --pf-card: #0f1116;
+  --pf-border: #1f2430;
+  --pf-border-light: #2a2f3a;
+
+  /* ============================================================
+     Typography
+     ============================================================ */
+  --pf-text: #e9ecf1;
+  --pf-text-dim: #b8c0cc;
+  --pf-text-muted: #8b95a1;
+  --pf-text-inverse: #0b0c10;
+
+  /* ============================================================
+     Brand Colors (Creative Purple Theme)
+     ============================================================ */
+  --pf-accent: #8b5cf6;
+  --pf-accent-secondary: #c084fc;
+  --pf-accent-hover: #7c3aed;
+  --pf-accent-light: #e9d5ff;
+  --pf-accent-dark: #6d28d9;
+  
+  /* Legacy alias for backward compatibility */
+  --pf-accent-2: var(--pf-accent-secondary);
+
+  /* ============================================================
+     Status & Feedback Colors
+     ============================================================ */
+  --pf-success: #22c55e;
+  --pf-success-light: #dcfce7;
+  --pf-success-dark: #16a34a;
+  
+  --pf-error: #ef4444;
+  --pf-error-light: #fef2f2;
+  --pf-error-dark: #dc2626;
+  
+  --pf-warning: #facc15;
+  --pf-warning-light: #fefce8;
+  --pf-warning-dark: #eab308;
+  
+  --pf-info: #3b82f6;
+  --pf-info-light: #dbeafe;
+  --pf-info-dark: #2563eb;
+
+  /* ============================================================
+     Interactive States
+     ============================================================ */
+  --pf-hover-overlay: rgba(139, 92, 246, 0.1);
+  --pf-active-overlay: rgba(139, 92, 246, 0.2);
+  --pf-focus-ring: 0 0 0 3px rgba(139, 92, 246, 0.3);
+  
+  /* ============================================================
+     Shadows & Effects
+     ============================================================ */
+  --pf-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --pf-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --pf-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --pf-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  
+  /* ============================================================
+     Transitions & Animations
+     ============================================================ */
+  --pf-transition-fast: 150ms ease-in-out;
+  --pf-transition-normal: 250ms ease-in-out;
+  --pf-transition-slow: 350ms ease-in-out;
+}
+
+/* ============================================================
+   Global Base Styles
+   ============================================================ */
+body {
+  background: #0a0b0f;
+  color: var(--pf-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   Light Mode Overrides
+   ============================================================ */
+@media (prefers-color-scheme: light) {
+  :root {
+    /* Surfaces & Backgrounds */
+    --pf-bg: #f7f9fc;
+    --pf-bg-soft: #ffffff;
+    --pf-surface-soft: #fafafa;
+    --pf-card: #ffffff;
+    --pf-border: #e5e7eb;
+    --pf-border-light: #d1d5db;
+
+    /* Typography */
+    --pf-text: #1e1b4b;
+    --pf-text-dim: #6b7280;
+    --pf-text-muted: #9ca3af;
+    --pf-text-inverse: #ffffff;
+
+    /* Brand Colors (adjusted for light backgrounds) */
+    --pf-accent: #8b5cf6;
+    --pf-accent-secondary: #c084fc;
+    --pf-accent-hover: #7c3aed;
+    --pf-accent-light: #f3e8ff;
+    --pf-accent-dark: #6d28d9;
+
+    /* Interactive States */
+    --pf-hover-overlay: rgba(139, 92, 246, 0.05);
+    --pf-active-overlay: rgba(139, 92, 246, 0.1);
+    --pf-focus-ring: 0 0 0 3px rgba(139, 92, 246, 0.2);
+
+    /* Shadows (adjusted for light mode) */
+    --pf-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --pf-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --pf-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --pf-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  body {
+    background: #ffffff;
+  }
+}
+
+/* ============================================================
+   Utility Classes
+   ============================================================ */
+.pf-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pf-focus-visible:focus-visible {
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Layout Primitives (from pf-core.css)
+   ============================================================ */
+.pf-wrap { 
+  max-width: var(--pf-wrap); 
+  margin: 0 auto; 
+  padding: 0 1.25rem; 
+}
+
+.pf-section { 
+  padding: var(--pf-space) 0; 
+  border-top: 1px solid var(--pf-border); 
+}
+
+.pf-section:first-of-type { 
+  border-top: none; 
+}
+
+/* ============================================================
+   Button System (from pf-core.css)
+   ============================================================ */
+.pf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid var(--pf-border);
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.18s ease;
+  line-height: 1;
+  cursor: pointer;
+}
+
+a.pf-btn,
+a.pf-btn:visited {
+  text-decoration: none !important;
+}
+
+.pf-btn--primary {
+  background: var(--pf-accent-primary);
+  color: white;
+  border-color: var(--pf-accent-primary);
+}
+
+.pf-btn--primary:hover {
+  background: var(--pf-accent-primary);
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   Header Styles
+   ============================================================ */
+.pf-header-site {
+  background: var(--pf-bg-elevated);
+  border-bottom: 1px solid var(--pf-border);
+  position: sticky;
+  top: 0;
+  z-index: var(--pf-z-sticky);
+}
+
+.pf-header-site .pf-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  min-height: 70px;
+}
+
+/* Logo */
+.pf-logo a {
+  text-decoration: none;
+  color: var(--pf-text-primary);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.pf-logo-text {
+  display: block;
+}
+
+/* Desktop Navigation */
+.pf-nav--desktop {
+  display: block;
+}
+
+.pf-nav-list {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pf-nav-link {
+  color: var(--pf-text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--pf-transition-fast);
+}
+
+.pf-nav-link:hover {
+  color: var(--pf-text-primary);
+}
+
+.pf-nav-item--cta .pf-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+}
+
+/* Mobile Navigation Toggle */
+.pf-nav-toggle--mobile {
+  display: block;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #333333;
+}
+
+.pf-nav-toggle-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 24px;
+  height: 18px;
+	color: #333333;
+}
+
+.pf-nav-toggle-line {
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transition: var(--pf-transition-fast);
+}
+
+/* Mobile Navigation */
+.pf-nav--mobile {
+  display: none !important;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--pf-bg-elevated);
+  border-top: 1px solid var(--pf-border);
+  padding: 1rem;
+}
+
+.pf-nav--mobile[aria-hidden="false"] {
+  display: block !important;
+}
+
+.pf-nav-list--mobile {
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pf-nav-list--mobile .pf-nav-item--cta .pf-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ============================================================
+   Responsive Breakpoints
+   ============================================================ */
+@media (max-width: 767px) {
+  .pf-nav--desktop {
+    display: none;
+  }
+  
+  .pf-nav-toggle--mobile {
+    display: block;
+  }
+  
+  .pf-nav--mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .pf-nav--desktop {
+    display: block;
+  }
+  
+  .pf-nav-toggle--mobile {
+    display: none;
+  }
+  
+  .pf-nav--mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pf-header-site .pf-wrap {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .pf-nav-list {
+    gap: 2.5rem;
+  }
+}
