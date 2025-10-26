@@ -461,6 +461,69 @@ $show_legend = !empty($PF_FLAGS['mode_legend']) || !empty($PF_FLAGS['gating']);
 
   </header>
 
+  <!-- Inputs Prerequisites (if set) -->
+  <?php if (!empty($inputs_prerequisites)): ?>
+    <div class="pf-prerequisites pf-tile">
+      <div class="pf-prerequisites-header">
+        <span class="pf-prerequisites-icon">📝</span>
+        <h3 class="pf-prerequisites-title"><?php esc_html_e('What you need before starting', 'prompt-finder'); ?></h3>
+      </div>
+      <div class="pf-prerequisites-content">
+        <?php echo wp_kses_post(nl2br($inputs_prerequisites)); ?>
+      </div>
+      <?php if ($requires_source_content): ?>
+        <div class="pf-prerequisites-warning">
+          <span class="pf-warning-icon">🔒</span>
+          <strong><?php esc_html_e('Privacy Note:', 'prompt-finder'); ?></strong>
+          <?php esc_html_e('You will paste your content directly into ChatGPT, not into Prompt Finder. Remove any personal names, email addresses, salaries, or confidential information first.', 'prompt-finder'); ?>
+        </div>
+      <?php endif; ?>
+    </div>
+  <?php endif; ?>
+
+  <!-- Workflow Variables (Global) -->
+  <?php if (!empty($workflow_variables)): ?>
+    <div class="pf-workflow-variables pf-tile">
+      <div class="pf-workflow-vars-header">
+        <span class="pf-workflow-vars-icon">⚙️</span>
+        <h3 class="pf-workflow-vars-title"><?php esc_html_e('Workflow Settings', 'prompt-finder'); ?></h3>
+        <p class="pf-workflow-vars-subtitle"><?php esc_html_e('Set these once - they apply to all steps', 'prompt-finder'); ?></p>
+      </div>
+      <div class="pf-workflow-vars-content">
+        <?php foreach ($workflow_variables as $wf_var):
+          $var_key = $wf_var['workflow_var_key'] ?? '';
+          $var_label = $wf_var['workflow_var_label'] ?? '';
+          $var_placeholder = $wf_var['workflow_var_placeholder'] ?? '';
+          $var_hint = $wf_var['workflow_var_hint'] ?? '';
+          $var_required = !empty($wf_var['workflow_var_required']);
+          $var_default = $wf_var['workflow_var_default_value'] ?? '';
+          $var_prefer_system = !empty($wf_var['workflow_var_prefer_system']);
+        ?>
+          <label class="pf-workflow-var <?php echo $var_required ? 'is-required' : ''; ?>">
+            <span class="pf-workflow-var-label">
+              <?php echo esc_html($var_label ?: ucfirst(str_replace('_', ' ', $var_key))); ?>
+              <?php if ($var_required): ?><span class="pf-req" title="Required">*</span><?php endif; ?>
+              <?php if ($var_prefer_system): ?><span class="pf-system-badge" title="Can use system default">🔗</span><?php endif; ?>
+            </span>
+
+            <input type="text"
+                   id="<?php echo esc_attr('pf-wf-var-' . sanitize_title($var_key)); ?>"
+                   name="<?php echo esc_attr('pf_wf_var_' . sanitize_title($var_key)); ?>"
+                   data-var-key="<?php echo esc_attr($var_key); ?>"
+                   data-var-type="workflow"
+                   placeholder="<?php echo esc_attr($var_placeholder); ?>"
+                   value="<?php echo esc_attr($var_default); ?>"
+                   <?php if ($var_required): ?>aria-required="true"<?php endif; ?>>
+
+            <?php if ($var_hint): ?>
+              <small class="pf-workflow-var-help"><?php echo esc_html($var_hint); ?></small>
+            <?php endif; ?>
+          </label>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  <?php endif; ?>
+
   <!-- Learn Mode: Show more details -->
   <div class="pf-learn-content">
     <?php if ($summary): ?>
@@ -609,16 +672,63 @@ $show_legend = !empty($PF_FLAGS['mode_legend']) || !empty($PF_FLAGS['gating']);
             <h3 class="pf-step-title">
               <?php echo esc_html($step_title ?: __('Untitled', 'prompt-finder')); ?>
             </h3>
-            <?php if ($estimated_time_min): ?>
-              <span class="pf-step-time" title="Estimated time to complete this step">⏱ <?php echo (int)$estimated_time_min; ?> min</span>
+            <div class="pf-step-head-meta">
+              <?php if ($estimated_time_min): ?>
+                <span class="pf-step-time" title="Estimated time to complete this step">⏱ <?php echo (int)$estimated_time_min; ?> min</span>
+              <?php endif; ?>
+            </div>
+          </div>
+
+          <!-- Step Type & Mode Badges -->
+          <div class="pf-step-badges">
+            <?php if ($locked): ?>
+              <span class="pf-chip pf-chip--lock" title="<?php esc_attr_e('This step is locked', 'prompt-finder'); ?>">
+                🔒 <?php echo esc_html($PF_COPY['chip_locked'] ?? 'Locked'); ?>
+              </span>
+            <?php endif; ?>
+            
+            <?php if ($step_type === 'prompt' && $prompt_mode): ?>
+              <span class="pf-chip pf-chip--prompt-mode pf-chip--<?php echo esc_attr($prompt_mode); ?>" title="Prompt Mode: <?php echo esc_attr(ucfirst(str_replace('_', ' ', $prompt_mode))); ?>">
+                <?php 
+                  $mode_icons = [
+                    'context_stage' => '🎬',
+                    'main' => '⚡',
+                    'optimizer' => '✨'
+                  ];
+                  $mode_labels = [
+                    'context_stage' => 'Context',
+                    'main' => 'Main',
+                    'optimizer' => 'Optimizer'
+                  ];
+                  echo esc_html($mode_icons[$prompt_mode] ?? '📝') . ' ' . esc_html($mode_labels[$prompt_mode] ?? ucfirst($prompt_mode));
+                ?>
+              </span>
+            <?php endif; ?>
+            
+            <?php if ($step_type === 'guide'): ?>
+              <span class="pf-chip pf-chip--guide" title="Guide Step">
+                📖 <?php esc_html_e('Guide', 'prompt-finder'); ?>
+              </span>
+            <?php endif; ?>
+            
+            <?php if ($step_type === 'review'): ?>
+              <span class="pf-chip pf-chip--review" title="Review Step">
+                ✅ <?php esc_html_e('Review', 'prompt-finder'); ?>
+              </span>
+            <?php endif; ?>
+            
+            <?php if ($uses_global_vars): ?>
+              <span class="pf-chip pf-chip--uses-global" title="Uses workflow settings">
+                ⚙️ <?php esc_html_e('Uses settings', 'prompt-finder'); ?>
+              </span>
+            <?php endif; ?>
+            
+            <?php if ($consumes_previous_output): ?>
+              <span class="pf-chip pf-chip--prev-output" title="Improves previous output">
+                🔄 <?php esc_html_e('Improves previous', 'prompt-finder'); ?>
+              </span>
             <?php endif; ?>
           </div>
-			<?php if ($locked): ?>
-  <span class="pf-chip pf-chip--lock" title="<?php esc_attr_e('This step is locked', 'prompt-finder'); ?>">
-    <?php echo esc_html($PF_COPY['chip_locked'] ?? 'Locked'); ?>
-  </span>
-<?php endif; ?>
-			
 
           <?php if ($objective): ?>
             <p class="pf-sub"><?php echo nl2br(esc_html($objective)); ?></p>
@@ -672,7 +782,18 @@ $show_legend = !empty($PF_FLAGS['mode_legend']) || !empty($PF_FLAGS['gating']);
             </div>
           <?php endif; ?>
 
-          <?php if (!$locked): ?>
+          <?php /* === PASTE GUIDANCE (for all steps) === */ ?>
+          <?php if (!empty($paste_guidance) && !$locked): ?>
+            <div class="pf-paste-guidance pf-tile pf-tile--info">
+              <span class="pf-paste-guidance-icon">💡</span>
+              <div class="pf-paste-guidance-content">
+                <?php echo wp_kses_post(nl2br($paste_guidance)); ?>
+              </div>
+            </div>
+          <?php endif; ?>
+
+          <?php /* === STEP TYPE: PROMPT === */ ?>
+          <?php if ($step_type === 'prompt' && !$locked): ?>
             <label class="pf-prompt-label" for="<?php echo esc_attr('pf-prompt-'.$idx); ?>">
               <?php echo esc_html($PF_COPY['prompt_label'] ?? __('Prompt', 'prompt-finder')); ?>
             </label>
@@ -689,29 +810,72 @@ $show_legend = !empty($PF_FLAGS['mode_legend']) || !empty($PF_FLAGS['gating']);
                       data-base="<?php echo esc_attr($enhanced_prompt); ?>"
                  contenteditable="true"
                  spellcheck="false"><?php echo esc_html($enhanced_prompt); ?></div>
-          <?php else: ?>
-            <!-- Locked step: Show teaser only, no prompt content in DOM -->
+
+            <div class="pf-cta">
+              <button class="pf-copy" data-action="copy-prompt">
+                <?php echo esc_html($PF_COPY['copy_prompt'] ?? __('Copy prompt', 'prompt-finder')); ?>
+              </button>
+              <span class="pf-help-inline">→ <?php echo esc_html($PF_COPY['paste_hint'] ?? __('Paste into the same chat and run.', 'prompt-finder')); ?></span>
+            </div>
+          <?php endif; ?>
+
+          <?php /* === STEP TYPE: GUIDE === */ ?>
+          <?php if ($step_type === 'guide' && !empty($step_body) && !$locked): ?>
+            <div class="pf-guide-body pf-tile">
+              <div class="pf-guide-body-header">
+                <span class="pf-guide-icon">📖</span>
+                <h4><?php esc_html_e('Instructions', 'prompt-finder'); ?></h4>
+              </div>
+              <div class="pf-guide-body-content">
+                <?php echo wp_kses_post(nl2br($step_body)); ?>
+              </div>
+            </div>
+          <?php endif; ?>
+
+          <?php /* === STEP TYPE: REVIEW === */ ?>
+          <?php if ($step_type === 'review' && !empty($step_checklist) && !$locked): ?>
+            <div class="pf-review-checklist pf-tile">
+              <div class="pf-review-checklist-header">
+                <span class="pf-review-icon">✅</span>
+                <h4><?php esc_html_e('Review Checklist', 'prompt-finder'); ?></h4>
+              </div>
+              <ul class="pf-review-checklist-list">
+                <?php foreach ($step_checklist as $check): ?>
+                  <li>
+                    <label class="pf-review-check-item">
+                      <input type="checkbox" class="pf-review-checkbox">
+                      <span class="pf-review-check-text"><?php echo esc_html($check['check_item'] ?? ''); ?></span>
+                    </label>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
+              <?php if (!empty($review_hint)): ?>
+                <div class="pf-review-hint">
+                  <span class="pf-review-hint-icon">💡</span>
+                  <div class="pf-review-hint-content">
+                    <?php echo wp_kses_post(nl2br($review_hint)); ?>
+                  </div>
+                </div>
+              <?php endif; ?>
+            </div>
+          <?php endif; ?>
+
+          <?php /* === LOCKED STEP TEASER === */ ?>
+          <?php if ($locked): ?>
             <div class="pf-prompt-teaser">
               <div class="pf-prompt-teaser-content">
-                <h4><?php echo esc_html($title ?: __('Untitled Step', 'prompt-finder')); ?></h4>
+                <h4><?php echo esc_html($step_title ?: __('Untitled Step', 'prompt-finder')); ?></h4>
                 <p class="pf-teaser-objective"><?php echo esc_html($objective ?: __('Complete the previous steps to unlock this content.', 'prompt-finder')); ?></p>
                 <div class="pf-teaser-benefits">
                   <ul>
-                    <li>✓ Professional AI prompt</li>
-                    <li>✓ Step-by-step guidance</li>
-                    <li>✓ Variable customization</li>
+                    <li>✓ <?php echo $step_type === 'prompt' ? esc_html__('Professional AI prompt', 'prompt-finder') : esc_html__('Step-by-step guidance', 'prompt-finder'); ?></li>
+                    <li>✓ <?php echo $step_type === 'review' ? esc_html__('Quality checklist', 'prompt-finder') : esc_html__('Detailed instructions', 'prompt-finder'); ?></li>
+                    <li>✓ <?php esc_html_e('Privacy-safe workflow', 'prompt-finder'); ?></li>
                   </ul>
                 </div>
               </div>
             </div>
           <?php endif; ?>
-
-          <div class="pf-cta">
-            <button class="pf-copy" data-action="copy-prompt">
-              <?php echo esc_html($PF_COPY['copy_prompt'] ?? __('Copy prompt', 'prompt-finder')); ?>
-            </button>
-            <span class="pf-help-inline">→ <?php echo esc_html($PF_COPY['paste_hint'] ?? __('Paste into the same chat and run.', 'prompt-finder')); ?></span>
-          </div>
 
           <?php if (!empty($example_output)): ?>
             <details class="pf-example">
@@ -719,18 +883,6 @@ $show_legend = !empty($PF_FLAGS['mode_legend']) || !empty($PF_FLAGS['gating']);
               <pre><?php echo esc_html($example_output); ?></pre>
             </details>
           <?php endif; ?>
-
-          <?php if (!empty($step_checklist)): ?>
-            <div class="pf-checklist">
-              <span class="pf-checklist-label"><?php _e('Checklist', 'prompt-finder'); ?></span>
-              <ul class="pf-checklist-list">
-                <?php foreach ($step_checklist as $c): ?>
-                  <li><?php echo esc_html($c['check_item'] ?? ''); ?></li>
-                <?php endforeach; ?>
-              </ul>
-            </div>
-          <?php endif; ?>
-
 
           <?php if ($idx < $total_steps): ?>
             <?php

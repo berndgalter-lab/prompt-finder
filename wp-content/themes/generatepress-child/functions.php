@@ -1,6 +1,7 @@
 <?php
-// Exit if accessed directly
 // Test-Änderung vom 26.10.2025
+// Exit if accessed directly
+
 if ( !defined( 'ABSPATH' ) ) exit;
 
 /* =====================================================
