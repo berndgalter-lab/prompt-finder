@@ -63,7 +63,7 @@ try {
         $summary = $optimized_workflow['summary'] ?? '';
         $use_case = function_exists('get_field') ? get_field('use_case') : ''; // Not in optimized table yet
         $version = $optimized_workflow['version'] ?? '';
-        $lastest_update = $optimized_workflow['lastest_update'] ?? '';
+        $latest_update = $optimized_workflow['latest_update'] ?? '';
         $steps = $optimized_workflow['steps'] ?? [];
         $has_steps = is_array($steps) && count($steps) > 0;
         $total_steps = $has_steps ? count($steps) : 0;
@@ -81,7 +81,7 @@ try {
         $summary = function_exists('get_field') ? get_field('summary') : '';
         $use_case = function_exists('get_field') ? get_field('use_case') : '';
         $version = function_exists('get_field') ? get_field('version') : '';
-        $lastest_update = function_exists('get_field') ? get_field('last_update') : ''; // returns d/m/Y per ACF
+        $latest_update = function_exists('get_field') ? get_field('last_update') : ''; // returns d/m/Y per ACF
         $steps = function_exists('get_field') ? get_field('steps') : []; // repeater
         $has_steps = is_array($steps) && count($steps) > 0;
         $total_steps = $has_steps ? count($steps) : 0;
@@ -99,7 +99,7 @@ try {
     $summary = '';
     $use_case = '';
     $version = '';
-    $lastest_update = '';
+    $latest_update = '';
     $steps = [];
     $has_steps = false;
     $total_steps = 0;
@@ -110,21 +110,40 @@ try {
     $usage_count = 0;
 }
 
+/* New workflow fields - with error handling */
+try {
+    $inputs_prerequisites = function_exists('get_field') ? get_field('inputs_prerequisites') : '';
+    $requires_source_content = function_exists('get_field') ? get_field('requires_source_content') : false;
+} catch (Exception $e) {
+    error_log('[PF Single] New workflow fields error: ' . $e->getMessage());
+    $inputs_prerequisites = '';
+    $requires_source_content = false;
+}
+
+/* Workflow Variables (Global) - with error handling */
+try {
+    $workflow_variables = function_exists('get_field') ? get_field('variables_workflow') : [];
+    $workflow_variables = is_array($workflow_variables) ? $workflow_variables : [];
+} catch (Exception $e) {
+    error_log('[PF Single] Workflow variables error: ' . $e->getMessage());
+    $workflow_variables = [];
+}
+
 /* Value-Highlights - with error handling */
 try {
     $pain_point = function_exists('get_field') ? get_field('pain_points') : '';
     $expected_outcome = function_exists('get_field') ? get_field('expected_outcome') : '';
     $time_saved_min = function_exists('get_field') ? get_field('time_saved_min') : 0; // int
     $difficulty_wo_ai = function_exists('get_field') ? get_field('difficulty_without_ai') : 0; // 1–5
-    $diff = (int) ($difficulty_wo_ai ?: 0);
-    $diff = max(0, min($diff, 5));
+    $difficulty_level = (int) ($difficulty_wo_ai ?: 0);
+    $difficulty_level = max(0, min($difficulty_level, 5));
 } catch (Exception $e) {
     error_log('[PF Single] Value highlights error: ' . $e->getMessage());
     $pain_point = '';
     $expected_outcome = '';
     $time_saved_min = 0;
     $difficulty_wo_ai = 0;
-    $diff = 0;
+    $difficulty_level = 0;
 }
 
 /* -------------------------------------------------------
@@ -277,7 +296,7 @@ if ($ACCESS_MODE === 'pro') {
     <?php endif; ?>
 
     <!-- Info Chips: Version, Last Update, Estimated Time, Time Saved, Difficulty -->
-    <?php if ($version || $lastest_update || $estimated_time || $time_saved_min || $difficulty_wo_ai): ?>
+    <?php if ($version || $latest_update || $estimated_time || $time_saved_min || $difficulty_wo_ai): ?>
       <div class="pf-info-chips">
         <?php if ($version): ?>
           <span class="pf-chip pf-chip--version">
@@ -286,10 +305,10 @@ if ($ACCESS_MODE === 'pro') {
           </span>
         <?php endif; ?>
         
-        <?php if ($lastest_update): ?>
+        <?php if ($latest_update): ?>
           <span class="pf-chip pf-chip--update">
             <span class="pf-chip-icon">🕒</span>
-            <span class="pf-chip-text">Updated: <?php echo esc_html($lastest_update); ?></span>
+            <span class="pf-chip-text">Updated: <?php echo esc_html($latest_update); ?></span>
           </span>
         <?php endif; ?>
         
@@ -310,7 +329,7 @@ if ($ACCESS_MODE === 'pro') {
         <?php if ($difficulty_wo_ai && $difficulty_wo_ai > 0): ?>
           <span class="pf-chip pf-chip--difficulty">
             <span class="pf-chip-icon">🎯</span>
-            <span class="pf-chip-text">Without AI: <?php echo esc_html($diff); ?>/5</span>
+            <span class="pf-chip-text">Without AI: <?php echo esc_html($difficulty_level); ?>/5</span>
           </span>
         <?php endif; ?>
       </div>
@@ -546,20 +565,26 @@ $show_legend = !empty($PF_FLAGS['mode_legend']) || !empty($PF_FLAGS['gating']);
       <ol class="pf-steps" id="pf-steps">
         <?php foreach ($steps as $i => $s):
           $idx        = $i + 1;
-          $step_id    = $s['step_id_'] ?? '';
-          $title      = $s['title'] ?? '';
+          $step_id    = $s['step_id'] ?? '';
+          $step_title = $s['title'] ?? '';
           $objective  = $s['objective'] ?? '';
           $prompt     = $s['prompt'] ?? '';
-          $vars       = (isset($s['variables']) && is_array($s['variables'])) ? $s['variables'] : [];
-          $example    = $s['example_output'] ?? '';
-          $checklist  = (isset($s['checklist']) && is_array($s['checklist'])) ? $s['checklist'] : [];
-          $eta        = isset($s['estimated_time_min']) ? (int)$s['estimated_time_min'] : 0;
           
-          // New ACF fields
-          $checkpoint_required = !empty($s['checkpoint_required']);
-          $checkpoint_message = $s['checkpoint_message'] ?? '';
-          $selection_key = $s['selection_key'] ?? '';
-          $context_requirements = (isset($s['context_requirements']) && is_array($s['context_requirements'])) ? $s['context_requirements'] : [];
+          // Step Variables (renamed from 'variables' to 'variables_step')
+          $step_variables = (isset($s['variables_step']) && is_array($s['variables_step'])) ? $s['variables_step'] : [];
+          
+          $example_output = $s['example_output'] ?? '';
+          $step_checklist = (isset($s['step_checklist']) && is_array($s['step_checklist'])) ? $s['step_checklist'] : [];
+          $estimated_time_min = isset($s['estimated_time_min']) ? (int)$s['estimated_time_min'] : 0;
+          
+          // New ACF fields from v1.7
+          $step_type = $s['step_type'] ?? 'prompt';
+          $prompt_mode = $s['prompt_mode'] ?? 'main';
+          $uses_global_vars = !empty($s['uses_global_vars']);
+          $consumes_previous_output = !empty($s['consumes_previous_output']);
+          $paste_guidance = $s['paste_guidance'] ?? '';
+          $step_body = $s['step_body'] ?? '';
+          $review_hint = $s['review_hint'] ?? '';
 
           $needs_prev = (stripos(($prompt ?? ''), '{previous_output}') !== false);
           $step_anchor = 'step-'.$idx;
@@ -567,7 +592,7 @@ $show_legend = !empty($PF_FLAGS['mode_legend']) || !empty($PF_FLAGS['gating']);
           // Lock-Entscheidung
           $locked = pf_step_is_locked($idx, $ACCESS_MODE, $USER_PLAN, (int)$FREE_STEP_LIMIT, (bool)$LOGIN_REQUIRED, (bool)$viewer_logged_in);
 
-          $li_classes = 'pf-step pf-step-card' . ($locked ? ' pf-step--locked' : '') . ($checkpoint_required ? ' pf-step--checkpoint' : '');
+          $li_classes = 'pf-step pf-step-card' . ($locked ? ' pf-step--locked' : '') . ' pf-step--' . esc_attr($step_type);
         ?>
         <li class="<?php echo esc_attr($li_classes); ?>" id="<?php echo esc_attr($step_anchor); ?>" data-step-id="<?php echo esc_attr($step_id ?: 'step-' . $idx); ?>"<?php echo $locked ? ' data-no-snippet="true"' : ''; ?>>
 
@@ -582,13 +607,10 @@ $show_legend = !empty($PF_FLAGS['mode_legend']) || !empty($PF_FLAGS['gating']);
 
           <div class="pf-step-head">
             <h3 class="pf-step-title">
-              <?php echo esc_html($title ?: __('Untitled', 'prompt-finder')); ?>
+              <?php echo esc_html($step_title ?: __('Untitled', 'prompt-finder')); ?>
             </h3>
-            <?php if ($eta): ?>
-			  
-			  
-			  
-              <span class="pf-step-time" title="Estimated time to complete this step">⏱ <?php echo (int)$eta; ?> min</span>
+            <?php if ($estimated_time_min): ?>
+              <span class="pf-step-time" title="Estimated time to complete this step">⏱ <?php echo (int)$estimated_time_min; ?> min</span>
             <?php endif; ?>
           </div>
 			<?php if ($locked): ?>
@@ -605,45 +627,45 @@ $show_legend = !empty($PF_FLAGS['mode_legend']) || !empty($PF_FLAGS['gating']);
           <!-- Body-Wrapper nur für Lock-Blur -->
           <div class="<?php echo $locked ? 'pf-blur' : ''; ?>">
 
-          <?php if (!empty($vars)): ?>
-            <div class="pf-vars" aria-label="Variables">
+          <?php if (!empty($step_variables)): ?>
+            <div class="pf-vars" aria-label="Step Variables">
               <?php if ($idx === 1): // einmalige, ausblendbare Mini-Hilfe oben bei Step 1 ?>
                 <div class="pf-vars-hint pf-tile" data-vars-hint>
                   <strong>Customize:</strong> Fill the fields — the prompt updates live.
-                  <button type="button" class="pf-hint-hide" data-action="hide-vars-hint">Don’t show again</button>
+                  <button type="button" class="pf-hint-hide" data-action="hide-vars-hint">Don't show again</button>
                 </div>
               <?php endif; ?>
 
-              <?php foreach ($vars as $v):
-                $name     = trim($v['var_name'] ?? '');
-                $desc     = trim($v['var_description'] ?? '');
-                $exampleV = trim($v['example_value'] ?? '');
-                $required = !empty($v['required'] ?? false);
+              <?php foreach ($step_variables as $v):
+                $var_name = trim($v['step_var_name'] ?? '');
+                $var_desc = trim($v['step_var_description'] ?? '');
+                $var_example = trim($v['step_var_example_value'] ?? '');
+                $var_required = !empty($v['step_var_required'] ?? false);
 
-                // Create label from variable name since var_label doesn't exist in ACF
-                $label = $name ? ucwords(str_replace(['_','-'], ' ', $name)) : 'Variable';
+                // Create label from variable name
+                $label = $var_name ? ucwords(str_replace(['_','-'], ' ', $var_name)) : 'Variable';
                 // Clean up the label for better display
                 $label = str_replace(['{', '}'], '', $label);
                 
                 // Use example value as placeholder if available, otherwise use a generic placeholder
-                $placeholder = $exampleV ?: 'Enter ' . strtolower($label);
+                $placeholder = $var_example ?: 'Enter ' . strtolower($label);
               ?>
-                <label class="pf-var <?php echo $required ? 'is-required' : ''; ?>">
+                <label class="pf-var <?php echo $var_required ? 'is-required' : ''; ?>">
                   <span class="pf-var-label">
                     <?php echo esc_html($label ?: 'Variable'); ?>
-                    <?php if ($required): ?><span class="pf-req" title="Required">*</span><?php endif; ?>
+                    <?php if ($var_required): ?><span class="pf-req" title="Required">*</span><?php endif; ?>
                   </span>
 
                   <input type="text"
-                         id="<?php echo esc_attr('pf-var-' . $idx . '-' . sanitize_title($name)); ?>"
-                         name="<?php echo esc_attr('pf_var_' . sanitize_title($name)); ?>"
-                         data-var-name="<?php echo esc_attr($name); ?>"
-                         <?php if ($exampleV) echo 'data-example="'.esc_attr($exampleV).'"'; ?>
+                         id="<?php echo esc_attr('pf-var-' . $idx . '-' . sanitize_title($var_name)); ?>"
+                         name="<?php echo esc_attr('pf_var_' . sanitize_title($var_name)); ?>"
+                         data-var-name="<?php echo esc_attr($var_name); ?>"
+                         <?php if ($var_example) echo 'data-example="'.esc_attr($var_example).'"'; ?>
                          placeholder="<?php echo esc_attr($placeholder); ?>"
-                         <?php if ($required): ?>aria-required="true"<?php endif; ?>>
+                         <?php if ($var_required): ?>aria-required="true"<?php endif; ?>>
 
-                  <?php if ($desc): ?>
-                    <small class="pf-var-help"><?php echo esc_html($desc); ?></small>
+                  <?php if ($var_desc): ?>
+                    <small class="pf-var-help"><?php echo esc_html($var_desc); ?></small>
                   <?php endif; ?>
                 </label>
               <?php endforeach; ?>
@@ -691,54 +713,24 @@ $show_legend = !empty($PF_FLAGS['mode_legend']) || !empty($PF_FLAGS['gating']);
             <span class="pf-help-inline">→ <?php echo esc_html($PF_COPY['paste_hint'] ?? __('Paste into the same chat and run.', 'prompt-finder')); ?></span>
           </div>
 
-          <?php if (!empty($example)): ?>
+          <?php if (!empty($example_output)): ?>
             <details class="pf-example">
               <summary><?php _e('Show example output', 'prompt-finder'); ?></summary>
-              <pre><?php echo esc_html($example); ?></pre>
+              <pre><?php echo esc_html($example_output); ?></pre>
             </details>
           <?php endif; ?>
 
-          <?php if (!empty($checklist)): ?>
+          <?php if (!empty($step_checklist)): ?>
             <div class="pf-checklist">
               <span class="pf-checklist-label"><?php _e('Checklist', 'prompt-finder'); ?></span>
               <ul class="pf-checklist-list">
-                <?php foreach ($checklist as $c): ?>
+                <?php foreach ($step_checklist as $c): ?>
                   <li><?php echo esc_html($c['check_item'] ?? ''); ?></li>
                 <?php endforeach; ?>
               </ul>
             </div>
           <?php endif; ?>
 
-          <?php if (!empty($context_requirements)): ?>
-            <div class="pf-context-requirements">
-              <strong><?php echo esc_html($PF_COPY['context_title'] ?? 'Context Requirements'); ?>:</strong>
-              <?php foreach ($context_requirements as $req): ?>
-                <div class="pf-context-item">
-                  <span class="pf-context-type"><?php echo esc_html(ucfirst($req['context_type'] ?? '')); ?></span>
-                  <span class="<?php echo !empty($req['required']) ? 'pf-context-required' : 'pf-context-optional'; ?>">
-                    <?php echo !empty($req['required']) ? 'Required' : 'Optional'; ?>
-                  </span>
-                  <?php if (!empty($req['source'])): ?>
-                    <span class="pf-context-source">(<?php echo esc_html(ucfirst(str_replace('_', ' ', $req['source']))); ?>)</span>
-                  <?php endif; ?>
-                </div>
-              <?php endforeach; ?>
-            </div>
-          <?php endif; ?>
-
-          <?php if ($checkpoint_required && $checkpoint_message): ?>
-            <div class="pf-checkpoint pf-tile" data-checkpoint="true">
-              <div class="pf-checkpoint-message">
-                <strong><?php echo esc_html($PF_COPY['checkpoint_title'] ?? 'Checkpoint'); ?>:</strong>
-                <p><?php echo nl2br(esc_html($checkpoint_message)); ?></p>
-              </div>
-              <div class="pf-checkpoint-actions">
-                <button class="pf-btn pf-btn--primary" data-action="continue-checkpoint">
-                  <?php echo esc_html($PF_COPY['continue_button'] ?? 'Continue'); ?>
-                </button>
-              </div>
-            </div>
-          <?php endif; ?>
 
           <?php if ($idx < $total_steps): ?>
             <?php
