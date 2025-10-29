@@ -1010,13 +1010,16 @@ function enqueue_new_workflow_assets() {
     
     // === CSS ===
     
-    // Main CSS (imports all components)
-    wp_enqueue_style(
-        'pf-workflows-new',
-        $theme_dir . '/assets/css/pf-workflows-new.css',
-        array(),
-        filemtime($theme_path . '/assets/css/pf-workflows-new.css')
-    );
+    // Main CSS (depends on pf-core for proper loading order)
+    $main_css_path = $theme_path . '/assets/css/pf-workflows-new.css';
+    if (file_exists($main_css_path)) {
+        wp_enqueue_style(
+            'pf-workflows-new',
+            $theme_dir . '/assets/css/pf-workflows-new.css',
+            array('pf-core'), // Depend on pf-core
+            filemtime($main_css_path)
+        );
+    }
     
     // Component CSS files
     $css_files = array(
@@ -1075,24 +1078,27 @@ function enqueue_new_workflow_assets() {
     }
     
     // Main JS (depends on all modules)
-    $all_module_handles = array_map(function($module) {
-        return "pf-module-{$module}";
-    }, $js_modules);
-    
-    wp_enqueue_script(
-        'pf-workflows-new',
-        $theme_dir . '/assets/js/pf-workflows-new.js',
-        $all_module_handles,
-        filemtime($theme_path . '/assets/js/pf-workflows-new.js'),
-        true
-    );
-    
-    // Localize
-    wp_localize_script('pf-workflows-new', 'workflowData', array(
-        'postId' => get_the_ID(),
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('workflow_actions')
-    ));
+    $main_js_path = $theme_path . '/assets/js/pf-workflows-new.js';
+    if (file_exists($main_js_path)) {
+        $all_module_handles = array_map(function($module) {
+            return "pf-module-{$module}";
+        }, $js_modules);
+        
+        wp_enqueue_script(
+            'pf-workflows-new',
+            $theme_dir . '/assets/js/pf-workflows-new.js',
+            $all_module_handles,
+            filemtime($main_js_path),
+            true
+        );
+        
+        // Localize
+        wp_localize_script('pf-workflows-new', 'workflowData', array(
+            'postId' => get_the_ID(),
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('workflow_actions')
+        ));
+    }
 }
 add_action('wp_enqueue_scripts', 'enqueue_new_workflow_assets', 30);
 
