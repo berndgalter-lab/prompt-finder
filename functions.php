@@ -999,92 +999,102 @@ function pf_show_variables_debug() {
 
 /**
  * Enqueue New Workflow Frontend Assets
- * Modern modular workflow system with separated components
  */
 function enqueue_new_workflow_assets() {
-    // DEBUG: Log function execution
-    error_log('🔍 NEW WORKFLOW ASSETS: Function called');
-    
     if (!is_singular('workflows')) {
-        error_log('❌ NEW WORKFLOW ASSETS: Not singular workflow - returning');
         return;
     }
     
-    error_log('✅ NEW WORKFLOW ASSETS: is_singular("workflows") = TRUE');
-    
     $theme_dir = get_stylesheet_directory_uri();
     $theme_path = get_stylesheet_directory();
-    $version = filemtime($theme_path . '/assets/css/pf-workflows-new.css');
     
-    error_log('📦 NEW WORKFLOW ASSETS: Enqueuing CSS - Version: ' . $version);
+    // === CSS ===
     
-    // Main CSS (imports all components via @import)
+    // Main CSS (imports all components)
     wp_enqueue_style(
         'pf-workflows-new',
         $theme_dir . '/assets/css/pf-workflows-new.css',
-        array('pf-core'),
-        $version
+        array(),
+        filemtime($theme_path . '/assets/css/pf-workflows-new.css')
     );
     
-    // JS Modules - Load in correct order with proper dependencies
-    $modules = array(
-        'storage' => array(),  // No dependencies - must load first
-        'navigation' => array('pf-module-storage'),
-        'variables' => array('pf-module-storage'),
-        'copy' => array('pf-module-storage'),
-        'progress' => array('pf-module-storage'),
-        'steps' => array('pf-module-storage', 'pf-module-variables'),
-        'keyboard' => array('pf-module-storage')
+    // Component CSS files
+    $css_files = array(
+        'workflow-header',
+        'workflow-sidebar',
+        'workflow-sections',
+        'workflow-steps',
+        'workflow-variables'
     );
     
-    $module_handles = array();
-    foreach ($modules as $mod => $deps) {
-        $file = "/assets/js/modules/{$mod}.js";
-        $file_path = $theme_path . $file;
-        
-        if (file_exists($file_path)) {
-            $mod_version = filemtime($file_path);
-            $handle = "pf-module-{$mod}";
-            $module_handles[] = $handle;
-            
-            error_log("📦 NEW WORKFLOW ASSETS: Enqueuing JS module: {$handle}");
-            
-            wp_enqueue_script(
-                $handle,
-                $theme_dir . $file,
-                $deps,
-                $mod_version,
-                true
+    foreach ($css_files as $file) {
+        $css_path = "/assets/css/components/{$file}.css";
+        if (file_exists($theme_path . $css_path)) {
+            wp_enqueue_style(
+                "pf-{$file}",
+                $theme_dir . $css_path,
+                array('pf-workflows-new'),
+                filemtime($theme_path . $css_path)
             );
-        } else {
-            error_log("❌ NEW WORKFLOW ASSETS: Module file not found: {$file_path}");
         }
     }
     
-    // Main JS (initializes all modules - depends on all modules)
-    $js_version = filemtime($theme_path . '/assets/js/pf-workflows-new.js');
+    // === JAVASCRIPT ===
     
-    error_log('📦 NEW WORKFLOW ASSETS: Enqueuing main JS - Version: ' . $js_version);
-    error_log('📦 NEW WORKFLOW ASSETS: Module handles: ' . implode(', ', $module_handles));
+    // JS Modules (already working)
+    $js_modules = array(
+        'storage',
+        'navigation', 
+        'variables',
+        'copy',
+        'progress',
+        'steps',
+        'keyboard'
+    );
+    
+    foreach ($js_modules as $module) {
+        $js_path = "/assets/js/modules/{$module}.js";
+        if (file_exists($theme_path . $js_path)) {
+            // Set dependencies based on module
+            $deps = array();
+            if ($module !== 'storage') {
+                $deps[] = 'pf-module-storage';
+            }
+            if ($module === 'steps') {
+                $deps[] = 'pf-module-variables';
+            }
+            
+            wp_enqueue_script(
+                "pf-module-{$module}",
+                $theme_dir . $js_path,
+                $deps,
+                filemtime($theme_path . $js_path),
+                true
+            );
+        }
+    }
+    
+    // Main JS (depends on all modules)
+    $all_module_handles = array_map(function($module) {
+        return "pf-module-{$module}";
+    }, $js_modules);
     
     wp_enqueue_script(
         'pf-workflows-new',
         $theme_dir . '/assets/js/pf-workflows-new.js',
-        $module_handles,
-        $js_version,
+        $all_module_handles,
+        filemtime($theme_path . '/assets/js/pf-workflows-new.js'),
         true
     );
     
-    // Localize script with workflow data
+    // Localize
     wp_localize_script('pf-workflows-new', 'workflowData', array(
         'postId' => get_the_ID(),
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('workflow_actions')
     ));
-    
-    error_log('✅ NEW WORKFLOW ASSETS: All assets enqueued successfully!');
 }
-add_action('wp_enqueue_scripts', 'enqueue_new_workflow_assets', 30); // Priority 30 to load AFTER old function
+add_action('wp_enqueue_scripts', 'enqueue_new_workflow_assets', 30);
 
 /**
  * Dequeue Old Workflow Assets

@@ -1,14 +1,10 @@
 /**
  * Workflow Frontend Styles - NEW VERSION
- * Main CSS File - Imports all components
+ * Main CSS File - Layout and Base Styles
+ * 
+ * NOTE: Component CSS files are loaded separately via functions.php
+ * This file only contains layout and base styles.
  */
-
-/* Import Components */
-@import url('components/workflow-header.css');
-@import url('components/workflow-sidebar.css');
-@import url('components/workflow-sections.css');
-@import url('components/workflow-steps.css');
-@import url('components/workflow-variables.css');
 
 /* ========================================
    WORKFLOW LAYOUT
