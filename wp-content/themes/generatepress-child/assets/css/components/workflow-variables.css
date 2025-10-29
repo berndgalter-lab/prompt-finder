@@ -1,0 +1,346 @@
+/**
+ * Workflow Component: Variables Section
+ * Interactive input fields with validation and storage
+ */
+
+/* ========================================
+   VARIABLES SECTION
+   ======================================== */
+
+.pf-section--variables {
+    scroll-margin-top: 120px;
+}
+
+.pf-section-subheading {
+    margin: 0 0 var(--pf-space-lg, 2rem) 0;
+    font-size: 1rem;
+    color: var(--pf-text-dim, #666);
+}
+
+/* Notice when no variables */
+.pf-variables-notice {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: var(--pf-space-lg, 2rem);
+    background: var(--pf-surface, #f9fafb);
+    border: 2px dashed var(--pf-border, #e5e7eb);
+    border-radius: var(--pf-radius-lg, 16px);
+    text-align: center;
+    color: var(--pf-text-dim, #666);
+}
+
+.pf-variables-notice svg {
+    flex-shrink: 0;
+    color: var(--pf-info, #3b82f6);
+}
+
+.pf-variables-notice p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* ========================================
+   VARIABLES CARD
+   ======================================== */
+
+.pf-variables-card {
+    background: var(--pf-bg, #ffffff);
+    border: 2px solid var(--pf-border, #e5e7eb);
+    border-radius: var(--pf-radius-lg, 16px);
+    padding: var(--pf-space-xl, 2.5rem);
+    transition: all 0.3s ease;
+}
+
+.pf-variables-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: var(--pf-accent, #6366f1);
+}
+
+/* ========================================
+   CARD HEADER
+   ======================================== */
+
+.pf-variables-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--pf-space-lg, 2rem);
+    gap: 1rem;
+}
+
+.pf-variables-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--pf-text-dim, #666);
+}
+
+.pf-variables-info svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+/* ========================================
+   COUNTER BADGE
+   ======================================== */
+
+.pf-variables-counter {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    background: var(--pf-accent, #6366f1);
+    color: #ffffff;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.pf-counter-number {
+    font-size: 1.125rem;
+}
+
+.pf-counter-total {
+    opacity: 0.8;
+}
+
+/* ========================================
+   VARIABLES LIST
+   ======================================== */
+
+.pf-variables-list {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: var(--pf-space-lg, 2rem);
+    margin-bottom: var(--pf-space-lg, 2rem);
+}
+
+@media (min-width: 768px) {
+    .pf-variables-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ========================================
+   VARIABLE ITEM
+   ======================================== */
+
+.pf-var-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* ========================================
+   LABEL
+   ======================================== */
+
+.pf-var-label {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--pf-text, #1a1a1a);
+    line-height: 1.4;
+}
+
+/* ========================================
+   REQUIRED STAR
+   ======================================== */
+
+.pf-var-required {
+    color: var(--pf-danger, #ef4444);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* ========================================
+   INPUT FIELD
+   ======================================== */
+
+.pf-var-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--pf-border, #e5e7eb);
+    border-radius: var(--pf-radius-sm, 8px);
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--pf-text, #1a1a1a);
+    background: var(--pf-bg, #ffffff);
+    transition: all 0.2s ease;
+}
+
+.pf-var-input:hover {
+    border-color: var(--pf-text-dim, #666);
+}
+
+.pf-var-input:focus {
+    outline: none;
+    border-color: var(--pf-accent, #6366f1);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.pf-var-input::placeholder {
+    color: #9ca3af;
+}
+
+/* ========================================
+   INPUT STATES
+   ======================================== */
+
+.pf-var-input.is-filled {
+    border-color: var(--pf-success, #10b981);
+}
+
+.pf-var-input.is-filled:focus {
+    border-color: var(--pf-success, #10b981);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.pf-var-input.is-error {
+    border-color: var(--pf-danger, #ef4444);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.pf-var-input.is-error:focus {
+    border-color: var(--pf-danger, #ef4444);
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+.pf-var-item[data-var-required="true"] .pf-var-input:not(.is-filled):not(:focus) {
+    border-style: dashed;
+    border-color: var(--pf-accent, #6366f1);
+}
+
+/* ========================================
+   HINT TEXT
+   ======================================== */
+
+.pf-var-hint {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--pf-text-dim, #666);
+    line-height: 1.5;
+}
+
+/* ========================================
+   ACTIONS SECTION
+   ======================================== */
+
+.pf-variables-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--pf-space-sm, 1rem);
+    margin-bottom: var(--pf-space-md, 1.5rem);
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.pf-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: var(--pf-radius-sm, 8px);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    font-family: inherit;
+}
+
+.pf-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
+/* Secondary Button */
+.pf-btn--secondary {
+    background: var(--pf-surface, #f9fafb);
+    color: var(--pf-text, #1a1a1a);
+    border: 2px solid var(--pf-border, #e5e7eb);
+}
+
+.pf-btn--secondary:hover {
+    background: #e5e7eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pf-btn--secondary:active {
+    transform: translateY(0);
+}
+
+/* Primary Button */
+.pf-btn--primary {
+    background: linear-gradient(135deg, var(--pf-accent, #6366f1) 0%, var(--pf-info, #3b82f6) 100%);
+    color: #ffffff;
+}
+
+.pf-btn--primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+.pf-btn--primary:active {
+    transform: translateY(0);
+}
+
+.pf-btn svg {
+    flex-shrink: 0;
+}
+
+/* ========================================
+   INFO NOTE
+   ======================================== */
+
+.pf-variables-note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--pf-text-dim, #666);
+    font-style: italic;
+}
+
+.pf-variables-note svg {
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .pf-variables-card {
+        padding: var(--pf-space-md, 1.5rem);
+    }
+    
+    .pf-variables-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .pf-variables-counter {
+        align-self: flex-end;
+    }
+    
+    .pf-variables-actions {
+        flex-direction: column;
+    }
+    
+    .pf-btn {
+        width: 100%;
+    }
+}

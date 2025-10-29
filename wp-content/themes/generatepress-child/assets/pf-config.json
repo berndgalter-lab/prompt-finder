@@ -3,7 +3,7 @@
 
   "feature_flags": {
     "howto_box": true,
-    "next_panel": true,
+    "next_panel": false,
     "rating": true,
     "share": true,
     "gating": true,

@@ -324,6 +324,17 @@ add_action('wp_enqueue_scripts', function () {
 
     // Workflows (Single, Archive, Taxonomy)
     if (is_singular('workflows') || is_post_type_archive('workflows') || is_tax(['workflow_category','workflow_tag'])) {
+        // NEW: Modern modular workflow CSS
+        $new_css = $base . '/assets/css/pf-workflows-new.css';
+        if (file_exists($new_css)) {
+            $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
+                ? wp_get_theme()->get('Version') 
+                : filemtime($new_css);
+            wp_enqueue_style('pf-workflows-new', $uri . '/assets/css/pf-workflows-new.css', ['pf-core'], $version);
+        }
+        
+        // OLD: Legacy workflow CSS (DISABLED - using new modular system)
+        /*
         $f = $base . '/assets/css/pf-workflows.css';
         if (file_exists($f)) {
             $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
@@ -331,7 +342,27 @@ add_action('wp_enqueue_scripts', function () {
                 : filemtime($f);
             wp_enqueue_style('pf-workflows', $uri . '/assets/css/pf-workflows.css', ['pf-core'], $version);
         }
+        */
 
+        // NEW: Modern modular workflow JavaScript
+        $new_js = $base . '/assets/js/pf-workflows-new.js';
+        if (file_exists($new_js)) {
+            $js_version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
+                ? wp_get_theme()->get('Version') 
+                : filemtime($new_js);
+            
+            // Enqueue JavaScript modules in correct order
+            wp_enqueue_script('pf-workflows-storage', $uri . '/assets/js/modules/storage.js', [], $js_version, true);
+            wp_enqueue_script('pf-workflows-navigation', $uri . '/assets/js/modules/navigation.js', [], $js_version, true);
+            wp_enqueue_script('pf-workflows-variables', $uri . '/assets/js/modules/variables.js', ['pf-workflows-storage'], $js_version, true);
+            wp_enqueue_script('pf-workflows-copy', $uri . '/assets/js/modules/copy.js', [], $js_version, true);
+            wp_enqueue_script('pf-workflows-progress', $uri . '/assets/js/modules/progress.js', [], $js_version, true);
+            wp_enqueue_script('pf-workflows-steps', $uri . '/assets/js/modules/steps.js', ['pf-workflows-storage', 'pf-workflows-variables'], $js_version, true);
+            wp_enqueue_script('pf-workflows-new', $uri . '/assets/js/pf-workflows-new.js', ['pf-workflows-storage', 'pf-workflows-navigation', 'pf-workflows-variables', 'pf-workflows-copy', 'pf-workflows-progress', 'pf-workflows-steps'], $js_version, true);
+        }
+        
+        // OLD: Legacy workflow JavaScript (DISABLED - using new modular system)
+        /*
         $js = $base . '/assets/js/pf-workflows.js';
         if (file_exists($js)) {
             $js_version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
@@ -360,6 +391,7 @@ add_action('wp_enqueue_scripts', function () {
 			wp_localize_script('pf-workflows-js', 'PF_CONFIG', $PF_CONFIG);
 			wp_localize_script('pf-workflows-js', 'PF_FLAGS', $PF_CONFIG['feature_flags'] ?? []);
         }
+        */
 
     }
 
@@ -877,5 +909,202 @@ function pf_get_favorites_cb(){
     wp_send_json_error(['message' => 'An unexpected error occurred'], 500);
   }
 }
+
+/* ============================================================================
+   DEBUG TOOL - Variables Inspector (WordPress Admin)
+   ============================================================================ */
+
+add_action('admin_menu', 'pf_debug_variables_menu');
+
+function pf_debug_variables_menu() {
+    add_submenu_page(
+        'tools.php',
+        'PF Variables Debug',
+        'PF Variables Debug',
+        'manage_options',
+        'pf-variables-debug',
+        'pf_show_variables_debug'
+    );
+}
+
+function pf_show_variables_debug() {
+    if (!current_user_can('manage_options')) {
+        wp_die('Access denied');
+    }
+    
+    $workflows = get_posts([
+        'post_type' => 'workflows',
+        'numberposts' => -1,
+        'post_status' => 'publish'
+    ]);
+    
+    ?>
+    <div class="wrap">
+        <h1>🔍 Prompt Finder - Variables Debug</h1>
+        
+        <?php
+        if (empty($workflows)) {
+            echo '<p style="color: red;">❌ Keine Workflows gefunden!</p>';
+            return;
+        }
+        
+        echo '<p style="color: green; font-weight: bold;">✅ ' . count($workflows) . ' Workflow(s) gefunden</p>';
+        
+        foreach ($workflows as $workflow) {
+            ?>
+            <div style="background: white; padding: 20px; margin: 20px 0; border: 1px solid #ccc; border-radius: 8px;">
+                <h2>📄 <?php echo esc_html($workflow->post_title); ?> (ID: <?php echo $workflow->ID; ?>)</h2>
+                
+                <h3>🆕 Workflow Variables:</h3>
+                <?php
+                $variables_workflow = get_field('variables_workflow', $workflow->ID);
+                if (!empty($variables_workflow) && is_array($variables_workflow)) {
+                    echo '<p style="color: green;"><strong>✅ variables_workflow: ' . count($variables_workflow) . ' Variable(n)</strong></p>';
+                    echo '<pre style="background: #f5f5f5; padding: 10px; overflow-x: auto; max-height: 300px;">' . esc_html(print_r($variables_workflow, true)) . '</pre>';
+                } else {
+                    echo '<p style="color: orange;">⚠️ variables_workflow: LEER</p>';
+                }
+                
+                $pf_variables = get_field('pf_variables', $workflow->ID);
+                if (!empty($pf_variables) && is_array($pf_variables)) {
+                    echo '<p style="color: green;"><strong>✅ pf_variables (ALT): ' . count($pf_variables) . ' Variable(n)</strong></p>';
+                    echo '<pre style="background: #f5f5f5; padding: 10px; overflow-x: auto; max-height: 300px;">' . esc_html(print_r($pf_variables, true)) . '</pre>';
+                } else {
+                    echo '<p style="color: orange;">⚠️ pf_variables (ALT): LEER</p>';
+                }
+                
+                $steps = get_field('steps', $workflow->ID);
+                if (!empty($steps) && is_array($steps)) {
+                    echo '<h3>📋 Steps (' . count($steps) . '):</h3>';
+                    
+                    foreach ($steps as $i => $step) {
+                        $idx = $i + 1;
+                        echo '<h4>Step ' . $idx . ': ' . esc_html($step['title'] ?? 'Untitled') . '</h4>';
+                        
+                        $variables_step = $step['variables_step'] ?? [];
+                        if (!empty($variables_step) && is_array($variables_step)) {
+                            echo '<p style="color: green;"><strong>✅ variables_step: ' . count($variables_step) . ' Variable(n)</strong></p>';
+                            echo '<pre style="background: #f5f5f5; padding: 10px; overflow-x: auto; max-height: 200px;">' . esc_html(print_r($variables_step, true)) . '</pre>';
+                        } else {
+                            echo '<p style="color: orange;">⚠️ variables_step: LEER</p>';
+                        }
+                        
+                        $variables = $step['variables'] ?? [];
+                        if (!empty($variables) && is_array($variables)) {
+                            echo '<p style="color: green;"><strong>✅ variables (ALT): ' . count($variables) . ' Variable(n)</strong></p>';
+                            echo '<pre style="background: #f5f5f5; padding: 10px; overflow-x: auto; max-height: 200px;">' . esc_html(print_r($variables, true)) . '</pre>';
+                        } else {
+                            echo '<p style="color: orange;">⚠️ variables (ALT): LEER</p>';
+                        }
+                        
+                        echo '<hr>';
+                    }
+                }
+                ?>
+            </div>
+            <?php
+        }
+        ?>
+        
+        <hr>
+        <h2>📝 Zusammenfassung:</h2>
+        <ul>
+            <li>Wenn <strong>variables_workflow</strong> UND <strong>pf_variables</strong> LEER sind → Keine Workflow Variables in der Datenbank</li>
+            <li>Wenn <strong>variables_step</strong> UND <strong>variables</strong> LEER sind → Keine Step Variables in der Datenbank</li>
+            <li>Der Code unterstützt BEIDE Feldnamen (alt + neu) automatisch</li>
+        </ul>
+    </div>
+    <?php
+}
+
+/**
+ * Enqueue New Workflow Frontend Assets
+ * Modern modular workflow system with separated components
+ */
+function enqueue_new_workflow_assets() {
+    if (!is_singular('workflows')) {
+        return;
+    }
+    
+    $theme_dir = get_stylesheet_directory_uri();
+    $theme_path = get_stylesheet_directory();
+    $version = filemtime($theme_path . '/assets/css/pf-workflows-new.css');
+    
+    // Main CSS (imports all components via @import)
+    wp_enqueue_style(
+        'pf-workflows-new',
+        $theme_dir . '/assets/css/pf-workflows-new.css',
+        array('pf-core'),
+        $version
+    );
+    
+    // JS Modules - Load in correct order with proper dependencies
+    $modules = array(
+        'storage' => array(),  // No dependencies - must load first
+        'navigation' => array('pf-module-storage'),
+        'variables' => array('pf-module-storage'),
+        'copy' => array('pf-module-storage'),
+        'progress' => array('pf-module-storage'),
+        'steps' => array('pf-module-storage', 'pf-module-variables'),
+        'keyboard' => array('pf-module-storage')
+    );
+    
+    $module_handles = array();
+    foreach ($modules as $mod => $deps) {
+        $file = "/assets/js/modules/{$mod}.js";
+        $file_path = $theme_path . $file;
+        
+        if (file_exists($file_path)) {
+            $mod_version = filemtime($file_path);
+            $handle = "pf-module-{$mod}";
+            $module_handles[] = $handle;
+            wp_enqueue_script(
+                $handle,
+                $theme_dir . $file,
+                $deps,
+                $mod_version,
+                true
+            );
+        }
+    }
+    
+    // Main JS (initializes all modules - depends on all modules)
+    $js_version = filemtime($theme_path . '/assets/js/pf-workflows-new.js');
+    wp_enqueue_script(
+        'pf-workflows-new',
+        $theme_dir . '/assets/js/pf-workflows-new.js',
+        $module_handles,
+        $js_version,
+        true
+    );
+    
+    // Localize script with workflow data
+    wp_localize_script('pf-workflows-new', 'workflowData', array(
+        'postId' => get_the_ID(),
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('workflow_actions')
+    ));
+}
+add_action('wp_enqueue_scripts', 'enqueue_new_workflow_assets', 20); // Priority 20 to load after pf-core
+
+/**
+ * Dequeue Old Workflow Assets
+ * Removes legacy workflow CSS/JS to prevent conflicts with new modular system
+ */
+function dequeue_old_workflow_assets() {
+    if (is_singular('workflows')) {
+        // Dequeue old CSS
+        wp_dequeue_style('pf-workflows');
+        
+        // Dequeue old JavaScript files
+        wp_dequeue_script('pf-workflows-js');
+        wp_dequeue_script('pf-workflow-navigation-js');
+        wp_dequeue_script('pf-learn-use-mode-js');
+        
+        // Keep pf-core and pf-analytics as they might be used elsewhere
+        // Only remove workflow-specific old scripts
+    }
+}
+add_action('wp_enqueue_scripts', 'dequeue_old_workflow_assets', 100); // Priority 100 to run after all enqueues
 
 

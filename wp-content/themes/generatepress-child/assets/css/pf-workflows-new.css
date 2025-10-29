@@ -1,0 +1,59 @@
+/**
+ * Workflow Frontend Styles - NEW VERSION
+ * Main CSS File - Imports all components
+ */
+
+/* Import Components */
+@import url('components/workflow-header.css');
+@import url('components/workflow-sidebar.css');
+@import url('components/workflow-sections.css');
+@import url('components/workflow-steps.css');
+@import url('components/workflow-variables.css');
+
+/* ========================================
+   WORKFLOW LAYOUT
+   ======================================== */
+
+.pf-workflow-container {
+    position: relative;
+    min-height: 100vh;
+}
+
+.pf-workflow-layout {
+    display: flex;
+    position: relative;
+}
+
+.pf-workflow-main {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem var(--pf-space-lg, 2rem);
+}
+
+@media (min-width: 1024px) {
+    .pf-workflow-main {
+        margin-left: 280px;
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+}
+
+@media (max-width: 1023px) {
+    .pf-workflow-main {
+        padding: 1.5rem 1rem;
+    }
+}
+
+/* ========================================
+   BASE STYLES
+   ======================================== */
+
+body.single-workflows {
+    background: var(--pf-bg, #ffffff);
+}
+
+.pf-workflow-container * {
+    box-sizing: border-box;
+}
+
