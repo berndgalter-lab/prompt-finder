@@ -324,41 +324,21 @@ add_action('wp_enqueue_scripts', function () {
 
     // Workflows (Single, Archive, Taxonomy)
     if (is_singular('workflows') || is_post_type_archive('workflows') || is_tax(['workflow_category','workflow_tag'])) {
-        // NEW: Modern modular workflow CSS
-        $new_css = $base . '/assets/css/pf-workflows-new.css';
-        if (file_exists($new_css)) {
-            $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
-                ? wp_get_theme()->get('Version') 
-                : filemtime($new_css);
-            wp_enqueue_style('pf-workflows-new', $uri . '/assets/css/pf-workflows-new.css', ['pf-core'], $version);
-        }
+        // DISABLED: For singular workflows, use new modular system (enqueue_new_workflow_assets)
+        // This old code only runs for archives/taxonomies now
         
-        // OLD: Legacy workflow CSS (DISABLED - using new modular system)
-        /*
-        $f = $base . '/assets/css/pf-workflows.css';
-        if (file_exists($f)) {
-            $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
-                ? wp_get_theme()->get('Version') 
-                : filemtime($f);
-            wp_enqueue_style('pf-workflows', $uri . '/assets/css/pf-workflows.css', ['pf-core'], $version);
-        }
-        */
-
-        // NEW: Modern modular workflow JavaScript
-        $new_js = $base . '/assets/js/pf-workflows-new.js';
-        if (file_exists($new_js)) {
-            $js_version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
-                ? wp_get_theme()->get('Version') 
-                : filemtime($new_js);
-            
-            // Enqueue JavaScript modules in correct order
-            wp_enqueue_script('pf-workflows-storage', $uri . '/assets/js/modules/storage.js', [], $js_version, true);
-            wp_enqueue_script('pf-workflows-navigation', $uri . '/assets/js/modules/navigation.js', [], $js_version, true);
-            wp_enqueue_script('pf-workflows-variables', $uri . '/assets/js/modules/variables.js', ['pf-workflows-storage'], $js_version, true);
-            wp_enqueue_script('pf-workflows-copy', $uri . '/assets/js/modules/copy.js', [], $js_version, true);
-            wp_enqueue_script('pf-workflows-progress', $uri . '/assets/js/modules/progress.js', [], $js_version, true);
-            wp_enqueue_script('pf-workflows-steps', $uri . '/assets/js/modules/steps.js', ['pf-workflows-storage', 'pf-workflows-variables'], $js_version, true);
-            wp_enqueue_script('pf-workflows-new', $uri . '/assets/js/pf-workflows-new.js', ['pf-workflows-storage', 'pf-workflows-navigation', 'pf-workflows-variables', 'pf-workflows-copy', 'pf-workflows-progress', 'pf-workflows-steps'], $js_version, true);
+        // For singular workflows: Assets werden von enqueue_new_workflow_assets() geladen
+        // For archives/taxonomies: Old system bleibt aktiv (falls benötigt)
+        if (!is_singular('workflows')) {
+            // Archive/Taxonomy: Old system
+            // OLD: Legacy workflow CSS
+            $f = $base . '/assets/css/pf-workflows.css';
+            if (file_exists($f)) {
+                $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
+                    ? wp_get_theme()->get('Version') 
+                    : filemtime($f);
+                wp_enqueue_style('pf-workflows', $uri . '/assets/css/pf-workflows.css', ['pf-core'], $version);
+            }
         }
         
         // OLD: Legacy workflow JavaScript (DISABLED - using new modular system)
@@ -1022,13 +1002,21 @@ function pf_show_variables_debug() {
  * Modern modular workflow system with separated components
  */
 function enqueue_new_workflow_assets() {
+    // DEBUG: Log function execution
+    error_log('🔍 NEW WORKFLOW ASSETS: Function called');
+    
     if (!is_singular('workflows')) {
+        error_log('❌ NEW WORKFLOW ASSETS: Not singular workflow - returning');
         return;
     }
+    
+    error_log('✅ NEW WORKFLOW ASSETS: is_singular("workflows") = TRUE');
     
     $theme_dir = get_stylesheet_directory_uri();
     $theme_path = get_stylesheet_directory();
     $version = filemtime($theme_path . '/assets/css/pf-workflows-new.css');
+    
+    error_log('📦 NEW WORKFLOW ASSETS: Enqueuing CSS - Version: ' . $version);
     
     // Main CSS (imports all components via @import)
     wp_enqueue_style(
@@ -1058,6 +1046,9 @@ function enqueue_new_workflow_assets() {
             $mod_version = filemtime($file_path);
             $handle = "pf-module-{$mod}";
             $module_handles[] = $handle;
+            
+            error_log("📦 NEW WORKFLOW ASSETS: Enqueuing JS module: {$handle}");
+            
             wp_enqueue_script(
                 $handle,
                 $theme_dir . $file,
@@ -1065,11 +1056,17 @@ function enqueue_new_workflow_assets() {
                 $mod_version,
                 true
             );
+        } else {
+            error_log("❌ NEW WORKFLOW ASSETS: Module file not found: {$file_path}");
         }
     }
     
     // Main JS (initializes all modules - depends on all modules)
     $js_version = filemtime($theme_path . '/assets/js/pf-workflows-new.js');
+    
+    error_log('📦 NEW WORKFLOW ASSETS: Enqueuing main JS - Version: ' . $js_version);
+    error_log('📦 NEW WORKFLOW ASSETS: Module handles: ' . implode(', ', $module_handles));
+    
     wp_enqueue_script(
         'pf-workflows-new',
         $theme_dir . '/assets/js/pf-workflows-new.js',
@@ -1084,8 +1081,10 @@ function enqueue_new_workflow_assets() {
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('workflow_actions')
     ));
+    
+    error_log('✅ NEW WORKFLOW ASSETS: All assets enqueued successfully!');
 }
-add_action('wp_enqueue_scripts', 'enqueue_new_workflow_assets', 20); // Priority 20 to load after pf-core
+add_action('wp_enqueue_scripts', 'enqueue_new_workflow_assets', 30); // Priority 30 to load AFTER old function
 
 /**
  * Dequeue Old Workflow Assets
