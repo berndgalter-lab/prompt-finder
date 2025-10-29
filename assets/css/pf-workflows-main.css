@@ -6,11 +6,11 @@
  */
 
 /* === Workflow Component Styles === */
-@import url('components/workflow-header.css');
-@import url('components/workflow-sidebar.css');
-@import url('components/workflow-sections.css');
-@import url('components/workflow-variables.css');
-@import url('components/workflow-steps.css');
+@import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-header.css');
+@import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-sidebar.css');
+@import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-sections.css');
+@import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-variables.css');
+@import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-steps.css');
 
 /* ========================================
    WORKFLOW LAYOUT
