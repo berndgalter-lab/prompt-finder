@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 }
 
 get_header();
+the_post();
 ?>
 
 <div class="pf-workflow-container" data-post-id="<?php echo esc_attr(get_the_ID()); ?>">
