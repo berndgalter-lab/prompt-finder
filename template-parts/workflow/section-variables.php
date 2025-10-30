@@ -12,8 +12,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get workflow variables from ACF
-$workflow_variables = get_field('variables_workflow');
+// Get workflow variables from ACF (explicit post ID)
+$workflow_variables = get_field('variables_workflow', get_the_ID());
 
 // Fallback: support old field 'pf_variables' by mapping to new structure
 if ((empty($workflow_variables) || !is_array($workflow_variables))) {
@@ -106,13 +106,14 @@ $post_id = get_the_ID();
                     $var_label = ucwords(str_replace(['_', '-'], ' ', $var_key));
                 }
                 
-                // Skip if no key
-                if (empty($var_key)) {
+            // If key is still empty, derive a safe fallback from label or index to ensure rendering
+            if (empty($var_key)) {
+                $derived = !empty($var_label) ? $var_label : ('var_' . ($idx + 1));
+                $var_key = sanitize_title($derived);
                 if (function_exists('error_log')) {
-                    error_log('[PF Variables] Skipping variable row without key: ' . print_r($var, true));
+                    error_log('[PF Variables] Derived missing workflow_var_key → ' . $var_key);
                 }
-                    continue;
-                }
+            }
                 ?>
                 
                 <div class="pf-var-item" data-var-key="<?php echo esc_attr($var_key); ?>" data-var-required="<?php echo $var_required ? 'true' : 'false'; ?>">
