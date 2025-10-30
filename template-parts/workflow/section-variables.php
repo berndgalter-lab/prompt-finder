@@ -15,6 +15,25 @@ if (!defined('ABSPATH')) {
 // Get workflow variables from ACF
 $workflow_variables = get_field('variables_workflow');
 
+// Fallback: support old field 'pf_variables' by mapping to new structure
+if ((empty($workflow_variables) || !is_array($workflow_variables))) {
+    $old_vars = get_field('pf_variables');
+    if (!empty($old_vars) && is_array($old_vars)) {
+        $mapped = [];
+        foreach ($old_vars as $ov) {
+            $mapped[] = [
+                'workflow_var_key' => isset($ov['var_key']) ? $ov['var_key'] : '',
+                'workflow_var_label' => isset($ov['label']) ? $ov['label'] : '',
+                'workflow_var_placeholder' => isset($ov['placeholder']) ? $ov['placeholder'] : '',
+                'workflow_var_hint' => isset($ov['hint']) ? $ov['hint'] : '',
+                'workflow_var_required' => !empty($ov['required']),
+                'workflow_var_default_value' => isset($ov['default_value']) ? $ov['default_value'] : '',
+            ];
+        }
+        $workflow_variables = $mapped;
+    }
+}
+
 // If no variables, show notice and return
 if (empty($workflow_variables) || !is_array($workflow_variables)) {
     ?>
@@ -66,7 +85,13 @@ $post_id = get_the_ID();
         
         <!-- Variables List -->
         <div class="pf-variables-list">
-            <?php foreach ($workflow_variables as $idx => $var): ?>
+            <?php 
+            // Debug logging
+            if (function_exists('error_log')) {
+                error_log('Global Variables Count: ' . (is_array($workflow_variables) ? count($workflow_variables) : 0));
+                error_log('Global Variables Data: ' . print_r($workflow_variables, true));
+            }
+            foreach ($workflow_variables as $idx => $var): ?>
                 <?php
                 // Get variable fields
                 $var_key = isset($var['workflow_var_key']) ? trim($var['workflow_var_key']) : '';

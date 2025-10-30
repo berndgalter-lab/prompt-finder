@@ -266,8 +266,10 @@
         if (input.hasAttribute('required') && input.value.trim().length === 0) {
           isValid = false;
           input.classList.add('is-error');
+          input.classList.add('pf-var-input--error');
         } else {
           input.classList.remove('is-error');
+          input.classList.remove('pf-var-input--error');
         }
       });
       

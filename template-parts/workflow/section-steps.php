@@ -58,6 +58,20 @@ $total_steps = count($steps);
             $example_output = isset($step['example_output']) ? trim($step['example_output']) : '';
             $estimated_time_min = isset($step['estimated_time_min']) ? trim($step['estimated_time_min']) : '';
             $variables_step = isset($step['variables_step']) && is_array($step['variables_step']) ? $step['variables_step'] : [];
+            // Fallback: support old key 'variables' for step variables
+            if (empty($variables_step) && isset($step['variables']) && is_array($step['variables'])) {
+                // Map old structure to new step vars
+                $mapped_step_vars = [];
+                foreach ($step['variables'] as $sv) {
+                    $mapped_step_vars[] = [
+                        'step_var_name' => isset($sv['var_name']) ? $sv['var_name'] : '',
+                        'step_var_description' => isset($sv['var_description']) ? $sv['var_description'] : '',
+                        'step_var_example_value' => isset($sv['example_value']) ? $sv['example_value'] : '',
+                        'step_var_required' => !empty($sv['required']),
+                    ];
+                }
+                $variables_step = $mapped_step_vars;
+            }
             
             // Get step checklist if review type
             $step_checklist = [];
@@ -228,7 +242,7 @@ $total_steps = count($steps);
                     <?php elseif ($step_type === 'guide' && !empty($step_body)): ?>
                         
                         <div class="pf-guide-body">
-                            <?php echo wp_kses_post($step_body); ?>
+                            <?php echo nl2br(esc_html($step_body)); ?>
                         </div>
                         
                         <?php if (!empty($paste_guidance)): ?>
