@@ -93,21 +93,24 @@ $post_id = get_the_ID();
             }
             foreach ($workflow_variables as $idx => $var): ?>
                 <?php
-                // Get variable fields
-                $var_key = isset($var['workflow_var_key']) ? trim($var['workflow_var_key']) : '';
-                $var_label = isset($var['workflow_var_label']) ? trim($var['workflow_var_label']) : '';
-                $var_placeholder = isset($var['workflow_var_placeholder']) ? trim($var['workflow_var_placeholder']) : '';
-                $var_hint = isset($var['workflow_var_hint']) ? trim($var['workflow_var_hint']) : '';
-                $var_required = !empty($var['workflow_var_required']);
-                $var_default = isset($var['workflow_var_default_value']) ? trim($var['workflow_var_default_value']) : '';
+            // Get variable fields (support BOTH new and old subfield names)
+            $var_key = trim($var['workflow_var_key'] ?? ($var['var_key'] ?? ''));
+            $var_label = trim($var['workflow_var_label'] ?? ($var['label'] ?? ''));
+            $var_placeholder = trim($var['workflow_var_placeholder'] ?? ($var['placeholder'] ?? ''));
+            $var_hint = trim($var['workflow_var_hint'] ?? ($var['hint'] ?? ''));
+            $var_required = !empty($var['workflow_var_required'] ?? $var['required'] ?? false);
+            $var_default = trim($var['workflow_var_default_value'] ?? ($var['default_value'] ?? ''));
                 
-                // Create label from key if label is empty
+            // Create label from key if label is empty
                 if (empty($var_label) && !empty($var_key)) {
                     $var_label = ucwords(str_replace(['_', '-'], ' ', $var_key));
                 }
                 
                 // Skip if no key
                 if (empty($var_key)) {
+                if (function_exists('error_log')) {
+                    error_log('[PF Variables] Skipping variable row without key: ' . print_r($var, true));
+                }
                     continue;
                 }
                 ?>
