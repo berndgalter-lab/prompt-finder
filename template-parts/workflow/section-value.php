@@ -62,14 +62,13 @@ $time_saved_min = get_field('time_saved_min');
     
     <!-- Time Saved Highlight (if available) -->
     <?php if (!empty($time_saved_min) && $time_saved_min > 0): ?>
-        <div class="pf-time-saved-badge">
+        <div class="pf-time-saved-badge" aria-label="Estimated time saving">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/>
                 <polyline points="12 6 12 12 16 14"/>
             </svg>
             <div class="pf-time-saved-content">
-                <span class="pf-time-saved-label">Time Saved</span>
-                <span class="pf-time-saved-value">Save ~<?php echo esc_html($time_saved_min); ?> minutes</span>
+                <span class="pf-time-saved-value">Saves ~<?php echo esc_html($time_saved_min); ?> minutes</span>
             </div>
         </div>
     <?php endif; ?>
