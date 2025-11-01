@@ -61,64 +61,55 @@ for ($i = 1; $i <= 5; $i++) {
 
     <div class="pf-overview-body">
         
-        <!-- Minimal (TL;DR) -->
-        <?php if (!empty($summary)): ?>
-            <p class="pf-overview-summary">
-                <?php echo esc_html($summary); ?>
-            </p>
-        <?php endif; ?>
-
         <!-- Key KPIs / Visualize (kompakt) -->
-        <ul class="pf-kpis" role="list">
-            <?php if (!empty($estimated_time_min)): ?>
-                <li class="pf-kpi">
-                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 6v6l4 2"/>
-                    </svg>
-                    <span class="pf-kpi-label">Time</span>
-                    <span class="pf-kpi-value"><?php echo esc_html($estimated_time_min); ?> min</span>
-                </li>
-            <?php endif; ?>
-            
-            <?php if (!empty($time_saved_min) && $time_saved_min > 0): ?>
-                <li class="pf-kpi">
-                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                    </svg>
-                    <span class="pf-kpi-label">Saves</span>
-                    <span class="pf-kpi-value">~<?php echo esc_html($time_saved_min); ?> min</span>
-                </li>
-            <?php endif; ?>
+        <?php if (!empty($estimated_time_min) || (!empty($time_saved_min) && $time_saved_min > 0) || !empty($difficulty_without_ai)): ?>
+            <ul class="pf-kpis" role="list">
+                <?php if (!empty($estimated_time_min)): ?>
+                    <li class="pf-kpi">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <span class="pf-kpi-label">Time</span>
+                        <span class="pf-kpi-value"><?php echo esc_html($estimated_time_min); ?> min</span>
+                    </li>
+                <?php endif; ?>
+                
+                <?php if (!empty($time_saved_min) && $time_saved_min > 0): ?>
+                    <li class="pf-kpi">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        <span class="pf-kpi-label">Saves</span>
+                        <span class="pf-kpi-value">~<?php echo esc_html($time_saved_min); ?> min</span>
+                    </li>
+                <?php endif; ?>
 
-            <?php if (!empty($difficulty_without_ai)): ?>
-                <li class="pf-kpi">
-                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    <span class="pf-kpi-label">Difficulty</span>
-                    <span class="pf-kpi-value"><?php echo esc_html($difficulty_stars); ?></span>
-                </li>
-            <?php endif; ?>
-        </ul>
-
-        <!-- Use Case (kleiner Pill) -->
-        <?php if (!empty($use_case)): ?>
-            <div class="pf-usecase">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7M19 2v6M13 8h6"/>
-                </svg>
-                <span><?php echo esc_html($use_case); ?></span>
-            </div>
+                <?php if (!empty($difficulty_without_ai)): ?>
+                    <li class="pf-kpi">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <span class="pf-kpi-label">Difficulty</span>
+                        <span class="pf-kpi-value"><?php echo esc_html($difficulty_stars); ?></span>
+                    </li>
+                <?php endif; ?>
+            </ul>
         <?php endif; ?>
 
-        <!-- Details (Why/Problems/Outcome) mit native <details> -->
-        <?php if (!empty($pain_points) || !empty($expected_outcome)): ?>
-            <details class="pf-overview-details">
-                <summary>More context</summary>
+        <!-- SUMMARY: wieder sichtbar ÜBER den beiden Blöcken -->
+        <div class="pf-overview-stack">
+            <?php if (!empty($summary)): ?>
+                <div class="pf-overview-summary-block">
+                    <p class="pf-overview-summary">
+                        <?php echo wp_kses_post($summary); ?>
+                    </p>
+                </div>
+            <?php endif; ?>
 
-                <div class="pf-overview-details-grid">
-                    
+            <!-- Zwei Spalten: Problem & What you'll get -->
+            <?php if (!empty($pain_points) || !empty($expected_outcome)): ?>
+                <div class="pf-overview-split">
                     <?php if (!empty($pain_points)): ?>
                         <section class="pf-overview-block">
                             <h3 class="pf-overview-sub">Problem this solves</h3>
@@ -136,9 +127,15 @@ for ($i = 1; $i <= 5; $i++) {
                             </div>
                         </section>
                     <?php endif; ?>
-
                 </div>
-            </details>
+            <?php endif; ?>
+        </div>
+
+        <!-- Optional: Use Case als kleine Pill (falls du den bereits nutzt) -->
+        <?php if (!empty($use_case)): ?>
+            <div class="pf-usecase">
+                <span><?php echo esc_html($use_case); ?></span>
+            </div>
         <?php endif; ?>
 
     </div>
