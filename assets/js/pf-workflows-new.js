@@ -296,3 +296,40 @@
   }
 })();
 
+// === PF Overview Toggle (per-post persistence) ===============================================
+// Adds collapse/expand toggle for the Overview section with localStorage persistence.
+// Persistence key: `pf_overview_collapsed_<postId>`
+
+(function() {
+  const section = document.querySelector('#overview.pf-section--overview');
+  const btn = section ? section.querySelector('.pf-overview-toggle') : null;
+  if (!section || !btn) return;
+
+  // Get post ID (try workflowData first, then data attribute, fallback to 'unknown')
+  const postId = (typeof workflowData !== 'undefined' && workflowData.postId) 
+    ? workflowData.postId 
+    : (section.getAttribute('data-post-id') || 
+       document.querySelector('[data-post-id]')?.getAttribute('data-post-id') || 
+       'unknown');
+  const key = `pf_overview_collapsed_${postId}`;
+
+  // Initial state from localStorage
+  const saved = localStorage.getItem(key);
+  if (saved === '1') {
+    section.classList.add('is-collapsed');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.textContent = 'Show overview';
+  } else {
+    btn.setAttribute('aria-expanded', 'true');
+    btn.textContent = 'Hide overview';
+  }
+
+  // Toggle handler
+  btn.addEventListener('click', () => {
+    const collapsed = section.classList.toggle('is-collapsed');
+    btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    btn.textContent = collapsed ? 'Show overview' : 'Hide overview';
+    localStorage.setItem(key, collapsed ? '1' : '0');
+  });
+})();
+

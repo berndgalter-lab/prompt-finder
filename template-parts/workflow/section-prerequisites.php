@@ -44,21 +44,6 @@ $estimated_time_min = get_field('estimated_time_min');
         </div>
     </div>
     
-    <!-- Privacy Warning (if requires_source_content = true) -->
-    <?php if (!empty($requires_source_content) && $requires_source_content): ?>
-        <div class="pf-privacy-warning">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                <path d="M12 8v4M12 16h.01"/>
-            </svg>
-            <div class="pf-privacy-warning-content">
-                <h3 class="pf-privacy-warning-heading">⚠️ Privacy Notice</h3>
-                <p class="pf-privacy-warning-text">
-                    <strong>You will paste real content into ChatGPT.</strong> Remove names, email addresses, salaries, or confidential information first.
-                </p>
-            </div>
-        </div>
-    <?php endif; ?>
     
     <!-- Time Reminder (if available) -->
     <?php if (!empty($estimated_time_min)): ?>
