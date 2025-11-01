@@ -20,11 +20,8 @@
 }
 
 /* === Workflow Component Styles === */
-@import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-header.css');
-@import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-sidebar.css');
-@import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-sections.css');
-@import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-variables.css');
-@import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-steps.css');
+/* NOTE: Component CSS files are enqueued directly via functions.php
+   No @import statements to avoid CSS loading issues in WordPress */
 
 /* ========================================
    WORKFLOW LAYOUT

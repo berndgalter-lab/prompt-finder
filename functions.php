@@ -970,8 +970,8 @@ function pf_show_variables_debug() {
 }
 
 /**
- * Enqueue New Workflow Assets - SIMPLIFIED
- * Single CSS file (pf-workflows-main.css) loads all components via @import
+ * Enqueue New Workflow Assets
+ * Loads all CSS files directly (no @import to avoid loading issues)
  */
 function enqueue_new_workflow_assets() {
     // Only on workflow pages
@@ -982,7 +982,20 @@ function enqueue_new_workflow_assets() {
     $theme_uri = get_stylesheet_directory_uri();
     $theme_path = get_stylesheet_directory();
     
-    // === CSS - ONE MAIN FILE (imports all components) ===
+    // === CSS - DIRECT ENQUEUE (no @import to avoid loading issues) ===
+    
+    // Ensure pf-core is loaded first (if not already loaded)
+    $core_css_path = $theme_path . '/assets/css/pf-core.css';
+    if (file_exists($core_css_path)) {
+        wp_enqueue_style(
+            'pf-core',
+            $theme_uri . '/assets/css/pf-core.css',
+            array('pf-child'),
+            filemtime($core_css_path)
+        );
+    }
+    
+    // Main CSS (base styles + layout)
     $main_css_path = $theme_path . '/assets/css/pf-workflows-main.css';
     if (file_exists($main_css_path)) {
         wp_enqueue_style(
@@ -991,6 +1004,33 @@ function enqueue_new_workflow_assets() {
             array('pf-core'), // Depend on pf-core
             filemtime($main_css_path)
         );
+    } else {
+        error_log('[PF Workflows] Main CSS file not found: ' . $main_css_path);
+    }
+    
+    // Component CSS files (in correct order)
+    $css_components = array(
+        'workflow-header' => array('pf-workflows-main'),
+        'workflow-sidebar' => array('pf-workflows-main'),
+        'workflow-sections' => array('pf-workflows-main'),
+        'workflow-variables' => array('pf-workflows-main'),
+        'workflow-steps' => array('pf-workflows-main')
+    );
+    
+    foreach ($css_components as $component => $deps) {
+        $css_file = "/assets/css/components/{$component}.css";
+        $css_path = $theme_path . $css_file;
+        
+        if (file_exists($css_path)) {
+            wp_enqueue_style(
+                "pf-{$component}",
+                $theme_uri . $css_file,
+                $deps,
+                filemtime($css_path)
+            );
+        } else {
+            error_log('[PF Workflows] Component CSS file not found: ' . $css_path);
+        }
     }
     
     // === JAVASCRIPT - MODULES ===
