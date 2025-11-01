@@ -70,3 +70,49 @@ body.single-workflows {
     box-sizing: border-box;
 }
 
+/* ========================================
+   ANCHOR TARGET SCROLL OFFSET
+   ======================================== */
+
+/* Sticky header offset: 4px (progress bar) + ~84px (header content) = 88px */
+:root {
+    --pf-sticky-offset: 88px;
+}
+
+/* Ensure anchor targets aren't hidden under sticky header */
+:target {
+    scroll-margin-top: var(--pf-sticky-offset, 88px);
+}
+
+/* Sections should also have scroll margin for smooth scrolling */
+.pf-section,
+[id^="step-"],
+[id^="overview"],
+[id^="value"],
+[id^="prerequisites"],
+[id^="variables"] {
+    scroll-margin-top: var(--pf-sticky-offset, 88px);
+}
+
+/* Optional: focus styles for skip link */
+.pf-skip-link {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+}
+
+.pf-skip-link:focus {
+    position: static;
+    clip: auto;
+    height: auto;
+    width: auto;
+    z-index: 9999;
+    padding: 1rem;
+    background: var(--pf-accent, #6366f1);
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: var(--pf-radius-sm, 8px);
+    box-shadow: var(--pf-shadow-md, 0 4px 6px rgba(0,0,0,0.1));
+}
+
