@@ -65,6 +65,48 @@ for ($i = 1; $i <= 5; $i++) {
                 </div>
             <?php endif; ?>
 
+            <?php
+              // Robust Werte beziehen (verwende bestehende Vars, sonst ACF-Fallback)
+              $PF_DIFFICULTY = isset($difficulty_stars) ? $difficulty_stars : '';
+              if (!$PF_DIFFICULTY) { $PF_DIFFICULTY = get_field('difficulty_stars') ?: get_field('difficulty') ?: ''; }
+
+              $PF_SAVES = isset($time_saved_min) ? ($time_saved_min > 0 ? "~{$time_saved_min} min/run" : '') : '';
+              if (!$PF_SAVES) { 
+                $saves_field = get_field('saved_time') ?: get_field('time_saved_min') ?: get_field('saves');
+                if ($saves_field) {
+                  $saves_num = is_numeric($saves_field) ? intval($saves_field) : 0;
+                  $PF_SAVES = $saves_num > 0 ? "~{$saves_num} min/run" : '';
+                }
+              }
+            ?>
+            <div class="pf-overview-metrics" role="group" aria-label="Workflow impact">
+              <div class="pf-metric pf-metric--difficulty">
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.86L12 17.77 5.82 21l1.18-6.86L2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <div class="pf-metric-body">
+                  <div class="pf-metric-line">
+                    <span class="pf-metric-label">Without AI</span>
+                    <span class="pf-metric-value"><?php echo esc_html($PF_DIFFICULTY ?: '★★★☆☆'); ?></span>
+                  </div>
+                  <p class="pf-metric-hint">Mehr manuelle Recherche, Kopieren/Einfügen & Trial-and-Error.</p>
+                </div>
+              </div>
+
+              <div class="pf-metric pf-metric--saved" <?php if ($PF_SAVES) : ?> data-saves-per-run="<?php echo esc_attr($PF_SAVES); ?>"<?php endif; ?>>
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                </svg>
+                <div class="pf-metric-body">
+                  <div class="pf-metric-line">
+                    <span class="pf-metric-label">Time saved</span>
+                    <span class="pf-metric-value"><?php echo esc_html($PF_SAVES ?: '~5 min/run'); ?></span>
+                  </div>
+                  <p class="pf-metric-hint">Jeder Durchlauf spart Zeit — das summiert sich spürbar.</p>
+                </div>
+              </div>
+            </div>
+
             <?php if (!empty($pain_points) || !empty($expected_outcome)): ?>
                 <div class="pf-overview-grid">
                     <?php if (!empty($pain_points)): ?>
