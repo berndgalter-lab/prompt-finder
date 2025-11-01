@@ -5,6 +5,20 @@
  * This file is the ONLY CSS file enqueued for workflows
  */
 
+/* === Accessibility Utilities === */
+/* Screen reader only class - visually hidden but accessible to screen readers */
+.pf-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* === Workflow Component Styles === */
 @import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-header.css');
 @import url('/wp-content/themes/generatepress-child/assets/css/components/workflow-sidebar.css');

@@ -6,12 +6,43 @@
 (function() {
   'use strict';
   
+  // Create aria-live region for screen reader announcements
+  let liveRegion = null;
+  
+  function createLiveRegion() {
+    if (liveRegion) return liveRegion;
+    
+    liveRegion = document.getElementById('pf-live');
+    if (!liveRegion) {
+      liveRegion = document.createElement('div');
+      liveRegion.id = 'pf-live';
+      liveRegion.setAttribute('aria-live', 'polite');
+      liveRegion.setAttribute('aria-atomic', 'true');
+      liveRegion.className = 'pf-sr-only';
+      document.body.appendChild(liveRegion);
+    }
+    return liveRegion;
+  }
+  
+  function announce(message) {
+    const live = createLiveRegion();
+    // Clear previous message
+    live.textContent = '';
+    // Set new message after small delay to ensure screen reader picks it up
+    setTimeout(() => {
+      live.textContent = message;
+    }, 10);
+  }
+  
   const WorkflowCopy = {
     
     /**
      * Initialize the copy module
      */
     init: function() {
+      // Create aria-live region
+      createLiveRegion();
+      
       this.setupCopyButtons();
       console.log('WorkflowCopy: Initialized');
     },
@@ -53,6 +84,7 @@
         navigator.clipboard.writeText(text)
           .then(() => {
             this.showFeedback(button);
+            announce('Copied to clipboard.');
             console.log('WorkflowCopy: Successfully copied to clipboard');
           })
           .catch(err => {
@@ -86,6 +118,7 @@
         
         if (successful) {
           this.showFeedback(button);
+          announce('Copied to clipboard.');
           console.log('WorkflowCopy: Successfully copied using fallback method');
         } else {
           throw new Error('execCommand failed');

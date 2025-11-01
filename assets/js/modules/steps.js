@@ -38,6 +38,9 @@
       // Load saved state
       this.loadProgress();
       
+      // Setup ARIA attributes for toggles
+      this.bindStepToggles();
+      
       // Setup event listeners
       this.setupToggle();
       this.setupCompletion();
@@ -49,6 +52,36 @@
       this.autoExpandFirstIncomplete();
       
       console.log('WorkflowSteps: Initialized for', this.steps.length, 'steps');
+    },
+    
+    /**
+     * Bind ARIA attributes to step toggle buttons
+     */
+    bindStepToggles: function() {
+      this.steps.forEach((step, i) => {
+        const btn = step.querySelector('.pf-step-toggle') || step.querySelector('.pf-step-header');
+        const content = step.querySelector('.pf-step-content');
+        
+        if (!btn || !content) return;
+        
+        // Ensure content has an ID
+        const cid = content.id || (step.id ? step.id + '-content' : 'step-' + (i + 1) + '-content');
+        if (!content.id) {
+          content.id = cid;
+        }
+        
+        // Set ARIA attributes on toggle button
+        if (btn.tagName === 'BUTTON' || btn.getAttribute('role') === 'button') {
+          btn.setAttribute('aria-controls', cid);
+          btn.setAttribute('aria-expanded', step.classList.contains('is-collapsed') ? 'false' : 'true');
+        } else {
+          // If header is clickable, ensure it has proper attributes
+          btn.setAttribute('role', 'button');
+          btn.setAttribute('tabindex', '0');
+          btn.setAttribute('aria-controls', cid);
+          btn.setAttribute('aria-expanded', step.classList.contains('is-collapsed') ? 'false' : 'true');
+        }
+      });
     },
     
     /**
@@ -78,8 +111,12 @@
      */
     toggleStep: function(stepElement) {
       const stepId = stepElement.dataset.stepId;
+      const btn = stepElement.querySelector('.pf-step-toggle') || stepElement.querySelector('.pf-step-header');
+      const content = stepElement.querySelector('.pf-step-content');
       
-      if (stepElement.classList.contains('is-collapsed')) {
+      const isCollapsed = stepElement.classList.contains('is-collapsed');
+      
+      if (isCollapsed) {
         stepElement.classList.remove('is-collapsed');
         this.collapsedSteps = this.collapsedSteps.filter(id => id !== stepId);
       } else {
@@ -87,6 +124,12 @@
         if (!this.collapsedSteps.includes(stepId)) {
           this.collapsedSteps.push(stepId);
         }
+      }
+      
+      // Update ARIA attributes
+      if (btn && content) {
+        const isOpen = !stepElement.classList.contains('is-collapsed');
+        btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
       }
       
       // Save state

@@ -10,6 +10,7 @@
     
     // Elements
     progressBar: null,
+    progressFill: null,
     section: null,
     
     // State
@@ -19,11 +20,12 @@
      * Initialize the progress module
      */
     init: function() {
-      this.progressBar = document.querySelector('.pf-progress-fill');
+      this.progressBar = document.querySelector('.pf-progress-bar');
+      this.progressFill = document.querySelector('.pf-progress-fill');
       this.section = document.querySelector('.pf-section--steps');
       
-      if (!this.progressBar) {
-        console.warn('WorkflowProgress: Progress bar not found');
+      if (!this.progressBar || !this.progressFill) {
+        console.warn('WorkflowProgress: Progress bar elements not found');
         return;
       }
       
@@ -53,12 +55,44 @@
       const completed = this.getCompletedSteps().length;
       const percentage = this.totalSteps > 0 ? (completed / this.totalSteps) * 100 : 0;
       
-      // Animate progress bar
-      this.progressBar.style.width = percentage + '%';
-      this.progressBar.setAttribute('aria-valuenow', Math.round(percentage));
-      this.progressBar.dataset.progress = Math.round(percentage);
+      // Use setProgress with proper ARIA attributes
+      this.setProgress(percentage, completed + ' of ' + this.totalSteps + ' steps completed');
+    },
+    
+    /**
+     * Set progress with ARIA attributes for accessibility
+     * @param {number} pct - Percentage (0-100)
+     * @param {string} label - Optional label for screen readers
+     */
+    setProgress: function(pct = 0, label) {
+      const bar = this.progressBar;
+      const fill = this.progressFill;
       
-      console.log('WorkflowProgress: Updated to', Math.round(percentage) + '% (' + completed + '/' + this.totalSteps + ')');
+      if (!bar || !fill) {
+        console.warn('WorkflowProgress: Progress bar elements not found');
+        return;
+      }
+      
+      // Set width on fill element
+      fill.style.width = pct + '%';
+      
+      // Set ARIA attributes on progress bar container
+      const roundedPct = Math.round(pct);
+      bar.setAttribute('aria-valuenow', String(roundedPct));
+      bar.setAttribute('aria-valuemin', '0');
+      bar.setAttribute('aria-valuemax', '100');
+      
+      // Set aria-valuetext with custom label or default
+      if (label) {
+        bar.setAttribute('aria-valuetext', label);
+      } else {
+        bar.setAttribute('aria-valuetext', roundedPct + '% complete');
+      }
+      
+      // Update data attribute
+      fill.dataset.progress = roundedPct;
+      
+      console.log('WorkflowProgress: Updated to', roundedPct + '% (' + label + ')');
     },
     
     /**

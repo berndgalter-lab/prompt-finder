@@ -56,6 +56,7 @@
           if (targetElement) {
             this.scrollToSection(targetElement);
             this.updateActiveLink(link);
+            this.markActiveStep(targetId);
             this.closeMobileSidebar();
           }
         });
@@ -131,7 +132,7 @@
       const scrollY = window.scrollY + headerOffset;
       
       // Find which section is currently visible
-      const sections = document.querySelectorAll('[data-section], [id^="step-"]');
+      const sections = document.querySelectorAll('[data-section], [id^="step-"], .pf-step');
       let currentSection = null;
       
       sections.forEach((section, index) => {
@@ -168,11 +169,34 @@
       
       const correspondingLink = Array.from(this.links).find(link => {
         const href = link.getAttribute('href');
-        return href && href === `#${sectionId}`;
+        return href && (href === `#${sectionId}` || href.replace('#', '') === sectionId);
       });
       
       if (correspondingLink) {
         this.updateActiveLink(correspondingLink);
+        this.markActiveStep(sectionId);
+      }
+    },
+    
+    /**
+     * Mark active step with aria-current="step"
+     * @param {string} id - Step ID
+     */
+    markActiveStep: function(id) {
+      // Remove aria-current from all step links
+      document.querySelectorAll('.pf-sidebar-link--step').forEach(a => {
+        a.removeAttribute('aria-current');
+      });
+      
+      // Set aria-current="step" on active link
+      const activeLink = Array.from(this.links).find(link => {
+        const href = link.getAttribute('href') || '';
+        const hrefId = href.replace(/^#/, '');
+        return hrefId === id && link.classList.contains('pf-sidebar-link--step');
+      });
+      
+      if (activeLink) {
+        activeLink.setAttribute('aria-current', 'step');
       }
     },
     
