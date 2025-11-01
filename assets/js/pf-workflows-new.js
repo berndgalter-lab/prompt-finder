@@ -207,19 +207,21 @@
         "step": steps
       };
       
-      // Remove existing schema if present (avoid duplicates)
+      // Check if PHP schema already exists (server-side generation is preferred)
       const existing = document.querySelector('script[type="application/ld+json"]');
       if (existing && existing.textContent?.includes('"@type":"HowTo"')) {
-        existing.remove();
+        // PHP schema already exists, don't inject duplicate
+        console.log('ℹ️ HowTo Schema already exists (server-side), skipping JavaScript injection');
+        return;
       }
       
-      // Inject schema
+      // Only inject if no schema exists (fallback for dynamic content or SPAs)
       const script = document.createElement('script');
       script.type = 'application/ld+json';
       script.textContent = JSON.stringify(schema, null, 2);
       document.head.appendChild(script);
       
-      console.log('✅ HowTo Schema injected:', schema);
+      console.log('✅ HowTo Schema injected (JavaScript fallback):', schema);
       
     } catch (e) {
       console.error('Failed to inject HowTo Schema:', e);

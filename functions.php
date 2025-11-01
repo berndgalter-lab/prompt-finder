@@ -1114,4 +1114,124 @@ function dequeue_old_workflow_assets() {
 }
 add_action('wp_enqueue_scripts', 'dequeue_old_workflow_assets', 100); // Priority 100 to run after all enqueues
 
+/* ========================================
+   HOWTO SCHEMA.ORG STRUCTURED DATA
+   ======================================== */
+
+/**
+ * Output HowTo Schema.org structured data in <head>
+ * Server-side generation ensures Google can crawl it (even without JavaScript)
+ * 
+ * @return void
+ */
+function pf_output_howto_schema() {
+    // Only on single workflow pages
+    if (!is_singular('workflows')) {
+        return;
+    }
+    
+    global $post;
+    if (!$post) {
+        return;
+    }
+    
+    // Get ACF fields
+    $steps = get_field('steps', $post->ID);
+    
+    if (empty($steps) || !is_array($steps)) {
+        return;
+    }
+    
+    // Build step array
+    $schema_steps = [];
+    foreach ($steps as $index => $step) {
+        // Get step name
+        $name = isset($step['title']) && !empty($step['title']) 
+            ? trim($step['title']) 
+            : 'Step ' . ($index + 1);
+        
+        // Get step text (prioritize objective, then prompt, then title)
+        $text = '';
+        
+        // 1. Try objective (preferred)
+        if (!empty($step['objective'])) {
+            $objective = trim($step['objective']);
+            // Remove "Goal:" prefix if present
+            $text = preg_replace('/^Goal:\s*/i', '', $objective);
+        }
+        
+        // 2. Fallback: prompt text (for prompt steps)
+        if (empty($text) && !empty($step['prompt'])) {
+            $prompt = trim($step['prompt']);
+            // Truncate if too long (max 500 chars for schema)
+            $text = mb_strlen($prompt) > 500 ? mb_substr($prompt, 0, 500) . '...' : $prompt;
+        }
+        
+        // 3. Fallback: step body (for guide steps)
+        if (empty($text) && !empty($step['step_body'])) {
+            $text = trim($step['step_body']);
+            // Truncate if too long
+            $text = mb_strlen($text) > 500 ? mb_substr($text, 0, 500) . '...' : $text;
+        }
+        
+        // 4. Final fallback: use step name
+        if (empty($text)) {
+            $text = $name;
+        }
+        
+        $schema_steps[] = [
+            '@type' => 'HowToStep',
+            'position' => $index + 1,
+            'name' => $name,
+            'text' => $text
+        ];
+    }
+    
+    // Get workflow name (post title)
+    $workflow_name = get_the_title($post->ID);
+    
+    // Get description (summary or default)
+    $summary = get_field('summary', $post->ID);
+    $description = !empty($summary) ? trim($summary) : 'Step-by-step workflow.';
+    
+    // Get total time
+    $estimated_time_min = get_field('estimated_time_min', $post->ID);
+    $total_time = 'PT10M'; // Default fallback
+    if (!empty($estimated_time_min)) {
+        $minutes = intval($estimated_time_min);
+        if ($minutes > 0) {
+            $total_time = 'PT' . $minutes . 'M';
+        }
+    }
+    
+    // Build schema
+    $schema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'HowTo',
+        'name' => $workflow_name,
+        'description' => $description,
+        'totalTime' => $total_time,
+        'estimatedCost' => [
+            '@type' => 'MonetaryAmount',
+            'currency' => 'EUR',
+            'value' => '0'
+        ],
+        'tool' => [
+            [
+                '@type' => 'HowToTool',
+                'name' => 'ChatGPT or compatible LLM'
+            ]
+        ],
+        'step' => $schema_steps
+    ];
+    
+    // Output schema
+    echo "\n";
+    echo '<!-- HowTo Schema.org Structured Data -->' . "\n";
+    echo '<script type="application/ld+json">' . "\n";
+    echo wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    echo "\n" . '</script>' . "\n";
+}
+add_action('wp_head', 'pf_output_howto_schema', 5); // Priority 5 to run early in head
+
 
