@@ -70,7 +70,7 @@ if ($difficulty_numeric > 5) $difficulty_numeric = 5;
         <!-- Estimated Time -->
         <?php if (!empty($estimated_time_min)): ?>
             <div class="pf-metric-card">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M12 6v6l4 2"/>
                 </svg>
@@ -84,7 +84,7 @@ if ($difficulty_numeric > 5) $difficulty_numeric = 5;
         <!-- Time Saved -->
         <?php if (!empty($time_saved_min) && $time_saved_min > 0): ?>
             <div class="pf-metric-card pf-metric-card--highlight">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                 </svg>
                 <div class="pf-metric-content">
@@ -100,18 +100,18 @@ if ($difficulty_numeric > 5) $difficulty_numeric = 5;
                 <div class="pf-star-rating">
                     <?php for ($i = 1; $i <= 5; $i++): ?>
                         <?php if ($i <= $difficulty_numeric): ?>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="1">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="1">
                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                             </svg>
                         <?php else: ?>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                             </svg>
                         <?php endif; ?>
                     <?php endfor; ?>
                 </div>
                 <div class="pf-metric-content">
-                    <span class="pf-metric-label">Difficulty</span>
+                    <span class="pf-metric-label">Without AI</span>
                     <span class="pf-metric-value"><?php echo esc_html($difficulty_text); ?></span>
                 </div>
             </div>
