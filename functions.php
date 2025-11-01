@@ -391,6 +391,26 @@ add_action('wp_enqueue_scripts', function () {
 
 }, 20); // Priority 20: Run after GeneratePress (default 10)
 
+/**
+ * Dequeue duplicate child CSS if both handles point to same file
+ * Priority 100 runs after all enqueues to catch duplicates
+ */
+add_action('wp_enqueue_scripts', function() {
+    // If both are enqueued, keep 'generate-child-css', dequeue 'pf-child-css'
+    if (wp_style_is('generate-child-css', 'enqueued') && wp_style_is('pf-child-css', 'enqueued')) {
+        wp_dequeue_style('pf-child-css');
+    }
+    // Also check for any other duplicate handles
+    if (wp_style_is('generate-child-css', 'enqueued') && wp_style_is('pf-child', 'enqueued')) {
+        // Check if they point to the same file
+        $gp_src = wp_styles()->registered['generate-child-css']->src ?? '';
+        $pf_src = wp_styles()->registered['pf-child']->src ?? '';
+        if ($gp_src && $pf_src && $gp_src === $pf_src) {
+            wp_dequeue_style('pf-child');
+        }
+    }
+}, 100);
+
 
 /* =====================================================
    Block Editor (Backend) Styles
@@ -1177,11 +1197,86 @@ add_action('wp_head', function () {
 }, 0);
 
 /**
- * Fallback og:site_name meta tag
+ * Preconnect for Google Fonts
+ * Priority 1 runs early for performance
+ */
+add_action('wp_head', function() {
+    echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
+    echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+}, 1);
+
+/**
+ * Force correct html lang for workflows CPT
+ * Since this is an international site, we use en-US for workflows
+ */
+add_filter('language_attributes', function($output) {
+    if (is_singular('workflows')) {
+        // Force en-US for workflows (international content)
+        $output = preg_replace('/lang="[^"]*"/', 'lang="en-US"', $output);
+    }
+    return $output;
+});
+
+/**
+ * Rank Math fallbacks (only if plugin is active)
+ * Check for Rank Math using multiple methods for compatibility
+ */
+if (class_exists('RankMath') || class_exists('RankMath\Plugin') || defined('RANK_MATH_VERSION')) {
+    // Description fallback for single workflows
+    add_filter('rank_math/frontend/description', function($desc) {
+        if (!$desc && is_singular('workflows')) {
+            $desc = get_field('summary', get_the_ID());
+            if (!$desc) {
+                $desc = __('This workflow tests all available ACF fields and guides you step by step.', 'prompt-finder');
+            }
+        }
+        return $desc;
+    });
+    
+    // OG/Twitter descriptions mirror the same fallback
+    add_filter('rank_math/opengraph/facebook/og_description', function($d) {
+        return $d ?: apply_filters('rank_math/frontend/description', '');
+    });
+    
+    add_filter('rank_math/opengraph/twitter/description', function($d) {
+        return $d ?: apply_filters('rank_math/frontend/description', '');
+    });
+    
+    // Site name typo guard (if any)
+    add_filter('rank_math/opengraph/facebook/site_name', function($name) {
+        if ($name) {
+            // Fix common typo: "rompt Finder" -> "Prompt Finder"
+            $name = str_replace('rompt Finder', 'Prompt Finder', $name);
+            // Also fix any case variations
+            $name = str_replace('rompt finder', 'Prompt Finder', $name);
+            $name = str_replace('ROMPT FINDER', 'Prompt Finder', $name);
+        } else {
+            $name = 'Prompt Finder';
+        }
+        return $name;
+    });
+    
+    // Twitter site name fallback
+    add_filter('rank_math/opengraph/twitter/site', function($site) {
+        if (!$site) {
+            $site = '@promptfinder'; // Adjust to your actual Twitter handle
+        }
+        return $site;
+    });
+}
+
+/**
+ * Fallback og:site_name meta tag (for non-Rank Math setups)
  * Only outputs if SEO plugin didn't set it correctly or it's malformed
  * Priority 99 runs late so SEO plugins can override if correct
  */
 add_action('wp_head', function () {
+    // Skip if Rank Math is active (it handles this)
+    $rank_math_active = class_exists('RankMath') || class_exists('RankMath\Plugin') || defined('RANK_MATH_VERSION');
+    if ($rank_math_active) {
+        return;
+    }
+    
     // Check if og:site_name already exists in output buffer
     // Note: We can't easily check existing output, so this is a safe fallback
     // that SEO plugins can override if they output it earlier
@@ -1190,6 +1285,9 @@ add_action('wp_head', function () {
     if (empty($site_name)) {
         return; // Don't output empty site name
     }
+    
+    // Fix potential typo
+    $site_name = str_replace('rompt Finder', 'Prompt Finder', $site_name);
     
     // Output og:site_name as fallback
     // SEO plugins (Rank Math, Yoast, etc.) should output this earlier and correctly

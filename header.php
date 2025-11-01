@@ -19,27 +19,43 @@ $home_url = esc_url( home_url( '/' ) );
 <html <?php language_attributes(); ?>>
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <?php
+    // Check if Rank Math is active using multiple methods
+    $rank_math_active = class_exists('RankMath') || class_exists('RankMath\Plugin') || defined('RANK_MATH_VERSION');
     
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="<?php echo esc_attr( $site_description ); ?>">
-    <meta name="author" content="<?php echo esc_attr( $site_name ); ?>">
-    <meta name="robots" content="index, follow">
+    // Only output viewport if Rank Math doesn't handle it
+    // WordPress core usually outputs viewport, but we ensure it's present
+    if (!$rank_math_active || !function_exists('rank_math_the_head')) {
+        echo '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">' . "\n";
+    }
+    ?>
     
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="<?php echo esc_url( home_url( $_SERVER['REQUEST_URI'] ?? '/' ) ); ?>">
-    <meta property="og:title" content="<?php echo esc_attr( $site_name ); ?>">
-    <meta property="og:description" content="<?php echo esc_attr( $site_description ); ?>">
-    <meta property="og:site_name" content="<?php echo esc_attr( $site_name ); ?>">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="<?php echo esc_url( home_url( $_SERVER['REQUEST_URI'] ?? '/' ) ); ?>">
-    <meta property="twitter:title" content="<?php echo esc_attr( $site_name ); ?>">
-    <meta property="twitter:description" content="<?php echo esc_attr( $site_description ); ?>">
-    
-    <!-- NO PRELOADS - Direct loading only -->
+    <?php
+    // Only output SEO meta tags if Rank Math is NOT active
+    // Rank Math handles all SEO meta tags, OG/Twitter, and robots
+    if (!$rank_math_active) {
+    ?>
+        <!-- SEO Meta Tags (only if Rank Math is not active) -->
+        <meta name="description" content="<?php echo esc_attr( $site_description ); ?>">
+        <meta name="author" content="<?php echo esc_attr( $site_name ); ?>">
+        <meta name="robots" content="index, follow">
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="<?php echo esc_url( home_url( $_SERVER['REQUEST_URI'] ?? '/' ) ); ?>">
+        <meta property="og:title" content="<?php echo esc_attr( $site_name ); ?>">
+        <meta property="og:description" content="<?php echo esc_attr( $site_description ); ?>">
+        <meta property="og:site_name" content="<?php echo esc_attr( $site_name ); ?>">
+        
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="<?php echo esc_url( home_url( $_SERVER['REQUEST_URI'] ?? '/' ) ); ?>">
+        <meta property="twitter:title" content="<?php echo esc_attr( $site_name ); ?>">
+        <meta property="twitter:description" content="<?php echo esc_attr( $site_description ); ?>">
+    <?php
+    }
+    // Rank Math handles all SEO tags when active, so we skip hardcoded OG/Twitter/robots
+    ?>
     
     <!-- DNS Prefetch for external resources -->
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
