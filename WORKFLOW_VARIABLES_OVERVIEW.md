@@ -25,13 +25,15 @@
 
 | ACF Feldname | PHP Variable | Template Verwendung | Beschreibung | Typ |
 |---------------|--------------|---------------------|--------------|-----|
-| `access_mode` | `$ACCESS_MODE` | Mode-Badge | Zugriffsmodus (free/half_locked/pro) | select |
-| `free_step_limit` | `$FREE_STEP_LIMIT` | Lock-Logic | Anzahl freier Steps | number |
-| `login_required` | `$LOGIN_REQUIRED` | Lock-Logic | Login erforderlich | true_false |
-| `status` | `$status` | Admin-Column | Workflow-Status | select |
-| `access_tier` | `$access_tier` | Admin-Column | Zugriffstier | select |
+| `access_mode` | `pf_workflow_mode($post_id)` | Mode-Badge (Free/Sign-in/Pro) | Zugriffsmodus (free/signin/pro), Default: pro | select |
+| `free_step_limit` | `pf_free_step_limit($post_id)` | Lock-Logic | Anzahl freier Steps im Preview, Default: 0 (HARDLOCK) | number |
+| `status` | `$status` | Admin-Column | Workflow-Status (draft/pending/approved/archived) | select |
 | `license` | `$license` | Admin-Column | Lizenz-Typ | select |
 | `owner` | `$owner` | Admin-Column | Workflow-Besitzer | text |
+
+**Deprecated Felder (nicht mehr verwenden):**
+- ~~`login_required`~~ → Ersetzt durch `access_mode` (signin/pro)
+- ~~`access_tier`~~ → Ersetzt durch `access_mode`
 
 ## Steps (ACF Repeater)
 
@@ -111,6 +113,11 @@
 | `data-base` | Prompt-Template | Ursprünglicher Prompt-Text |
 | `data-action="copy-prompt"` | Copy-Button | Copy-Button-Identifikation |
 | `data-example` | Variable-Input | Beispielwert für Placeholder |
+| `data-mode` | Steps-Section | Access-Mode (free/signin/pro) |
+| `data-total-steps` | Steps-Section | Gesamtanzahl Steps |
+| `data-visible-steps` | Steps-Section | Anzahl sichtbarer Steps für aktuellen User |
+| `aria-disabled="true"` | Locked Step | Markiert gesperrten Step (nur Header sichtbar) |
+| `role="region"` | Locked Step | Accessibility-Attribut für Locked Steps |
 
 ## Platzhalter-Syntax
 
@@ -120,14 +127,42 @@
 | `{previous_output}` | Vorherige Step-Ausgabe | `{previous_output}` |
 | `{selected_item}` | Ausgewählte Option | `{selected_item}` |
 
+## Access Control Helper-Funktionen
+
+| Funktion | Verwendung | Rückgabewert | Beschreibung |
+|----------|------------|--------------|--------------|
+| `pf_user_is_logged_in()` | Template/Logic | `bool` | Prüft ob User eingeloggt ist |
+| `pf_user_has_pro(?int $user_id)` | Template/Logic | `bool` | Prüft Pro-Zugriff (Capability oder User Meta) |
+| `pf_workflow_mode(int $post_id)` | Template/Logic | `string` | Gibt Access-Mode zurück (free/signin/pro), Default: pro |
+| `pf_free_step_limit(int $post_id)` | Template/Logic | `int` | Gibt Free Step Limit zurück (≥0), Default: 0 |
+| `pf_can_view_all(int $post_id)` | Template/Logic | `bool` | Prüft ob User alle Steps sehen kann |
+| `pf_visible_steps_count(int $post_id, int $total_steps)` | Template/Logic | `int` | Berechnet Anzahl sichtbarer Steps |
+| `pf_mode_badge_text(string $mode)` | Template | `string` | Badge-Text für Access-Mode (Free/Sign-in/Pro) |
+| `pf_mode_badge_css(string $mode)` | Template | `string` | CSS-Klasse für Badge (pf-badge--free/signin/pro) |
+| `pf_get_access_cta(int $post_id)` | Template | `array\|null` | CTA-Info für Locked-Workflows (URL + Text) |
+
+**Access-Mode Logik:**
+- `free`: Alle Steps sichtbar für alle User
+- `signin`: Alle Steps sichtbar für eingeloggte User, sonst nur `free_step_limit` Steps
+- `pro`: Alle Steps sichtbar für eingeloggte User mit Pro, sonst nur `free_step_limit` Steps
+
+**Security:**
+- Server-seitiges Gating: Gesperrte Steps enthalten keinen vertraulichen Inhalt im HTML
+- Locked Placeholder: Nur Header sichtbar, kein Prompt/Body-Content im DOM
+
 ## Datei-Zuordnung
 
 | Datei | Zweck | Wichtige Variablen |
 |-------|-------|-------------------|
 | `single-workflows.php` | Workflow-Template | Alle PHP-Variablen |
 | `functions.php` | Theme-Funktionen | Admin-Columns, AJAX |
+| `inc/pf-access.php` | Access-Control Helper | Alle `pf_*()` Access-Funktionen |
+| `template-parts/workflow/header.php` | Workflow-Header | Access-Mode Badge |
+| `template-parts/workflow/section-steps.php` | Steps-Rendering | Access-Control Logic, Locked Placeholders |
 | `pf-workflows.js` | JavaScript-Logic | `window.PF_VARS`, Copy-Funktionen |
 | `pf-workflows.css` | Styling | CSS-Klassen für UI |
+| `assets/css/components/workflow-header.css` | Header Styles | Badge-Styles (Free/Sign-in/Pro) |
+| `assets/css/components/workflow-steps.css` | Steps Styles | Locked Steps, Access CTA |
 | `group_68a082f7ac4d6.json` | ACF-Definition | Alle ACF-Felder |
 
 ## Debug-Informationen
@@ -146,11 +181,39 @@
 |-----------|------|-----------|
 | `PF_MIN_RATING` | 1 | Mindestbewertung |
 | `PF_MAX_RATING` | 5 | Maximalbewertung |
-| `PF_DEFAULT_FREE_STEPS` | 1 | Standard freie Steps |
+| `PF_DEFAULT_FREE_STEPS` | 1 | Standard freie Steps (Deprecated - nutze ACF `free_step_limit`) |
 | `PF_RATE_LIMIT_DURATION` | 60 | Rate-Limit in Sekunden |
 | `PF_FAV_LIMIT_DURATION` | 60 | Favoriten-Rate-Limit |
 | `PF_CACHE_DURATION` | 3600 | Cache-Dauer in Sekunden |
 
+## CSS-Klassen für Access Control
+
+| CSS-Klasse | Verwendung | Beschreibung |
+|------------|------------|--------------|
+| `.pf-meta-chip--free`, `.pf-badge--free` | Header Badge | Free-Mode Badge (grün) |
+| `.pf-meta-chip--signin`, `.pf-badge--signin` | Header Badge | Sign-in-Mode Badge (gelb) |
+| `.pf-meta-chip--pro`, `.pf-badge--pro` | Header Badge | Pro-Mode Badge (gelb) |
+| `.pf-step--locked` | Locked Step | Gesperrter Step (nur Header sichtbar) |
+| `.pf-step-locked` | Locked Placeholder | Lock-Placeholder-Inhalt |
+| `.pf-access-cta` | Access CTA | CTA-Box für Login/Upgrade |
+| `.pf-access-cta-text` | CTA Text | Text innerhalb CTA |
+| `.pf-access-cta-btn` | CTA Button | Button innerhalb CTA |
+
+---
+
+## Änderungsprotokoll
+
+### Access Control System (Update)
+- ✅ **Neu**: Einheitliches `access_mode` System (free/signin/pro)
+- ✅ **Neu**: Helper-Funktionen in `inc/pf-access.php`
+- ✅ **Neu**: Server-seitiges Gating mit Locked Placeholders
+- ❌ **Deprecated**: `login_required` → Nutze `access_mode` (signin/pro)
+- ❌ **Deprecated**: `access_tier` → Nutze `access_mode`
+- ⚠️ **Wichtig**: `access_mode` leer/unbekannt → Verhält sich wie 'pro' (HARDLOCK)
+- ⚠️ **Wichtig**: `free_step_limit` leer → Treated als 0 (HARDLOCK)
+
 ---
 
 **Hinweis:** Diese Übersicht zeigt alle Variablen und deren Zusammenhänge im PromptFinder Workflow-System. Jede Variable ist mit ihrem ACF-Feldnamen, PHP-Variablen-Namen und Template-Verwendung verknüpft.
+
+**Access Control:** Das System verwendet serverseitiges Gating. Gesperrte Steps enthalten keinen vertraulichen Inhalt im HTML-DOM. Die Lock-Logik wird über Helper-Funktionen in `inc/pf-access.php` zentralisiert.
