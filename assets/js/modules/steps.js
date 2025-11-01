@@ -18,6 +18,63 @@
     completedSteps: [],
     
     /**
+     * Slugify helper: Convert string to URL-safe slug
+     * @param {string} s - Input string
+     * @returns {string} Normalized slug
+     */
+    slugify: function(s) {
+      return String(s)
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+    },
+    
+    /**
+     * Synchronize step IDs with sidebar links
+     * Sets 1-based indexing and ensures anchors match
+     */
+    synchronizeStepIds: function() {
+      const steps = Array.from(document.querySelectorAll('.pf-steps-list > .pf-step'));
+      
+      steps.forEach((step, i) => {
+        // 1-based index
+        const stepIndex = i + 1;
+        
+        // Get title and clean it
+        const titleEl = step.querySelector('.pf-step-title');
+        if (!titleEl) return;
+        
+        let titleText = titleEl.textContent || '';
+        // Remove leading spaces
+        titleText = titleText.trim().replace(/^\s+/, '');
+        
+        // Slugify title
+        const slug = this.slugify(titleText);
+        
+        // Set step data attributes and ID
+        step.dataset.stepIndex = String(stepIndex);
+        step.id = `step-${stepIndex}-${slug}`;
+        
+        // Update matching sidebar link
+        const sidebarLink = document.querySelector(`.pf-sidebar-link--step[data-step-index="${stepIndex}"]`);
+        if (sidebarLink) {
+          sidebarLink.href = '#' + step.id;
+          sidebarLink.setAttribute('aria-controls', step.id);
+        }
+        
+        // Ensure checkbox has proper aria-label
+        const checkbox = step.querySelector('.pf-step-checkbox');
+        if (checkbox) {
+          checkbox.setAttribute('aria-label', `Step ${stepIndex} als erledigt markieren`);
+        }
+      });
+      
+      console.log('WorkflowSteps: Synchronized', steps.length, 'step IDs with sidebar links');
+    },
+    
+    /**
      * Initialize the steps module
      */
     init: function() {
@@ -34,6 +91,12 @@
         console.warn('WorkflowSteps: No steps found');
         return;
       }
+      
+      // Synchronize step IDs with sidebar links (must be first)
+      this.synchronizeStepIds();
+      
+      // Refresh steps NodeList after ID synchronization
+      this.steps = document.querySelectorAll('.pf-step');
       
       // Load saved state
       this.loadProgress();

@@ -45,18 +45,76 @@
         this.update();
       });
       
+      // Listen for checkbox changes directly
+      document.addEventListener('change', (e) => {
+        if (e.target.classList.contains('pf-step-checkbox')) {
+          this.update();
+        }
+      });
+      
+      // Listen for reset progress button
+      document.addEventListener('click', (e) => {
+        const resetBtn = e.target.closest('[data-action="reset-progress"]');
+        if (resetBtn) {
+          e.preventDefault();
+          
+          // Uncheck all checkboxes
+          const checkboxes = document.querySelectorAll('.pf-step-checkbox');
+          checkboxes.forEach(cb => {
+            cb.checked = false;
+            // Remove is-completed class from parent step
+            const step = cb.closest('.pf-step');
+            if (step) {
+              step.classList.remove('is-completed');
+            }
+          });
+          
+          // Update progress
+          this.update();
+          
+          // Clear localStorage if WorkflowSteps is available
+          if (window.WorkflowSteps) {
+            window.WorkflowSteps.completedSteps = [];
+            window.WorkflowSteps.saveProgress();
+          }
+          
+          console.log('WorkflowProgress: Progress reset');
+        }
+      });
+      
       console.log('WorkflowProgress: Initialized for', this.totalSteps, 'steps');
     },
     
     /**
      * Update progress bar
+     * Counts checked checkboxes and updates progress bar with aria-valuenow
      */
     update: function() {
-      const completed = this.getCompletedSteps().length;
-      const percentage = this.totalSteps > 0 ? (completed / this.totalSteps) * 100 : 0;
+      // Count checked checkboxes (not just is-completed class)
+      const checkedBoxes = document.querySelectorAll('.pf-step-checkbox:checked');
+      const checked = checkedBoxes.length;
       
-      // Use setProgress with proper ARIA attributes
-      this.setProgress(percentage, completed + ' of ' + this.totalSteps + ' steps completed');
+      // Calculate percentage
+      const pct = this.totalSteps > 0 ? Math.round((checked / this.totalSteps) * 100) : 0;
+      
+      // Update progress bar aria-valuenow
+      if (this.progressBar) {
+        this.progressBar.setAttribute('aria-valuenow', String(pct));
+      }
+      
+      // Update fill width
+      if (this.progressFill) {
+        this.progressFill.style.width = pct + '%';
+        this.progressFill.dataset.progress = String(pct);
+      }
+      
+      // Set aria-valuetext
+      if (this.progressBar) {
+        const label = checked + ' of ' + this.totalSteps + ' steps completed';
+        this.progressBar.setAttribute('aria-valuetext', label);
+      }
+      
+      console.log('WorkflowProgress: Updated to', pct + '% (' + checked + ' of ' + this.totalSteps + ')');
     },
     
     /**

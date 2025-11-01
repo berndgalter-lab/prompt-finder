@@ -96,11 +96,17 @@
 
   function init() {
     // Normalize step anchors first (before other modules initialize)
+    // Note: WorkflowSteps.synchronizeStepIds() will handle the actual ID synchronization
+    // This function is kept for backward compatibility
     try {
       normalizeStepAnchors();
     } catch (e) {
       console.warn('Failed to normalize step anchors:', e);
     }
+    
+    // Ensure modules are initialized after DOM is ready
+    // Steps module will call synchronizeStepIds() during its init
+    // Progress module will call updateProgress() during its init and on checkbox changes
     
     console.log('✅ Workflow Frontend initialized');
     console.log('📦 Modules loaded:', {
