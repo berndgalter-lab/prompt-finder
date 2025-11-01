@@ -341,37 +341,7 @@ add_action('wp_enqueue_scripts', function () {
             }
         }
         
-        // OLD: Legacy workflow JavaScript (DISABLED - using new modular system)
-        /*
-        $js = $base . '/assets/js/pf-workflows.js';
-        if (file_exists($js)) {
-            $js_version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
-                ? wp_get_theme()->get('Version') 
-                : filemtime($js);
-            // Enqueue modular JavaScript files in correct order
-            wp_enqueue_script('pf-core-js', $uri . '/assets/js/pf-core.js', [], $js_version, true);
-            wp_enqueue_script('pf-analytics-js', $uri . '/assets/js/pf-analytics.js', ['pf-core-js'], $js_version, true);
-            wp_enqueue_script('pf-workflow-navigation-js', $uri . '/assets/js/pf-workflow-navigation.js', ['pf-core-js'], $js_version, true);
-            wp_enqueue_script('pf-learn-use-mode-js', $uri . '/assets/js/pf-learn-use-mode.js', ['pf-core-js', 'pf-analytics-js'], $js_version, true);
-            wp_enqueue_script('pf-workflows-js', $uri . '/assets/js/pf-workflows.js', ['pf-core-js', 'pf-analytics-js', 'pf-workflow-navigation-js', 'pf-learn-use-mode-js'], $js_version, true);
-            
-            // DEBUG: Log the actual URL being used
-            error_log('PF DEBUG: Enqueuing JS from: ' . $uri . '/assets/js/pf-workflows.js');
-            error_log('PF DEBUG: get_stylesheet_directory_uri() = ' . get_stylesheet_directory_uri());
-            error_log('PF DEBUG: get_template_directory_uri() = ' . get_template_directory_uri());
-
-            // Bereits vorhanden: AJAX-Infos für Ratings
-            wp_localize_script('pf-workflows-js', 'PF_WORKFLOWS', [
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce'    => wp_create_nonce('pf-rate-nonce'),
-            ]);
-			
-			// PF Config laden und ins JS geben (einmalig)
-			$PF_CONFIG = pf_load_config();
-			wp_localize_script('pf-workflows-js', 'PF_CONFIG', $PF_CONFIG);
-			wp_localize_script('pf-workflows-js', 'PF_FLAGS', $PF_CONFIG['feature_flags'] ?? []);
-        }
-        */
+        // Legacy workflow JavaScript removed - using new modular system (pf-workflows-new.js)
 
     }
 
@@ -750,18 +720,20 @@ add_action('pre_get_posts', function ($query) {
 });
 
 /* ============ Favorites (MVP) ============ */
+// NOTE: Favorites functionality is not yet implemented in new system
+// When implemented, use 'pf-workflows-new' as script handle
 add_action('wp_enqueue_scripts', function(){
   if ( is_singular('workflows') || is_post_type_archive('workflows') ) {
-    wp_localize_script('pf-workflows-js', 'PF_FAVS', [
-      'ajax_url'   => admin_url('admin-ajax.php'),
-      'nonce'      => wp_create_nonce('pf-fav-nonce'),
-      'logged_in'  => is_user_logged_in(),
-      // optional Texte
-      'txt_added'  => 'Saved to favorites',
-      'txt_removed'=> 'Removed from favorites',
-      'txt_login'  => 'Please log in to save favorites',
-      'txt_denied' => 'Favorites are for paying users',
-    ]);
+    // Localize to new workflow script when favorites are implemented
+    // wp_localize_script('pf-workflows-new', 'PF_FAVS', [
+    //   'ajax_url'   => admin_url('admin-ajax.php'),
+    //   'nonce'      => wp_create_nonce('pf-fav-nonce'),
+    //   'logged_in'  => is_user_logged_in(),
+    //   'txt_added'  => 'Saved to favorites',
+    //   'txt_removed'=> 'Removed from favorites',
+    //   'txt_login'  => 'Please log in to save favorites',
+    //   'txt_denied' => 'Favorites are for paying users',
+    // ]);
   }
 }, 111);
 
