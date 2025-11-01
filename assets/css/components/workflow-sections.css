@@ -512,3 +512,258 @@
     margin: 0 !important;
     font-size: var(--pf-font-md);
 }
+
+/* ===== Overview & Value — Compact Layout ===== */
+
+.pf-section--overview {
+  --ov-space-1: 6px;
+  --ov-space-2: 10px;
+  --ov-space-3: 14px;
+  --ov-space-4: 18px;
+
+  --ov-text-xs: 12.5px;
+  --ov-text-sm: 14px;
+  --ov-text-md: 16px;
+  --ov-text-lg: 18px;
+
+  --ov-border: rgba(0,0,0,.08);
+}
+
+.pf-section--overview .pf-section-heading {
+  margin-bottom: var(--ov-space-2);
+}
+
+/* Panel: zwei Spalten auf Desktop, Stack auf Mobile */
+.pf-overview-panel {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: var(--ov-space-4);
+  padding: var(--ov-space-3);
+  background: var(--pf-bg-light, #f9fafb);
+  border: 1px solid var(--ov-border);
+  border-radius: 12px;
+}
+
+.pf-overview-left { 
+  min-width: 0; 
+  display: flex;
+  flex-direction: column;
+  gap: var(--ov-space-2);
+}
+
+.pf-overview-right { 
+  min-width: 0; 
+}
+
+/* Summary kompakt */
+.pf-overview-summary {
+  margin: 0;
+}
+
+.pf-overview-summary p {
+  margin: 0 0 var(--ov-space-2) 0;
+  font-size: var(--ov-text-md);
+  line-height: 1.5;
+  color: var(--pf-text, #1a1a1a);
+}
+
+/* Use Case als kleine Badge-Reihe, einzeilig scroll-sicher */
+.pf-overview-badges {
+  display: flex;
+  gap: var(--ov-space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--ov-space-2);
+  align-items: center;
+}
+
+.pf-overview-badges .pf-use-case-badge,
+.pf-overview-badges .pf-meta-chip,
+.pf-section--overview .pf-use-case-badge {
+  font-size: var(--ov-text-xs);
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 10px;
+  line-height: 1;
+}
+
+.pf-overview-badges .pf-use-case-badge svg,
+.pf-section--overview .pf-use-case-badge svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Optionaler Hinweis (ehem. "Without AI") als dezent graue Zeile */
+.pf-overview-note {
+  font-size: var(--ov-text-sm);
+  opacity: .85;
+  color: var(--pf-text-dim, #666);
+  margin-top: var(--ov-space-1);
+}
+
+/* Metrics kompakt als Grid 3x1 (wrapt auf kleineren Screens) */
+.pf-overview-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: var(--ov-space-2);
+  align-content: start;
+}
+
+/* bestehende .pf-metric-card verkleinern */
+.pf-overview-metrics .pf-metric-card {
+  display: flex;
+  align-items: center;
+  gap: var(--ov-space-2);
+  padding: 10px;
+  border: 1px solid var(--ov-border);
+  border-radius: 10px;
+  background: var(--pf-bg, #ffffff);
+  min-height: 48px;
+}
+
+.pf-overview-metrics .pf-metric-card svg { 
+  width: 16px; 
+  height: 16px; 
+  flex-shrink: 0;
+}
+
+.pf-overview-metrics .pf-metric-content .pf-metric-label { 
+  font-size: var(--ov-text-xs); 
+  opacity: .8; 
+}
+
+.pf-overview-metrics .pf-metric-content .pf-metric-value { 
+  font-size: var(--ov-text-md); 
+  line-height: 1.2; 
+}
+
+/* Star-Rating kleiner */
+.pf-overview-metrics .pf-star-rating svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Doppelte "Saved 5 minutes"-Badge unten im Overview ausblenden */
+.pf-section--overview .pf-time-saved-badge { 
+  display: none !important; 
+}
+
+/* Hide old info card in overview */
+.pf-section--overview .pf-info-card--summary {
+  display: none;
+}
+
+/* Hide old metrics grid if not in overview panel */
+.pf-section--overview > .pf-metrics-grid:not(.pf-overview-metrics) {
+  display: none;
+}
+
+/* ===== Value Section: zwei Mini-Karten nebeneinander ===== */
+
+.pf-section--value { 
+  --val-space-2: 10px; 
+  --val-space-3: 14px; 
+}
+
+.pf-section--value .pf-section-heading { 
+  margin: var(--val-space-3) 0 var(--val-space-2); 
+}
+
+.pf-value-rows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: var(--val-space-3);
+}
+
+/* Mini-Karten neutral, nur schmaler Farbakzent an der linken Kante */
+.pf-value-mini {
+  background: var(--pf-bg, #ffffff);
+  border: 1px solid var(--ov-border);
+  border-radius: 10px;
+  padding: 12px;
+  position: relative;
+}
+
+.pf-value-mini h3 {
+  margin: 0 0 8px;
+  font-size: var(--ov-text-md);
+  font-weight: 600;
+  color: var(--pf-text, #1a1a1a);
+}
+
+.pf-value-mini .pf-value-card-text {
+  margin: 0;
+  font-size: var(--ov-text-sm);
+  line-height: 1.5;
+  color: var(--pf-text, #1a1a1a);
+}
+
+/* Akzentstreifen */
+.pf-value-mini--problems { 
+  border-left: 4px solid #f59e0b; /* Amber */
+}
+
+.pf-value-mini--outcome { 
+  border-left: 4px solid #10b981; /* Green */
+}
+
+/* Vorhandene bunte Cards neutralisieren, falls sie noch im DOM sind */
+.pf-value-card--warning,
+.pf-value-card--success {
+  background: var(--pf-bg, #ffffff) !important;
+  border: 1px solid var(--ov-border) !important;
+  border-left-width: 4px !important;
+  border-radius: 10px !important;
+  padding: 12px !important;
+}
+
+.pf-value-card--warning { 
+  border-left-color: #f59e0b !important; 
+}
+
+.pf-value-card--success { 
+  border-left-color: #10b981 !important; 
+}
+
+/* Hide icons in value cards when using mini layout */
+.pf-value-rows .pf-value-card svg {
+  display: none;
+}
+
+.pf-value-rows .pf-value-card-content {
+  margin: 0;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 1023.98px) {
+  .pf-overview-panel {
+    grid-template-columns: 1fr;
+    gap: var(--ov-space-3);
+  }
+  
+  .pf-overview-metrics {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+}
+
+@media (max-width: 767.98px) {
+  .pf-overview-panel { 
+    padding: var(--ov-space-2); 
+  }
+  
+  .pf-overview-summary p { 
+    font-size: var(--ov-text-sm); 
+  }
+  
+  .pf-overview-metrics { 
+    grid-template-columns: repeat(2, minmax(0,1fr)); 
+  }
+  
+  .pf-value-rows { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .pf-value-mini { 
+    padding: 10px; 
+  }
+}

@@ -40,82 +40,96 @@ if ($difficulty_numeric > 5) $difficulty_numeric = 5;
     <!-- Section Heading -->
     <h2 class="pf-section-heading">Overview</h2>
     
-    <!-- Summary Card (only if not empty) -->
-    <?php if (!empty($summary)): ?>
-        <div class="pf-info-card pf-info-card--summary">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="16" x2="12" y2="12"/>
-                <line x1="12" y1="8" x2="12.01" y2="8"/>
-            </svg>
-            <div class="pf-info-card-content">
-                <p><?php echo esc_html($summary); ?></p>
+    <!-- Overview Panel: Two-column layout -->
+    <div class="pf-overview-panel">
+        
+        <!-- Left: Summary + Badges + Note -->
+        <div class="pf-overview-left">
+            
+            <!-- Summary -->
+            <?php if (!empty($summary)): ?>
+                <div class="pf-overview-summary">
+                    <p><?php echo esc_html($summary); ?></p>
+                </div>
+            <?php endif; ?>
+            
+            <!-- Use Case Badge (only if not empty) -->
+            <?php if (!empty($use_case)): ?>
+                <div class="pf-overview-badges">
+                    <div class="pf-use-case-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7M19 2v6M13 8h6"/>
+                        </svg>
+                        <span><?php echo esc_html($use_case); ?></span>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
+            <!-- Optional: Without AI Note -->
+            <?php if (!empty($difficulty_without_ai)): ?>
+                <div class="pf-overview-note">
+                    Difficulty without AI: <?php echo esc_html($difficulty_text); ?>
+                </div>
+            <?php endif; ?>
+            
+        </div>
+        
+        <!-- Right: Metrics -->
+        <div class="pf-overview-right">
+            <div class="pf-overview-metrics">
+        
+                <!-- Estimated Time -->
+                <?php if (!empty($estimated_time_min)): ?>
+                    <div class="pf-metric-card">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <div class="pf-metric-content">
+                            <span class="pf-metric-label">Estimated Time</span>
+                            <span class="pf-metric-value"><?php echo esc_html($estimated_time_min); ?> min</span>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
+                <!-- Time Saved -->
+                <?php if (!empty($time_saved_min) && $time_saved_min > 0): ?>
+                    <div class="pf-metric-card pf-metric-card--highlight">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        <div class="pf-metric-content">
+                            <span class="pf-metric-label">Time Saved</span>
+                            <span class="pf-metric-value pf-metric-value--accent"><?php echo esc_html($time_saved_min); ?> min</span>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
+                <!-- Difficulty -->
+                <?php if (!empty($difficulty_without_ai)): ?>
+                    <div class="pf-metric-card">
+                        <div class="pf-star-rating">
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                <?php if ($i <= $difficulty_numeric): ?>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="1">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                <?php else: ?>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+                        </div>
+                        <div class="pf-metric-content">
+                            <span class="pf-metric-label">Without AI</span>
+                            <span class="pf-metric-value"><?php echo esc_html($difficulty_text); ?></span>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
             </div>
         </div>
-    <?php endif; ?>
-    
-    <!-- Use Case Badge (only if not empty) -->
-    <?php if (!empty($use_case)): ?>
-        <div class="pf-use-case-badge">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7M19 2v6M13 8h6"/>
-            </svg>
-            <span><?php echo esc_html($use_case); ?></span>
-        </div>
-    <?php endif; ?>
-    
-    <!-- Metrics Grid -->
-    <div class="pf-metrics-grid">
-        
-        <!-- Estimated Time -->
-        <?php if (!empty($estimated_time_min)): ?>
-            <div class="pf-metric-card">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 6v6l4 2"/>
-                </svg>
-                <div class="pf-metric-content">
-                    <span class="pf-metric-label">Estimated Time</span>
-                    <span class="pf-metric-value"><?php echo esc_html($estimated_time_min); ?> min</span>
-                </div>
-            </div>
-        <?php endif; ?>
-        
-        <!-- Time Saved -->
-        <?php if (!empty($time_saved_min) && $time_saved_min > 0): ?>
-            <div class="pf-metric-card pf-metric-card--highlight">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                </svg>
-                <div class="pf-metric-content">
-                    <span class="pf-metric-label">Time Saved</span>
-                    <span class="pf-metric-value pf-metric-value--accent"><?php echo esc_html($time_saved_min); ?> min</span>
-                </div>
-            </div>
-        <?php endif; ?>
-        
-        <!-- Difficulty -->
-        <?php if (!empty($difficulty_without_ai)): ?>
-            <div class="pf-metric-card">
-                <div class="pf-star-rating">
-                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                        <?php if ($i <= $difficulty_numeric): ?>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="1">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                            </svg>
-                        <?php else: ?>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                            </svg>
-                        <?php endif; ?>
-                    <?php endfor; ?>
-                </div>
-                <div class="pf-metric-content">
-                    <span class="pf-metric-label">Without AI</span>
-                    <span class="pf-metric-value"><?php echo esc_html($difficulty_text); ?></span>
-                </div>
-            </div>
-        <?php endif; ?>
         
     </div>
     
