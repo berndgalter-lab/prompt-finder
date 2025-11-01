@@ -767,3 +767,156 @@
     padding: 10px; 
   }
 }
+
+/* === PF Intro Panel (compact) ============================================ */
+
+.pf-hidden { 
+  display: none !important; 
+}
+
+.pf-intro {
+  background: var(--pf-bg-light, #f9fafb);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 16px 0 12px;
+}
+
+.pf-intro * { 
+  box-sizing: border-box; 
+}
+
+.pf-intro-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.pf-intro-summary {
+  margin: 0;
+  line-height: 1.35;
+  font-size: 15px;
+  color: var(--pf-text, #1a1a1a);
+  flex: 1;
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* compact */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pf-intro-toggle {
+  appearance: none;
+  border: 1px solid var(--pf-border, #e5e7eb);
+  background: transparent;
+  color: var(--pf-text-dim, #666);
+  font-size: 13px;
+  line-height: 1;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.pf-intro-toggle:hover,
+.pf-intro-toggle:focus {
+  border-color: var(--pf-accent, #6366f1);
+  color: var(--pf-text, #1a1a1a);
+  outline: none;
+  background: var(--pf-surface, #f9fafb);
+}
+
+.pf-intro-content { 
+  margin-top: 4px; 
+}
+
+/* Two columns desktop, one column mobile */
+.pf-intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+@media (max-width: 768px) {
+  .pf-intro-grid { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .pf-intro { 
+    padding: 10px 12px; 
+  }
+  
+  .pf-intro-toggle { 
+    padding: 6px 8px; 
+  }
+  
+  .pf-intro-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* Minimal columns with left accent, no big colored boxes */
+.pf-intro-col {
+  background: var(--pf-bg, #ffffff);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-left-width: 3px;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.pf-intro-problems { 
+  border-left-color: #f59e0b; /* amber */
+}
+
+.pf-intro-outcome { 
+  border-left-color: #10b981; /* green */
+}
+
+.pf-intro-h3 {
+  font-size: 14px;
+  line-height: 1.2;
+  margin: 0 0 6px 0;
+  color: var(--pf-text, #1a1a1a);
+  font-weight: 600;
+}
+
+.pf-intro-text {
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--pf-text-dim, #666);
+  margin: 0;
+}
+
+.pf-intro-text p {
+  margin: 0 0 4px 0;
+}
+
+.pf-intro-text ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.pf-intro-text li {
+  margin: 4px 0;
+}
+
+/* Optional, tiny note line */
+.pf-intro-note {
+  margin: 10px 2px 2px;
+  font-size: 13px;
+  color: var(--pf-text-dim, #666);
+  opacity: 0.85;
+}
+
+/* Collapsed state */
+.pf-intro.is-collapsed .pf-intro-summary {
+  -webkit-line-clamp: 1;
+}

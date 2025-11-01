@@ -165,3 +165,134 @@
   
 })();
 
+// === PF Intro Panel (compact) ===============================================
+// Builds a compact Intro panel from existing "Overview" + "Value" content,
+// adds a persistent Hide/Show toggle, and hides the old sections.
+//
+// Persistence key: `pf:intro:hidden:<postId>`
+//
+// Assumes `workflowData.postId` is available (already enqueued in this theme).
+
+(function () {
+  if (!document || !('querySelector' in document)) return;
+
+  // Wait for DOM to be fully ready
+  function initIntroPanel() {
+    const postId = (typeof workflowData !== 'undefined' && workflowData.postId) ? workflowData.postId : null;
+    const lsKey = postId ? `pf:intro:hidden:${postId}` : null;
+
+    const overview = document.querySelector('#overview.pf-section--overview');
+    const value = document.querySelector('#value.pf-section--value');
+    const before = document.querySelector('#prerequisites.pf-section--prerequisites') || document.querySelector('.pf-section--prerequisites');
+
+    // Collect source fragments (graceful fallbacks)
+    // Try new compact layout first, then fallback to old layout
+    const summaryEl = overview?.querySelector('.pf-overview-summary p') || 
+                      overview?.querySelector('.pf-info-card--summary .pf-info-card-content p');
+    
+    const problemsEl = value?.querySelector('.pf-value-mini--problems .pf-value-card-text') ||
+                       value?.querySelector('.pf-value-card--warning .pf-value-card-text');
+    
+    const outcomeEl = value?.querySelector('.pf-value-mini--outcome .pf-value-card-text') ||
+                     value?.querySelector('.pf-value-card--success .pf-value-card-text');
+
+    // Optional: Without-AI note (if present somewhere in overview/value; make it robust)
+    let withoutAiText = '';
+    const withoutAiCandidate = overview?.querySelector('.pf-overview-note') ||
+                               overview?.querySelector('.pf-without-ai, .pf-withoutai, [data-without-ai]') || 
+                               value?.querySelector('.pf-without-ai, .pf-withoutai, [data-without-ai]');
+    if (withoutAiCandidate) withoutAiText = withoutAiCandidate.textContent.trim();
+
+    // If there's nothing to build from, do nothing.
+    const hasAny = summaryEl || problemsEl || outcomeEl || withoutAiText;
+    if (!hasAny || !before) return;
+
+    // Build Intro DOM
+    const intro = document.createElement('section');
+    intro.className = 'pf-intro';
+    intro.setAttribute('role', 'region');
+    intro.setAttribute('aria-label', 'Workflow introduction');
+
+    // Collapsed state from storage
+    const hiddenByUser = lsKey ? (localStorage.getItem(lsKey) === '1') : false;
+    if (hiddenByUser) intro.classList.add('is-collapsed');
+
+    const introId = `pf-intro-content-${postId || 'x'}`;
+
+    // Get text content safely
+    const summaryText = (summaryEl?.textContent || '').trim();
+    const problemsText = (problemsEl?.innerHTML || problemsEl?.textContent || '').trim();
+    const outcomeText = (outcomeEl?.innerHTML || outcomeEl?.textContent || '').trim();
+
+    intro.innerHTML = `
+      <div class="pf-intro-bar">
+        <p class="pf-intro-summary">${summaryText}</p>
+        <button class="pf-intro-toggle" type="button"
+                aria-controls="${introId}"
+                aria-expanded="${hiddenByUser ? 'false' : 'true'}"
+                aria-pressed="${hiddenByUser ? 'true' : 'false'}"
+                data-action="toggle-intro">
+          ${hiddenByUser ? 'Show intro' : 'Hide intro'}
+        </button>
+      </div>
+
+      <div class="pf-intro-content" id="${introId}" ${hiddenByUser ? 'hidden' : ''}>
+        <div class="pf-intro-grid">
+          <div class="pf-intro-col pf-intro-problems" ${problemsEl ? '' : 'hidden'}>
+            <h3 class="pf-intro-h3">Problems this solves</h3>
+            <div class="pf-intro-text">${problemsText}</div>
+          </div>
+          <div class="pf-intro-col pf-intro-outcome" ${outcomeEl ? '' : 'hidden'}>
+            <h3 class="pf-intro-h3">What you'll get</h3>
+            <div class="pf-intro-text">${outcomeText}</div>
+          </div>
+        </div>
+        ${withoutAiText ? `<p class="pf-intro-note">${withoutAiText}</p>` : ''}
+      </div>
+    `;
+
+    // Insert Intro before "Before you start"
+    before.parentNode.insertBefore(intro, before);
+
+    // Hide old sections to avoid duplication (keep DOM for SEO if desired)
+    if (overview) overview.classList.add('pf-hidden');
+    if (value) value.classList.add('pf-hidden');
+
+    // Toggle handlers
+    const toggleBtn = intro.querySelector('[data-action="toggle-intro"]');
+    const contentEl = intro.querySelector('.pf-intro-content');
+
+    function setCollapsed(collapsed) {
+      if (!contentEl || !toggleBtn) return;
+      
+      if (collapsed) {
+        intro.classList.add('is-collapsed');
+        contentEl.hidden = true;
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        toggleBtn.setAttribute('aria-pressed', 'true');
+        toggleBtn.textContent = 'Show intro';
+        if (lsKey) localStorage.setItem(lsKey, '1');
+      } else {
+        intro.classList.remove('is-collapsed');
+        contentEl.hidden = false;
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        toggleBtn.setAttribute('aria-pressed', 'false');
+        toggleBtn.textContent = 'Hide intro';
+        if (lsKey) localStorage.setItem(lsKey, '0');
+      }
+    }
+
+    toggleBtn?.addEventListener('click', () => {
+      const nowCollapsed = !contentEl || !contentEl.hidden ? true : false;
+      setCollapsed(nowCollapsed);
+    });
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initIntroPanel);
+  } else {
+    initIntroPanel();
+  }
+})();
+
