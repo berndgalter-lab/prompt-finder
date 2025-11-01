@@ -289,22 +289,50 @@ function pf_inject_global_context(string $prompt, array $context_requirements = 
 /* =====================================================
    Frontend CSS / JS Enqueue
 ===================================================== */
+// Run with priority 20 to allow GeneratePress to enqueue style.css first (default is 10)
 add_action('wp_enqueue_scripts', function () {
     // Basisvariablen
     $base = get_stylesheet_directory();
     $uri  = get_stylesheet_directory_uri();
 
-    // Note: Child style.css is automatically loaded by GeneratePress parent theme
-    // with handle 'generate-child-css'. We don't enqueue it again to avoid duplicates.
+    // Child style.css: Check if GeneratePress already enqueued it
+    // GeneratePress typically uses 'generate-child-css' handle
+    // If GeneratePress loaded it, use that handle; otherwise use our own
+    $child_style_handle = 'pf-child';
+    $style_uri = get_stylesheet_uri();
+    
+    // Check if style.css is already enqueued by GeneratePress (common handles)
+    $gp_handles = ['generate-child-css', 'generate-child-style', 'child-style'];
+    $child_already_enqueued = false;
+    
+    foreach ($gp_handles as $handle) {
+        if (wp_style_is($handle, 'enqueued') || wp_style_is($handle, 'registered')) {
+            // GeneratePress already loaded it, use that handle for dependencies
+            $child_style_handle = $handle;
+            $child_already_enqueued = true;
+            break;
+        }
+    }
+    
+    // If GeneratePress didn't enqueue it, we do it ourselves as fallback
+    if (!$child_already_enqueued) {
+        wp_enqueue_style(
+            'pf-child',
+            $style_uri,
+            [],
+            wp_get_theme()->get('Version')
+        );
+        $child_style_handle = 'pf-child';
+    }
     
     // Core (immer) - mit Caching für bessere Performance
-    // Depend on 'generate-child-css' which is automatically loaded by GeneratePress
+    // Depend on child style (either 'pf-child' or GeneratePress handle)
     $core = $base . '/assets/css/pf-core.css';
     if (file_exists($core)) {
         $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
             ? wp_get_theme()->get('Version') 
             : filemtime($core);
-        wp_enqueue_style('pf-core', $uri . '/assets/css/pf-core.css', ['generate-child-css'], $version);
+        wp_enqueue_style('pf-core', $uri . '/assets/css/pf-core.css', [$child_style_handle], $version);
     }
 
     // Landing (nur Front Page)
@@ -361,7 +389,7 @@ add_action('wp_enqueue_scripts', function () {
         }
     }
 
-}, 99);
+}, 20); // Priority 20: Run after GeneratePress (default 10)
 
 
 /* =====================================================
@@ -981,13 +1009,34 @@ function enqueue_new_workflow_assets() {
     // === CSS - DIRECT ENQUEUE (no @import to avoid loading issues) ===
     
     // Ensure pf-core is loaded first (if not already loaded)
-    // Depend on 'generate-child-css' which is automatically loaded by GeneratePress
+    // Check which child style handle is available (GeneratePress might use different handle)
+    $child_handle = 'pf-child';
+    $gp_handles = ['generate-child-css', 'generate-child-style', 'child-style'];
+    
+    // Check if GeneratePress already enqueued child style
+    foreach ($gp_handles as $handle) {
+        if (wp_style_is($handle, 'enqueued') || wp_style_is($handle, 'registered')) {
+            $child_handle = $handle; // Use GeneratePress handle for dependencies
+            break;
+        }
+    }
+    
+    // If no GeneratePress handle found, ensure our own is enqueued
+    if ($child_handle === 'pf-child' && !wp_style_is('pf-child', 'enqueued') && !wp_style_is('pf-child', 'registered')) {
+        wp_enqueue_style(
+            'pf-child',
+            get_stylesheet_uri(),
+            [],
+            wp_get_theme()->get('Version')
+        );
+    }
+    
     $core_css_path = $theme_path . '/assets/css/pf-core.css';
     if (file_exists($core_css_path)) {
         wp_enqueue_style(
             'pf-core',
             $theme_uri . '/assets/css/pf-core.css',
-            array('generate-child-css'),
+            array($child_handle),
             filemtime($core_css_path)
         );
     }
