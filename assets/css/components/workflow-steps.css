@@ -889,3 +889,76 @@
     padding: 0 var(--pf-chip-pad-x) !important;
     height: var(--pf-chip-h) !important;
 }
+
+/* ========================================
+   LOCKED STEPS
+   ======================================== */
+
+.pf-step--locked {
+    opacity: 0.7;
+    position: relative;
+}
+
+.pf-step--locked .pf-step-header {
+    opacity: 1; /* Header always visible */
+}
+
+.pf-step--locked .pf-step-content {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pf-step-locked {
+    text-align: center;
+    padding: var(--pf-space-xl, 3rem) var(--pf-space-lg, 2rem);
+    color: var(--pf-text-dim, #666);
+}
+
+.pf-step-locked svg {
+    color: var(--pf-text-dim, #666);
+    margin-bottom: var(--pf-space-md, 1.5rem);
+    opacity: 0.5;
+}
+
+.pf-step-locked h3 {
+    margin: 0 0 var(--pf-space-sm, 1rem) 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--pf-text, #1a1a1a);
+}
+
+.pf-step-locked p {
+    margin: 0 0 var(--pf-space-lg, 2rem) 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+}
+
+.pf-step-locked .pf-btn {
+    margin-top: var(--pf-space-md, 1.5rem);
+}
+
+/* ========================================
+   ACCESS CTA
+   ======================================== */
+
+.pf-access-cta {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+    border: 2px solid var(--pf-accent, #6366f1);
+    border-radius: var(--pf-radius-lg, 16px);
+    padding: var(--pf-space-lg, 2rem);
+    margin: var(--pf-space-lg, 2rem) 0;
+    text-align: center;
+}
+
+.pf-access-cta-text {
+    margin: 0 0 var(--pf-space-md, 1.5rem) 0;
+    font-size: 1rem;
+    color: var(--pf-text, #1a1a1a);
+    font-weight: 500;
+}
+
+.pf-access-cta-btn {
+    margin: 0 auto;
+}

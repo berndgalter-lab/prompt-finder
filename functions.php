@@ -25,6 +25,11 @@ define('PF_CACHE_DURATION', 3600); // 1 hour
 ===================================================== */
 
 /**
+ * Load Access Control Helpers
+ */
+require_once get_stylesheet_directory() . '/inc/pf-access.php';
+
+/**
  * Load PF configuration from JSON file
  * 
  * @since 1.0.0
@@ -69,13 +74,14 @@ function pf_get_user_plan(): string {
 /**
  * Check if user has access based on gating rules
  * 
+ * @deprecated Use pf_can_view_all() instead
  * @since 1.0.0
  * @param array $gating Gating configuration
  * @return bool True if user has access
  */
 function pf_user_has_access(array $gating): bool {
-    // Login-Pflicht?
-    if (!empty($gating['login_required']) && !is_user_logged_in()) return false;
+    // DEPRECATED: login_required field is deprecated, use access_mode instead
+    // This function kept for backward compatibility only
     
     // Capability/Tier check
     if (!empty($gating['required_cap']) && !current_user_can($gating['required_cap'])) return false;
@@ -618,8 +624,8 @@ add_filter('manage_workflows_posts_columns', function ($columns) {
     $columns['pf_last_updated']   = __('Last Update', 'prompt-finder');
     $columns['pf_access_mode']    = __('Access', 'prompt-finder');
     $columns['pf_free_steps']     = __('Free Steps', 'prompt-finder');
-    $columns['pf_login_required'] = __('Login', 'prompt-finder');
-    $columns['pf_access_tier']    = __('Tier', 'prompt-finder');
+    $columns['pf_login_required'] = __('Login (Deprecated)', 'prompt-finder'); // DEPRECATED
+    $columns['pf_access_tier']    = __('Tier (Deprecated)', 'prompt-finder'); // DEPRECATED
     $columns['pf_status']         = __('Status', 'prompt-finder');
     $columns['pf_license']        = __('License', 'prompt-finder');
     $columns['pf_owner']          = __('Owner', 'prompt-finder');
@@ -662,7 +668,14 @@ add_action('manage_workflows_posts_custom_column', function ($column, $post_id) 
             break;
 
         case 'pf_login_required':
-            echo get_field('login_required', $post_id) ? 'Yes' : 'No';
+            // DEPRECATED: login_required field is deprecated, use access_mode instead
+            // Show access_mode for backward compatibility
+            $mode = get_field('access_mode', $post_id);
+            if ($mode === 'signin' || $mode === 'pro') {
+                echo 'Yes (via access_mode)';
+            } else {
+                echo 'No (via access_mode)';
+            }
             break;
 
         case 'pf_access_tier':

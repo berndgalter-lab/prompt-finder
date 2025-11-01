@@ -28,18 +28,42 @@ if (empty($steps) || !is_array($steps)) {
     return;
 }
 
+// Get post ID and access control info
+$post_id = get_the_ID();
 $total_steps = count($steps);
+$visible_steps = pf_visible_steps_count($post_id, $total_steps);
+$access_mode = pf_workflow_mode($post_id);
+$can_view_all = pf_can_view_all($post_id);
+$cta_info = pf_get_access_cta($post_id);
 ?>
 
-<section id="steps" class="pf-section pf-section--steps" data-total-steps="<?php echo esc_attr($total_steps); ?>">
+<section id="steps" class="pf-section pf-section--steps" 
+         data-mode="<?php echo esc_attr($access_mode); ?>"
+         data-total-steps="<?php echo esc_attr($total_steps); ?>"
+         data-visible-steps="<?php echo esc_attr($visible_steps); ?>">
     
     <!-- Section Heading -->
     <h2 class="pf-section-heading">Workflow Steps</h2>
     <p class="pf-section-subheading">Follow these steps in order. Complete each step before moving to the next.</p>
     
+    <?php if ($cta_info): ?>
+        <!-- Access CTA -->
+        <div class="pf-access-cta">
+            <p class="pf-access-cta-text"><?php echo esc_html($cta_info['text']); ?></p>
+            <a href="<?php echo esc_url($cta_info['url']); ?>" class="pf-btn pf-btn--primary pf-access-cta-btn">
+                <?php echo esc_html($cta_info['text']); ?>
+            </a>
+        </div>
+    <?php endif; ?>
+    
     <!-- Steps List -->
     <ol class="pf-steps-list">
         <?php foreach ($steps as $index => $step): ?>
+            <?php
+            // Determine if this step is visible or locked
+            $step_is_visible = ($index < $visible_steps);
+            $step_is_locked = !$step_is_visible;
+            ?>
             <?php
             // Get step data
             $step_id = isset($step['step_id']) && !empty($step['step_id']) 
@@ -89,12 +113,16 @@ $total_steps = count($steps);
             }
             ?>
             
-            <li class="pf-step <?php echo 'pf-step--' . esc_attr($step_type); ?>" 
+            <li class="pf-step <?php echo 'pf-step--' . esc_attr($step_type); ?> <?php echo $step_is_locked ? 'pf-step--locked' : ''; ?>" 
                 id="<?php echo esc_attr($step_id); ?>" 
                 data-step-index="<?php echo esc_attr($index); ?>"
                 data-step-number="<?php echo esc_attr($step_number); ?>"
                 data-step-type="<?php echo esc_attr($step_type); ?>"
-                data-step-id="<?php echo esc_attr($step_id); ?>">
+                data-step-id="<?php echo esc_attr($step_id); ?>"
+                <?php if ($step_is_locked): ?>
+                aria-disabled="true"
+                role="region"
+                <?php endif; ?>>
                 
                 <!-- Step Header (always visible) -->
                 <div class="pf-step-header" data-action="toggle-step">
@@ -158,11 +186,28 @@ $total_steps = count($steps);
                 
                 <!-- Step Content (collapsible) -->
                 <div class="pf-step-content">
-                    <?php if (!empty($objective)): ?>
-                        <div class="pf-step-objective">
-                            <strong>Goal:</strong> <?php echo esc_html($objective); ?>
+                    <?php if ($step_is_locked): ?>
+                        <!-- Locked Placeholder - NO sensitive content -->
+                        <div class="pf-step-locked">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            <h3>Step Locked</h3>
+                            <p>This step is not available in the free preview.</p>
+                            <?php if ($cta_info): ?>
+                                <a href="<?php echo esc_url($cta_info['url']); ?>" class="pf-btn pf-btn--primary">
+                                    <?php echo esc_html($cta_info['text']); ?>
+                                </a>
+                            <?php endif; ?>
                         </div>
-                    <?php endif; ?>
+                    <?php else: ?>
+                        <!-- Full Step Content (only rendered if visible) -->
+                        <?php if (!empty($objective)): ?>
+                            <div class="pf-step-objective">
+                                <strong>Goal:</strong> <?php echo esc_html($objective); ?>
+                            </div>
+                        <?php endif; ?>
                     
                     <!-- Prompt Type -->
                     <?php if ($step_type === 'prompt' && !empty($prompt)): ?>
@@ -301,6 +346,8 @@ $total_steps = count($steps);
                             </div>
                         </details>
                     <?php endif; ?>
+                    
+                    <?php endif; // End locked check ?>
                     
                 </div>
                 

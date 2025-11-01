@@ -20,11 +20,13 @@ $version_field = get_field('version');
 $estimated_time_min_field = get_field('estimated_time_min');
 $steps_field = get_field('steps');
 $total_steps = is_array($steps_field) ? count($steps_field) : 0;
-$access_tier_field = get_field('access_tier');
-$login_required_field = get_field('login_required');
 
-// Get post title
+// Get post title and ID
 $post_title = get_the_title();
+$post_id = get_the_ID();
+
+// Get access mode using helper
+$access_mode = pf_workflow_mode($post_id);
 ?>
 
 <header class="pf-workflow-header" role="banner" aria-label="Workflow Header">
@@ -122,45 +124,24 @@ $post_title = get_the_title();
             <?php endif; ?>
             
             <?php 
-            // Access Tier / Login Status Chip
-            $show_access_chip = false;
-            $access_label = '';
-            $access_class = '';
-            
-            if ($login_required_field || ($access_tier_field && $access_tier_field !== 'free')) {
-                // Show "Login" or Tier name if login required or tier is not free
-                $show_access_chip = true;
-                if ($access_tier_field && $access_tier_field !== 'free') {
-                    $access_label = ucfirst($access_tier_field);
-                    $access_class = 'pf-meta-chip--' . $access_tier_field;
-                } else {
-                    $access_label = 'Login';
-                    $access_class = 'pf-meta-chip--login';
-                }
-            } elseif ($access_tier_field === 'free') {
-                // Show "Free" if explicitly set to free
-                $show_access_chip = true;
-                $access_label = 'Free';
-                $access_class = 'pf-meta-chip--free';
-            }
-            
-            if ($show_access_chip):
+            // Access Mode Badge (using helper functions)
+            $access_badge_text = pf_mode_badge_text($access_mode);
+            $access_badge_css = pf_mode_badge_css($access_mode);
             ?>
-                <div class="pf-meta-chip <?php echo esc_attr($access_class); ?>">
-                    <?php if ($access_class === 'pf-meta-chip--free'): ?>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
-                        </svg>
-                    <?php else: ?>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                        </svg>
-                    <?php endif; ?>
-                    <span class="pf-meta-chip-text"><?php echo esc_html($access_label); ?></span>
-                </div>
-            <?php endif; ?>
+            <div class="pf-meta-chip <?php echo esc_attr($access_badge_css); ?>">
+                <?php if ($access_mode === 'free'): ?>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                <?php else: ?>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                <?php endif; ?>
+                <span class="pf-meta-chip-text"><?php echo esc_html($access_badge_text); ?></span>
+            </div>
         </div>
         
     </div>
