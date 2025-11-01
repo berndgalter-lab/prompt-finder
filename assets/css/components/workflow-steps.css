@@ -471,6 +471,12 @@
     background: var(--pf-success, #10b981);
 }
 
+.pf-btn-copy.is-copied::after {
+    content: " Copied";
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
 .pf-btn-copy svg {
     flex-shrink: 0;
 }

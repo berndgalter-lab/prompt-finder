@@ -44,6 +44,7 @@
       createLiveRegion();
       
       this.setupCopyButtons();
+      this.setupActionButtons();
       console.log('WorkflowCopy: Initialized');
     },
     
@@ -154,18 +155,134 @@
      * @param {HTMLElement} button - Button element
      */
     showFeedback: function(button) {
-      const originalHTML = button.innerHTML;
-      const originalText = button.textContent.trim();
-      
-      // Change button
-      button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+      // Add class for CSS ::after styling
       button.classList.add('is-copied');
       
-      // Reset after 2 seconds
+      // Set aria-live for screen reader feedback
+      button.setAttribute('aria-live', 'polite');
+      
+      // Set data-feedback for temporary visual feedback
+      button.dataset.feedback = 'Copied';
+      
+      // Announce to screen readers
+      announce('Copied to clipboard.');
+      
+      // Remove feedback after 1.5 seconds
       setTimeout(() => {
-        button.innerHTML = originalHTML;
         button.classList.remove('is-copied');
-      }, 2000);
+        button.removeAttribute('aria-live');
+        delete button.dataset.feedback;
+      }, 1500);
+    },
+    
+    /**
+     * Setup action buttons (Favorite, Share, Reset)
+     */
+    setupActionButtons: function() {
+      // Favorite button
+      const favoriteBtn = document.querySelector('.pf-action-btn--favorite');
+      if (favoriteBtn) {
+        // Initialize aria-pressed if not already set
+        if (!favoriteBtn.hasAttribute('aria-pressed')) {
+          favoriteBtn.setAttribute('aria-pressed', 'false');
+        }
+        
+        favoriteBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.handleFavorite(favoriteBtn);
+        });
+      }
+      
+      // Share button
+      const shareBtn = document.querySelector('.pf-action-btn--share');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.handleShare(shareBtn);
+        });
+      }
+      
+      // Reset button - handled by progress.js, but ensure it also triggers updateProgress()
+      const resetBtn = document.querySelector('[data-action="reset-progress"]');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          // Progress.js handles the reset, but we ensure updateProgress() is called
+          setTimeout(() => {
+            if (window.WorkflowProgress && window.WorkflowProgress.update) {
+              window.WorkflowProgress.update();
+            }
+          }, 100);
+        });
+      }
+    },
+    
+    /**
+     * Handle favorite button click
+     * @param {HTMLElement} button - Favorite button element
+     */
+    handleFavorite: function(button) {
+      const isPressed = button.getAttribute('aria-pressed') === 'true';
+      const newState = !isPressed;
+      
+      // Toggle aria-pressed
+      button.setAttribute('aria-pressed', String(newState));
+      
+      // Update aria-label
+      const label = newState ? 'Remove from favorites' : 'Add to favorites';
+      button.setAttribute('aria-label', label);
+      
+      // TODO: Implement actual favorite functionality (AJAX call, localStorage, etc.)
+      console.log('WorkflowCopy: Favorite toggled to', newState);
+    },
+    
+    /**
+     * Handle share button click
+     * @param {HTMLElement} button - Share button element
+     */
+    handleShare: function(button) {
+      // Try native Web Share API first
+      if (navigator.share) {
+        navigator.share({
+          title: document.title,
+          url: window.location.href
+        })
+        .then(() => {
+          console.log('WorkflowCopy: Successfully shared');
+        })
+        .catch(err => {
+          // User cancelled or share failed, fall back to clipboard
+          if (err.name !== 'AbortError') {
+            this.copyUrlToClipboard(button);
+          }
+        });
+      } else {
+        // Fallback: Copy URL to clipboard
+        this.copyUrlToClipboard(button);
+      }
+    },
+    
+    /**
+     * Copy URL to clipboard and show feedback
+     * @param {HTMLElement} button - Button element (usually share button)
+     */
+    copyUrlToClipboard: function(button) {
+      const url = window.location.href;
+      
+      // Use the same copy logic as prompt copy
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url)
+          .then(() => {
+            // Show feedback using the same mechanism as copy button
+            this.showFeedback(button);
+            announce('Link copied to clipboard.');
+          })
+          .catch(() => {
+            // Fallback to execCommand
+            this.fallbackCopy(url, button);
+          });
+      } else {
+        this.fallbackCopy(url, button);
+      }
     }
   };
   
