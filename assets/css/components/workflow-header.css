@@ -215,6 +215,37 @@
     white-space: nowrap;
 }
 
+/* Access Tier Chips */
+.pf-meta-chip--free {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #065f46;
+}
+
+.pf-meta-chip--free:hover {
+    background: #10b981;
+    border-color: #10b981;
+    color: #ffffff;
+}
+
+.pf-meta-chip--login,
+.pf-meta-chip--pro,
+.pf-meta-chip--team,
+.pf-meta-chip--enterprise {
+    background: #fef3c7;
+    border-color: #fde68a;
+    color: #92400e;
+}
+
+.pf-meta-chip--login:hover,
+.pf-meta-chip--pro:hover,
+.pf-meta-chip--team:hover,
+.pf-meta-chip--enterprise:hover {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    color: #ffffff;
+}
+
 /* ========================================
    RESPONSIVE
    ======================================== */
