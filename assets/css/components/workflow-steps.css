@@ -764,3 +764,81 @@
         width: 100%;
     }
 }
+
+/* ========================================
+   MOBILE STICKY ACTION BAR
+   ======================================== */
+
+.pf-sticky-actions {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem clamp(12px, 4vw, 20px);
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    background: var(--pf-surface, #f9fafb);
+    border-top: 1px solid var(--pf-border, #e5e7eb);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+    z-index: 999;
+}
+
+@media (min-width: 768px) {
+    .pf-sticky-actions {
+        display: none !important;
+    }
+}
+
+.pf-sticky-actions .pf-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    border-radius: var(--pf-radius-sm, 8px);
+}
+
+.pf-sticky-actions .pf-btn svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+}
+
+.pf-sticky-actions .pf-btn-prev svg {
+    order: -1;
+}
+
+.pf-sticky-actions .pf-btn-next svg {
+    order: 1;
+}
+
+.pf-sticky-actions .pf-btn-copy-sticky {
+    display: none;
+}
+
+.pf-sticky-actions .pf-btn-copy-sticky:not([style*="display: none"]) {
+    display: flex;
+}
+
+.pf-sticky-actions .pf-btn.is-copied {
+    background: var(--pf-success, #10b981);
+    color: #ffffff;
+}
+
+.pf-sticky-actions .pf-btn.is-copied span {
+    font-weight: 600;
+}
+
+/* Safe area support for iOS notch */
+@supports (padding: max(0px)) {
+    .pf-sticky-actions {
+        padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+}
