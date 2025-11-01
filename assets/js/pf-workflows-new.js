@@ -94,6 +94,43 @@
     });
   }
 
+  /**
+   * Mark decorative SVGs for accessibility
+   * Adds aria-hidden="true" and focusable="false" to SVGs that don't have aria-label
+   */
+  function markDecorativeSVGs() {
+    const container = document.querySelector('.pf-workflow-container');
+    if (!container) return;
+    
+    const svgs = container.querySelectorAll('svg');
+    let markedCount = 0;
+    
+    svgs.forEach(svg => {
+      // Skip if already has aria-label (meaningful icon)
+      if (svg.hasAttribute('aria-label') || svg.closest('[aria-label]')) {
+        return;
+      }
+      
+      // Skip if inside a button/link that already has aria-label
+      const parentButton = svg.closest('button, a');
+      if (parentButton && (parentButton.hasAttribute('aria-label') || parentButton.hasAttribute('title'))) {
+        svg.setAttribute('aria-hidden', 'true');
+        svg.setAttribute('focusable', 'false');
+        markedCount++;
+        return;
+      }
+      
+      // Mark as decorative
+      svg.setAttribute('aria-hidden', 'true');
+      svg.setAttribute('focusable', 'false');
+      markedCount++;
+    });
+    
+    if (markedCount > 0) {
+      console.log('✅ Marked', markedCount, 'decorative SVGs for accessibility');
+    }
+  }
+
   function init() {
     // Normalize step anchors first (before other modules initialize)
     // Note: WorkflowSteps.synchronizeStepIds() will handle the actual ID synchronization
@@ -102,6 +139,13 @@
       normalizeStepAnchors();
     } catch (e) {
       console.warn('Failed to normalize step anchors:', e);
+    }
+    
+    // Mark decorative SVGs for accessibility
+    try {
+      markDecorativeSVGs();
+    } catch (e) {
+      console.warn('Failed to mark decorative SVGs:', e);
     }
     
     // Ensure modules are initialized after DOM is ready

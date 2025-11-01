@@ -141,6 +141,30 @@
     display: flex;
     gap: 0.125rem;
     flex-shrink: 0;
+    align-items: center;
+}
+
+/* Normalize star SVG styles - consistent fill/stroke */
+.pf-star-rating svg {
+    stroke-width: 1;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Filled stars */
+.pf-star-rating svg[fill="#fbbf24"],
+.pf-star-rating svg[fill^="#fbbf24"] {
+    fill: #fbbf24;
+    stroke: #fbbf24;
+}
+
+/* Outline stars (empty) */
+.pf-star-rating svg:not([fill]),
+.pf-star-rating svg[fill="none"] {
+    fill: none;
+    stroke: currentColor;
+    color: var(--pf-border, #e5e7eb);
 }
 
 /* ========================================
