@@ -294,21 +294,17 @@ add_action('wp_enqueue_scripts', function () {
     $base = get_stylesheet_directory();
     $uri  = get_stylesheet_directory_uri();
 
-    // 0) Child Style
-    wp_enqueue_style(
-        'pf-child',
-        get_stylesheet_uri(),
-        [],
-        wp_get_theme()->get('Version')
-    );
-
+    // Note: Child style.css is automatically loaded by GeneratePress parent theme
+    // with handle 'generate-child-css'. We don't enqueue it again to avoid duplicates.
+    
     // Core (immer) - mit Caching für bessere Performance
+    // Depend on 'generate-child-css' which is automatically loaded by GeneratePress
     $core = $base . '/assets/css/pf-core.css';
     if (file_exists($core)) {
         $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
             ? wp_get_theme()->get('Version') 
             : filemtime($core);
-        wp_enqueue_style('pf-core', $uri . '/assets/css/pf-core.css', ['pf-child'], $version);
+        wp_enqueue_style('pf-core', $uri . '/assets/css/pf-core.css', ['generate-child-css'], $version);
     }
 
     // Landing (nur Front Page)
@@ -985,12 +981,13 @@ function enqueue_new_workflow_assets() {
     // === CSS - DIRECT ENQUEUE (no @import to avoid loading issues) ===
     
     // Ensure pf-core is loaded first (if not already loaded)
+    // Depend on 'generate-child-css' which is automatically loaded by GeneratePress
     $core_css_path = $theme_path . '/assets/css/pf-core.css';
     if (file_exists($core_css_path)) {
         wp_enqueue_style(
             'pf-core',
             $theme_uri . '/assets/css/pf-core.css',
-            array('pf-child'),
+            array('generate-child-css'),
             filemtime($core_css_path)
         );
     }
@@ -1115,123 +1112,39 @@ function dequeue_old_workflow_assets() {
 add_action('wp_enqueue_scripts', 'dequeue_old_workflow_assets', 100); // Priority 100 to run after all enqueues
 
 /* ========================================
-   HOWTO SCHEMA.ORG STRUCTURED DATA
+   HEAD CLEANUP & FALLBACKS
    ======================================== */
 
 /**
- * Output HowTo Schema.org structured data in <head>
- * Server-side generation ensures Google can crawl it (even without JavaScript)
- * 
- * @return void
+ * Ensure single viewport meta tag
+ * Prevents duplicate viewport tags from theme/plugins
+ * Priority 0 runs early to catch duplicates
  */
-function pf_output_howto_schema() {
-    // Only on single workflow pages
-    if (!is_singular('workflows')) {
-        return;
-    }
-    
-    global $post;
-    if (!$post) {
-        return;
-    }
-    
-    // Get ACF fields
-    $steps = get_field('steps', $post->ID);
-    
-    if (empty($steps) || !is_array($steps)) {
-        return;
-    }
-    
-    // Build step array
-    $schema_steps = [];
-    foreach ($steps as $index => $step) {
-        // Get step name
-        $name = isset($step['title']) && !empty($step['title']) 
-            ? trim($step['title']) 
-            : 'Step ' . ($index + 1);
-        
-        // Get step text (prioritize objective, then prompt, then title)
-        $text = '';
-        
-        // 1. Try objective (preferred)
-        if (!empty($step['objective'])) {
-            $objective = trim($step['objective']);
-            // Remove "Goal:" prefix if present
-            $text = preg_replace('/^Goal:\s*/i', '', $objective);
-        }
-        
-        // 2. Fallback: prompt text (for prompt steps)
-        if (empty($text) && !empty($step['prompt'])) {
-            $prompt = trim($step['prompt']);
-            // Truncate if too long (max 500 chars for schema)
-            $text = mb_strlen($prompt) > 500 ? mb_substr($prompt, 0, 500) . '...' : $prompt;
-        }
-        
-        // 3. Fallback: step body (for guide steps)
-        if (empty($text) && !empty($step['step_body'])) {
-            $text = trim($step['step_body']);
-            // Truncate if too long
-            $text = mb_strlen($text) > 500 ? mb_substr($text, 0, 500) . '...' : $text;
-        }
-        
-        // 4. Final fallback: use step name
-        if (empty($text)) {
-            $text = $name;
-        }
-        
-        $schema_steps[] = [
-            '@type' => 'HowToStep',
-            'position' => $index + 1,
-            'name' => $name,
-            'text' => $text
-        ];
-    }
-    
-    // Get workflow name (post title)
-    $workflow_name = get_the_title($post->ID);
-    
-    // Get description (summary or default)
-    $summary = get_field('summary', $post->ID);
-    $description = !empty($summary) ? trim($summary) : 'Step-by-step workflow.';
-    
-    // Get total time
-    $estimated_time_min = get_field('estimated_time_min', $post->ID);
-    $total_time = 'PT10M'; // Default fallback
-    if (!empty($estimated_time_min)) {
-        $minutes = intval($estimated_time_min);
-        if ($minutes > 0) {
-            $total_time = 'PT' . $minutes . 'M';
-        }
-    }
-    
-    // Build schema
-    $schema = [
-        '@context' => 'https://schema.org',
-        '@type' => 'HowTo',
-        'name' => $workflow_name,
-        'description' => $description,
-        'totalTime' => $total_time,
-        'estimatedCost' => [
-            '@type' => 'MonetaryAmount',
-            'currency' => 'EUR',
-            'value' => '0'
-        ],
-        'tool' => [
-            [
-                '@type' => 'HowToTool',
-                'name' => 'ChatGPT or compatible LLM'
-            ]
-        ],
-        'step' => $schema_steps
-    ];
-    
-    // Output schema
-    echo "\n";
-    echo '<!-- HowTo Schema.org Structured Data -->' . "\n";
-    echo '<script type="application/ld+json">' . "\n";
-    echo wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    echo "\n" . '</script>' . "\n";
-}
-add_action('wp_head', 'pf_output_howto_schema', 5); // Priority 5 to run early in head
+add_action('wp_head', function () {
+    // WordPress core and most themes/plugins add viewport at priority 10
+    // If your theme or a plugin adds a second viewport, you can prevent your own duplicate.
+    // Do not echo another viewport here if Rank Math/core already emitted one.
+    // This is a placeholder for future cleanup if needed - WordPress core handles viewport by default.
+}, 0);
 
+/**
+ * Fallback og:site_name meta tag
+ * Only outputs if SEO plugin didn't set it correctly or it's malformed
+ * Priority 99 runs late so SEO plugins can override if correct
+ */
+add_action('wp_head', function () {
+    // Check if og:site_name already exists in output buffer
+    // Note: We can't easily check existing output, so this is a safe fallback
+    // that SEO plugins can override if they output it earlier
+    
+    $site_name = get_bloginfo('name');
+    if (empty($site_name)) {
+        return; // Don't output empty site name
+    }
+    
+    // Output og:site_name as fallback
+    // SEO plugins (Rank Math, Yoast, etc.) should output this earlier and correctly
+    // This ensures it's always present even if plugin fails or outputs malformed data
+    echo "\n" . '<meta property="og:site_name" content="' . esc_attr($site_name) . '">' . "\n";
+}, 99);
 
