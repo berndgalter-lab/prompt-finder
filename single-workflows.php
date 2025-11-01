@@ -27,7 +27,7 @@ the_post();
         <div class="pf-workflow-main">
             <?php 
             get_template_part('template-parts/workflow/section-overview');
-            get_template_part('template-parts/workflow/section-value');
+            // get_template_part('template-parts/workflow/section-value'); // Removed - duplicate of overview
             get_template_part('template-parts/workflow/section-prerequisites');
             get_template_part('template-parts/workflow/section-variables');
             get_template_part('template-parts/workflow/section-steps');

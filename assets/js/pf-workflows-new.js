@@ -313,6 +313,9 @@
        'unknown');
   const key = `pf_overview_collapsed_${postId}`;
 
+  const card = section.querySelector('.pf-overview-card');
+  if (!card) return;
+
   // Initial state from localStorage
   const saved = localStorage.getItem(key);
   if (saved === '1') {
