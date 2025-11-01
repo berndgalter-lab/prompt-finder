@@ -299,3 +299,23 @@
 .pf-sidebar-nav::-webkit-scrollbar-thumb:hover {
     background: var(--pf-accent, #6366f1);
 }
+
+/* ===== Compact spacing for workflow pages ===== */
+.pf-workflow-container .pf-workflow-sidebar {
+    padding: var(--pf-space-2) !important;
+}
+
+.pf-workflow-container .pf-sidebar-section {
+    gap: var(--pf-space-1) !important;
+}
+
+.pf-workflow-container .pf-sidebar-link {
+    padding: 6px var(--pf-space-2) !important;
+    font-size: var(--pf-font-sm);
+}
+
+.pf-workflow-container .pf-step-number {
+    min-width: 18px;
+    height: 18px;
+    font-size: 11px;
+}

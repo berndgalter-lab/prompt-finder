@@ -252,3 +252,44 @@
         padding: 0.3125rem 0.625rem;
     }
 }
+
+/* ===== Compact spacing for workflow pages ===== */
+.pf-workflow-container .pf-header-content {
+    row-gap: var(--pf-row-gap) !important;
+}
+
+.pf-workflow-container .pf-header-title {
+    margin: 0 !important;
+    line-height: 1.2;
+}
+
+.pf-workflow-container .pf-header-actions {
+    gap: var(--pf-space-2) !important;
+}
+
+.pf-workflow-container .pf-header-meta {
+    gap: var(--pf-space-2) !important;
+}
+
+/* Meta Chips / Badges */
+.pf-workflow-container .pf-meta-chip {
+    height: var(--pf-chip-h) !important;
+    padding: 0 var(--pf-chip-pad-x) !important;
+    font-size: var(--pf-font-xs) !important;
+    border-radius: 9999px;
+    line-height: 1;
+}
+
+.pf-workflow-container .pf-meta-chip svg {
+    width: var(--pf-icon-sm);
+    height: var(--pf-icon-sm);
+}
+
+/* Progressbar */
+.pf-workflow-container .pf-progress-bar {
+    height: 4px;
+}
+
+.pf-workflow-container .pf-progress-fill {
+    height: 100%;
+}

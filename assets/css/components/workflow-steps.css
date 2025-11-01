@@ -842,3 +842,50 @@
         padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
     }
 }
+
+/* ===== Compact spacing for workflow pages ===== */
+.pf-workflow-container .pf-steps-list {
+    gap: var(--pf-row-gap) !important;
+}
+
+/* Step Header & Content */
+.pf-workflow-container .pf-step-header {
+    padding: var(--pf-space-3) var(--pf-space-3) !important;
+    gap: var(--pf-space-2) !important;
+}
+
+.pf-workflow-container .pf-step-title {
+    margin: 0 !important;
+    font-size: var(--pf-font-lg);
+    line-height: 1.2;
+}
+
+.pf-workflow-container .pf-step-objective-preview {
+    margin: 0 !important;
+    font-size: var(--pf-font-sm);
+    color: var(--pf-text-dim);
+}
+
+.pf-workflow-container .pf-step-content {
+    padding: var(--pf-space-2) var(--pf-space-3) var(--pf-space-3) !important;
+    gap: var(--pf-space-2) !important;
+}
+
+/* Prompt/Text-Flächen */
+.pf-workflow-container .pf-prompt-text {
+    font-size: var(--pf-font-md) !important;
+    line-height: 1.35 !important;
+    word-break: break-word;
+}
+
+.pf-workflow-container .pf-prompt-header {
+    margin-bottom: var(--pf-space-2) !important;
+}
+
+/* Step Badges */
+.pf-workflow-container .pf-step-badge {
+    line-height: 1;
+    font-size: var(--pf-font-xs) !important;
+    padding: 0 var(--pf-chip-pad-x) !important;
+    height: var(--pf-chip-h) !important;
+}

@@ -377,3 +377,27 @@
         width: 100%;
     }
 }
+
+/* ===== Compact spacing for workflow pages ===== */
+.pf-workflow-container .pf-variables-card {
+    padding: var(--pf-space-3) !important;
+    gap: var(--pf-space-2) !important;
+}
+
+.pf-workflow-container .pf-variables-list {
+    gap: var(--pf-space-2) !important;
+}
+
+.pf-workflow-container .pf-var-item {
+    gap: var(--pf-space-1) !important;
+}
+
+.pf-workflow-container .pf-var-label {
+    margin: 0 !important;
+    font-size: var(--pf-font-sm);
+}
+
+.pf-workflow-container .pf-var-input {
+    height: 36px;
+    font-size: var(--pf-font-md);
+}

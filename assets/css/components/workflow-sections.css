@@ -456,3 +456,49 @@
         text-align: center;
     }
 }
+
+/* ===== Compact spacing for workflow pages ===== */
+.pf-workflow-container .pf-section {
+    padding-top: var(--pf-sec-pad-y) !important;
+    padding-bottom: var(--pf-sec-pad-y) !important;
+}
+
+.pf-workflow-container .pf-metrics-grid,
+.pf-workflow-container .pf-value-grid {
+    gap: var(--pf-row-gap) !important;
+}
+
+/* Meta Chips / Badges */
+.pf-workflow-container .pf-meta-chip,
+.pf-workflow-container .pf-step-badge,
+.pf-workflow-container .pf-step-status {
+    line-height: 1;
+}
+
+.pf-workflow-container .pf-meta-chip {
+    height: var(--pf-chip-h) !important;
+    padding: 0 var(--pf-chip-pad-x) !important;
+    font-size: var(--pf-font-xs) !important;
+    border-radius: 9999px;
+}
+
+.pf-workflow-container .pf-meta-chip svg {
+    width: var(--pf-icon-sm);
+    height: var(--pf-icon-sm);
+}
+
+/* Info/Warning/Note Cards */
+.pf-workflow-container .pf-info-card,
+.pf-workflow-container .pf-value-card,
+.pf-workflow-container .pf-prerequisite-card,
+.pf-workflow-container .pf-privacy-warning,
+.pf-workflow-container .pf-time-reminder {
+    padding: var(--pf-space-3) !important;
+    gap: var(--pf-space-2) !important;
+}
+
+.pf-workflow-container .pf-value-card-text,
+.pf-workflow-container .pf-prerequisite-text {
+    margin: 0 !important;
+    font-size: var(--pf-font-md);
+}
