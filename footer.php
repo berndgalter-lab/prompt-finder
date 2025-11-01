@@ -33,18 +33,26 @@ $current_year = date( 'Y' );
             <div class="pf-footer-col pf-footer-col--brand">
                 <div class="pf-footer-brand">
                     <?php 
-                    try {
-                        if ( function_exists( 'the_custom_logo' ) && has_custom_logo() ) {
-                            the_custom_logo(); 
+                    if ( function_exists( 'has_custom_logo' ) && has_custom_logo() ) {
+                        // Get custom logo HTML and extract image from anchor
+                        $logo_html = get_custom_logo();
+                        if ( $logo_html ) {
+                            // Remove the anchor tags and keep only the image/content
+                            $logo_html = preg_replace( '/<a[^>]*>/', '', $logo_html );
+                            $logo_html = preg_replace( '/<\/a>/', '', $logo_html );
+                            // Wrap in our single anchor with proper attributes
+                            echo '<a href="' . esc_url( $home_url ) . '" class="custom-logo-link pf-logo pf-logo--footer" rel="home" aria-label="' . esc_attr( $site_name ) . ' – ' . esc_attr__( 'Home', 'prompt-finder' ) . '">';
+                            echo wp_kses_post( $logo_html );
+                            echo '</a>';
                         } else {
                             // Fallback: Site title with proper styling
-                            echo '<a href="' . $home_url . '" class="pf-logo pf-logo--footer" aria-label="' . esc_attr( $site_name ) . ' - ' . esc_attr__( 'Home', 'prompt-finder' ) . '">';
+                            echo '<a href="' . esc_url( $home_url ) . '" class="pf-logo pf-logo--footer" rel="home" aria-label="' . esc_attr( $site_name ) . ' – ' . esc_attr__( 'Home', 'prompt-finder' ) . '">';
                             echo '<span class="pf-logo-text">' . esc_html( $site_name ) . '</span>';
                             echo '</a>';
                         }
-                    } catch ( Exception $e ) {
-                        error_log( '[PF Footer] Logo error: ' . $e->getMessage() );
-                        echo '<a href="' . $home_url . '" class="pf-logo pf-logo--footer">';
+                    } else {
+                        // Fallback: Site title with proper styling
+                        echo '<a href="' . esc_url( $home_url ) . '" class="pf-logo pf-logo--footer" rel="home" aria-label="' . esc_attr( $site_name ) . ' – ' . esc_attr__( 'Home', 'prompt-finder' ) . '">';
                         echo '<span class="pf-logo-text">' . esc_html( $site_name ) . '</span>';
                         echo '</a>';
                     }

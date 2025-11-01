@@ -67,21 +67,31 @@ $home_url = esc_url( home_url( '/' ) );
         <div class="pf-wrap">
             <!-- Logo Section -->
             <div class="pf-logo">
-                <a href="<?php echo $home_url; ?>" aria-label="<?php echo esc_attr( $site_name ); ?> - <?php esc_attr_e( 'Home', 'prompt-finder' ); ?>">
-                    <?php 
-                    try {
-                        if ( function_exists( 'the_custom_logo' ) && has_custom_logo() ) {
-                            the_custom_logo(); 
-                        } else {
-                            // Fallback: Site title with proper styling
-                            echo '<span class="pf-logo-text">' . esc_html( $site_name ) . '</span>';
-                        }
-                    } catch ( Exception $e ) {
-                        error_log( '[PF Header] Logo error: ' . $e->getMessage() );
+                <?php 
+                if ( function_exists( 'has_custom_logo' ) && has_custom_logo() ) {
+                    // Get custom logo HTML and extract image from anchor
+                    $logo_html = get_custom_logo();
+                    if ( $logo_html ) {
+                        // Remove the anchor tags and keep only the image/content
+                        $logo_html = preg_replace( '/<a[^>]*>/', '', $logo_html );
+                        $logo_html = preg_replace( '/<\/a>/', '', $logo_html );
+                        // Wrap in our single anchor with proper attributes
+                        echo '<a href="' . esc_url( $home_url ) . '" class="custom-logo-link" rel="home" aria-label="' . esc_attr( $site_name ) . ' – ' . esc_attr__( 'Home', 'prompt-finder' ) . '">';
+                        echo wp_kses_post( $logo_html );
+                        echo '</a>';
+                    } else {
+                        // Fallback: Site title with proper styling
+                        echo '<a href="' . esc_url( $home_url ) . '" class="custom-logo-link" rel="home" aria-label="' . esc_attr( $site_name ) . ' – ' . esc_attr__( 'Home', 'prompt-finder' ) . '">';
                         echo '<span class="pf-logo-text">' . esc_html( $site_name ) . '</span>';
+                        echo '</a>';
                     }
-                    ?>
-                </a>
+                } else {
+                    // Fallback: Site title with proper styling
+                    echo '<a href="' . esc_url( $home_url ) . '" class="custom-logo-link" rel="home" aria-label="' . esc_attr( $site_name ) . ' – ' . esc_attr__( 'Home', 'prompt-finder' ) . '">';
+                    echo '<span class="pf-logo-text">' . esc_html( $site_name ) . '</span>';
+                    echo '</a>';
+                }
+                ?>
             </div>
 
             <!-- Desktop Navigation -->
@@ -159,7 +169,7 @@ $home_url = esc_url( home_url( '/' ) );
         do_action( 'generate_inside_site_container' );
         ?>
         
-        <main id="main-content" <?php generate_do_attr( 'site-content' ); ?> role="main">
+        <main id="main-content" class="site-content" role="main">
             <?php
             // Maintain compatibility with GeneratePress layout
             do_action( 'generate_inside_container' );
