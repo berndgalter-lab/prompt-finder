@@ -6,10 +6,25 @@
 (function() {
   'use strict';
   
+  /**
+   * Humanize a variable key (e.g., "var_1" → "Var 1")
+   * @param {string} key - Variable key
+   * @returns {string} Humanized label
+   */
+  function humanize(key = '') {
+    return String(key)
+      .replace(/^var[_-]?/i, '')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\b\w/g, m => m.toUpperCase())
+      .trim() || 'Value';
+  }
+  
   const WorkflowVariables = {
     
     // Elements
     section: null,
+    card: null,
+    items: [],
     inputs: [],
     counter: null,
     saveBtn: null,
@@ -19,6 +34,7 @@
     debounceTimer: null,
     postId: null,
     storageKey: null,
+    requiredCount: 0,
     
     /**
      * Initialize the variables module
@@ -28,6 +44,13 @@
       
       if (!this.section) {
         console.warn('WorkflowVariables: Variables section not found');
+        return;
+      }
+      
+      // Get card container
+      this.card = this.section.querySelector('.pf-variables-card');
+      if (!this.card) {
+        console.warn('WorkflowVariables: Variables card not found');
         return;
       }
       
@@ -41,16 +64,22 @@
       // Generate storage key
       this.storageKey = window.WorkflowStorage.getVariablesKey(this.postId);
       
-      // Get elements
-      this.inputs = this.section.querySelectorAll('.pf-var-input');
-      this.counter = this.section.querySelector('.pf-variables-counter');
-      this.saveBtn = this.section.querySelector('[data-action="save-variables"]');
-      this.clearBtn = this.section.querySelector('[data-action="clear-variables"]');
+      // Get all variable items
+      this.items = Array.from(this.card.querySelectorAll('.pf-var-item'));
       
-      if (this.inputs.length === 0) {
-        console.warn('WorkflowVariables: No input fields found');
+      if (this.items.length === 0) {
+        console.warn('WorkflowVariables: No variable items found');
         return;
       }
+      
+      // Initialize UI (labels, required fields, etc.)
+      this.initVariablesUI();
+      
+      // Get elements after UI initialization
+      this.inputs = this.card.querySelectorAll('.pf-var-input');
+      this.counter = this.card.querySelector('.pf-variables-counter');
+      this.saveBtn = this.card.querySelector('.pf-btn--save, [data-action="save-variables"]');
+      this.clearBtn = this.card.querySelector('[data-action="clear-variables"]');
       
       // Load saved values
       this.loadFromStorage();
@@ -59,26 +88,69 @@
       this.setupListeners();
       
       // Update initial state
-      this.updateCounter();
+      this.updateState();
       
       console.log('WorkflowVariables: Initialized for post ID', this.postId);
+    },
+    
+    /**
+     * Initialize variables UI: auto-fill labels, mark required fields
+     */
+    initVariablesUI: function() {
+      let requiredCount = 0;
+      
+      this.items.forEach(item => {
+        const key = item.getAttribute('data-var-key') || '';
+        const required = (item.getAttribute('data-var-required') || 'false') === 'true';
+        const labelEl = item.querySelector('.pf-var-label');
+        const input = item.querySelector('.pf-var-input');
+        
+        if (!input) {
+          console.warn('WorkflowVariables: Input not found for item', key);
+          return;
+        }
+        
+        // Auto-fill empty label from key
+        if (labelEl && !labelEl.textContent.trim()) {
+          labelEl.textContent = humanize(key);
+        }
+        
+        // Mark required fields
+        if (required) {
+          requiredCount++;
+          input.required = true;
+          input.setAttribute('aria-required', 'true');
+          
+          // Add asterisk to label if not already present
+          if (labelEl) {
+            const existingAsterisk = labelEl.querySelector('.pf-var-required, [aria-hidden="true"]');
+            if (!existingAsterisk) {
+              labelEl.insertAdjacentHTML('beforeend', ' <span class="pf-var-required" aria-hidden="true">*</span>');
+            }
+          }
+        }
+      });
+      
+      this.requiredCount = requiredCount;
     },
     
     /**
      * Setup event listeners
      */
     setupListeners: function() {
-      // Listen to input changes
-      this.inputs.forEach(input => {
-        input.addEventListener('input', (e) => {
+      // Listen to input changes (using event delegation for better performance)
+      this.card.addEventListener('input', (e) => {
+        if (e.target.matches('.pf-var-input')) {
           this.onInputChange(e.target);
-        });
+        }
       });
       
       // Save button click
       if (this.saveBtn) {
         this.saveBtn.addEventListener('click', () => {
-          this.saveToStorage(true);
+          if (!this.saveBtn.disabled) {
+            this.saveToStorage(true);
+          }
         });
       }
       
@@ -103,8 +175,8 @@
         this.saveToStorage(false);
       }, 500);
       
-      // Update counter
-      this.updateCounter();
+      // Update state (counter + button)
+      this.updateState();
     },
     
     /**
@@ -135,13 +207,19 @@
       }
       
       // Populate inputs
-      this.inputs.forEach(input => {
-        const varKey = input.dataset.varKey;
+      this.items.forEach(item => {
+        const input = item.querySelector('.pf-var-input');
+        if (!input) return;
+        
+        const varKey = item.getAttribute('data-var-key') || input.dataset.varKey;
         if (saved[varKey]) {
           input.value = saved[varKey];
           this.updateInputState(input);
         }
       });
+      
+      // Update state after loading (counter + button)
+      this.updateState();
     },
     
     /**
@@ -151,8 +229,11 @@
     saveToStorage: function(showFeedback) {
       const data = {};
       
-      this.inputs.forEach(input => {
-        const varKey = input.dataset.varKey;
+      this.items.forEach(item => {
+        const input = item.querySelector('.pf-var-input');
+        if (!input) return;
+        
+        const varKey = item.getAttribute('data-var-key') || input.dataset.varKey;
         const value = input.value.trim();
         data[varKey] = value;
       });
@@ -176,51 +257,93 @@
       }
       
       // Clear inputs
-      this.inputs.forEach(input => {
-        input.value = '';
-        this.updateInputState(input);
+      this.items.forEach(item => {
+        const input = item.querySelector('.pf-var-input');
+        if (input) {
+          input.value = '';
+          this.updateInputState(input);
+        }
       });
       
       // Clear localStorage
       window.WorkflowStorage.remove(this.storageKey);
       
-      // Update counter
-      this.updateCounter();
+      // Update state
+      this.updateState();
       
       console.log('WorkflowVariables: Cleared all values');
     },
     
     /**
-     * Update counter badge
+     * Update state: counter + save button enabled/disabled
+     */
+    updateState: function() {
+      // Count required fields that are filled
+      const requiredFilled = this.items.filter(item => {
+        const required = (item.getAttribute('data-var-required') || 'false') === 'true';
+        if (!required) return false;
+        
+        const input = item.querySelector('.pf-var-input');
+        if (!input) return false;
+        
+        const value = input.value.trim();
+        return !!value;
+      }).length;
+      
+      // Count all filled fields
+      const filled = this.items.filter(item => {
+        const input = item.querySelector('.pf-var-input');
+        if (!input) return false;
+        return !!input.value.trim();
+      }).length;
+      
+      // Update counter
+      if (this.counter) {
+        const counterNumber = this.counter.querySelector('.pf-counter-number');
+        const counterTotal = this.counter.querySelector('.pf-counter-total');
+        
+        if (counterNumber) {
+          counterNumber.textContent = String(filled);
+        }
+        
+        if (counterTotal) {
+          const total = parseInt(this.counter.dataset.variablesTotal, 10) || this.items.length;
+          counterTotal.textContent = String(total);
+        }
+        
+        // Update data attribute
+        this.counter.dataset.variablesFilled = filled;
+        
+        // Animate counter when it changes
+        if (filled > 0) {
+          this.counter.style.transform = 'scale(1.05)';
+          setTimeout(() => {
+            this.counter.style.transform = 'scale(1)';
+          }, 200);
+        }
+      }
+      
+      // Enable/disable save button based on required fields
+      if (this.saveBtn) {
+        const allRequiredDone = requiredFilled === this.requiredCount;
+        
+        this.saveBtn.disabled = !allRequiredDone;
+        this.saveBtn.setAttribute('aria-disabled', String(!allRequiredDone));
+        
+        // Add visual class for disabled state
+        if (allRequiredDone) {
+          this.saveBtn.classList.remove('pf-btn--disabled');
+        } else {
+          this.saveBtn.classList.add('pf-btn--disabled');
+        }
+      }
+    },
+    
+    /**
+     * Update counter badge (legacy - now handled by updateState)
      */
     updateCounter: function() {
-      if (!this.counter) return;
-      
-      let filledCount = 0;
-      
-      this.inputs.forEach(input => {
-        if (input.value.trim().length > 0) {
-          filledCount++;
-        }
-      });
-      
-      const total = parseInt(this.counter.dataset.variablesTotal, 10);
-      const counterNumber = this.counter.querySelector('.pf-counter-number');
-      
-      if (counterNumber) {
-        counterNumber.textContent = filledCount;
-      }
-      
-      // Update data attribute
-      this.counter.dataset.variablesFilled = filledCount;
-      
-      // Animate counter
-      if (filledCount > 0) {
-        this.counter.style.transform = 'scale(1.05)';
-        setTimeout(() => {
-          this.counter.style.transform = 'scale(1)';
-        }, 200);
-      }
+      this.updateState();
     },
     
     /**
@@ -246,8 +369,11 @@
     getValues: function() {
       const data = {};
       
-      this.inputs.forEach(input => {
-        const varKey = input.dataset.varKey;
+      this.items.forEach(item => {
+        const input = item.querySelector('.pf-var-input');
+        if (!input) return;
+        
+        const varKey = item.getAttribute('data-var-key') || input.dataset.varKey;
         const value = input.value.trim();
         data[varKey] = value;
       });
@@ -262,8 +388,14 @@
     validate: function() {
       let isValid = true;
       
-      this.inputs.forEach(input => {
-        if (input.hasAttribute('required') && input.value.trim().length === 0) {
+      this.items.forEach(item => {
+        const required = (item.getAttribute('data-var-required') || 'false') === 'true';
+        if (!required) return;
+        
+        const input = item.querySelector('.pf-var-input');
+        if (!input) return;
+        
+        if (input.value.trim().length === 0) {
           isValid = false;
           input.classList.add('is-error');
           input.classList.add('pf-var-input--error');

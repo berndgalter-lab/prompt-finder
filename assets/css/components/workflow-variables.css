@@ -307,6 +307,28 @@
     transform: translateY(0);
 }
 
+/* Disabled Button State */
+.pf-btn:disabled,
+.pf-btn--disabled,
+.pf-btn[disabled],
+.pf-btn[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: var(--pf-border, #e5e7eb);
+    color: var(--pf-text-dim, #666);
+    border-color: var(--pf-border, #e5e7eb);
+}
+
+.pf-btn--primary:disabled,
+.pf-btn--primary.pf-btn--disabled,
+.pf-btn--primary[disabled],
+.pf-btn--primary[aria-disabled="true"] {
+    background: var(--pf-border, #e5e7eb);
+    color: var(--pf-text-dim, #666);
+    background-image: none;
+}
+
 .pf-btn svg {
     flex-shrink: 0;
 }
