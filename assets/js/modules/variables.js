@@ -8,13 +8,13 @@
   
   /**
    * Humanize a variable key (e.g., "var_1" → "Var 1")
+   * Format: key.replace(/_/g,' ').replace(/\b\w/g,m=>m.toUpperCase())
    * @param {string} key - Variable key
    * @returns {string} Humanized label
    */
   function humanize(key = '') {
     return String(key)
-      .replace(/^var[_-]?/i, '')
-      .replace(/[_-]+/g, ' ')
+      .replace(/_/g, ' ')
       .replace(/\b\w/g, m => m.toUpperCase())
       .trim() || 'Value';
   }
@@ -87,14 +87,14 @@
       // Setup event listeners
       this.setupListeners();
       
-      // Update initial state
-      this.updateState();
+      // Validate and update initial state (counter + button)
+      this.validate();
       
       console.log('WorkflowVariables: Initialized for post ID', this.postId);
     },
     
     /**
-     * Initialize variables UI: auto-fill labels, mark required fields
+     * Initialize variables UI: auto-fill labels, placeholders, mark required fields
      */
     initVariablesUI: function() {
       let requiredCount = 0;
@@ -110,9 +110,24 @@
           return;
         }
         
-        // Auto-fill empty label from key
+        // Auto-fill empty label from key using exact format: key.replace(/_/g,' ').replace(/\b\w/g,m=>m.toUpperCase())
         if (labelEl && !labelEl.textContent.trim()) {
-          labelEl.textContent = humanize(key);
+          const labelText = humanize(key);
+          // Remove any existing asterisk before setting new text
+          const asterisk = labelEl.querySelector('.pf-var-required');
+          if (asterisk) {
+            asterisk.remove();
+          }
+          labelEl.textContent = labelText;
+          // Re-add asterisk if required
+          if (required) {
+            labelEl.insertAdjacentHTML('beforeend', ' <span class="pf-var-required" aria-hidden="true">*</span>');
+          }
+        }
+        
+        // Set placeholder if empty
+        if (!input.placeholder || input.placeholder.trim() === '') {
+          input.placeholder = 'Wert eingeben';
         }
         
         // Mark required fields
@@ -147,8 +162,20 @@
       
       // Save button click
       if (this.saveBtn) {
-        this.saveBtn.addEventListener('click', () => {
-          if (!this.saveBtn.disabled) {
+        this.saveBtn.addEventListener('click', (e) => {
+          // If disabled, prevent default and focus first invalid field
+          if (this.saveBtn.disabled) {
+            e.preventDefault();
+            const firstInvalid = this.card.querySelector('.pf-var-input:required:invalid, .pf-var-input[aria-required="true"]:not(.is-filled)');
+            if (firstInvalid) {
+              firstInvalid.focus();
+              firstInvalid.classList.add('is-error');
+            }
+            return;
+          }
+          
+          // Validate before saving
+          if (this.validate()) {
             this.saveToStorage(true);
           }
         });
@@ -175,8 +202,8 @@
         this.saveToStorage(false);
       }, 500);
       
-      // Update state (counter + button)
-      this.updateState();
+      // Validate and update state (counter + button)
+      this.validate();
     },
     
     /**
@@ -218,8 +245,8 @@
         }
       });
       
-      // Update state after loading (counter + button)
-      this.updateState();
+      // Validate and update state after loading (counter + button)
+      this.validate();
     },
     
     /**
@@ -268,14 +295,15 @@
       // Clear localStorage
       window.WorkflowStorage.remove(this.storageKey);
       
-      // Update state
-      this.updateState();
+      // Validate and update state
+      this.validate();
       
       console.log('WorkflowVariables: Cleared all values');
     },
     
     /**
      * Update state: counter + save button enabled/disabled
+     * This is now called by validate() to keep things in sync
      */
     updateState: function() {
       // Count required fields that are filled
@@ -290,11 +318,12 @@
         return !!value;
       }).length;
       
-      // Count all filled fields
+      // Count all filled fields (only when value is actually present)
       const filled = this.items.filter(item => {
         const input = item.querySelector('.pf-var-input');
         if (!input) return false;
-        return !!input.value.trim();
+        const value = input.value.trim();
+        return value !== '';
       }).length;
       
       // Update counter
@@ -325,7 +354,7 @@
       
       // Enable/disable save button based on required fields
       if (this.saveBtn) {
-        const allRequiredDone = requiredFilled === this.requiredCount;
+        const allRequiredDone = requiredFilled === this.requiredCount && this.requiredCount > 0;
         
         this.saveBtn.disabled = !allRequiredDone;
         this.saveBtn.setAttribute('aria-disabled', String(!allRequiredDone));
@@ -382,12 +411,61 @@
     },
     
     /**
-     * Validate all required fields
+     * Validate all fields and update counter + save button state
      * @returns {boolean} True if all required fields are filled
      */
     validate: function() {
-      let isValid = true;
+      // Count total = items.length
+      const total = this.items.length;
       
+      // Count filled: items where value.trim() !== ""
+      const filled = this.items.filter(item => {
+        const input = item.querySelector('.pf-var-input');
+        if (!input) return false;
+        const value = input.value.trim();
+        return value !== '';
+      }).length;
+      
+      // Count required fields that are filled
+      const requiredFilled = this.items.filter(item => {
+        const required = (item.getAttribute('data-var-required') || 'false') === 'true';
+        if (!required) return false;
+        
+        const input = item.querySelector('.pf-var-input');
+        if (!input) return false;
+        
+        const value = input.value.trim();
+        return value !== '';
+      }).length;
+      
+      // Update counter
+      if (this.counter) {
+        const counterNumber = this.counter.querySelector('.pf-counter-number');
+        const counterTotal = this.counter.querySelector('.pf-counter-total');
+        
+        if (counterNumber) {
+          counterNumber.textContent = String(filled);
+        }
+        
+        if (counterTotal) {
+          counterTotal.textContent = String(total);
+        }
+        
+        // Update data attribute
+        this.counter.dataset.variablesFilled = filled;
+        this.counter.dataset.variablesTotal = total;
+        
+        // Animate counter when it changes
+        if (filled > 0) {
+          this.counter.style.transform = 'scale(1.05)';
+          setTimeout(() => {
+            this.counter.style.transform = 'scale(1)';
+          }, 200);
+        }
+      }
+      
+      // Validate required fields and mark errors
+      let isValid = true;
       this.items.forEach(item => {
         const required = (item.getAttribute('data-var-required') || 'false') === 'true';
         if (!required) return;
@@ -395,7 +473,8 @@
         const input = item.querySelector('.pf-var-input');
         if (!input) return;
         
-        if (input.value.trim().length === 0) {
+        const value = input.value.trim();
+        if (value === '') {
           isValid = false;
           input.classList.add('is-error');
           input.classList.add('pf-var-input--error');
@@ -404,6 +483,23 @@
           input.classList.remove('pf-var-input--error');
         }
       });
+      
+      // Enable/disable save button based on required fields
+      // If no required fields exist, button is always enabled
+      if (this.saveBtn) {
+        const hasRequired = this.requiredCount > 0;
+        const allRequiredDone = hasRequired ? (requiredFilled === this.requiredCount) : true;
+        
+        this.saveBtn.disabled = !allRequiredDone;
+        this.saveBtn.setAttribute('aria-disabled', String(!allRequiredDone));
+        
+        // Add visual class for disabled state
+        if (allRequiredDone) {
+          this.saveBtn.classList.remove('pf-btn--disabled');
+        } else {
+          this.saveBtn.classList.add('pf-btn--disabled');
+        }
+      }
       
       return isValid;
     }

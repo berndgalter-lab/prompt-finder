@@ -469,12 +469,30 @@
 
 .pf-btn-copy.is-copied {
     background: var(--pf-success, #10b981);
+    position: relative;
+    /* Hide the "Copy" text by setting font-size to 0 */
+    font-size: 0;
+    line-height: 0;
 }
 
+/* Keep SVG icon visible - SVG has its own width/height, not affected by font-size */
+.pf-btn-copy.is-copied svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+/* Show "Copied" text via ::after with restored font size */
 .pf-btn-copy.is-copied::after {
-    content: " Copied";
+    content: "Copied";
+    font-size: 0.875rem;
+    line-height: 1.2;
     font-weight: 600;
     margin-left: 0.5rem;
+    vertical-align: middle;
+    display: inline-block;
 }
 
 .pf-btn-copy svg {
