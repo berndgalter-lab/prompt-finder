@@ -931,10 +931,17 @@
 }
 
 .pf-overview-header { 
+  position: relative;
   display: flex; 
   align-items: center; 
   justify-content: flex-end; 
-  margin-bottom: 10px; 
+  margin-bottom: -34px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.pf-overview-header .pf-overview-toggle {
+  pointer-events: auto;
 }
 
 .pf-section-heading { 
@@ -1113,6 +1120,7 @@
   border: 1px solid var(--base, #e5e7eb);
   border-radius: 10px;
   padding: 14px 16px;
+  padding-top: 42px;
   margin: 4px 0 12px 0;
   position: relative;
 }

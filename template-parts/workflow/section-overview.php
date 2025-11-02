@@ -46,17 +46,17 @@ for ($i = 1; $i <= 5; $i++) {
 <!-- pf:overview START -->
 <?php $post_id = get_the_ID(); ?>
 <section id="overview" class="pf-section pf-section--overview" data-post-id="<?php echo esc_attr($post_id); ?>">
+    <header class="pf-overview-header">
+        <button 
+            class="pf-overview-toggle" 
+            type="button" 
+            aria-expanded="true"
+            data-action="toggle-overview">
+            Hide overview
+        </button>
+    </header>
     <div class="pf-overview-body">
         <div class="pf-overview-card">
-            <header class="pf-overview-header">
-                <button 
-                    class="pf-overview-toggle" 
-                    type="button" 
-                    aria-expanded="true"
-                    data-action="toggle-overview">
-                    Hide overview
-                </button>
-            </header>
             <?php if (!empty($summary)): ?>
                 <div class="pf-overview-summary">
                     <?php echo wp_kses_post($summary); ?>
