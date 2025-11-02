@@ -944,6 +944,18 @@
   pointer-events: auto;
 }
 
+/* Mobile: Button nicht überlappend, sondern über der Card */
+@media (max-width: 768px) {
+  .pf-overview-header {
+    margin-bottom: 8px;
+    margin-top: 0;
+  }
+  
+  .pf-overview-card {
+    padding-top: 14px;
+  }
+}
+
 .pf-section-heading { 
   margin: 0; 
   font-size: 1.1rem; 
@@ -1057,9 +1069,16 @@
   font-size: .9rem; 
 }
 
-/* Collapse */
-.pf-section--overview.is-collapsed .pf-overview-card { 
-  display: none; 
+/* Collapse - Body wird ausgeblendet, aber Card-Struktur bleibt für Layout */
+.pf-section--overview.is-collapsed .pf-overview-body {
+  display: none;
+}
+
+/* Stelle sicher, dass die Section selbst ihre Breite behält */
+.pf-section--overview {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* === Prereqs (Before you start) === */
