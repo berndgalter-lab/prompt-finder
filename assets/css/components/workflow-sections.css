@@ -1078,6 +1078,14 @@
 .pf-section--overview {
   min-width: 0;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  /* Breite bleibt erhalten, auch wenn Body ausgeblendet wird */
+  display: block;
+}
+
+.pf-section--overview .pf-overview-body {
+  width: 100%;
   box-sizing: border-box;
 }
 
