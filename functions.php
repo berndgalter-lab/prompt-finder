@@ -584,6 +584,17 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('pf-core', $base_uri . '/assets/css/pf-core.css', [], $version);
     }
 
+    // Reuse workflow visual language
+    $wf_css = $base_dir . '/assets/css/pf-workflows.css';
+    if (file_exists($wf_css)) {
+        wp_enqueue_style('pf-workflows', $base_uri . '/assets/css/pf-workflows.css', ['pf-core'], filemtime($wf_css));
+    }
+
+    $landing_css = $base_dir . '/assets/css/pf-landing.css';
+    if (file_exists($landing_css)) {
+        wp_enqueue_style('pf-landing', $base_uri . '/assets/css/pf-landing.css', ['pf-core'], filemtime($landing_css));
+    }
+
     $pricing_css = $base_dir . '/assets/css/pf-pricing.css';
     if (file_exists($pricing_css)) {
         $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
@@ -592,13 +603,17 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('pf-pricing-css', $base_uri . '/assets/css/pf-pricing.css', ['pf-core'], $version);
     }
 
-    $pricing_js = $base_dir . '/assets/js/pf-pricing.js';
+    // New pricing JS
+    $pricing_js = $base_dir . '/assets/js/pricing.js';
     if (file_exists($pricing_js)) {
         $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
             ? wp_get_theme()->get('Version') 
             : filemtime($pricing_js);
-        wp_enqueue_script('pf-pricing-js', $base_uri . '/assets/js/pf-pricing.js', [], $version, true);
+        wp_enqueue_script('pf-pricing-js', $base_uri . '/assets/js/pricing.js', [], $version, true);
     }
+
+    // Lemon Squeezy checkout script
+    wp_enqueue_script('lemonjs', 'https://app.lemonsqueezy.com/js/lemon.js', [], null, true);
 }, 110);
 
 /* =====================================================
