@@ -603,17 +603,14 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('pf-pricing-css', $base_uri . '/assets/css/pf-pricing.css', ['pf-core'], $version);
     }
 
-    // New pricing JS
-    $pricing_js = $base_dir . '/assets/js/pricing.js';
+    // Pricing JS (includes Lemon Squeezy loader)
+    $pricing_js = $base_dir . '/assets/js/pf-pricing.js';
     if (file_exists($pricing_js)) {
         $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
             ? wp_get_theme()->get('Version') 
             : filemtime($pricing_js);
-        wp_enqueue_script('pf-pricing-js', $base_uri . '/assets/js/pricing.js', [], $version, true);
+        wp_enqueue_script('pf-pricing-js', $base_uri . '/assets/js/pf-pricing.js', [], $version, true);
     }
-
-    // Lemon Squeezy checkout script
-    wp_enqueue_script('lemonjs', 'https://app.lemonsqueezy.com/js/lemon.js', [], null, true);
 }, 110);
 
 /* =====================================================
