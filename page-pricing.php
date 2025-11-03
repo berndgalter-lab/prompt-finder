@@ -43,7 +43,8 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
     </section>
 
     <!-- Pricing Grid -->
-    <section class="pf-section" id="pricing-grid">
+    <section class="pf-section" id="plans">
+      <h2 class="pf-pricing-head" style="text-align:center; margin-bottom: 12px;">Choose your plan</h2>
       <div class="pf-plans" aria-label="Pricing plans">
         <!-- Free -->
         <article class="pf-plan" aria-label="Free plan">
@@ -66,6 +67,7 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
         <!-- Pro -->
         <article class="pf-plan is-popular" aria-label="Pro plan">
           <div class="pf-plan-body">
+            <span class="pf-badge">Most popular</span>
             <h3 class="pf-plan-title">Pro</h3>
             <p class="pf-plan-desc">Unlock full output and save variables for repeatable quality.</p>
             <div class="pf-price">
@@ -219,9 +221,9 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
     </section>
 
     <!-- FAQ -->
-    <section class="pf-section" aria-labelledby="faq-h2">
+    <section class="pf-section pf-faq" aria-labelledby="faq-h2">
       <h2 id="faq-h2">FAQ</h2>
-      <div class="pf-faq-list">
+      <div>
         <?php
           $faqs = [
             ['Can I cancel anytime?','Yes. You can cancel in a click in the Customer Portal. Your access remains until the end of the billing period.'],

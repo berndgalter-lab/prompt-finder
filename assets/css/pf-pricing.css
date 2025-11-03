@@ -143,9 +143,11 @@
 .pf-btn--ghost:hover{ background:#0e1119; border-color:#2a3140; }
 
 /* Order: Free left, Pro center, Business right (no HTML change) */
+/* Explicit ordering for 4-card row: Free | Pro | Team | Business */
 .pf-plan[aria-label="Free plan"]     { order:1; }
 .pf-plan[aria-label="Pro plan"]      { order:2; }
-.pf-plan[aria-label="Business plan"] { order:3; }
+.pf-plan[aria-label="Team plan"]     { order:3; }
+.pf-plan[aria-label="Business plan"] { order:4; }
 
 /* Responsive: 2 cols > 680–980px, 1 col < 680px */
 @media (max-width: 980px){
@@ -155,6 +157,14 @@
 @media (max-width: 680px){
   .pf-plan{ flex:1 1 100%; }
 }
+
+/* FAQ styling (reuse card look) */
+.pf-faq details{ background: var(--pf-card, #fff); border:1px solid var(--pf-border); border-radius:12px; padding:.85rem 1rem; margin:.5rem 0; }
+.pf-faq summary{ cursor:pointer; display:flex; align-items:center; justify-content:space-between; list-style:none; }
+.pf-faq summary::-webkit-details-marker{ display:none; }
+.pf-faq summary:after{ content:'+'; font-weight:800; color:var(--pf-text-dim); }
+.pf-faq details[open] summary:after{ content:'–'; }
+.pf-faq p{ color:var(--pf-text-dim); margin:.5rem 0 0; }
 
 /* Footnote + proof + FAQ */
 .pf-proof{ margin-top:18px; }
