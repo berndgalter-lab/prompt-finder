@@ -24,6 +24,7 @@
       const active = b.dataset.billing === mode;
       b.classList.toggle('is-active', active);
       b.setAttribute('aria-selected', String(active));
+      b.setAttribute('aria-pressed', String(active));
       b.setAttribute('tabindex', active ? '0' : '-1');
     });
     // Prices visibility
@@ -76,6 +77,9 @@
     btn.addEventListener('click', () => {
       const plan = btn.getAttribute('data-plan');
       const mode = (localStorage.getItem('pf_billing') || 'monthly');
+      // Update analytics attribute to reflect interval
+      const analyticsBase = `cta-${plan}-${mode === 'annual' ? 'yearly' : 'monthly'}`;
+      btn.setAttribute('data-analytics', analyticsBase);
       openCheckout(plan, mode === 'annual' ? 'annual' : 'monthly');
     });
   });
