@@ -154,7 +154,7 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
           </thead>
           <tbody>
             <?php
-              $rows = [
+              $rows = array(
                 'Preview first step(s) on every workflow',
                 'Unlock all steps (depends on workflow access mode)',
                 'Full output (no redaction)',
@@ -168,24 +168,26 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
                 'Priority support',
                 'SSO (coming soon)',
                 'Audit logs (coming soon)'
-              ];
+              );
               // Matrix: F,P,T,B boolean
-              $matrix = [
-                [true,  true,  true,  true ],
-                [false, true,  true,  true ],
-                [false, true,  true,  true ],
-                [false, true,  true,  true ],
-                [false, true,  true,  true ],
-                [false, true,  true,  true ],
-                [false, true,  true,  true ],
-                [false, false, true,  true ],
-                [false, false, true,  true ],
-                [false, false, true,  true ],
-                [false, false, true,  true ],
-                [false, false, false, true ],
-                [false, false, false, true ],
-              ];
-              foreach ($rows as $i => $label): $vals = $matrix[$i]; ?>
+              $matrix = array(
+                array(true,  true,  true,  true ),
+                array(false, true,  true,  true ),
+                array(false, true,  true,  true ),
+                array(false, true,  true,  true ),
+                array(false, true,  true,  true ),
+                array(false, true,  true,  true ),
+                array(false, true,  true,  true ),
+                array(false, false, true,  true ),
+                array(false, false, true,  true ),
+                array(false, false, true,  true ),
+                array(false, false, true,  true ),
+                array(false, false, false, true ),
+                array(false, false, false, true )
+              );
+              foreach ($rows as $i => $label):
+                $vals = $matrix[$i];
+              ?>
               <tr>
                 <td style="text-align:left; padding:8px 6px;"><?php echo esc_html($label); ?></td>
                 <?php foreach ($vals as $v): ?>
@@ -244,17 +246,18 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
       <h2 id="faq-h2">FAQ</h2>
       <div>
         <?php
-          $faqs = [
-            ['Can I try before I pay?','Yes. You can preview the first step(s) on every workflow. Some workflows unlock fully with a free account (Sign-in), others require Pro due to cost or licensing. Pro also adds saved variables, recent runs, and team sharing.'],
-            ['Can I cancel anytime?','Yes. You can cancel in a click in the Customer Portal. Your access remains until the end of the billing period.'],
-            ['Do you offer a refund?','Yes—7-day money-back if you're not happy. We prefer refunds over disputes to keep it simple for everyone.'],
-            ['Do prices include taxes?','No. Prices are tax-exclusive. VAT is calculated at checkout by Lemon Squeezy (our Merchant of Record).'],
-            ['What happens after I pay?','You're unlocked immediately. Reload the workflow page to see full output and save variables.'],
-            ['How many seats are in Team?','5 seats are included. You can add more seats later (we'll prompt you if you need more).'],
-            ['Do you support annual billing?','Yes—switch to Yearly to save 2 months.'],
-            ['Is this for individuals or teams?','Both. Start with Pro; upgrade to Team when you want a shared library.'],
-          ];
-          foreach ($faqs as $i => $f): ?>
+          $faqs = array(
+            array('Can I try before I pay?','Yes. You can preview the first step(s) on every workflow. Some workflows unlock fully with a free account (Sign-in), others require Pro due to cost or licensing. Pro also adds saved variables, recent runs, and team sharing.'),
+            array('Can I cancel anytime?','Yes. You can cancel in a click in the Customer Portal. Your access remains until the end of the billing period.'),
+            array('Do you offer a refund?','Yes—7-day money-back if you're not happy. We prefer refunds over disputes to keep it simple for everyone.'),
+            array('Do prices include taxes?','No. Prices are tax-exclusive. VAT is calculated at checkout by Lemon Squeezy (our Merchant of Record).'),
+            array('What happens after I pay?','You're unlocked immediately. Reload the workflow page to see full output and save variables.'),
+            array('How many seats are in Team?','5 seats are included. You can add more seats later (we'll prompt you if you need more).'),
+            array('Do you support annual billing?','Yes—switch to Yearly to save 2 months.'),
+            array('Is this for individuals or teams?','Both. Start with Pro; upgrade to Team when you want a shared library.')
+          );
+          foreach ($faqs as $f):
+        ?>
           <details data-analytics="faq-open">
             <summary><strong><?php echo esc_html($f[0]); ?></strong></summary>
             <p class="pf-sub" style="margin-top:6px;"><?php echo esc_html($f[1]); ?></p>
@@ -275,60 +278,58 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
 
   <!-- Inline JSON with plan config for JS -->
   <script type="application/json" id="pf-pricing-config">
-  <?php echo wp_json_encode([
+  <?php echo wp_json_encode(array(
     'currency' => 'EUR',
-    'plans' => [
-      'pro' => ['monthly' => 15,  'annual' => 150,  'variant_month' => 'PRO_VARIANT_ID',     'variant_annual' => 'PRO_VARIANT_ID'],
-      'team' => ['monthly' => 79,  'annual' => 790,  'variant_month' => 'TEAM_VARIANT_ID',    'variant_annual' => 'TEAM_VARIANT_ID'],
-      'business' => ['monthly' => 249, 'annual' => 2490, 'variant_month' => 'BUSINESS_VARIANT_ID','variant_annual' => 'BUSINESS_VARIANT_ID'],
-    ],
-    'user' => [
+    'plans' => array(
+      'pro' => array('monthly' => 15,  'annual' => 150,  'variant_month' => 'PRO_VARIANT_ID',     'variant_annual' => 'PRO_VARIANT_ID'),
+      'team' => array('monthly' => 79,  'annual' => 790,  'variant_month' => 'TEAM_VARIANT_ID',    'variant_annual' => 'TEAM_VARIANT_ID'),
+      'business' => array('monthly' => 249, 'annual' => 2490, 'variant_month' => 'BUSINESS_VARIANT_ID','variant_annual' => 'BUSINESS_VARIANT_ID')
+    ),
+    'user' => array(
       'email' => $prefill_email,
       'name'  => $prefill_name,
-      'id'    => $is_logged_in ? get_current_user_id() : 0,
-    ],
-    'returnUrl' => $return_url,
-  ], JSON_UNESCAPED_SLASHES); ?>
+      'id'    => $is_logged_in ? get_current_user_id() : 0
+    ),
+    'returnUrl' => $return_url
+  ), JSON_UNESCAPED_SLASHES); ?>
   </script>
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
-  <?php echo wp_json_encode([
+  <?php echo wp_json_encode(array(
     '@context' => 'https://schema.org',
     '@type' => 'SoftwareApplication',
     'name' => 'Prompt Finder',
     'operatingSystem' => 'Web',
     'applicationCategory' => 'BusinessApplication',
-    'offers' => [
-      [
+    'offers' => array(
+      array(
         '@type' => 'Offer',
         'name' => 'Pro',
         'price' => '15',
         'priceCurrency' => 'EUR',
         'availability' => 'https://schema.org/InStock',
         'isFamilyFriendly' => true
-      ],
-      [
+      ),
+      array(
         '@type' => 'Offer',
         'name' => 'Team',
         'price' => '79',
         'priceCurrency' => 'EUR',
         'availability' => 'https://schema.org/InStock',
         'isFamilyFriendly' => true
-      ],
-      [
+      ),
+      array(
         '@type' => 'Offer',
         'name' => 'Business',
         'price' => '249',
         'priceCurrency' => 'EUR',
         'availability' => 'https://schema.org/InStock',
         'isFamilyFriendly' => true
-      ]
-    ]
-  ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>
+      )
+    )
+  ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>
   </script>
 </main>
 
 <?php get_footer(); ?>
-
-
