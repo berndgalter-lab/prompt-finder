@@ -29,8 +29,8 @@ $time_saved_min = get_field('time_saved_min');
         <?php if (!empty($pain_points)): ?>
             <div class="pf-value-mini pf-value-mini--problems">
                 <h3>Problems This Solves</h3>
-                <div class="pf-value-card-text">
-                    <?php echo wp_kses_post($pain_points); ?>
+                    <div class="pf-value-card-text">
+                        <?php echo wp_kses_post($pain_points); ?>
                 </div>
             </div>
         <?php endif; ?>
@@ -39,8 +39,8 @@ $time_saved_min = get_field('time_saved_min');
         <?php if (!empty($expected_outcome)): ?>
             <div class="pf-value-mini pf-value-mini--outcome">
                 <h3>What You'll Get</h3>
-                <div class="pf-value-card-text">
-                    <?php echo wp_kses_post($expected_outcome); ?>
+                    <div class="pf-value-card-text">
+                        <?php echo wp_kses_post($expected_outcome); ?>
                 </div>
             </div>
         <?php endif; ?>

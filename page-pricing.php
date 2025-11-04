@@ -30,7 +30,7 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
           <a href="#plans" class="pf-btn pf-btn--primary" data-analytics="cta-hero-pro" aria-label="Get Pro monthly">Get Pro</a>
           <a href="#pricing-grid" class="pf-btn pf-btn--ghost" data-analytics="cta-hero-see-plans">See Team &amp; Business</a>
         </div>
-        <p class="pf-sub" style="margin-top:10px; font-size:.9rem;">Cancel anytime · 7-day money-back · Secure checkout via Lemon Squeezy · Prices exclude taxes</p>
+        <p class="pf-sub" style="margin-top:10px; font-size:.9rem;">Cancel anytime · 7-day money-back · Secure checkout via Lemon Squeezy · Taxes calculated at checkout</p>
       </header>
     </section>
 
@@ -51,7 +51,7 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
           <div class="pf-plan-body">
             <h3 class="pf-plan-title">Free</h3>
             <p class="pf-plan-desc">Explore free workflows — no account needed.</p>
-            <div class="pf-price"><div class="pf-price" aria-hidden="true">€0</div></div>
+            <div class="pf-price"><div class="pf-price" aria-hidden="true">$0</div></div>
             <ul class="pf-features">
               <li><span class="dot"></span>Full access to Free-gated workflows</li>
               <li><span class="dot"></span>Preview the first step(s) on Sign-in/Pro items</li>
@@ -70,8 +70,8 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
             <h3 class="pf-plan-title">Pro</h3>
             <p class="pf-plan-desc">Unlock Pro-gated workflows and save 15–40 min per run.</p>
             <div class="pf-price">
-              <span class="pf-amount" data-monthly>€15</span>
-              <span class="pf-amount" data-annual>€150</span>
+              <span class="pf-amount" data-monthly>$19</span>
+              <span class="pf-amount" data-annual>$190</span>
               <span class="pf-per" data-per>/ month</span>
             </div>
             <ul class="pf-features">
@@ -84,7 +84,7 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
               <button class="pf-btn pf-btn--primary js-checkout" data-plan="pro" data-variant-month="PRO_VARIANT_ID" data-variant-annual="PRO_VARIANT_ID" data-email="<?php echo esc_attr($prefill_email); ?>" data-name="<?php echo esc_attr($prefill_name); ?>" data-return="<?php echo esc_attr($return_url); ?>" aria-label="Get Pro monthly" data-analytics="cta-pro-monthly">Get Pro</button>
               <a href="#comparison" class="pf-btn pf-btn--ghost" data-analytics="cta-compare-pro">Compare plans</a>
             </div>
-            <div class="pf-per" style="font-size:.8rem; color:var(--pf-text-dim);">Prices exclude taxes. VAT is calculated at checkout.</div>
+            <div class="pf-per" style="font-size:.8rem; color:var(--pf-text-dim);">Taxes calculated at checkout.</div>
           </div>
         </article>
 
@@ -94,8 +94,8 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
             <h3 class="pf-plan-title">Team</h3>
             <p class="pf-plan-desc">Share a consistent library across your team (5 seats included).</p>
             <div class="pf-price">
-              <span class="pf-amount" data-monthly>€79</span>
-              <span class="pf-amount" data-annual>€790</span>
+              <span class="pf-amount" data-monthly>$99</span>
+              <span class="pf-amount" data-annual>$990</span>
               <span class="pf-per" data-per>/ month</span>
             </div>
             <ul class="pf-features">
@@ -108,7 +108,7 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
               <button class="pf-btn pf-btn--primary js-checkout" data-plan="team" data-variant-month="TEAM_VARIANT_ID" data-variant-annual="TEAM_VARIANT_ID" data-email="<?php echo esc_attr($prefill_email); ?>" data-name="<?php echo esc_attr($prefill_name); ?>" data-return="<?php echo esc_attr($return_url); ?>" aria-label="Get Team monthly" data-analytics="cta-team-monthly">Get Team</button>
               <a href="#comparison" class="pf-btn pf-btn--ghost" data-analytics="cta-compare-team">Compare plans</a>
             </div>
-            <div class="pf-per" style="font-size:.8rem; color:var(--pf-text-dim);">Prices exclude taxes. VAT is calculated at checkout.</div>
+            <div class="pf-per" style="font-size:.8rem; color:var(--pf-text-dim);">Taxes calculated at checkout.</div>
           </div>
         </article>
 
@@ -118,8 +118,8 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
             <h3 class="pf-plan-title">Business</h3>
             <p class="pf-plan-desc">Scale governance and support for larger teams (20 seats).</p>
             <div class="pf-price">
-              <span class="pf-amount" data-monthly>€249</span>
-              <span class="pf-amount" data-annual>€2,490</span>
+              <span class="pf-amount" data-monthly>$299</span>
+              <span class="pf-amount" data-annual>$2,990</span>
               <span class="pf-per" data-per>/ month</span>
             </div>
             <ul class="pf-features">
@@ -132,7 +132,7 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
               <button class="pf-btn pf-btn--primary js-checkout" data-plan="business" data-variant-month="BUSINESS_VARIANT_ID" data-variant-annual="BUSINESS_VARIANT_ID" data-email="<?php echo esc_attr($prefill_email); ?>" data-name="<?php echo esc_attr($prefill_name); ?>" data-return="<?php echo esc_attr($return_url); ?>" aria-label="Get Business monthly" data-analytics="cta-business-monthly">Get Business</button>
               <a href="#comparison" class="pf-btn pf-btn--ghost" data-analytics="cta-compare-business">Compare plans</a>
             </div>
-            <div class="pf-per" style="font-size:.8rem; color:var(--pf-text-dim);">Prices exclude taxes. VAT is calculated at checkout.</div>
+            <div class="pf-per" style="font-size:.8rem; color:var(--pf-text-dim);">Taxes calculated at checkout.</div>
           </div>
         </article>
       </div>
@@ -248,7 +248,7 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
             ['Can I try before I pay?','Yes. You can preview the first step(s) on every workflow. Some workflows unlock fully with a free account (Sign-in), others require Pro due to cost or licensing. Pro also adds saved variables, recent runs, and team sharing.'],
             ['Can I cancel anytime?','Yes. You can cancel in a click in the Customer Portal. Your access remains until the end of the billing period.'],
             ['Do you offer a refund?','Yes—7-day money-back if you’re not happy. We prefer refunds over disputes to keep it simple for everyone.'],
-            ['Do prices include taxes?','No. Prices are tax-exclusive. VAT is calculated at checkout by Lemon Squeezy (our Merchant of Record).'],
+            ['Do prices include taxes?','No. Prices are tax-exclusive. Applicable taxes are calculated at checkout by Lemon Squeezy (our Merchant of Record).'],
             ['What happens after I pay?','You’re unlocked immediately. Reload the workflow page to see full output and save variables.'],
             ['How many seats are in Team?','5 seats are included. You can add more seats later (we’ll prompt you if you need more).'],
             ['Do you support annual billing?','Yes—switch to Yearly to save 2 months.'],
@@ -276,11 +276,11 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
   <!-- Inline JSON with plan config for JS -->
   <script type="application/json" id="pf-pricing-config">
   <?php echo wp_json_encode([
-    'currency' => 'EUR',
+    'currency' => 'USD',
     'plans' => [
-      'pro' => ['monthly' => 15,  'annual' => 150,  'variant_month' => 'PRO_VARIANT_ID',     'variant_annual' => 'PRO_VARIANT_ID'],
-      'team' => ['monthly' => 79,  'annual' => 790,  'variant_month' => 'TEAM_VARIANT_ID',    'variant_annual' => 'TEAM_VARIANT_ID'],
-      'business' => ['monthly' => 249, 'annual' => 2490, 'variant_month' => 'BUSINESS_VARIANT_ID','variant_annual' => 'BUSINESS_VARIANT_ID'],
+      'pro' => ['monthly' => 19,  'annual' => 190,  'variant_month' => 'PRO_VARIANT_ID',     'variant_annual' => 'PRO_VARIANT_ID'],
+      'team' => ['monthly' => 99,  'annual' => 990,  'variant_month' => 'TEAM_VARIANT_ID',    'variant_annual' => 'TEAM_VARIANT_ID'],
+      'business' => ['monthly' => 299, 'annual' => 2990, 'variant_month' => 'BUSINESS_VARIANT_ID','variant_annual' => 'BUSINESS_VARIANT_ID'],
     ],
     'user' => [
       'email' => $prefill_email,
@@ -303,24 +303,24 @@ $return_url = isset($_COOKIE['pf_return_url']) ? esc_url_raw($_COOKIE['pf_return
       [
         '@type' => 'Offer',
         'name' => 'Pro',
-        'price' => '15',
-        'priceCurrency' => 'EUR',
+        'price' => '19',
+        'priceCurrency' => 'USD',
         'availability' => 'https://schema.org/InStock',
         'isFamilyFriendly' => true
       ],
       [
         '@type' => 'Offer',
         'name' => 'Team',
-        'price' => '79',
-        'priceCurrency' => 'EUR',
+        'price' => '99',
+        'priceCurrency' => 'USD',
         'availability' => 'https://schema.org/InStock',
         'isFamilyFriendly' => true
       ],
       [
         '@type' => 'Offer',
         'name' => 'Business',
-        'price' => '249',
-        'priceCurrency' => 'EUR',
+        'price' => '299',
+        'priceCurrency' => 'USD',
         'availability' => 'https://schema.org/InStock',
         'isFamilyFriendly' => true
       ]

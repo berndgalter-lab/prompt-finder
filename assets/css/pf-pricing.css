@@ -115,12 +115,13 @@
 
 /* Feature list (green bead like landing) */
 .pf-features{ list-style:none; padding:0; margin:.4rem 0 0; display:grid; gap:.5rem; }
-.pf-features li{ display:flex; align-items:flex-start; gap:.55rem; color:var(--pf-text); }
+.pf-features li{ display:flex; align-items:flex-start; gap:.55rem; color:var(--pf-text); line-height:1.5; }
 .pf-features .dot{
   width:10px; height:10px; border-radius:999px; display:inline-block;
   background:linear-gradient(180deg,#34d399,#10b981);
   box-shadow:0 0 0 2px rgba(16,185,129,.15);
-  margin-top:0.4rem;
+  margin-top:5px; /* Align with first line of text */
+  flex-shrink:0; /* Prevent dot from shrinking */
 }
 
 /* CTA row sticks to bottom */
@@ -139,7 +140,10 @@
   color:#081119; border-color:transparent;
   box-shadow:0 8px 22px rgba(93,185,255,.25), 0 2px 0 rgba(8,17,25,.35) inset;
 }
-.pf-btn--primary:hover{ transform:translateY(-1px) scale(1.01); }
+.pf-btn--primary:hover{ 
+  transform:translateY(-1px) scale(1.01); 
+  color:#081119; /* Ensure text stays dark on hover */
+}
 .pf-btn--ghost{ background:transparent; color:var(--pf-text); }
 .pf-btn--ghost:hover{ background:#0e1119; border-color:#2a3140; }
 

@@ -28,21 +28,21 @@ $estimated_time_min = get_field('estimated_time_min');
     <div class="pf-prereqs-body">
         <div class="pf-prereqs-card">
             <!-- Requirements (bestehende PHP-Schleife/Felder beibehalten) -->
-            <?php if (!empty($inputs_prerequisites)): ?>
+                <?php if (!empty($inputs_prerequisites)): ?>
                 <ul class="pf-reqs" role="list">
                     <li class="pf-reqs-item">
                         <div class="pf-reqs-notes">
-                            <?php echo wp_kses_post($inputs_prerequisites); ?>
+                    <?php echo wp_kses_post($inputs_prerequisites); ?>
                         </div>
                     </li>
                 </ul>
-            <?php else: ?>
+                <?php else: ?>
                 <ul class="pf-reqs" role="list">
                     <li class="pf-reqs-item">
                         <div class="pf-reqs-notes">No special prerequisites needed.</div>
                     </li>
                 </ul>
-            <?php endif; ?>
+                <?php endif; ?>
         </div>
     </div>
     

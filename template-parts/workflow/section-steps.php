@@ -203,11 +203,11 @@ $cta_info = pf_get_access_cta($post_id);
                         </div>
                     <?php else: ?>
                         <!-- Full Step Content (only rendered if visible) -->
-                        <?php if (!empty($objective)): ?>
-                            <div class="pf-step-objective">
-                                <strong>Goal:</strong> <?php echo esc_html($objective); ?>
-                            </div>
-                        <?php endif; ?>
+                    <?php if (!empty($objective)): ?>
+                        <div class="pf-step-objective">
+                            <strong>Goal:</strong> <?php echo esc_html($objective); ?>
+                        </div>
+                    <?php endif; ?>
                     
                     <!-- Prompt Type -->
                     <?php if ($step_type === 'prompt' && !empty($prompt)): ?>
