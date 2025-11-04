@@ -115,11 +115,12 @@
 
 /* Feature list (green bead like landing) */
 .pf-features{ list-style:none; padding:0; margin:.4rem 0 0; display:grid; gap:.5rem; }
-.pf-features li{ display:flex; align-items:center; gap:.55rem; color:var(--pf-text); }
+.pf-features li{ display:flex; align-items:flex-start; gap:.55rem; color:var(--pf-text); }
 .pf-features .dot{
   width:10px; height:10px; border-radius:999px; display:inline-block;
   background:linear-gradient(180deg,#34d399,#10b981);
   box-shadow:0 0 0 2px rgba(16,185,129,.15);
+  margin-top:0.4rem;
 }
 
 /* CTA row sticks to bottom */
