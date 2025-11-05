@@ -320,19 +320,21 @@ function renderVarControl(container, level, key, def, ctx, onChange){
   ctrl.addEventListener('input', ()=>{
     const k = key;
     if (ctrl.type === 'checkbox') {
-      PF_FORM_STORE[k] = ctrl.checked ? '1' : '';
+      PF_FORM_STORE[k] = ctrl.checked ? '1' : '0';
     } else {
       PF_FORM_STORE[k] = ctrl.value;
     }
+    markDirty();
     if (typeof onChange === 'function') onChange();
   });
   ctrl.addEventListener('change', ()=>{
     const k = key;
     if (ctrl.type === 'checkbox') {
-      PF_FORM_STORE[k] = ctrl.checked ? '1' : '';
+      PF_FORM_STORE[k] = ctrl.checked ? '1' : '0';
     } else {
       PF_FORM_STORE[k] = ctrl.value;
     }
+    markDirty();
     if (typeof onChange === 'function') onChange();
   });
 
@@ -394,6 +396,12 @@ boot = function(){
       const stepMap = buildStepMap(stepRows);
       const ctx = { stepMap, workflowMap, allowProfile };
       renderStep(section, ctx);
+      const bar = section.querySelector('.pf-step-toolbar');
+      const statusEl = bar ? bar.querySelector('[data-step-status]') : null;
+      if (statusEl) {
+        const s = computeStatus(stepMap, workflowMap, allowProfile);
+        renderStatus(statusEl, s);
+      }
     });
   };
   renderWorkflowForm(wfForm, workflowMap, { stepMap: {}, workflowMap, allowProfile: true }, rerenderAll);
@@ -414,16 +422,335 @@ boot = function(){
 };
 
 
+// ====== VALIDATION & UX POLISH =============================================
+
+
+// Namespacing for localStorage
+function getStorageKey(){
+  const root = document.querySelector('[data-wf-root]');
+  if (!root) return 'pf:vars';
+  const wfId = root.getAttribute('data-wf-id') || 'wf';
+  const uid  = root.getAttribute('data-user-uid') || 'anon';
+  return `pf:vars:${wfId}:${uid}`;
+}
+
+
+// Load/save PF_FORM_STORE
+function loadDraft(){
+  try {
+    const raw = localStorage.getItem(getStorageKey());
+    if (!raw) return;
+    const obj = JSON.parse(raw);
+    if (obj && typeof obj === 'object'){
+      Object.assign(PF_FORM_STORE, obj);
+    }
+  } catch(e){}
+}
+function saveDraft(){
+  try {
+    localStorage.setItem(getStorageKey(), JSON.stringify(PF_FORM_STORE));
+  } catch(e){}
+}
+
+
+// Simple validators
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
+const URL_RE   = /^(https?:\/\/|\/)[^\s]+$/i;
+
+
+function validateValueByType(type, val){
+  const v = String(val ?? '').trim();
+  if (v === '') return { ok: true };
+  switch ((type||'text').toLowerCase()){
+    case 'email':  return { ok: EMAIL_RE.test(v), msg: 'Invalid email format' };
+    case 'url':    return { ok: URL_RE.test(v),   msg: 'Invalid URL (use http(s):// or /)' };
+    case 'number': return { ok: !isNaN(Number(v)), msg: 'Must be a number' };
+    case 'boolean': return { ok: v === '1' || v === '0' || v === '' };
+    default: return { ok: true };
+  }
+}
+
+
+function isResolved(val){ return val !== undefined && val !== null && String(val) !== '' && !/^\{.+\}$/.test(String(val)); }
+
+
+// Compute per-step status
+function computeStatus(stepMap, workflowMap, allowProfile){
+  // Collect keys from step first (local tunables), then include workflow keys
+  const keys = Array.from(new Set([...Object.keys(stepMap), ...Object.keys(workflowMap)]));
+  let filled = 0, totalReq = 0, errors = [];
+
+  keys.forEach(k=>{
+    // Resolve without rendering to check requirement + type
+    const r = resolveKey(k, { stepMap, workflowMap, allowProfile });
+    const def = stepMap[k] || workflowMap[k] || {};
+    const required = !!def.required;
+    const type = def.type || 'text';
+
+    const val = isResolved(r.value) ? r.value : '';
+    const check = validateValueByType(type, val);
+
+    if (required) {
+      totalReq++;
+      if (val === '') {
+        errors.push({key:k, msg:'Required'});
+      }
+    }
+    if (!check.ok) {
+      errors.push({key:k, msg:check.msg});
+    }
+    if (val !== '') filled++;
+  });
+
+  return { filled, totalReq, errors };
+}
+
+
+// Render status bar inside a step (or workflow header)
+function renderStatus(container, status){
+  if (!container) return;
+  container.innerHTML = '';
+  const info = document.createElement('div');
+  info.className = 'pf-status-info';
+  info.textContent = `Filled: ${status.filled} • Required: ${status.totalReq} • Errors: ${status.errors.length}`;
+  container.appendChild(info);
+
+  if (status.errors.length){
+    const list = document.createElement('ul');
+    list.className = 'pf-status-errors';
+    status.errors.slice(0,5).forEach(e=>{
+      const li = document.createElement('li');
+      li.textContent = `${e.key}: ${e.msg}`;
+      list.appendChild(li);
+    });
+    container.appendChild(list);
+  }
+}
+
+
+// Copy helper
+async function copyToClipboard(text){
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch(e){
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(e2){}
+    document.body.removeChild(ta);
+    return true;
+  }
+}
+
+
+// Attach toolbar to a step
+function ensureStepToolbar(sectionEl){
+  let bar = sectionEl.querySelector('.pf-step-toolbar');
+  if (!bar){
+    bar = document.createElement('div');
+    bar.className = 'pf-step-toolbar';
+    bar.innerHTML = `
+      <div class="pf-step-status" data-step-status></div>
+      <div class="pf-step-actions">
+        <button type="button" class="pf-btn pf-btn-copy" data-action="copy">Copy Prompt</button>
+        <button type="button" class="pf-btn pf-btn-reset" data-action="reset-step">Reset Step</button>
+      </div>
+    `;
+    sectionEl.insertBefore(bar, sectionEl.querySelector('[data-prompt-template]'));
+  }
+  return bar;
+}
+
+
+// Attach workflow toolbar
+function ensureWorkflowToolbar(){
+  const root = document.querySelector('[data-wf-root]');
+  if (!root) return null;
+  let bar = root.querySelector('.pf-wf-toolbar');
+  if (!bar){
+    bar = document.createElement('div');
+    bar.className = 'pf-wf-toolbar';
+    bar.innerHTML = `
+      <div class="pf-wf-actions">
+        <button type="button" class="pf-btn pf-btn-reset" data-action="reset-wf">Reset Workflow Vars</button>
+        <button type="button" class="pf-btn pf-btn-clear" data-action="clear-draft">Clear Draft</button>
+      </div>
+    `;
+    const wfForm = root.querySelector('[data-wf-form]');
+    if (wfForm && wfForm.parentNode === root){
+      root.insertBefore(bar, wfForm.nextSibling);
+    } else {
+      const firstStep = root.querySelector('[data-pf-step]');
+      if (firstStep && firstStep.parentNode){
+        firstStep.parentNode.insertBefore(bar, firstStep);
+      } else {
+        root.appendChild(bar);
+      }
+    }
+  }
+  return bar;
+}
+
+
+// Reset helpers
+function resetStep(sectionEl){
+  sectionEl.querySelectorAll('[data-step-vars-ui] [data-var-name]').forEach(inp=>{
+    const k = inp.getAttribute('data-var-name');
+    if (inp.type === 'checkbox') {
+      inp.checked = false;
+      PF_FORM_STORE[k] = '';
+    } else {
+      inp.value = '';
+      PF_FORM_STORE[k] = '';
+    }
+  });
+  markDirty();
+}
+function resetWorkflowVars(){
+  const wrap = document.querySelector('[data-wf-form]');
+  if (!wrap) return;
+  wrap.querySelectorAll('[data-var-name]').forEach(inp=>{
+    const k = inp.getAttribute('data-var-name');
+    if (inp.type === 'checkbox') {
+      inp.checked = false;
+      PF_FORM_STORE[k] = '';
+    } else {
+      inp.value = '';
+      PF_FORM_STORE[k] = '';
+    }
+  });
+  markDirty();
+}
+
+
+// Dirty state
+let DIRTY = false;
+function markDirty(){ DIRTY = true; saveDraft(); }
+window.addEventListener('beforeunload', function(e){
+  if (DIRTY){
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+
+// Hook existing inputs to mark dirty
+(function hookDirty(){
+  document.addEventListener('input', function(e){
+    const t = e.target;
+    if (t && t.matches('[data-var-name], [data-prompt-template]')) markDirty();
+  }, true);
+})();
+
+
+// Integrate with boot(): autosave load, toolbars, status updating
+const _boot5_prev = boot;
+
+boot = function(){
+  // Ensure root dataset (workflow id, user uid) via PHP attributes
+  const root = document.querySelector('[data-wf-root]');
+  loadDraft(); // load local draft early (fills PF_FORM_STORE)
+
+  _boot5_prev(); // previous initialization renders everything
+
+  // Workflow toolbar
+  const wfBar = ensureWorkflowToolbar();
+  if (wfBar && !wfBar.dataset.bound){
+    wfBar.dataset.bound = '1';
+    wfBar.addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.getAttribute('data-action');
+      if (action === 'reset-wf'){
+        resetWorkflowVars();
+        // Re-render all steps
+        if (window.PF_RenderAll) window.PF_RenderAll();
+      } else if (action === 'clear-draft'){
+        localStorage.removeItem(getStorageKey());
+        location.reload();
+      }
+    });
+  }
+
+  // Per-step toolbars + status
+  document.querySelectorAll('[data-pf-step]').forEach(section=>{
+    const wfEl = document.querySelector('[data-wf-vars]');
+    let wfRows = [];
+    try { wfRows = JSON.parse(wfEl ? wfEl.getAttribute('data-wf-vars') : '[]'); } catch(e){ wfRows = []; }
+    const workflowMap = buildWorkflowMap(wfRows);
+
+    const stepVarsJson = section.getAttribute('data-step-vars') || '[]';
+    let stepRows = [];
+    try { stepRows = JSON.parse(stepVarsJson); } catch(e){ stepRows = []; }
+    const allowProfile = (section.getAttribute('data-uses-global-vars') === '1' || section.getAttribute('data-uses-global-vars') === 'true');
+    const stepMap = buildStepMap(stepRows);
+    const ctx = { stepMap, workflowMap, allowProfile };
+
+    const bar = ensureStepToolbar(section);
+    const statusEl = bar.querySelector('[data-step-status]');
+    const promptEl = section.querySelector('[data-prompt-template]');
+
+    function updateStatus(){
+      const s = computeStatus(stepMap, workflowMap, allowProfile);
+      renderStatus(statusEl, s);
+    }
+    updateStatus();
+
+    // Wiring: copy + reset
+    if (!bar.dataset.bound){
+      bar.dataset.bound = '1';
+      bar.addEventListener('click', async (e)=>{
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.getAttribute('data-action');
+      if (action === 'copy'){
+        const text = (promptEl && (promptEl.value || promptEl.textContent)) || '';
+        await copyToClipboard(text);
+        btn.classList.add('pf-success');
+        setTimeout(()=>btn.classList.remove('pf-success'), 1200);
+      } else if (action === 'reset-step'){
+        resetStep(section);
+        renderStep(section, ctx);
+        updateStatus();
+      }
+      });
+    }
+
+    // Recompute status on input changes
+    if (!section.dataset.boundInputs){
+      section.dataset.boundInputs = '1';
+      section.addEventListener('input', (e)=>{
+        if (e.target && e.target.matches('[data-var-name]')){
+          updateStatus();
+          markDirty();
+        }
+      });
+      section.addEventListener('change', (e)=>{
+        if (e.target && e.target.matches('[data-var-name]')){
+          updateStatus();
+          markDirty();
+        }
+      });
+    }
+  });
+
+  // Save draft after initial render (to store defaults resolved by profile)
+  saveDraft();
+};
+
+
+window.PF_RenderAll = boot;
+window.PF_FORM_STORE = PF_FORM_STORE;
+
 // Re-run with new boot
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);
 } else {
   boot();
 }
-
-// expose for debugging
-window.PF_RenderAll = boot;
-window.PF_FORM_STORE = PF_FORM_STORE;
 
 })();
 

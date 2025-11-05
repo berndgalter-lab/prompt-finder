@@ -40,14 +40,20 @@ $workflow_vars_json = wp_json_encode($workflow_vars, JSON_UNESCAPED_UNICODE | JS
 if (!is_string($workflow_vars_json)) {
     $workflow_vars_json = '[]';
 }
+$user_uid = '';
+if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
+    $user_uid = PF_UserUidMap::userUidFromWpId(get_current_user_id());
+}
 ?>
 
-<section id="steps" class="pf-section pf-section--steps" 
-         data-mode="<?php echo esc_attr($access_mode); ?>"
-         data-total-steps="<?php echo esc_attr($total_steps); ?>"
-         data-visible-steps="<?php echo esc_attr($visible_steps); ?>">
-    <div class="pf-wf-vars" data-wf-vars="<?php echo esc_attr($workflow_vars_json); ?>" hidden></div>
+<div class="pf-wf-root" data-wf-root data-wf-id="<?php echo esc_attr($post_id); ?>" data-user-uid="<?php echo esc_attr($user_uid); ?>">
+    <div class="pf-wf-vars" data-wf-vars="<?php echo esc_attr($workflow_vars_json); ?>"></div>
     <div class="pf-wf-form" data-wf-form></div>
+
+    <section id="steps" class="pf-section pf-section--steps" 
+             data-mode="<?php echo esc_attr($access_mode); ?>"
+             data-total-steps="<?php echo esc_attr($total_steps); ?>"
+             data-visible-steps="<?php echo esc_attr($visible_steps); ?>">
     
     <!-- Section Heading -->
     <h2 class="pf-section-heading">Workflow Steps</h2>
@@ -330,4 +336,5 @@ if (!is_string($workflow_vars_json)) {
         <?php endforeach; ?>
     </ol>
     
-</section>
+    </section>
+</div>

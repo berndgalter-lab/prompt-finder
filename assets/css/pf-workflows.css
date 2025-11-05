@@ -2404,6 +2404,19 @@ html, body {
     border-left: 4px solid #ffc107;
 }
 
+.pf-wf-toolbar, .pf-step-toolbar { display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin:.75rem 0; }
+.pf-wf-actions, .pf-step-actions { display:flex; gap:.5rem; }
+.pf-btn { padding:.4rem .6rem; border:1px solid #ddd; border-radius:6px; background:#fafafa; cursor:pointer; }
+.pf-btn:hover { background:#f2f2f2; }
+.pf-btn.pf-success { background:#e7f8ec; border-color:#9dd8ae; }
+.pf-status-info { font-size:.9rem; opacity:.85; }
+.pf-status-errors { margin:.25rem 0 0; padding-left:1rem; color:#b10000; font-size:.85rem; }
+.pf-var { margin:.5rem 0; }
+.pf-var-label { display:inline-block; font-weight:600; margin-bottom:.25rem; }
+.pf-var-required { color:#b10000; }
+.pf-var-hint { font-size:.85rem; opacity:.75; margin-top:.15rem; }
+.pf-step textarea.pf-prompt { width:100%; min-height:120px; }
+
 /* ========== PRINT STYLES ========== */
 @media print {
     .pf-mode-toggle,
