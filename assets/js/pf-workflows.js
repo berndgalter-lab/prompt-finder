@@ -17,7 +17,7 @@
   const PF_USER_VARS = (typeof window.PF_USER_VARS === 'object' && window.PF_USER_VARS) ? window.PF_USER_VARS : {};
 
   // Unified live store for user-typed values across workflow+steps
-  const PF_FORM_STORE = window.PF_VARS || {};
+  const PF_FORM_STORE = window.PF_FORM_STORE || {};
 
   // --- Helpers ---------------------------------------------------------------
 
@@ -201,15 +201,229 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
+// === UI helpers (append below existing code in pf-workflows.js) =============
+
+
+function coerceBool(v){
+  const s = String(v ?? '').trim().toLowerCase();
+  return s === '1' || s === 'true' || s === 'yes' || s === 'on' || s === 'y';
+}
+
+
+/**
+ * Render a single control for a variable.
+ * - container: element to append into
+ * - level: 'workflow' | 'step'
+ * - key: normalized key
+ * - def: map entry (from buildWorkflowMap/buildStepMap)
+ * - ctx: { stepMap, workflowMap, allowProfile }
+ * - onChange: callback to call after store update (re-renderer)
+ */
+function renderVarControl(container, level, key, def, ctx, onChange){
+  const wrap = document.createElement('div');
+  wrap.className = `pf-var pf-var-${level} pf-var-${def.type || 'text'}`;
+
+  const label = document.createElement('label');
+  label.className = 'pf-var-label';
+  label.htmlFor = `${level}-${key}`;
+  label.textContent = def.label || key;
+
+  if (def.required) {
+    const star = document.createElement('span');
+    star.className = 'pf-var-required';
+    star.textContent = ' *';
+    label.appendChild(star);
   }
 
-  // expose for debugging
-  window.PF_RenderAll = boot;
-  window.PF_FORM_STORE = PF_FORM_STORE;
+  let ctrl;
+  const id = `${level}-${key}`;
+  const initResolved = resolveKey(key, ctx);
+  const initialValue = initResolved.resolved ? initResolved.value : '';
+
+  const placeholder = def.placeholder || '';
+
+  switch ((def.type || 'text').toLowerCase()) {
+    case 'textarea': {
+      ctrl = document.createElement('textarea');
+      ctrl.rows = 3;
+      ctrl.value = initialValue;
+      if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+      break;
+    }
+    case 'number': {
+      ctrl = document.createElement('input');
+      ctrl.type = 'number';
+      if (initialValue !== '') ctrl.value = initialValue;
+      if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+      break;
+    }
+    case 'email': {
+      ctrl = document.createElement('input');
+      ctrl.type = 'email';
+      if (initialValue !== '') ctrl.value = initialValue;
+      if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+      break;
+    }
+    case 'url': {
+      ctrl = document.createElement('input');
+      ctrl.type = 'url';
+      if (initialValue !== '') ctrl.value = initialValue;
+      if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+      break;
+    }
+    case 'select': {
+      ctrl = document.createElement('select');
+      // empty option (let placeholder remain until user chooses)
+      const emptyOpt = document.createElement('option');
+      emptyOpt.value = '';
+      emptyOpt.textContent = placeholder || '— select —';
+      ctrl.appendChild(emptyOpt);
+      (def.options || []).forEach(o=>{
+        const opt = document.createElement('option');
+        opt.value = String(o.value);
+        opt.textContent = String(o.label ?? o.value);
+        ctrl.appendChild(opt);
+      });
+      if (initialValue !== '') ctrl.value = initialValue;
+      break;
+    }
+    case 'boolean': {
+      ctrl = document.createElement('input');
+      ctrl.type = 'checkbox';
+      ctrl.checked = coerceBool(initialValue);
+      break;
+    }
+    default: { // text
+      ctrl = document.createElement('input');
+      ctrl.type = 'text';
+      if (initialValue !== '') ctrl.value = initialValue;
+      if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+    }
+  }
+
+  ctrl.id = id;
+  ctrl.setAttribute('data-var-name', key);
+
+  if (def.required && ctrl.tagName !== 'INPUT' || (ctrl.tagName === 'INPUT' && ctrl.type !== 'checkbox')) {
+    ctrl.required = true;
+  }
+
+  const hint = document.createElement('div');
+  hint.className = 'pf-var-hint';
+  if (def.description) {
+    hint.textContent = def.description;
+  } else if (def.hint) {
+    hint.textContent = def.hint;
+  }
+
+  // Bind changes to store + re-render
+  ctrl.addEventListener('input', ()=>{
+    const k = key;
+    if (ctrl.type === 'checkbox') {
+      PF_FORM_STORE[k] = ctrl.checked ? '1' : '';
+    } else {
+      PF_FORM_STORE[k] = ctrl.value;
+    }
+    if (typeof onChange === 'function') onChange();
+  });
+  ctrl.addEventListener('change', ()=>{
+    const k = key;
+    if (ctrl.type === 'checkbox') {
+      PF_FORM_STORE[k] = ctrl.checked ? '1' : '';
+    } else {
+      PF_FORM_STORE[k] = ctrl.value;
+    }
+    if (typeof onChange === 'function') onChange();
+  });
+
+  wrap.appendChild(label);
+  wrap.appendChild(ctrl);
+  if ((def.description && def.description.trim()) || (def.hint && def.hint.trim())) {
+    wrap.appendChild(hint);
+  }
+  container.appendChild(wrap);
+}
+
+
+/**
+ * Render the workflow-level form (affects all steps).
+ * Expects a container with [data-wf-form].
+ */
+function renderWorkflowForm(containerEl, workflowMap, ctx, rerenderAllSteps){
+  if (!containerEl) return;
+  containerEl.innerHTML = '';
+  Object.keys(workflowMap).forEach(k=>{
+    renderVarControl(containerEl, 'workflow', k, workflowMap[k], ctx, rerenderAllSteps);
+  });
+}
+
+
+/**
+ * Render step-level variable controls inside a step section.
+ * Expects a child container [data-step-vars-ui].
+ */
+function renderStepForm(sectionEl, stepMap, ctx){
+  const target = sectionEl.querySelector('[data-step-vars-ui]');
+  if (!target) return;
+  target.innerHTML = '';
+  Object.keys(stepMap).forEach(k=>{
+    renderVarControl(target, 'step', k, stepMap[k], ctx, ()=>renderStep(sectionEl, ctx));
+  });
+}
+
+
+// === integrate into boot() (replace the end of boot with this) ==============
+
+const _orig_boot = boot;
+
+boot = function(){
+  const wfEl = document.querySelector('[data-wf-vars]');
+  const wfVarsJson = wfEl ? wfEl.getAttribute('data-wf-vars') : '[]';
+  let wfRows = [];
+  try { wfRows = JSON.parse(wfVarsJson || '[]'); } catch(e){ wfRows = []; }
+  const workflowMap = buildWorkflowMap(wfRows);
+
+  // render workflow-level form if present
+  const wfForm = document.querySelector('[data-wf-form]');
+  const rerenderAll = ()=> {
+    document.querySelectorAll('[data-pf-step]').forEach(section=>{
+      const stepVarsJson = section.getAttribute('data-step-vars') || '[]';
+      let stepRows = [];
+      try { stepRows = JSON.parse(stepVarsJson); } catch(e){ stepRows = []; }
+      const allowProfile = (section.getAttribute('data-uses-global-vars') === '1' || section.getAttribute('data-uses-global-vars') === 'true');
+      const stepMap = buildStepMap(stepRows);
+      const ctx = { stepMap, workflowMap, allowProfile };
+      renderStep(section, ctx);
+    });
+  };
+  renderWorkflowForm(wfForm, workflowMap, { stepMap: {}, workflowMap, allowProfile: true }, rerenderAll);
+
+  // Boot each step: render controls + initial render
+  document.querySelectorAll('[data-pf-step]').forEach(section=>{
+    const stepVarsJson = section.getAttribute('data-step-vars') || '[]';
+    let stepRows = [];
+    try { stepRows = JSON.parse(stepVarsJson); } catch(e){ stepRows = []; }
+    const allowProfile = (section.getAttribute('data-uses-global-vars') === '1' || section.getAttribute('data-uses-global-vars') === 'true');
+    const stepMap = buildStepMap(stepRows);
+    const ctx = { stepMap, workflowMap, allowProfile };
+
+    renderStepForm(section, stepMap, ctx);
+    bindStep(section, ctx); // keeps manual binds for any pre-existing inputs
+    renderStep(section, ctx);
+  });
+};
+
+
+// Re-run with new boot
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
+
+// expose for debugging
+window.PF_RenderAll = boot;
+window.PF_FORM_STORE = PF_FORM_STORE;
 
 })();
 

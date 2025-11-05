@@ -47,6 +47,7 @@ if (!is_string($workflow_vars_json)) {
          data-total-steps="<?php echo esc_attr($total_steps); ?>"
          data-visible-steps="<?php echo esc_attr($visible_steps); ?>">
     <div class="pf-wf-vars" data-wf-vars="<?php echo esc_attr($workflow_vars_json); ?>" hidden></div>
+    <div class="pf-wf-form" data-wf-form></div>
     
     <!-- Section Heading -->
     <h2 class="pf-section-heading">Workflow Steps</h2>
@@ -226,49 +227,7 @@ if (!is_string($workflow_vars_json)) {
                     <!-- Prompt Type -->
                     <?php if ($step_type === 'prompt' && !empty($prompt)): ?>
                         
-                        <?php if (!empty($variables_step)): ?>
-                            <div class="pf-step-variables-section">
-                                <h4>Step Variables</h4>
-                                <div class="pf-step-variables-list">
-                                    <?php foreach ($variables_step as $v): ?>
-                                        <?php
-                                        $var_name = isset($v['step_var_name']) ? trim($v['step_var_name']) : '';
-                                        $var_desc = isset($v['step_var_description']) ? trim($v['step_var_description']) : '';
-                                        $var_example = isset($v['step_var_example_value']) ? trim($v['step_var_example_value']) : '';
-                                        $var_required = !empty($v['step_var_required']);
-                                        
-                                        if (empty($var_name)) continue;
-                                        
-                                        $label = ucwords(str_replace(['_', '-'], ' ', $var_name));
-                                        $label = str_replace(['{', '}'], '', $label);
-                                        $placeholder = !empty($var_example) ? $var_example : (!empty($var_desc) ? $var_desc : 'Enter ' . strtolower($label));
-                                        ?>
-                                        <div class="pf-step-var-input-wrapper">
-                                            <label class="pf-step-var-label">
-                                                <?php echo esc_html($label); ?>
-                                                <?php if ($var_required): ?>
-                                                    <span class="pf-var-required">*</span>
-                                                <?php endif; ?>
-                                            </label>
-                                            
-                                            <?php if (!empty($var_desc)): ?>
-                                                <p class="pf-step-var-hint"><?php echo esc_html($var_desc); ?></p>
-                                            <?php endif; ?>
-                                            
-                                            <input 
-                                                type="text"
-                                                class="pf-step-var-input"
-                                                data-var-name="<?php echo esc_attr($var_name); ?>"
-                                                data-var-key="<?php echo esc_attr($var_name); ?>"
-                                                data-step-number="<?php echo esc_attr($step_number); ?>"
-                                                placeholder="<?php echo esc_attr($placeholder); ?>"
-                                                <?php if ($var_required): ?>required<?php endif; ?>
-                                            />
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        <?php endif; ?>
+                        <div class="pf-step-variables-section" data-step-vars-ui></div>
                         
                         <div class="pf-prompt-container">
                             <div class="pf-prompt-header">
@@ -281,13 +240,11 @@ if (!is_string($workflow_vars_json)) {
                                     Copy
                                 </button>
                             </div>
-                            <div class="pf-prompt-text" 
-                                 data-prompt-id="<?php echo esc_attr($step_id); ?>"
-                                 data-original-text="<?php echo esc_attr($prompt); ?>"
-                                 data-prompt-template="true"
-                                 data-base="<?php echo esc_attr($prompt); ?>">
-                                <?php echo esc_html($prompt); ?>
-                            </div>
+                            <textarea class="pf-prompt-text pf-prompt"
+                                      data-prompt-id="<?php echo esc_attr($step_id); ?>"
+                                      data-original-text="<?php echo esc_attr($prompt); ?>"
+                                      data-prompt-template
+                                      data-base="<?php echo esc_attr($prompt); ?>"></textarea>
                         </div>
                         
                         <?php if (!empty($paste_guidance)): ?>
