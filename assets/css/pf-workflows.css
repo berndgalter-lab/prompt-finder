@@ -2416,6 +2416,12 @@ html, body {
 .pf-var-required { color:#b10000; }
 .pf-var-hint { font-size:.85rem; opacity:.75; margin-top:.15rem; }
 .pf-step textarea.pf-prompt { width:100%; min-height:120px; }
+.pf-wf-presets { margin:.5rem 0 .75rem; }
+.pf-wf-presets-row { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
+.pf-wf-presets .pf-preset-name { padding:.35rem .5rem; border:1px solid #ddd; border-radius:6px; min-width:180px; }
+.pf-wf-presets .pf-preset-select { padding:.35rem .5rem; border:1px solid #ddd; border-radius:6px; min-width:180px; }
+.pf-btn-file { position:relative; overflow:hidden; }
+.pf-btn-file input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
 
 /* ========== PRINT STYLES ========== */
 @media print {

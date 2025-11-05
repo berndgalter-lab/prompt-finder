@@ -745,6 +745,152 @@ boot = function(){
 window.PF_RenderAll = boot;
 window.PF_FORM_STORE = PF_FORM_STORE;
 
+// ====== PRESETS (localStorage) =============================================
+
+function getPresetsKey(){
+  const root = document.querySelector('[data-wf-root]');
+  if (!root) return 'pf:presets';
+  const wfId = root.getAttribute('data-wf-id') || 'wf';
+  const uid  = root.getAttribute('data-user-uid') || 'anon';
+  return `pf:presets:${wfId}:${uid}`;
+}
+function loadPresets(){
+  try { return JSON.parse(localStorage.getItem(getPresetsKey())||'{}') || {}; } catch(e){ return {}; }
+}
+function savePresets(presets){
+  try { localStorage.setItem(getPresetsKey(), JSON.stringify(presets)); } catch(e){}
+}
+function listPresetNames(){
+  return Object.keys(loadPresets()).sort((a,b)=>a.localeCompare(b, undefined, {numeric:true}));
+}
+function savePreset(name){
+  if (!name || !name.trim()) return false;
+  const presets = loadPresets();
+  presets[name] = { ts: Date.now(), data: {...PF_FORM_STORE} };
+  savePresets(presets);
+  return true;
+}
+function loadPreset(name){
+  const presets = loadPresets();
+  const p = presets[name];
+  if (!p) return false;
+  Object.keys(PF_FORM_STORE).forEach(k=>delete PF_FORM_STORE[k]);
+  Object.assign(PF_FORM_STORE, p.data || {});
+  markDirty();
+  return true;
+}
+function deletePreset(name){
+  const presets = loadPresets();
+  if (!(name in presets)) return false;
+  delete presets[name];
+  savePresets(presets);
+  return true;
+}
+function exportPresets(){
+  const data = JSON.stringify(loadPresets(), null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'pf-variable-presets.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function importPresets(file, cb){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      const isObj = parsed && typeof parsed === 'object' && !Array.isArray(parsed);
+      if (isObj) {
+        const current = loadPresets();
+        savePresets({...current, ...parsed});
+        if (typeof cb === 'function') cb(true);
+      } else { if (typeof cb === 'function') cb(false); }
+    } catch(e){ if (typeof cb === 'function') cb(false); }
+  };
+  reader.readAsText(file);
+}
+
+const _ensureWorkflowToolbar_prev = ensureWorkflowToolbar;
+ensureWorkflowToolbar = function(){
+  const bar = _ensureWorkflowToolbar_prev();
+  if (!bar) return bar;
+
+  if (!bar.querySelector('.pf-wf-presets')){
+    const box = document.createElement('div');
+    box.className = 'pf-wf-presets';
+    box.innerHTML = `
+      <div class="pf-wf-presets-row">
+        <input type="text" class="pf-preset-name" placeholder="Preset name…" />
+        <button type="button" class="pf-btn" data-action="preset-save">Save</button>
+        <select class="pf-preset-select"><option value="">Load preset…</option></select>
+        <button type="button" class="pf-btn" data-action="preset-delete" disabled>Delete</button>
+        <button type="button" class="pf-btn" data-action="preset-export">Export</button>
+        <label class="pf-btn pf-btn-file">
+          Import<input type="file" class="pf-preset-import" accept="application/json" hidden />
+        </label>
+      </div>
+    `;
+    bar.appendChild(box);
+
+    const nameInp = box.querySelector('.pf-preset-name');
+    const select  = box.querySelector('.pf-preset-select');
+    const delBtn  = box.querySelector('[data-action="preset-delete"]');
+    const fileInp = box.querySelector('.pf-preset-import');
+
+    function refreshList(){
+      const names = listPresetNames();
+      const current = select.value;
+      select.innerHTML = `<option value="">Load preset…</option>`;
+      names.forEach(n=>{
+        const opt = document.createElement('option');
+        opt.value = n; opt.textContent = n;
+        select.appendChild(opt);
+      });
+      if (names.includes(current)) select.value = current;
+      delBtn.disabled = !select.value;
+    }
+    refreshList();
+
+    box.addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.getAttribute('data-action');
+
+      if (action === 'preset-save'){
+        const ok = savePreset(nameInp.value.trim());
+        if (ok){ refreshList(); btn.classList.add('pf-success'); setTimeout(()=>btn.classList.remove('pf-success'), 1000); }
+      } else if (action === 'preset-delete'){
+        if (!select.value) return;
+        const ok = deletePreset(select.value);
+        if (ok){ refreshList(); }
+      } else if (action === 'preset-export'){
+        exportPresets();
+      }
+    });
+
+    select.addEventListener('change', ()=>{
+      delBtn.disabled = !select.value;
+      if (!select.value) return;
+      if (loadPreset(select.value)) {
+        if (window.PF_RenderAll) window.PF_RenderAll();
+      }
+    });
+
+    fileInp.addEventListener('change', ()=>{
+      const f = fileInp.files && fileInp.files[0];
+      if (!f) return;
+      importPresets(f, ok=>{
+        if (ok){ refreshList(); fileInp.value=''; }
+      });
+    });
+  }
+  return bar;
+};
+
 // Re-run with new boot
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);
