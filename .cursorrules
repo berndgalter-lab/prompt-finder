@@ -1,0 +1,71 @@
+# Prompt Finder — Variables v1 (Project Rules)
+
+## Resolution order
+
+Step > Workflow > Global (Profile) > Default (ACF) > Fallback (in prompt)
+
+## Syntax
+
+- Use `{key}` and `{key|fallback}` placeholders.
+- Leave placeholders visible if unresolved (only replace when a value exists).
+- Support `injection_mode`: `conditional` (default), `direct`.
+
+## Naming
+
+- snake_case, ASCII, ≤ 32 chars. Never rename existing keys once published.
+
+## Reserved
+
+- Prefixes: `sys_` (system), `run_` (session)
+- Keys v1: `sys_today`, `sys_now`, `sys_user_timezone`, `run_previous_output`
+
+## ACF fields (wire these EXACT names)
+
+### Workflow repeater: `variables_workflow` (per row)
+
+- `workflow_var_key` (string)
+- `workflow_var_label` (string)
+- `workflow_var_placeholder` (string)
+- `workflow_var_required` (bool)
+- `workflow_var_default_value` (string)
+- `workflow_var_type` (select: text, textarea, number, email, url, select, boolean)
+- `workflow_var_options_json` (textarea; only if type=select; JSON array/map)
+- `workflow_var_profile_key` (string; optional alias to global)
+- `workflow_var_prefer_system` (bool)
+- `workflow_var_hint` (textarea)
+- `workflow_var_injection_mode` (select: conditional [default], direct)
+
+### Step repeater: `variables_step` (per row)
+
+- `step_var_name` (string)
+- `step_var_label` (string)
+- `step_var_placeholder` (string)
+- `step_var_description` (textarea)
+- `step_var_default` (string)
+- `step_var_example_value` (string)
+- `step_var_required` (bool)
+- `step_var_type` (select: text, textarea, number, email, url, select, boolean)
+- `step_var_options_json` (textarea; only if type=select; JSON array/map)
+- `step_var_hint` (textarea)
+- `step_var_profile_key` (string; optional alias to global)
+- `step_var_prefer_system` (bool)
+
+### Workflow toggle
+
+- `use_profile_defaults` (bool; UI label: “Use Global Variables (Profile Defaults)”)
+
+## Do NOT
+
+- Do not read usermeta directly (no raw get_user_meta). Always use the repository interface (`PF_UserVarsStore`).
+- Do not hide unresolved placeholders; they must remain `{key}` unless a fallback is provided.
+
+## Acceptance criteria
+
+1) Unresolved values remain `{key}`; `{key|fallback}` yields `fallback` only if unresolved.
+2) Priority is enforced: Step > Workflow > Global > Default > Fallback.
+3) With `use_profile_defaults=off`, no global values are localized to the frontend.
+4) With `use_profile_defaults=on`, same-name keys prefill from Global; alias via `*_profile_key` works.
+5) `*_prefer_system` pushes system values (e.g., `sys_today`) before workflow/global (after Step).
+6) Default `workflow_var_injection_mode` = `conditional`.
+
+

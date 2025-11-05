@@ -1320,3 +1320,7 @@ add_action('wp_head', function () {
     echo "\n" . '<meta property="og:site_name" content="' . esc_attr($site_name) . '">' . "\n";
 }, 99);
 
+// Prompt Finder autoload + variables localize bootstrap
+require_once __DIR__ . '/app/bootstrap/pf-autoload.php';
+require_once __DIR__ . '/app/bootstrap/pf-variables-localize.php';
+
