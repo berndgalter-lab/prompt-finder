@@ -35,12 +35,18 @@ $visible_steps = pf_visible_steps_count($post_id, $total_steps);
 $access_mode = pf_workflow_mode($post_id);
 $can_view_all = pf_can_view_all($post_id);
 $cta_info = pf_get_access_cta($post_id);
+$workflow_vars = get_field('variables_workflow', $post_id) ?: [];
+$workflow_vars_json = wp_json_encode($workflow_vars, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+if (!is_string($workflow_vars_json)) {
+    $workflow_vars_json = '[]';
+}
 ?>
 
 <section id="steps" class="pf-section pf-section--steps" 
          data-mode="<?php echo esc_attr($access_mode); ?>"
          data-total-steps="<?php echo esc_attr($total_steps); ?>"
          data-visible-steps="<?php echo esc_attr($visible_steps); ?>">
+    <div class="pf-wf-vars" data-wf-vars="<?php echo esc_attr($workflow_vars_json); ?>" hidden></div>
     
     <!-- Section Heading -->
     <h2 class="pf-section-heading">Workflow Steps</h2>
@@ -77,6 +83,7 @@ $cta_info = pf_get_access_cta($post_id);
             $step_body = isset($step['step_body']) ? trim($step['step_body']) : '';
             $review_hint = isset($step['review_hint']) ? trim($step['review_hint']) : '';
             $uses_global_vars = !empty($step['uses_global_vars']);
+            $uses_global_numeric = isset($step['uses_global_vars']) ? (int) !!$step['uses_global_vars'] : 1;
             $consumes_previous_output = !empty($step['consumes_previous_output']);
             $paste_guidance = isset($step['paste_guidance']) ? trim($step['paste_guidance']) : '';
             $example_output = isset($step['example_output']) ? trim($step['example_output']) : '';
@@ -95,6 +102,10 @@ $cta_info = pf_get_access_cta($post_id);
                     ];
                 }
                 $variables_step = $mapped_step_vars;
+            }
+            $step_vars_json = wp_json_encode($variables_step, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            if (!is_string($step_vars_json)) {
+                $step_vars_json = '[]';
             }
             
             // Get step checklist if review type
@@ -119,6 +130,9 @@ $cta_info = pf_get_access_cta($post_id);
                 data-step-number="<?php echo esc_attr($step_number); ?>"
                 data-step-type="<?php echo esc_attr($step_type); ?>"
                 data-step-id="<?php echo esc_attr($step_id); ?>"
+                data-pf-step
+                data-step-vars="<?php echo esc_attr($step_vars_json); ?>"
+                data-uses-global-vars="<?php echo esc_attr($uses_global_numeric); ?>"
                 <?php if ($step_is_locked): ?>
                 aria-disabled="true"
                 role="region"
@@ -244,6 +258,7 @@ $cta_info = pf_get_access_cta($post_id);
                                             <input 
                                                 type="text"
                                                 class="pf-step-var-input"
+                                                data-var-name="<?php echo esc_attr($var_name); ?>"
                                                 data-var-key="<?php echo esc_attr($var_name); ?>"
                                                 data-step-number="<?php echo esc_attr($step_number); ?>"
                                                 placeholder="<?php echo esc_attr($placeholder); ?>"
@@ -268,7 +283,9 @@ $cta_info = pf_get_access_cta($post_id);
                             </div>
                             <div class="pf-prompt-text" 
                                  data-prompt-id="<?php echo esc_attr($step_id); ?>"
-                                 data-original-text="<?php echo esc_attr($prompt); ?>">
+                                 data-original-text="<?php echo esc_attr($prompt); ?>"
+                                 data-prompt-template="true"
+                                 data-base="<?php echo esc_attr($prompt); ?>">
                                 <?php echo esc_html($prompt); ?>
                             </div>
                         </div>
