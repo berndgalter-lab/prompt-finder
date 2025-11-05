@@ -1205,6 +1205,16 @@ function dequeue_old_workflow_assets() {
 }
 add_action('wp_enqueue_scripts', 'dequeue_old_workflow_assets', 100); // Priority 100 to run after all enqueues
 
+add_action('wp_enqueue_scripts', function(){
+    if (!is_singular('workflows')) {
+        return;
+    }
+    wp_localize_script('pf-workflows', 'PF_API', [
+        'base'  => esc_url_raw(rest_url('pf/v1/')),
+        'nonce' => wp_create_nonce('wp_rest'),
+    ]);
+}, 21);
+
 /* ========================================
    HEAD CLEANUP & FALLBACKS
    ======================================== */

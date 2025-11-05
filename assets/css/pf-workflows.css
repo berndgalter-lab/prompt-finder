@@ -2422,6 +2422,7 @@ html, body {
 .pf-wf-presets .pf-preset-select { padding:.35rem .5rem; border:1px solid #ddd; border-radius:6px; min-width:180px; }
 .pf-btn-file { position:relative; overflow:hidden; }
 .pf-btn-file input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.pf-wf-storage { font-size:.85rem; color:#4b5563; margin-right:auto; }
 
 /* ========== PRINT STYLES ========== */
 @media print {

@@ -853,43 +853,209 @@ ensureWorkflowToolbar = function(){
       if (names.includes(current)) select.value = current;
       delBtn.disabled = !select.value;
     }
-    refreshList();
+    if (!SERVER_PRESETS_AVAILABLE) {
+      refreshList();
 
-    box.addEventListener('click', (e)=>{
-      const btn = e.target.closest('[data-action]');
-      if (!btn) return;
-      const action = btn.getAttribute('data-action');
+      box.addEventListener('click', (e)=>{
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const action = btn.getAttribute('data-action');
 
-      if (action === 'preset-save'){
-        const ok = savePreset(nameInp.value.trim());
-        if (ok){ refreshList(); btn.classList.add('pf-success'); setTimeout(()=>btn.classList.remove('pf-success'), 1000); }
-      } else if (action === 'preset-delete'){
-        if (!select.value) return;
-        const ok = deletePreset(select.value);
-        if (ok){ refreshList(); }
-      } else if (action === 'preset-export'){
-        exportPresets();
-      }
-    });
-
-    select.addEventListener('change', ()=>{
-      delBtn.disabled = !select.value;
-      if (!select.value) return;
-      if (loadPreset(select.value)) {
-        if (window.PF_RenderAll) window.PF_RenderAll();
-      }
-    });
-
-    fileInp.addEventListener('change', ()=>{
-      const f = fileInp.files && fileInp.files[0];
-      if (!f) return;
-      importPresets(f, ok=>{
-        if (ok){ refreshList(); fileInp.value=''; }
+        if (action === 'preset-save'){
+          const ok = savePreset(nameInp.value.trim());
+          if (ok){ refreshList(); btn.classList.add('pf-success'); setTimeout(()=>btn.classList.remove('pf-success'), 1000); }
+        } else if (action === 'preset-delete'){
+          if (!select.value) return;
+          const ok = deletePreset(select.value);
+          if (ok){ refreshList(); }
+        } else if (action === 'preset-export'){
+          exportPresets();
+        }
       });
-    });
+
+      select.addEventListener('change', ()=>{
+        delBtn.disabled = !select.value;
+        if (!select.value) return;
+        if (loadPreset(select.value)) {
+          if (window.PF_RenderAll) window.PF_RenderAll();
+        }
+      });
+
+      fileInp.addEventListener('change', ()=>{
+        const f = fileInp.files && fileInp.files[0];
+        if (!f) return;
+        importPresets(f, ok=>{
+          if (ok){ refreshList(); fileInp.value=''; }
+        });
+      });
+    } else {
+      delBtn.disabled = true;
+    }
   }
   return bar;
 };
+
+const SERVER_PRESETS = (window.PF_FLAGS && (window.PF_FLAGS.server_presets === true || window.PF_FLAGS.server_presets === 'true'));
+const SERVER_PRESETS_AVAILABLE = !!(SERVER_PRESETS && window.PF_API && window.PF_API.base);
+
+async function apiFetch(method, path, body){
+  if (!window.PF_API || !PF_API.base) throw new Error('API not configured');
+  const res = await fetch(PF_API.base + path, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-WP-Nonce': PF_API.nonce || ''
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    credentials: 'same-origin'
+  });
+  if (!res.ok) {
+    const t = await res.text().catch(()=> '');
+    throw new Error(`API ${method} ${path} failed: ${res.status} ${t}`);
+  }
+  return res.json();
+}
+
+function getWorkflowId(){
+  const root = document.querySelector('[data-wf-root]');
+  return root ? parseInt(root.getAttribute('data-wf-id') || '0', 10) : 0;
+}
+
+async function serverListPresets(){ return apiFetch('GET', `presets?workflow_id=${getWorkflowId()}`); }
+async function serverGetPreset(name){ return apiFetch('GET', `presets/${encodeURIComponent(name)}?workflow_id=${getWorkflowId()}`); }
+async function serverSavePreset(name){ return apiFetch('POST', 'presets', {workflow_id:getWorkflowId(), name, data:{...PF_FORM_STORE}}); }
+async function serverDeletePreset(name){ return apiFetch('DELETE', 'presets', {workflow_id:getWorkflowId(), name}); }
+async function serverExportPresets(){ return apiFetch('GET', `presets/export?workflow_id=${getWorkflowId()}`); }
+async function serverImportPresets(presets){ return apiFetch('POST', 'presets/import', {workflow_id:getWorkflowId(), presets}); }
+
+async function serverListNames(){
+  const map = await serverListPresets();
+  return Object.keys(map || {}).sort((a,b)=>a.localeCompare(b, undefined, {numeric:true}));
+}
+
+(function enhanceToolbarForServer(){
+  if (!SERVER_PRESETS_AVAILABLE) return;
+
+  const bar = document.querySelector('.pf-wf-toolbar');
+  if (bar && !bar.querySelector('.pf-wf-storage')){
+    const tag = document.createElement('span');
+    tag.className = 'pf-wf-storage';
+    tag.textContent = 'Storage: Server';
+    bar.insertBefore(tag, bar.firstChild);
+  }
+
+  const box = document.querySelector('.pf-wf-presets');
+  if (!box) return;
+  const nameInp = box.querySelector('.pf-preset-name');
+  const select  = box.querySelector('.pf-preset-select');
+  const delBtn  = box.querySelector('[data-action="preset-delete"]');
+  const fileInp = box.querySelector('.pf-preset-import');
+  const saveBtn = box.querySelector('[data-action="preset-save"]');
+
+  async function refreshList(){
+    try {
+      const names = await serverListNames();
+      const current = select.value;
+      select.innerHTML = `<option value="">Load preset…</option>`;
+      names.forEach(n=>{
+        const opt = document.createElement('option'); opt.value = n; opt.textContent = n; select.appendChild(opt);
+      });
+      if (names.includes(current)) select.value = current;
+      delBtn.disabled = !select.value;
+    } catch(e) {
+      console.warn('Server presets list failed, retaining local fallback.', e);
+    }
+  }
+  refreshList();
+
+  box.addEventListener('click', async (e)=>{
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const action = btn.getAttribute('data-action');
+
+    try {
+      if (action === 'preset-save'){
+        if (!nameInp.value.trim()) return;
+        await serverSavePreset(nameInp.value.trim());
+        await refreshList();
+        btn.classList.add('pf-success'); setTimeout(()=>btn.classList.remove('pf-success'), 1000);
+      } else if (action === 'preset-delete'){
+        if (!select.value) return;
+        await serverDeletePreset(select.value);
+        await refreshList();
+      } else if (action === 'preset-export'){
+        const data = await serverExportPresets();
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'pf-variable-presets.server.json';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+      }
+    } catch(err) {
+      console.warn('Server presets action failed', err);
+    }
+  });
+
+  select.addEventListener('change', async ()=>{
+    delBtn.disabled = !select.value;
+    if (!select.value) return;
+    try {
+      const one = await serverGetPreset(select.value);
+      Object.keys(PF_FORM_STORE).forEach(k=>delete PF_FORM_STORE[k]);
+      Object.assign(PF_FORM_STORE, one?.data || {});
+      if (window.PF_RenderAll) window.PF_RenderAll();
+    } catch(err) {
+      console.warn('Server preset load failed', err);
+    }
+  });
+
+  fileInp.addEventListener('change', async ()=>{
+    const f = fileInp.files && fileInp.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = async ()=>{
+      try {
+        const parsed = JSON.parse(reader.result);
+        if (parsed && typeof parsed === 'object') {
+          await serverImportPresets(parsed);
+          await refreshList();
+        }
+      } catch(err) {
+        console.warn('Import failed', err);
+      }
+      fileInp.value = '';
+    };
+    reader.readAsText(f);
+  });
+
+  (async function maybeOfferMigrate(){
+    try {
+      const serverNames = await serverListNames();
+      const localNames = typeof listPresetNames === 'function' ? listPresetNames() : [];
+      if (serverNames.length === 0 && localNames.length > 0) {
+        const migBtn = document.createElement('button');
+        migBtn.type = 'button';
+        migBtn.className = 'pf-btn';
+        migBtn.textContent = 'Migrate Local → Server';
+        box.appendChild(migBtn);
+        migBtn.addEventListener('click', async ()=>{
+          try {
+            const payload = {};
+            const local = loadPresets();
+            Object.keys(local || {}).forEach(n=>{
+              payload[n] = { ts: local[n].ts || Date.now(), data: local[n].data || {} };
+            });
+            await serverImportPresets(payload);
+            await refreshList();
+            migBtn.classList.add('pf-success');
+            setTimeout(()=>migBtn.remove(), 1200);
+          } catch(err) {
+            console.warn('Migration failed', err);
+          }
+        });
+      }
+    } catch(err) {}
+  })();
+})();
 
 // Re-run with new boot
 if (document.readyState === 'loading') {
