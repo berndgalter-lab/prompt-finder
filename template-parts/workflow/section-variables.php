@@ -84,66 +84,7 @@ $post_id = get_the_ID();
         </div>
         
         <!-- Variables List -->
-        <div class="pf-variables-list">
-            <?php 
-            // Debug logging
-            if (function_exists('error_log')) {
-                error_log('Global Variables Count: ' . (is_array($workflow_variables) ? count($workflow_variables) : 0));
-                error_log('Global Variables Data: ' . print_r($workflow_variables, true));
-            }
-            foreach ($workflow_variables as $idx => $var): ?>
-                <?php
-            // Get variable fields (support BOTH new and old subfield names)
-            $var_key = trim($var['workflow_var_key'] ?? ($var['var_key'] ?? ''));
-            $var_label = trim($var['workflow_var_label'] ?? ($var['label'] ?? ''));
-            $var_placeholder = trim($var['workflow_var_placeholder'] ?? ($var['placeholder'] ?? ''));
-            $var_hint = trim($var['workflow_var_hint'] ?? ($var['hint'] ?? ''));
-            $var_required = !empty($var['workflow_var_required'] ?? $var['required'] ?? false);
-            $var_default = trim($var['workflow_var_default_value'] ?? ($var['default_value'] ?? ''));
-                
-            // Create label from key if label is empty
-                if (empty($var_label) && !empty($var_key)) {
-                    $var_label = ucwords(str_replace(['_', '-'], ' ', $var_key));
-                }
-                
-            // If key is still empty, derive a safe fallback from label or index to ensure rendering
-            if (empty($var_key)) {
-                $derived = !empty($var_label) ? $var_label : ('var_' . ($idx + 1));
-                $var_key = sanitize_title($derived);
-                if (function_exists('error_log')) {
-                    error_log('[PF Variables] Derived missing workflow_var_key → ' . $var_key);
-                }
-            }
-                ?>
-                
-                <div class="pf-var-item" data-var-key="<?php echo esc_attr($var_key); ?>" data-var-required="<?php echo $var_required ? 'true' : 'false'; ?>">
-                    <label class="pf-var-label" for="pf-var-input-<?php echo esc_attr($var_key); ?>">
-                        <?php echo esc_html($var_label); ?>
-                        <?php if ($var_required): ?>
-                            <span class="pf-var-required" aria-label="Required">*</span>
-                        <?php endif; ?>
-                    </label>
-                    
-                    <input 
-                        type="text"
-                        id="pf-var-input-<?php echo esc_attr($var_key); ?>"
-                        class="pf-var-input"
-                        data-var-key="<?php echo esc_attr($var_key); ?>"
-                        placeholder="<?php echo esc_attr($var_placeholder); ?>"
-                        value="<?php echo esc_attr($var_default); ?>"
-                        <?php if ($var_required): ?>
-                            required
-                            aria-required="true"
-                        <?php endif; ?>
-                    />
-                    
-                    <?php if (!empty($var_hint)): ?>
-                        <p class="pf-var-hint"><?php echo esc_html($var_hint); ?></p>
-                    <?php endif; ?>
-                </div>
-                
-            <?php endforeach; ?>
-        </div>
+        <div class="pf-variables-list" data-vars-host></div>
         
         <!-- Actions -->
         <div class="pf-variables-actions">

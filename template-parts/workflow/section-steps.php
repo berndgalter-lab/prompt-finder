@@ -79,9 +79,8 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
             ?>
             <?php
             // Get step data
-            $step_id = isset($step['step_id']) && !empty($step['step_id']) 
-                ? sanitize_title($step['step_id']) 
-                : 'step-' . ($index + 1);
+            $raw_step_id = isset($step['step_id']) ? trim($step['step_id']) : '';
+            $step_id = !empty($raw_step_id) ? sanitize_title($raw_step_id) : '';
             $title = isset($step['title']) ? trim($step['title']) : 'Untitled Step';
             $objective = isset($step['objective']) ? trim($step['objective']) : '';
             $step_type = isset($step['step_type']) ? trim($step['step_type']) : 'prompt';
@@ -129,14 +128,16 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
             if ($step_type === 'prompt' && !empty($prompt_mode)) {
                 $type_badge_text = ucfirst(str_replace('_', ' ', $prompt_mode));
             }
+            $step_dom_id = 'step-' . $step_number;
             ?>
             
             <li class="pf-step <?php echo 'pf-step--' . esc_attr($step_type); ?> <?php echo $step_is_locked ? 'pf-step--locked' : ''; ?>" 
-                id="<?php echo esc_attr($step_id); ?>" 
+                id="<?php echo esc_attr($step_dom_id); ?>" 
                 data-step-index="<?php echo esc_attr($index); ?>"
                 data-step-number="<?php echo esc_attr($step_number); ?>"
                 data-step-type="<?php echo esc_attr($step_type); ?>"
-                data-step-id="<?php echo esc_attr($step_id); ?>"
+                data-step-id="<?php echo esc_attr($step_dom_id); ?>"
+                <?php if (!empty($step_id)): ?>data-original-step-id="<?php echo esc_attr($step_id); ?>"<?php endif; ?>
                 data-pf-step
                 data-step-vars="<?php echo esc_attr($step_vars_json); ?>"
                 data-uses-global-vars="<?php echo esc_attr($uses_global_numeric); ?>"
@@ -238,7 +239,7 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                         <div class="pf-prompt-container">
                             <div class="pf-prompt-header">
                                 <span class="pf-prompt-label">Prompt</span>
-                                <button class="pf-btn pf-btn-copy" data-copy-target="<?php echo esc_attr($step_id); ?>">
+                                <button class="pf-btn pf-btn-copy" data-copy-target="<?php echo esc_attr($step_dom_id); ?>">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -247,7 +248,7 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                                 </button>
                             </div>
                             <textarea class="pf-prompt-text pf-prompt"
-                                      data-prompt-id="<?php echo esc_attr($step_id); ?>"
+                                      data-prompt-id="<?php echo esc_attr($step_dom_id); ?>"
                                       data-original-text="<?php echo esc_attr($prompt); ?>"
                                       data-prompt-template
                                       data-base="<?php echo esc_attr($prompt); ?>"></textarea>

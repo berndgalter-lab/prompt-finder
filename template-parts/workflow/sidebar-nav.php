@@ -66,9 +66,9 @@ $variable_count = $has_variables ? count($variables_workflow_field) : 0;
                 <?php foreach ($steps_field as $i => $step): ?>
                     <?php
                     $step_idx = $i + 1;
-                    $step_id = $step['step_id'] ?? '';
+                    $step_id = isset($step['step_id']) ? sanitize_title($step['step_id']) : '';
                     $step_title = $step['title'] ?? 'Untitled';
-                    $step_anchor = !empty($step_id) ? 'step-' . $step_id : 'step-' . $step_idx;
+                    $step_anchor = 'step-' . $step_idx;
                     ?>
                     <a href="#<?php echo esc_attr($step_anchor); ?>" 
                        class="pf-sidebar-link pf-sidebar-link--step" 
