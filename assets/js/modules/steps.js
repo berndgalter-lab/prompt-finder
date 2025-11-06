@@ -1,7 +1,7 @@
 function sanitizeKey(name) {
   return (name || '')
     .toLowerCase()
-    .replace(/[^a-z0-9_]+/g, '_')
+    .replace(/[^a-z0-9_]+/g, '')
     .replace(/^_+|_+$/g, '')
     .slice(0, 32);
 }
@@ -188,8 +188,8 @@ function renderStepVarItem(item, stepId) {
       this.setupToggle();
       this.setupCompletion();
       
-      // Inject variables into prompts
-    this.renderStepVariables();
+      this.renderStepVariables();
+      this.pruneVarsBadge();
       
       // Auto-expand first incomplete step
       this.autoExpandFirstIncomplete();
@@ -386,6 +386,17 @@ function renderStepVarItem(item, stepId) {
         const frag = document.createDocumentFragment();
         schema.forEach(item => frag.appendChild(renderStepVarItem(item, stepId)));
         ui.appendChild(frag);
+      });
+    },
+
+    pruneVarsBadge: function() {
+      document.querySelectorAll('[data-pf-step]').forEach(stepEl => {
+        const hasStepVars = !!stepEl.getAttribute('data-step-vars') && stepEl.getAttribute('data-step-vars') !== '[]';
+        const promptEl = stepEl.querySelector('[data-prompt-template]');
+        const promptHasTokens = promptEl && /\{[^}]+\}/.test(promptEl.dataset.base || promptEl.dataset.originalText || '');
+        if (hasStepVars || promptHasTokens) return;
+        const badge = stepEl.querySelector('.pf-step-badge--vars');
+        if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
       });
     },
     

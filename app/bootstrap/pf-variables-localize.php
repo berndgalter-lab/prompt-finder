@@ -24,7 +24,7 @@ function pf_localize_user_vars_for_workflow(string $script_handle, int $workflow
       $store = new PF_UserVarsStoreWp();
       $payload = $store->getByUserUid($uid);
       if (!empty($payload['data']) && is_array($payload['data'])) {
-        // Merge profile on top of sys_ (profile may override none of the sys_* keys)
+        $vars['profile'] = (array) $payload['data'];
         foreach ($payload['data'] as $k => $v) {
           if ($k === 'sys_today' || $k === 'sys_now' || $k === 'sys_user_timezone') continue;
           $vars[$k] = is_scalar($v) || $v === null ? $v : wp_json_encode($v);
