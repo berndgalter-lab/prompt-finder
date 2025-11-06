@@ -1,3 +1,82 @@
+function sanitizeKey(name) {
+  return (name || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9_]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 32);
+}
+
+function renderStepVarItem(item, stepId) {
+  const type = (item.step_var_type || 'text').toLowerCase();
+  const key = sanitizeKey(item.step_var_name || item.step_var_label || 'var');
+  const label = item.step_var_label || key;
+  const placeholder = item.step_var_placeholder || '';
+  const required = !!item.step_var_required;
+  const hint = item.step_var_hint || '';
+  const defaultVal = item.step_var_default || '';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'pf-var-item';
+  wrap.dataset.varKey = key;
+  if (required) wrap.dataset.varRequired = 'true';
+
+  const lab = document.createElement('label');
+  lab.className = 'pf-var-label';
+  lab.setAttribute('for', `pf-step-${stepId}-var-input-${key}`);
+  lab.innerHTML = `${label}${required ? ' <span class="pf-var-required" aria-label="Required">*</span>' : ''}`;
+
+  let input;
+  if (type === 'select' && item.step_var_options_json) {
+    input = document.createElement('select');
+    try {
+      const opts = JSON.parse(item.step_var_options_json);
+      const empty = document.createElement('option');
+      empty.value = '';
+      empty.textContent = placeholder || '— choose —';
+      input.appendChild(empty);
+      (opts || []).forEach(o => {
+        const opt = document.createElement('option');
+        if (typeof o === 'string') { opt.value = o; opt.textContent = o; }
+        else { opt.value = o.value ?? o.key ?? ''; opt.textContent = o.label ?? o.value ?? ''; }
+        input.appendChild(opt);
+      });
+    } catch(e) {
+      input = document.createElement('input');
+      input.type = 'text';
+    }
+  }
+  if (!input) {
+    input = document.createElement('input');
+    input.type = type === 'number' ? 'number' : 'text';
+  }
+
+  input.id = `pf-step-${stepId}-var-input-${key}`;
+  input.className = 'pf-var-input';
+  input.dataset.varKey = key;
+  if (placeholder) input.placeholder = placeholder;
+  if (required) {
+    input.required = true;
+    input.setAttribute('aria-required', 'true');
+  }
+  input.value = defaultVal;
+
+  let hintEl = null;
+  if (hint) {
+    hintEl = document.createElement('p');
+    hintEl.className = 'pf-var-hint';
+    hintEl.textContent = hint;
+  }
+
+  wrap.appendChild(lab);
+  wrap.appendChild(input);
+  if (hintEl) wrap.appendChild(hintEl);
+
+  input.addEventListener('input', () => {
+    if (required) wrap.classList.toggle('pf-var--invalid', !input.value.trim());
+  });
+
+  return wrap;
+}
 /**
  * Workflow Module: Steps
  * Handles step toggle, completion, and variable injection
@@ -110,7 +189,7 @@
       this.setupCompletion();
       
       // Inject variables into prompts
-      this.injectVariables();
+    this.renderStepVariables();
       
       // Auto-expand first incomplete step
       this.autoExpandFirstIncomplete();
@@ -291,68 +370,23 @@
       window.WorkflowStorage.set('workflow_completed_' + this.postId, this.completedSteps);
     },
     
-    /**
-     * Inject variables into prompts
-     */
-    injectVariables: function() {
-      const variablesKey = window.WorkflowStorage.getVariablesKey(this.postId);
-      const savedVariables = window.WorkflowStorage.get(variablesKey);
-      
-      if (!savedVariables || typeof savedVariables !== 'object') {
-        console.log('WorkflowSteps: No variables saved yet');
-        return;
-      }
-      
-      // Find all prompt texts
-      const promptTexts = document.querySelectorAll('.pf-prompt-text');
-      
-      promptTexts.forEach(textElement => {
-        const originalText = textElement.dataset.originalText;
-        if (!originalText) return;
-        
-        let processedText = originalText;
-        
-        // Replace {{var_key}} with actual values
-        Object.keys(savedVariables).forEach(varKey => {
-          const varValue = savedVariables[varKey];
-          const placeholder = '{{' + varKey + '}}';
-          const regex = new RegExp(escapeRegExp(placeholder), 'g');
-          
-          if (varValue && varValue.trim().length > 0) {
-            processedText = processedText.replace(regex, '<span class="pf-var-injected">' + escapeHtml(varValue) + '</span>');
-          } else {
-            processedText = processedText.replace(regex, '<span class="pf-var-empty">' + placeholder + '</span>');
-          }
-        });
-        
-        // Also replace user-supplied values from step variables
-        const stepNumber = textElement.closest('.pf-step')?.dataset?.stepNumber;
-        if (stepNumber) {
-          const stepInputs = textElement.closest('.pf-step')?.querySelectorAll('.pf-step-var-input');
-          
-          if (stepInputs) {
-            stepInputs.forEach(input => {
-              const varKey = input.dataset.varKey;
-              const varValue = input.value.trim();
-              const placeholder = '{{' + varKey + '}}';
-              const regex = new RegExp(escapeRegExp(placeholder), 'g');
-              
-              if (varValue.length > 0) {
-                processedText = processedText.replace(regex, '<span class="pf-var-injected">' + escapeHtml(varValue) + '</span>');
-              }
-            });
-          }
-        }
-        
-        // Update text (only if it changed to avoid flickering)
-        if (processedText !== originalText) {
-          textElement.innerHTML = processedText;
-        } else {
-          textElement.textContent = originalText;
-        }
+    renderStepVariables: function() {
+      const steps = document.querySelectorAll('[data-pf-step]');
+      steps.forEach(stepEl => {
+        const ui = stepEl.querySelector('[data-step-vars-ui]');
+        if (!ui) return;
+        if (ui.querySelector('.pf-var-item')) return;
+
+        const raw = stepEl.getAttribute('data-step-vars') || '[]';
+        let schema = [];
+        try { schema = JSON.parse(raw); } catch(e) { schema = []; }
+        if (!schema.length) return;
+
+        const stepId = stepEl.getAttribute('data-step-id') || stepEl.id || 'step';
+        const frag = document.createDocumentFragment();
+        schema.forEach(item => frag.appendChild(renderStepVarItem(item, stepId)));
+        ui.appendChild(frag);
       });
-      
-      console.log('WorkflowSteps: Variables injected');
     },
     
     /**
@@ -670,6 +704,49 @@
       "'": '&#039;'
     };
     return text.replace(/[&<>"']/g, m => map[m]);
+  }
+
+  // Helper: Render a single variable item for the UI
+  function renderStepVarItem(item, stepId) {
+    const varItem = document.createElement('div');
+    varItem.className = 'pf-var-item';
+    varItem.setAttribute('data-var-key', item.key);
+
+    const varKeySpan = document.createElement('span');
+    varKeySpan.className = 'pf-var-key';
+    varKeySpan.textContent = item.key;
+    varItem.appendChild(varKeySpan);
+
+    const varValueInput = document.createElement('input');
+    varValueInput.type = 'text';
+    varValueInput.className = 'pf-step-var-input';
+    varValueInput.setAttribute('data-var-key', item.key);
+    varValueInput.value = item.value || '';
+    varItem.appendChild(varValueInput);
+
+    const varRemoveBtn = document.createElement('button');
+    varRemoveBtn.className = 'pf-btn pf-btn--icon pf-btn--small pf-btn--danger';
+    varRemoveBtn.type = 'button';
+    varRemoveBtn.setAttribute('aria-label', 'Remove variable');
+    varRemoveBtn.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" x2="6" y1="6" y2="18"></line>
+        <line x1="6" x2="18" y1="6" y2="18"></line>
+      </svg>
+    `;
+    varRemoveBtn.addEventListener('click', () => {
+      varItem.remove();
+      // Update the data-step-vars attribute on the parent step
+      const stepEl = document.querySelector(`[data-pf-step][data-step-id="${stepId}"]`);
+      if (stepEl) {
+        const newSchema = JSON.parse(stepEl.getAttribute('data-step-vars') || '[]');
+        newSchema.splice(newSchema.findIndex(i => i.key === item.key), 1);
+        stepEl.setAttribute('data-step-vars', JSON.stringify(newSchema));
+      }
+    });
+    varItem.appendChild(varRemoveBtn);
+
+    return varItem;
   }
   
   // Listen for variable updates
