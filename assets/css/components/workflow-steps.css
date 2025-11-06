@@ -355,6 +355,27 @@
     border-radius: var(--pf-radius-md, 12px);
 }
 
+.pf-step-variables-intro {
+    padding: 0 var(--pf-space-md, 1.5rem);
+    margin-bottom: var(--pf-space-sm, 1rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.pf-step-variables-heading {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--pf-text, #1a1a1a);
+}
+
+.pf-variables--step {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--pf-space-md, 1.5rem);
+}
+
 .pf-step-variables-section h4 {
     margin: 0 0 var(--pf-space-md, 1.5rem) 0;
     font-size: 1rem;

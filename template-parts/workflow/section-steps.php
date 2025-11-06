@@ -48,7 +48,6 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
 
 <div class="pf-wf-root" data-wf-root data-wf-id="<?php echo esc_attr($post_id); ?>" data-user-uid="<?php echo esc_attr($user_uid); ?>">
     <div class="pf-wf-vars" data-wf-vars="<?php echo esc_attr($workflow_vars_json); ?>"></div>
-    <div class="pf-wf-form" data-wf-form></div>
 
     <section id="steps" class="pf-section pf-section--steps" 
              data-mode="<?php echo esc_attr($access_mode); ?>"
@@ -234,7 +233,13 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                     <!-- Prompt Type -->
                     <?php if ($step_type === 'prompt' && !empty($prompt)): ?>
                         
-                        <div class="pf-step-variables-section" data-step-vars-ui></div>
+                        <?php if (!empty($variables_step)): ?>
+                            <div class="pf-step-variables-intro">
+                                <h4 class="pf-step-variables-heading">Step-Specific Inputs</h4>
+                                <p class="pf-variables-helper">These values are specific to this step only.</p>
+                            </div>
+                        <?php endif; ?>
+                        <div class="pf-step-variables-section pf-variables--step" data-step-vars-ui></div>
                         
                         <div class="pf-prompt-container">
                             <div class="pf-prompt-header">

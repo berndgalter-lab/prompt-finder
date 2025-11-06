@@ -1128,7 +1128,6 @@ function enqueue_new_workflow_assets() {
     $js_modules = array(
         'storage',
         'navigation', 
-        'variables',
         'copy',
         'progress',
         'steps',
@@ -1146,10 +1145,6 @@ function enqueue_new_workflow_assets() {
             if ($module !== 'storage') {
                 $deps[] = 'pf-module-storage';
             }
-            if ($module === 'steps') {
-                $deps[] = 'pf-module-variables';
-            }
-            
             wp_enqueue_script(
                 "pf-module-{$module}",
                 $theme_uri . $js_path,

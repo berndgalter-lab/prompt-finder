@@ -17,9 +17,10 @@ get_header();
 the_post();
 ?>
 
-<div class="pf-workflow-container" data-post-id="<?php echo esc_attr(get_the_ID()); ?>">
+<div class="pf-workflow-container" data-post-id="<?php echo esc_attr(get_the_ID()); ?>" data-profile-enabled="<?php echo get_field('use_profile_defaults') ? 'true' : 'false'; ?>">
     
     <?php get_template_part('template-parts/workflow/header'); ?>
+    <?php get_template_part('template-parts/workflow/section-variable-status'); ?>
     
     <div class="pf-workflow-layout">
         <?php get_template_part('template-parts/workflow/sidebar-nav'); ?>

@@ -17,6 +17,12 @@
     color: var(--pf-text-dim, #666);
 }
 
+.pf-variables-helper {
+    margin: 0 0 var(--pf-space-sm, 0.75rem) 0;
+    font-size: 0.875rem;
+    color: var(--pf-text-dim, #666);
+}
+
 /* Notice when no variables */
 .pf-variables-notice {
     display: flex;
@@ -57,6 +63,15 @@
     border-color: var(--pf-accent, #6366f1);
 }
 
+.pf-variables-card.pf-variables--profile {
+    background: var(--pf-bg-soft, #f9fafb);
+    border-color: rgba(99, 102, 241, 0.12);
+}
+
+.pf-variables-card.pf-variables--workflow {
+    position: relative;
+}
+
 /* ========================================
    CARD HEADER
    ======================================== */
@@ -67,6 +82,19 @@
     align-items: center;
     margin-bottom: var(--pf-space-lg, 2rem);
     gap: 1rem;
+}
+
+.pf-variables-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.pf-variables-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--pf-text, #111827);
 }
 
 .pf-variables-info {
@@ -119,6 +147,12 @@
     margin-bottom: var(--pf-space-lg, 2rem);
 }
 
+.pf-variables--profile .pf-variables-list {
+    grid-template-columns: 1fr;
+    gap: var(--pf-space-md, 1.5rem);
+    margin-bottom: 0;
+}
+
 @media (min-width: 768px) {
     .pf-variables-list {
         grid-template-columns: repeat(2, 1fr);
@@ -135,6 +169,18 @@
     gap: 0.5rem;
 }
 
+.pf-var-item--profile {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: var(--pf-space-sm, 0.75rem) 0;
+    border-bottom: 1px solid var(--pf-border, #e5e7eb);
+}
+
+.pf-var-item--profile:last-child {
+    border-bottom: none;
+}
+
 /* ========================================
    LABEL
    ======================================== */
@@ -147,6 +193,19 @@
     font-size: 0.9375rem;
     color: var(--pf-text, #1a1a1a);
     line-height: 1.4;
+}
+
+.pf-var-item--profile .pf-var-label {
+    font-weight: 500;
+    color: var(--pf-text-dim, #4b5563);
+}
+
+.pf-var-value {
+    font-weight: 600;
+    color: var(--pf-text, #111827);
+    font-size: 0.95rem;
+    word-break: break-word;
+    margin-left: var(--pf-space-md, 1rem);
 }
 
 /* ========================================
@@ -349,6 +408,65 @@
 .pf-variables-note svg {
     flex-shrink: 0;
     opacity: 0.6;
+}
+
+/* ========================================
+   VARIABLE STATUS BAR
+   ======================================== */
+
+.pf-variable-status {
+    margin: var(--pf-space-xl, 2.5rem) 0 var(--pf-space-lg, 2rem);
+}
+
+.pf-variable-status-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pf-space-sm, 0.75rem);
+    background: var(--pf-bg, #ffffff);
+    border: 1px solid var(--pf-border, #e5e7eb);
+    border-radius: var(--pf-radius-md, 12px);
+    padding: var(--pf-space-md, 1.5rem);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+
+.pf-status-tier {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--pf-text, #1f2937);
+    background: var(--pf-bg-soft, #f9fafb);
+    border: 1px solid var(--pf-border, #e5e7eb);
+}
+
+.pf-status--profile {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.25);
+    color: #047857;
+}
+
+.pf-status--workflow {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.25);
+    color: #4338ca;
+}
+
+.pf-status--step {
+    background: rgba(251, 191, 36, 0.15);
+    border-color: rgba(251, 191, 36, 0.3);
+    color: #92400e;
+}
+
+.pf-status-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.pf-status-count {
+    font-variant-numeric: tabular-nums;
 }
 
 /* ========================================

@@ -347,6 +347,118 @@ function renderVarControl(container, level, key, def, ctx, onChange){
 }
 
 
+function isProfileEnabled(){
+  const container = document.querySelector('.pf-workflow-container');
+  return !!(container && container.getAttribute('data-profile-enabled') === 'true');
+}
+
+
+function renderWorkflowCounter(workflowMap){
+  const counter = document.querySelector('.pf-variables--workflow .pf-variables-counter');
+  if (!counter) return;
+  const keys = Object.keys(workflowMap || {});
+  const allowProfile = isProfileEnabled();
+  let filled = 0;
+  keys.forEach(k => {
+    const res = resolveKey(k, { stepMap: {}, workflowMap, allowProfile });
+    if (isResolved(res.value)) filled++;
+  });
+  counter.dataset.variablesFilled = String(filled);
+  counter.dataset.variablesTotal = String(keys.length);
+  const numberEl = counter.querySelector('.pf-counter-number');
+  const totalEl = counter.querySelector('.pf-counter-total');
+  if (numberEl) numberEl.textContent = String(filled);
+  if (totalEl) totalEl.textContent = keys.length ? `/ ${keys.length}` : '/ 0';
+}
+
+
+let statusListenersBound = false;
+
+
+function getActiveStepSection(){
+  const steps = Array.from(document.querySelectorAll('[data-pf-step]')).filter(step => !step.classList.contains('pf-step--locked'));
+  if (!steps.length) return null;
+  const expanded = steps.find(step => !step.classList.contains('is-collapsed'));
+  return expanded || steps[0];
+}
+
+
+function computeStepTierStatus(sectionEl, workflowMap){
+  if (!sectionEl) {
+    return { filled: 0, total: 0 };
+  }
+  const raw = sectionEl.getAttribute('data-step-vars') || '[]';
+  let rows = [];
+  try { rows = JSON.parse(raw); } catch(e) { rows = []; }
+  const stepMap = buildStepMap(rows);
+  const allowProfileFlag = (sectionEl.getAttribute('data-uses-global-vars') === '1' || sectionEl.getAttribute('data-uses-global-vars') === 'true') && isProfileEnabled();
+  const keys = Object.keys(stepMap);
+  let filled = 0;
+  keys.forEach(k => {
+    const res = resolveKey(k, { stepMap, workflowMap, allowProfile: allowProfileFlag });
+    if (isResolved(res.value)) filled++;
+  });
+  return { filled, total: keys.length };
+}
+
+
+function renderVariableStatus(workflowMap){
+  const bar = document.querySelector('.pf-variable-status-bar');
+  if (!bar) return;
+
+  const profileTier = bar.querySelector('.pf-status--profile .pf-status-count');
+  if (profileTier) {
+    if (!isProfileEnabled()) {
+      profileTier.textContent = '—';
+    } else {
+      const profileData = (PF_USER_VARS.profile && typeof PF_USER_VARS.profile === 'object') ? PF_USER_VARS.profile : {};
+      const keys = Object.keys(profileData).filter(k => !/^sys_/i.test(k));
+      const count = keys.length;
+      profileTier.textContent = `${count}/${count}`;
+    }
+  }
+
+  const workflowTier = bar.querySelector('.pf-status--workflow .pf-status-count');
+  if (workflowTier) {
+    const keys = Object.keys(workflowMap || {});
+    const allowProfile = isProfileEnabled();
+    let filled = 0;
+    keys.forEach(k => {
+      const res = resolveKey(k, { stepMap: {}, workflowMap, allowProfile });
+      if (isResolved(res.value)) filled++;
+    });
+    workflowTier.textContent = keys.length ? `${filled}/${keys.length}` : '0/0';
+  }
+
+  const stepTier = bar.querySelector('.pf-status--step .pf-status-count');
+  if (stepTier) {
+    const active = getActiveStepSection();
+    const status = computeStepTierStatus(active, workflowMap);
+    if (!status.total) {
+      stepTier.textContent = '-';
+    } else {
+      stepTier.textContent = `${status.filled}/${status.total}`;
+    }
+  }
+}
+
+
+function bindVariableStatusListeners(workflowMap){
+  if (statusListenersBound) return;
+  statusListenersBound = true;
+
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('[data-action="toggle-step"]')) {
+      requestAnimationFrame(() => renderVariableStatus(workflowMap));
+    }
+  });
+
+  document.addEventListener('stepCompleted', () => {
+    renderVariableStatus(workflowMap);
+  });
+}
+
+
 /**
  * Render the workflow-level form (affects all steps).
  * Expects a container with [data-wf-form].
@@ -354,9 +466,16 @@ function renderVarControl(container, level, key, def, ctx, onChange){
 function renderWorkflowForm(containerEl, workflowMap, ctx, rerenderAllSteps){
   if (!containerEl) return;
   containerEl.innerHTML = '';
+  const handleChange = ()=>{
+    if (typeof rerenderAllSteps === 'function') rerenderAllSteps();
+    renderWorkflowCounter(workflowMap);
+    renderVariableStatus(workflowMap);
+  };
   Object.keys(workflowMap).forEach(k=>{
-    renderVarControl(containerEl, 'workflow', k, workflowMap[k], ctx, rerenderAllSteps);
+    renderVarControl(containerEl, 'workflow', k, workflowMap[k], ctx, handleChange);
   });
+  renderWorkflowCounter(workflowMap);
+  renderVariableStatus(workflowMap);
 }
 
 
@@ -368,9 +487,14 @@ function renderStepForm(sectionEl, stepMap, ctx){
   const target = sectionEl.querySelector('[data-step-vars-ui]');
   if (!target) return;
   target.innerHTML = '';
+  const handleChange = ()=>{
+    renderStep(sectionEl, ctx);
+    renderVariableStatus(ctx.workflowMap || {});
+  };
   Object.keys(stepMap).forEach(k=>{
-    renderVarControl(target, 'step', k, stepMap[k], ctx, ()=>renderStep(sectionEl, ctx));
+    renderVarControl(target, 'step', k, stepMap[k], ctx, handleChange);
   });
+  renderVariableStatus(ctx.workflowMap || {});
 }
 
 
@@ -392,7 +516,7 @@ boot = function(){
       const stepVarsJson = section.getAttribute('data-step-vars') || '[]';
       let stepRows = [];
       try { stepRows = JSON.parse(stepVarsJson); } catch(e){ stepRows = []; }
-      const allowProfile = (section.getAttribute('data-uses-global-vars') === '1' || section.getAttribute('data-uses-global-vars') === 'true');
+      const allowProfile = (section.getAttribute('data-uses-global-vars') === '1' || section.getAttribute('data-uses-global-vars') === 'true') && isProfileEnabled();
       const stepMap = buildStepMap(stepRows);
       const ctx = { stepMap, workflowMap, allowProfile };
       renderStep(section, ctx);
@@ -403,15 +527,18 @@ boot = function(){
         renderStatus(statusEl, s);
       }
     });
+    renderWorkflowCounter(workflowMap);
+    renderVariableStatus(workflowMap);
   };
-  renderWorkflowForm(wfForm, workflowMap, { stepMap: {}, workflowMap, allowProfile: true }, rerenderAll);
+  const workflowCtx = { stepMap: {}, workflowMap, allowProfile: isProfileEnabled() };
+  renderWorkflowForm(wfForm, workflowMap, workflowCtx, rerenderAll);
 
   // Boot each step: render controls + initial render
   document.querySelectorAll('[data-pf-step]').forEach(section=>{
     const stepVarsJson = section.getAttribute('data-step-vars') || '[]';
     let stepRows = [];
     try { stepRows = JSON.parse(stepVarsJson); } catch(e){ stepRows = []; }
-    const allowProfile = (section.getAttribute('data-uses-global-vars') === '1' || section.getAttribute('data-uses-global-vars') === 'true');
+    const allowProfile = (section.getAttribute('data-uses-global-vars') === '1' || section.getAttribute('data-uses-global-vars') === 'true') && isProfileEnabled();
     const stepMap = buildStepMap(stepRows);
     const ctx = { stepMap, workflowMap, allowProfile };
 
@@ -419,6 +546,8 @@ boot = function(){
     bindStep(section, ctx); // keeps manual binds for any pre-existing inputs
     renderStep(section, ctx);
   });
+  renderVariableStatus(workflowMap);
+  bindVariableStatusListeners(workflowMap);
 };
 
 
@@ -685,7 +814,7 @@ boot = function(){
     const stepVarsJson = section.getAttribute('data-step-vars') || '[]';
     let stepRows = [];
     try { stepRows = JSON.parse(stepVarsJson); } catch(e){ stepRows = []; }
-    const allowProfile = (section.getAttribute('data-uses-global-vars') === '1' || section.getAttribute('data-uses-global-vars') === 'true');
+    const allowProfile = (section.getAttribute('data-uses-global-vars') === '1' || section.getAttribute('data-uses-global-vars') === 'true') && isProfileEnabled();
     const stepMap = buildStepMap(stepRows);
     const ctx = { stepMap, workflowMap, allowProfile };
 
