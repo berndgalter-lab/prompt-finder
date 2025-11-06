@@ -675,8 +675,8 @@ async function copyToClipboard(text){
 }
 
 
-// Attach toolbar to a step
 function ensureStepToolbar(sectionEl){
+  if (!sectionEl) return null;
   let bar = sectionEl.querySelector('.pf-step-toolbar');
   if (!bar){
     bar = document.createElement('div');
@@ -688,7 +688,24 @@ function ensureStepToolbar(sectionEl){
         <button type="button" class="pf-btn pf-btn-reset" data-action="reset-step">Reset Step</button>
       </div>
     `;
-    sectionEl.insertBefore(bar, sectionEl.querySelector('[data-prompt-template]'));
+
+    const promptEl = sectionEl.querySelector('[data-prompt-template]');
+    const stepContent = sectionEl.querySelector('.pf-step-content');
+    const parent = promptEl ? promptEl.parentNode : (stepContent || sectionEl);
+
+    if (promptEl && parent && parent.contains(promptEl)) {
+      try {
+        parent.insertBefore(bar, promptEl);
+      } catch (err) {
+        parent.appendChild(bar);
+      }
+    } else if (stepContent) {
+      stepContent.insertAdjacentElement('afterbegin', bar);
+    } else if (parent) {
+      parent.appendChild(bar);
+    } else {
+      sectionEl.appendChild(bar);
+    }
   }
   return bar;
 }
@@ -819,6 +836,7 @@ boot = function(){
     const ctx = { stepMap, workflowMap, allowProfile };
 
     const bar = ensureStepToolbar(section);
+    if (!bar) return;
     const statusEl = bar.querySelector('[data-step-status]');
     const promptEl = section.querySelector('[data-prompt-template]');
 
