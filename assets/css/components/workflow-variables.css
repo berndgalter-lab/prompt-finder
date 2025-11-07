@@ -170,15 +170,10 @@
 }
 
 .pf-var-item--profile {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: var(--pf-space-sm, 0.75rem) 0;
-    border-bottom: 1px solid var(--pf-border, #e5e7eb);
-}
-
-.pf-var-item--profile:last-child {
-    border-bottom: none;
+    border-left: 3px solid #2196F3;
+    background: rgba(33, 150, 243, 0.05);
+    padding: 1rem;
+    border-radius: 12px;
 }
 
 /* ========================================
@@ -196,8 +191,8 @@
 }
 
 .pf-var-item--profile .pf-var-label {
-    font-weight: 500;
-    color: var(--pf-text-dim, #4b5563);
+    font-weight: 600;
+    color: var(--pf-text, #1a1a1a);
 }
 
 .pf-var-value {
@@ -420,44 +415,33 @@
 
 .pf-variable-status-bar {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--pf-space-sm, 0.75rem);
-    background: var(--pf-bg, #ffffff);
-    border: 1px solid var(--pf-border, #e5e7eb);
-    border-radius: var(--pf-radius-md, 12px);
-    padding: var(--pf-space-md, 1.5rem);
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    gap: 2rem;
+    padding: 1rem;
+    background: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .pf-status-tier {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: var(--pf-text, #1f2937);
-    background: var(--pf-bg-soft, #f9fafb);
-    border: 1px solid var(--pf-border, #e5e7eb);
 }
 
-.pf-status--profile {
-    background: rgba(16, 185, 129, 0.12);
-    border-color: rgba(16, 185, 129, 0.25);
-    color: #047857;
+.pf-status--profile .pf-status-count {
+    color: #2196F3;
+    font-weight: bold;
 }
 
-.pf-status--workflow {
-    background: rgba(99, 102, 241, 0.12);
-    border-color: rgba(99, 102, 241, 0.25);
-    color: #4338ca;
+.pf-status--workflow .pf-status-count {
+    color: #9C27B0;
+    font-weight: bold;
 }
 
-.pf-status--step {
-    background: rgba(251, 191, 36, 0.15);
-    border-color: rgba(251, 191, 36, 0.3);
-    color: #92400e;
+.pf-status--step .pf-status-count {
+    color: #4CAF50;
+    font-weight: bold;
 }
 
 .pf-status-icon {
@@ -467,6 +451,33 @@
 
 .pf-status-count {
     font-variant-numeric: tabular-nums;
+}
+
+/* Variable source badges */
+.pf-var-source-badge {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    margin-left: 0.5rem;
+    opacity: 0.8;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.pf-var-source-badge--profile {
+    background: #E3F2FD;
+    color: #1976D2;
+}
+
+.pf-var-source-badge--workflow {
+    background: #F3E5F5;
+    color: #7B1FA2;
+}
+
+.pf-var-source-badge--step {
+    background: #E8F5E9;
+    color: #2E7D32;
 }
 
 /* ========================================

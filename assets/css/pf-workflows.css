@@ -383,8 +383,34 @@ html, body {
     position: relative;
 }
 
+.pf-var-item--profile {
+    border-left: 3px solid #2196F3;
+    background: rgba(33, 150, 243, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.pf-var-item--workflow {
+    border-left: 3px solid #9C27B0;
+    background: rgba(156, 39, 176, 0.05);
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.pf-var-item--step {
+    border-left: 3px solid #4CAF50;
+    background: rgba(76, 175, 80, 0.05);
+    padding: 1rem;
+    border-radius: 12px;
+}
+
 .pf-var-label {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     font-weight: 600;
     color: var(--pf-text);
     margin-bottom: 8px;
@@ -426,6 +452,63 @@ html, body {
     box-shadow: 
         0 2px 8px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.pf-variable-status-bar {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem;
+    background: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pf-status-tier {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pf-status--profile .pf-status-count {
+    color: #2196F3;
+    font-weight: bold;
+}
+
+.pf-status--workflow .pf-status-count {
+    color: #9C27B0;
+    font-weight: bold;
+}
+
+.pf-status--step .pf-status-count {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.pf-var-source-badge {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    margin-left: 0.5rem;
+    opacity: 0.8;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.pf-var-source-badge--profile {
+    background: #E3F2FD;
+    color: #1976D2;
+}
+
+.pf-var-source-badge--workflow {
+    background: #F3E5F5;
+    color: #7B1FA2;
+}
+
+.pf-var-source-badge--step {
+    background: #E8F5E9;
+    color: #2E7D32;
 }
 
 .pf-var-help {

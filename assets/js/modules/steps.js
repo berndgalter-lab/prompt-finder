@@ -188,7 +188,6 @@ function renderStepVarItem(item, stepId) {
       this.setupToggle();
       this.setupCompletion();
       
-      this.renderStepVariables();
       this.pruneVarsBadge();
       
       // Auto-expand first incomplete step
@@ -371,22 +370,7 @@ function renderStepVarItem(item, stepId) {
     },
     
     renderStepVariables: function() {
-      const steps = document.querySelectorAll('[data-pf-step]');
-      steps.forEach(stepEl => {
-        const ui = stepEl.querySelector('[data-step-vars-ui]');
-        if (!ui) return;
-        if (ui.querySelector('.pf-var-item')) return;
-
-        const raw = stepEl.getAttribute('data-step-vars') || '[]';
-        let schema = [];
-        try { schema = JSON.parse(raw); } catch(e) { schema = []; }
-        if (!schema.length) return;
-
-        const stepId = stepEl.getAttribute('data-step-id') || stepEl.id || 'step';
-        const frag = document.createDocumentFragment();
-        schema.forEach(item => frag.appendChild(renderStepVarItem(item, stepId)));
-        ui.appendChild(frag);
-      });
+      // handled by pf-workflows.js (Variables v1)
     },
 
     pruneVarsBadge: function() {

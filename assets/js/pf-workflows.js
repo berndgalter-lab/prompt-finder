@@ -76,20 +76,30 @@
     return map;
   }
 
+  function getTierForVariable(rawKey, ctx){
+    const k = keyNorm(rawKey);
+    if (ctx?.stepMap && ctx.stepMap[k]) return 'step';
+    if (ctx?.workflowMap && ctx.workflowMap[k]) return 'workflow';
+    return 'profile';
+  }
+
   /**
    * Resolve a single key with full priority & flags.
    * ctx = { stepMap, workflowMap, allowProfile }
-   * Returns { value, resolved, injMode }
+   * Returns { value, resolved, injMode, tier }
    */
   function resolveKey(rawKey, ctx){
     const k = keyNorm(rawKey);
     const { stepMap, workflowMap, allowProfile } = ctx;
     const sDef = stepMap[k];
     const wDef = workflowMap[k];
+    const baseTier = getTierForVariable(k, ctx);
+    let tier = baseTier;
 
     // 0) user-typed value (live form store)
     if (Object.prototype.hasOwnProperty.call(PF_FORM_STORE, k) && PF_FORM_STORE[k] !== '') {
-      return { value: String(PF_FORM_STORE[k]), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional') };
+      tier = baseTier;
+      return { value: String(PF_FORM_STORE[k]), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional'), tier };
     }
 
     // Prefer system?
@@ -98,10 +108,12 @@
       // System keys usually start with sys_; but allow explicit profileKey usage for system-like aliases
       const sysKey = k.startsWith('sys_') ? k : (sDef?.profileKey || wDef?.profileKey || '');
       if (sysKey && PF_USER_VARS[sysKey] != null) {
-        return { value: String(PF_USER_VARS[sysKey]), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional') };
+        tier = 'profile';
+        return { value: String(PF_USER_VARS[sysKey]), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional'), tier };
       }
       if (k.startsWith('sys_') && PF_USER_VARS[k] != null) {
-        return { value: String(PF_USER_VARS[k]), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional') };
+        tier = 'profile';
+        return { value: String(PF_USER_VARS[k]), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional'), tier };
       }
     }
 
@@ -113,26 +125,33 @@
       const alias = sDef?.profileKey || wDef?.profileKey || '';
       const fromProfile = alias ? PF_USER_VARS[alias] : PF_USER_VARS[k];
       if (fromProfile != null && fromProfile !== '') {
-        return { value: String(fromProfile), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional') };
+        tier = 'profile';
+        return { value: String(fromProfile), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional'), tier };
       }
     }
 
     // 3) Defaults (step first, then workflow)
     if (sDef?.defaultValue) {
-      return { value: String(sDef.defaultValue), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional') };
+      tier = 'step';
+      return { value: String(sDef.defaultValue), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional'), tier };
     }
     if (wDef?.defaultValue) {
-      return { value: String(wDef.defaultValue), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional') };
+      tier = 'workflow';
+      return { value: String(wDef.defaultValue), resolved: true, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional'), tier };
     }
 
     // 4) Unresolved -> keep placeholder; injMode carried for caller
-    return { value: `{${k}}`, resolved: false, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional') };
+    return { value: `{${k}}`, resolved: false, injMode: (sDef?.injectionMode || wDef?.injectionMode || 'conditional'), tier };
   }
 
-  function renderPrompt(template, ctx){
-    return String(template || '').replace(/\{([^}]+)\}/g, (_m, token) => {
+  function renderPrompt(template, ctx, meta){
+    const collect = meta || {};
+    collect.sources = collect.sources || {};
+    const output = String(template || '').replace(/\{([^}]+)\}/g, (_m, token) => {
       const [rawKey, fallback] = String(token).split('|');
       const r = resolveKey(rawKey, ctx);
+      collect.sources[keyNorm(rawKey)] = r.tier;
+      collect.lastTier = r.tier;
       if (!r.resolved) {
         // unresolved: depend on injection mode
         if ((r.injMode || 'conditional') === 'direct') {
@@ -142,17 +161,24 @@
       }
       return r.value;
     });
+    return output;
   }
 
   // Render all prompts within a step section
   function renderStep(sectionEl, ctx){
     sectionEl.querySelectorAll('[data-prompt-template]').forEach(area=>{
       const base = area.getAttribute('data-base') || area.value || '';
-      const out  = renderPrompt(base, ctx);
+      const meta = {};
+      const out  = renderPrompt(base, ctx, meta);
       if (area.tagName === 'TEXTAREA' || area.tagName === 'INPUT') {
         area.value = out;
       } else {
         area.textContent = out;
+      }
+      if (meta.lastTier) {
+        const label = meta.lastTier === 'profile' ? '✓ From Profile' : meta.lastTier === 'workflow' ? '✓ From Workflow' : '✓ From Step';
+        area.setAttribute('data-source-tier', meta.lastTier);
+        area.setAttribute('title', label);
       }
     });
   }
@@ -210,141 +236,207 @@ function coerceBool(v){
 }
 
 
-/**
- * Render a single control for a variable.
- * - container: element to append into
- * - level: 'workflow' | 'step'
- * - key: normalized key
- * - def: map entry (from buildWorkflowMap/buildStepMap)
- * - ctx: { stepMap, workflowMap, allowProfile }
- * - onChange: callback to call after store update (re-renderer)
- */
-function renderVarControl(container, level, key, def, ctx, onChange){
-  const wrap = document.createElement('div');
-  wrap.className = `pf-var pf-var-${level} pf-var-${def.type || 'text'}`;
-
-  const label = document.createElement('label');
-  label.className = 'pf-var-label';
-  label.htmlFor = `${level}-${key}`;
-  label.textContent = def.label || key;
-
-  if (def.required) {
-    const star = document.createElement('span');
-    star.className = 'pf-var-required';
-    star.textContent = ' *';
-    label.appendChild(star);
+  function ensureStaticBadge(container, id, text, modifier){
+    if (!container) return;
+    let badge = container.querySelector(`.pf-var-source-badge[data-badge="${id}"]`);
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'pf-var-source-badge';
+      badge.dataset.badge = id;
+      container.appendChild(badge);
+    }
+    badge.classList.remove('pf-var-source-badge--profile', 'pf-var-source-badge--workflow');
+    if (modifier) badge.classList.add(modifier);
+    badge.textContent = text;
   }
 
-  let ctrl;
-  const id = `${level}-${key}`;
-  const initResolved = resolveKey(key, ctx);
-  const initialValue = initResolved.resolved ? initResolved.value : '';
-
-  const placeholder = def.placeholder || '';
-
-  switch ((def.type || 'text').toLowerCase()) {
-    case 'textarea': {
-      ctrl = document.createElement('textarea');
-      ctrl.rows = 3;
-      ctrl.value = initialValue;
-      if (placeholder) ctrl.setAttribute('placeholder', placeholder);
-      break;
+  function updateVariableSourceIndicator(wrap, key, ctx){
+    if (!wrap) return;
+    const resolved = resolveKey(key, ctx);
+    const tier = resolved.resolved ? resolved.tier : 'unset';
+    let badge = wrap.querySelector('.pf-var-source-badge[data-role="value-source"]');
+  if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'pf-var-source-badge';
+      badge.dataset.role = 'value-source';
+      wrap.appendChild(badge);
     }
-    case 'number': {
-      ctrl = document.createElement('input');
-      ctrl.type = 'number';
-      if (initialValue !== '') ctrl.value = initialValue;
-      if (placeholder) ctrl.setAttribute('placeholder', placeholder);
-      break;
-    }
-    case 'email': {
-      ctrl = document.createElement('input');
-      ctrl.type = 'email';
-      if (initialValue !== '') ctrl.value = initialValue;
-      if (placeholder) ctrl.setAttribute('placeholder', placeholder);
-      break;
-    }
-    case 'url': {
-      ctrl = document.createElement('input');
-      ctrl.type = 'url';
-      if (initialValue !== '') ctrl.value = initialValue;
-      if (placeholder) ctrl.setAttribute('placeholder', placeholder);
-      break;
-    }
-    case 'select': {
-      ctrl = document.createElement('select');
-      // empty option (let placeholder remain until user chooses)
-      const emptyOpt = document.createElement('option');
-      emptyOpt.value = '';
-      emptyOpt.textContent = placeholder || '— select —';
-      ctrl.appendChild(emptyOpt);
-      (def.options || []).forEach(o=>{
-        const opt = document.createElement('option');
-        opt.value = String(o.value);
-        opt.textContent = String(o.label ?? o.value);
-        ctrl.appendChild(opt);
-      });
-      if (initialValue !== '') ctrl.value = initialValue;
-      break;
-    }
-    case 'boolean': {
-      ctrl = document.createElement('input');
-      ctrl.type = 'checkbox';
-      ctrl.checked = coerceBool(initialValue);
-      break;
-    }
-    default: { // text
-      ctrl = document.createElement('input');
-      ctrl.type = 'text';
-      if (initialValue !== '') ctrl.value = initialValue;
-      if (placeholder) ctrl.setAttribute('placeholder', placeholder);
-    }
-  }
-
-  ctrl.id = id;
-  ctrl.setAttribute('data-var-name', key);
-
-  if (def.required && ctrl.tagName !== 'INPUT' || (ctrl.tagName === 'INPUT' && ctrl.type !== 'checkbox')) {
-    ctrl.required = true;
-  }
-
-  const hint = document.createElement('div');
-  hint.className = 'pf-var-hint';
-  if (def.description) {
-    hint.textContent = def.description;
-  } else if (def.hint) {
-    hint.textContent = def.hint;
-  }
-
-  // Bind changes to store + re-render
-  ctrl.addEventListener('input', ()=>{
-    const k = key;
-    if (ctrl.type === 'checkbox') {
-      PF_FORM_STORE[k] = ctrl.checked ? '1' : '0';
+    badge.classList.remove('pf-var-source-badge--profile', 'pf-var-source-badge--workflow', 'pf-var-source-badge--step');
+    let label = '✓ From Step';
+    if (tier === 'profile') {
+      badge.classList.add('pf-var-source-badge--profile');
+      label = '✓ From Profile';
+    } else if (tier === 'workflow') {
+      badge.classList.add('pf-var-source-badge--workflow');
+      label = '✓ From Workflow';
+    } else if (tier === 'step') {
+      badge.classList.add('pf-var-source-badge--step');
+      label = '✓ From Step';
     } else {
-      PF_FORM_STORE[k] = ctrl.value;
+      badge.textContent = '⧗ Unresolved';
+      wrap.dataset.valueSource = 'unset';
+      return;
     }
-    markDirty();
-    if (typeof onChange === 'function') onChange();
-  });
-  ctrl.addEventListener('change', ()=>{
-    const k = key;
-    if (ctrl.type === 'checkbox') {
-      PF_FORM_STORE[k] = ctrl.checked ? '1' : '0';
-    } else {
-      PF_FORM_STORE[k] = ctrl.value;
-    }
-    markDirty();
-    if (typeof onChange === 'function') onChange();
-  });
-
-  wrap.appendChild(label);
-  wrap.appendChild(ctrl);
-  if ((def.description && def.description.trim()) || (def.hint && def.hint.trim())) {
-    wrap.appendChild(hint);
+    badge.textContent = label;
+    wrap.dataset.valueSource = tier;
   }
-  container.appendChild(wrap);
-}
+
+  /**
+   * Render a single control for a variable.
+   * - container: element to append into
+   * - level: 'workflow' | 'step'
+   * - key: normalized key
+   * - def: map entry
+   */
+  function renderVarControl(container, level, key, def, ctx, onChange){
+    const wrap = document.createElement('div');
+    wrap.className = `pf-var pf-var-${level} pf-var-${def.type || 'text'}`;
+    wrap.classList.add('pf-var-item');
+    const tierTag = getTierForVariable(key, ctx);
+    wrap.classList.add(`pf-var-item--${tierTag}`);
+    wrap.setAttribute('data-variable-tier', tierTag);
+    wrap.dataset.variableTier = tierTag;
+    const workflowDef = ctx.workflowMap ? ctx.workflowMap[key] : undefined;
+    const profileAlias = def.profileKey || workflowDef?.profileKey || '';
+
+    const label = document.createElement('label');
+    label.className = 'pf-var-label';
+    label.htmlFor = `${level}-${key}`;
+    label.textContent = def.label || key;
+
+    if (def.required) {
+      const star = document.createElement('span');
+      star.className = 'pf-var-required';
+      star.textContent = ' *';
+      label.appendChild(star);
+    }
+
+    if (level === 'workflow' && profileAlias) {
+      ensureStaticBadge(label, 'profile-alias', 'Inherits Profile', 'pf-var-source-badge--profile');
+    }
+    if (level === 'step') {
+      if (workflowDef) {
+        ensureStaticBadge(label, 'overrides-workflow', 'Overrides Workflow', 'pf-var-source-badge--workflow');
+      }
+      if (profileAlias) {
+        ensureStaticBadge(label, 'overrides-profile', 'Overrides Profile', 'pf-var-source-badge--profile');
+      }
+    }
+
+    let ctrl;
+    const id = `${level}-${key}`;
+    const initResolved = resolveKey(key, ctx);
+    const initialValue = initResolved.resolved ? initResolved.value : '';
+
+    const placeholder = def.placeholder || '';
+
+    switch ((def.type || 'text').toLowerCase()) {
+      case 'textarea': {
+        ctrl = document.createElement('textarea');
+        ctrl.rows = 3;
+        ctrl.value = initialValue;
+        if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+        break;
+      }
+      case 'number': {
+        ctrl = document.createElement('input');
+        ctrl.type = 'number';
+        if (initialValue !== '') ctrl.value = initialValue;
+        if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+        break;
+      }
+      case 'email': {
+        ctrl = document.createElement('input');
+        ctrl.type = 'email';
+        if (initialValue !== '') ctrl.value = initialValue;
+        if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+        break;
+      }
+      case 'url': {
+        ctrl = document.createElement('input');
+        ctrl.type = 'url';
+        if (initialValue !== '') ctrl.value = initialValue;
+        if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+        break;
+      }
+      case 'select': {
+        ctrl = document.createElement('select');
+        const emptyOpt = document.createElement('option');
+        emptyOpt.value = '';
+        emptyOpt.textContent = placeholder || '— select —';
+        ctrl.appendChild(emptyOpt);
+        (def.options || []).forEach(o=>{
+          const opt = document.createElement('option');
+          opt.value = String(o.value);
+          opt.textContent = String(o.label ?? o.value);
+          ctrl.appendChild(opt);
+        });
+        if (initialValue !== '') ctrl.value = initialValue;
+        break;
+      }
+      case 'boolean': {
+        ctrl = document.createElement('input');
+        ctrl.type = 'checkbox';
+        ctrl.checked = coerceBool(initialValue);
+        break;
+      }
+      default: {
+        ctrl = document.createElement('input');
+        ctrl.type = 'text';
+        if (initialValue !== '') ctrl.value = initialValue;
+        if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+      }
+    }
+
+    ctrl.id = id;
+    ctrl.setAttribute('data-var-name', key);
+
+    if (def.required && ctrl.tagName !== 'INPUT' || (ctrl.tagName === 'INPUT' && ctrl.type !== 'checkbox')) {
+      ctrl.required = true;
+    }
+
+    const hint = document.createElement('div');
+    hint.className = 'pf-var-hint';
+    if (def.description) {
+      hint.textContent = def.description;
+    } else if (def.hint) {
+      hint.textContent = def.hint;
+    }
+
+    wrap.appendChild(label);
+    wrap.appendChild(ctrl);
+    if ((def.description && def.description.trim()) || (def.hint && def.hint.trim())) {
+      wrap.appendChild(hint);
+    }
+    updateVariableSourceIndicator(wrap, key, ctx);
+    container.appendChild(wrap);
+
+    const emitChange = ()=>{
+      markDirty();
+      updateVariableSourceIndicator(wrap, key, ctx);
+      updateStatusBar(ctx.workflowMap);
+      if (typeof onChange === 'function') onChange();
+    };
+
+    ctrl.addEventListener('input', ()=>{
+      const k = key;
+      if (ctrl.type === 'checkbox') {
+        PF_FORM_STORE[k] = ctrl.checked ? '1' : '0';
+      } else {
+        PF_FORM_STORE[k] = ctrl.value;
+      }
+      emitChange();
+    });
+    ctrl.addEventListener('change', ()=>{
+      const k = key;
+      if (ctrl.type === 'checkbox') {
+        PF_FORM_STORE[k] = ctrl.checked ? '1' : '0';
+      } else {
+        PF_FORM_STORE[k] = ctrl.value;
+      }
+      emitChange();
+    });
+  }
 
 
 function isProfileEnabled(){
@@ -369,6 +461,7 @@ function renderWorkflowCounter(workflowMap){
   const totalEl = counter.querySelector('.pf-counter-total');
   if (numberEl) numberEl.textContent = String(filled);
   if (totalEl) totalEl.textContent = keys.length ? `/ ${keys.length}` : '/ 0';
+  updateStatusBar(workflowMap);
 }
 
 
@@ -402,7 +495,7 @@ function computeStepTierStatus(sectionEl, workflowMap){
 }
 
 
-function renderVariableStatus(workflowMap){
+function updateStatusBar(workflowMap){
   const bar = document.querySelector('.pf-variable-status-bar');
   if (!bar) return;
 
@@ -413,8 +506,11 @@ function renderVariableStatus(workflowMap){
     } else {
       const profileData = (PF_USER_VARS.profile && typeof PF_USER_VARS.profile === 'object') ? PF_USER_VARS.profile : {};
       const keys = Object.keys(profileData).filter(k => !/^sys_/i.test(k));
-      const count = keys.length;
-      profileTier.textContent = `${count}/${count}`;
+      const filled = keys.filter(k => {
+        const val = profileData[k];
+        return val != null && String(val).trim() !== '';
+      }).length;
+      profileTier.textContent = `${filled}/${keys.length}`;
     }
   }
 
@@ -449,12 +545,12 @@ function bindVariableStatusListeners(workflowMap){
 
   document.addEventListener('click', (event) => {
     if (event.target.closest('[data-action="toggle-step"]')) {
-      requestAnimationFrame(() => renderVariableStatus(workflowMap));
+      requestAnimationFrame(() => updateStatusBar(workflowMap));
     }
   });
 
   document.addEventListener('stepCompleted', () => {
-    renderVariableStatus(workflowMap);
+    updateStatusBar(workflowMap);
   });
 }
 
@@ -469,13 +565,11 @@ function renderWorkflowForm(containerEl, workflowMap, ctx, rerenderAllSteps){
   const handleChange = ()=>{
     if (typeof rerenderAllSteps === 'function') rerenderAllSteps();
     renderWorkflowCounter(workflowMap);
-    renderVariableStatus(workflowMap);
   };
   Object.keys(workflowMap).forEach(k=>{
     renderVarControl(containerEl, 'workflow', k, workflowMap[k], ctx, handleChange);
   });
   renderWorkflowCounter(workflowMap);
-  renderVariableStatus(workflowMap);
 }
 
 
@@ -489,12 +583,12 @@ function renderStepForm(sectionEl, stepMap, ctx){
   target.innerHTML = '';
   const handleChange = ()=>{
     renderStep(sectionEl, ctx);
-    renderVariableStatus(ctx.workflowMap || {});
+    updateStatusBar(ctx.workflowMap || {});
   };
   Object.keys(stepMap).forEach(k=>{
     renderVarControl(target, 'step', k, stepMap[k], ctx, handleChange);
   });
-  renderVariableStatus(ctx.workflowMap || {});
+  updateStatusBar(ctx.workflowMap || {});
 }
 
 
@@ -528,7 +622,7 @@ boot = function(){
       }
     });
     renderWorkflowCounter(workflowMap);
-    renderVariableStatus(workflowMap);
+    updateStatusBar(workflowMap);
   };
   const workflowCtx = { stepMap: {}, workflowMap, allowProfile: isProfileEnabled() };
   renderWorkflowForm(wfForm, workflowMap, workflowCtx, rerenderAll);
@@ -546,7 +640,7 @@ boot = function(){
     bindStep(section, ctx); // keeps manual binds for any pre-existing inputs
     renderStep(section, ctx);
   });
-  renderVariableStatus(workflowMap);
+  updateStatusBar(workflowMap);
   bindVariableStatusListeners(workflowMap);
 };
 
