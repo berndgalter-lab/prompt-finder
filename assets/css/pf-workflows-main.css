@@ -37,11 +37,14 @@
 
 .pf-workflow-layout {
     display: flex;
+    flex-direction: column;
     position: relative;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    gap: 0;
 }
+
 
 .pf-workflow-main {
     flex: 1;
@@ -50,32 +53,28 @@
     margin: 0 auto;
     padding: 2rem var(--pf-space-lg, 2rem);
     box-sizing: border-box;
-    /* Feste Breite behalten, auch wenn Content ausgeblendet wird */
     min-width: 0;
-}
-
-@media (min-width: 1400px) {
-    .pf-workflow-main {
-        max-width: 1400px;
-        margin-left: 280px;
-        padding-left: 3rem;
-        padding-right: 3rem;
-    }
-}
-
-@media (min-width: 1024px) and (max-width: 1399px) {
-    .pf-workflow-main {
-        max-width: calc(100% - 280px);
-        margin-left: 280px;
-        padding-left: 3rem;
-        padding-right: 3rem;
-    }
 }
 
 @media (max-width: 1023px) {
     .pf-workflow-main {
         max-width: 100%;
         padding: 1.5rem 1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .pf-workflow-layout {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        column-gap: 2.5rem;
+        align-items: flex-start;
+    }
+
+    .pf-workflow-main {
+        max-width: 1400px;
+        margin: 0;
+        padding: 2.5rem 3rem;
     }
 }
 
