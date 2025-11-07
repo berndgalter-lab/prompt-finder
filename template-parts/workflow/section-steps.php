@@ -57,6 +57,11 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
     <!-- Section Heading -->
     <h2 class="pf-section-heading">Workflow Steps</h2>
     <p class="pf-section-subheading">Follow these steps in order. Complete each step before moving to the next.</p>
+
+    <div class="pf-steps-progress" data-steps-progress>
+        <span class="pf-steps-progress-label">Progress:</span>
+        <span class="pf-steps-progress-count" data-steps-progress-count aria-live="polite"><?php echo esc_html(sprintf('%d of %d steps completed', 0, $total_steps)); ?></span>
+    </div>
     
     <?php if ($cta_info): ?>
         <!-- Access CTA -->
@@ -272,12 +277,13 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                                       aria-label="Prompt text for step <?php echo esc_attr($step_number); ?>"></textarea>
 
                             <div class="pf-prompt-actions pf-prompt-actions--footer">
+                                <div class="pf-prompt-subheading">Ready to copy:</div>
                                 <button class="pf-btn pf-btn-copy" data-copy-target="<?php echo esc_attr($step_dom_id); ?>" type="button" aria-label="Copy prompt for step <?php echo esc_attr($step_number); ?>">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                                     </svg>
-                                    <span class="pf-btn-copy__text">Copy to Clipboard</span>
+                                    <span class="pf-btn-copy__text">Copy to Clipboard &rarr;</span>
                                 </button>
                             </div>
                         </div>

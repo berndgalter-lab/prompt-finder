@@ -164,6 +164,7 @@ function renderStepVarItem(item, stepId) {
       const toggle = step.querySelector('.pf-step-toggle');
       const isCollapsed = step.classList.contains('is-collapsed');
       const expanded = !isCollapsed;
+      step.classList.toggle('is-open', expanded);
       if (header) {
         header.setAttribute('aria-expanded', expanded ? 'true' : 'false');
       }
@@ -221,6 +222,14 @@ function renderStepVarItem(item, stepId) {
       this.steps.forEach(step => {
         this.stepObserver.observe(step);
       });
+    },
+
+    updateProgressCounter: function() {
+      const progressEl = document.querySelector('[data-steps-progress-count]');
+      if (!progressEl) return;
+      const total = this.steps ? this.steps.length : 0;
+      const completed = Array.isArray(this.completedSteps) ? this.completedSteps.length : 0;
+      progressEl.textContent = `${completed} of ${total} steps completed`;
     },
 
     applyViewportLayout: function() {
@@ -298,6 +307,7 @@ function renderStepVarItem(item, stepId) {
         this.applyViewportLayout();
         this.updateMobileActionBarVisibility();
         this.updateMobileActionBarButtons();
+        this.updateProgressCounter();
       }, 150);
     },
 
@@ -351,6 +361,7 @@ function renderStepVarItem(item, stepId) {
       
       // Load saved state
       this.loadProgress();
+      this.updateProgressCounter();
 
       // Layout adjustments & helpers
       this.initializeGuideCollapsibles();
@@ -574,6 +585,7 @@ function renderStepVarItem(item, stepId) {
           this.syncStepAria(step);
         });
       }
+      this.updateProgressCounter();
     },
     
     /**
@@ -587,6 +599,7 @@ function renderStepVarItem(item, stepId) {
       
       // Save completed steps
       window.WorkflowStorage.set('workflow_completed_' + this.postId, this.completedSteps);
+      this.updateProgressCounter();
     },
     
     renderStepVariables: function() {
