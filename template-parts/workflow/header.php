@@ -27,17 +27,49 @@ $post_id = get_the_ID();
 
 // Get access mode using helper
 $access_mode = pf_workflow_mode($post_id);
+
+// Build breadcrumb trail
+$workflow_archive_link = get_post_type_archive_link('workflows');
+$workflow_archive_link = $workflow_archive_link ? $workflow_archive_link : home_url('/');
+$breadcrumb_category = null;
+$breadcrumb_terms = get_the_terms($post_id, 'workflow_category');
+if (empty($breadcrumb_terms) || is_wp_error($breadcrumb_terms)) {
+    $breadcrumb_terms = get_the_terms($post_id, 'category');
+}
+if (!empty($breadcrumb_terms) && !is_wp_error($breadcrumb_terms)) {
+    $breadcrumb_category = $breadcrumb_terms[0];
+}
+
+$start_timestamp = current_time('timestamp');
 ?>
 
 <header class="pf-workflow-header" role="banner" aria-label="Workflow Header">
     
     <!-- Progress Bar (Fixed Top) -->
-    <div class="pf-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Workflow Progress">
-        <div class="pf-progress-fill" data-progress="0"></div>
+    <div class="pf-progress-shell">
+        <div class="pf-progress-track">
+            <div class="pf-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Workflow Progress" aria-live="polite">
+                <div class="pf-progress-fill" data-progress="0"></div>
+            </div>
+        </div>
+        <div class="pf-progress-meta">
+            <span class="pf-progress-label" data-progress-label>0%</span>
+            <span class="pf-progress-summary" data-progress-summary>0 of <?php echo esc_html($total_steps); ?> steps completed</span>
+        </div>
     </div>
     
     <!-- Header Content (Sticky) -->
     <div class="pf-header-content">
+
+        <nav class="pf-breadcrumbs" aria-label="Breadcrumb">
+            <ol>
+                <li><a href="<?php echo esc_url($workflow_archive_link); ?>">Workflows</a></li>
+                <?php if ($breadcrumb_category): ?>
+                    <li><a href="<?php echo esc_url(get_term_link($breadcrumb_category)); ?>"><?php echo esc_html($breadcrumb_category->name); ?></a></li>
+                <?php endif; ?>
+                <li aria-current="page"><?php echo esc_html($post_title); ?></li>
+            </ol>
+        </nav>
         
         <!-- Title Section -->
         <div class="pf-header-title-section">
@@ -91,6 +123,16 @@ $access_mode = pf_workflow_mode($post_id);
         
         <!-- Meta Chips -->
         <div class="pf-header-meta">
+            <div class="pf-meta-chip pf-meta-chip--time pf-time-tracker" data-workflow-start="<?php echo esc_attr($start_timestamp); ?>">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span class="pf-meta-chip-text">
+                    Started: <span data-time-elapsed>just now</span>
+                </span>
+            </div>
+            
             <?php if (!empty($estimated_time_min_field)): ?>
                 <div class="pf-meta-chip pf-meta-chip--time">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

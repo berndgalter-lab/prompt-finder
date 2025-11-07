@@ -12,6 +12,13 @@
     progressBar: null,
     progressFill: null,
     section: null,
+    progressLabel: null,
+    progressSummary: null,
+    timeTracker: null,
+    timeElapsedEl: null,
+    startedAt: null,
+    timeIntervalId: null,
+    visibilityHandler: null,
     
     // State
     totalSteps: 0,
@@ -23,6 +30,10 @@
       this.progressBar = document.querySelector('.pf-progress-bar');
       this.progressFill = document.querySelector('.pf-progress-fill');
       this.section = document.querySelector('.pf-section--steps');
+      this.progressLabel = document.querySelector('[data-progress-label]');
+      this.progressSummary = document.querySelector('[data-progress-summary]');
+      this.timeTracker = document.querySelector('[data-workflow-start]');
+      this.timeElapsedEl = this.timeTracker ? this.timeTracker.querySelector('[data-time-elapsed]') : null;
       
       if (!this.progressBar || !this.progressFill) {
         console.warn('WorkflowProgress: Progress bar elements not found');
@@ -37,6 +48,9 @@
         this.totalSteps = steps.length;
       }
       
+      // Setup time tracking indicator
+      this.setupTimeTracking();
+
       // Initial update
       this.update();
       
@@ -108,6 +122,8 @@
         this.progressFill.dataset.progress = String(pct);
       }
       
+      this.updateMeta(pct, checked);
+      
       // Set aria-valuetext
       if (this.progressBar) {
         const label = checked + ' of ' + this.totalSteps + ' steps completed';
@@ -150,9 +166,93 @@
       // Update data attribute
       fill.dataset.progress = roundedPct;
       
-      console.log('WorkflowProgress: Updated to', roundedPct + '% (' + label + ')');
+      this.updateMeta(roundedPct, null, label);
+
+      console.log('WorkflowProgress: Updated to', roundedPct + '% (' + (label || 'manual update') + ')');
     },
     
+    updateMeta: function(pct, completed, label) {
+      if (this.progressLabel) {
+        var clampedPct = Math.max(0, Math.min(100, Math.round(pct)));
+        this.progressLabel.textContent = clampedPct + '%';
+      }
+
+      if (this.progressSummary) {
+        if (typeof completed === 'number' && this.totalSteps > 0) {
+          this.progressSummary.textContent = completed + ' of ' + this.totalSteps + ' steps completed';
+        } else if (label) {
+          this.progressSummary.textContent = label;
+        }
+      }
+    },
+
+    setupTimeTracking: function() {
+      if (!this.timeTracker || !this.timeElapsedEl) {
+        return;
+      }
+
+      var raw = parseInt(this.timeTracker.getAttribute('data-workflow-start'), 10);
+      if (isNaN(raw)) {
+        return;
+      }
+
+      this.startedAt = raw * 1000; // convert to milliseconds
+      this.updateTimeElapsed();
+
+      if (this.timeIntervalId) {
+        window.clearInterval(this.timeIntervalId);
+      }
+
+      this.timeIntervalId = window.setInterval(() => {
+        this.updateTimeElapsed();
+      }, 60000);
+
+      if (!this.visibilityHandler) {
+        this.visibilityHandler = () => {
+          if (document.visibilityState === 'visible') {
+            this.updateTimeElapsed();
+          }
+        };
+        document.addEventListener('visibilitychange', this.visibilityHandler);
+      }
+    },
+
+    updateTimeElapsed: function() {
+      if (!this.startedAt || !this.timeElapsedEl) {
+        return;
+      }
+
+      var now = Date.now();
+      var diff = Math.max(0, now - this.startedAt);
+      var minutesTotal = Math.round(diff / 60000);
+      var label = 'just now';
+
+      if (minutesTotal >= 60 * 24) {
+        var days = Math.floor(minutesTotal / (60 * 24));
+        var hours = Math.floor((minutesTotal % (60 * 24)) / 60);
+        label = days + 'd';
+        if (hours > 0) {
+          label += ' ' + hours + 'h';
+        }
+        label += ' ago';
+      } else if (minutesTotal >= 60) {
+        var hoursOnly = Math.floor(minutesTotal / 60);
+        var minutesRemainder = minutesTotal % 60;
+        label = hoursOnly + ' hr';
+        if (hoursOnly > 1) {
+          label += 's';
+        }
+        if (minutesRemainder > 0) {
+          label += ' ' + minutesRemainder + ' min';
+        }
+        label += ' ago';
+      } else if (minutesTotal >= 1) {
+        label = minutesTotal + ' min ago';
+      }
+
+      this.timeElapsedEl.textContent = label;
+    },
+
     /**
      * Get completed steps
      * @returns {NodeList} List of completed step elements

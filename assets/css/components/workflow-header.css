@@ -4,25 +4,150 @@
  */
 
 /* ========================================
-   PROGRESS BAR (Fixed Top)
+   PROGRESS BAR (Sticky Shell)
    ======================================== */
 
-.pf-progress-bar {
-    position: fixed;
+.pf-progress-shell {
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: var(--pf-border, #e5e7eb);
     z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem 2rem 0.75rem;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.pf-progress-track {
+    width: 100%;
+    height: 0.75rem;
+    background: linear-gradient(90deg, rgba(226, 232, 240, 0.9), rgba(226, 232, 240, 0.6));
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+}
+
+.pf-progress-bar {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    background: transparent;
 }
 
 .pf-progress-fill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, var(--pf-accent, #6366f1) 0%, var(--pf-info, #3b82f6) 100%);
-    transition: width 0.3s ease;
-    border-radius: 0 2px 2px 0;
+    background: linear-gradient(90deg, #6366f1 0%, #3b82f6 50%, #0ea5e9 100%);
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 999px;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.45);
+}
+
+.pf-progress-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    color: #1f2937;
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
+}
+
+.pf-progress-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1d4ed8;
+}
+
+.pf-progress-summary {
+    opacity: 0.7;
+}
+
+@media (min-width: 1200px) {
+    .pf-progress-shell {
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+}
+
+/* ========================================
+   BREADCRUMBS
+   ======================================== */
+
+.pf-breadcrumbs {
+    font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin: 0 0 0.75rem;
+}
+
+.pf-breadcrumbs ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pf-breadcrumbs li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pf-breadcrumbs li::after {
+    content: "/";
+    opacity: 0.5;
+    margin-left: 0.5rem;
+}
+
+.pf-breadcrumbs li:last-child::after {
+    display: none;
+}
+
+.pf-breadcrumbs a {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.pf-breadcrumbs a:hover,
+.pf-breadcrumbs a:focus {
+    color: #1d4ed8;
+}
+
+.pf-breadcrumbs li[aria-current="page"] {
+    font-weight: 700;
+    color: #1f2937;
+}
+
+/* ========================================
+   TIME TRACKER
+   ======================================== */
+
+.pf-time-tracker {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.25);
+    color: #1e3a8a;
+}
+
+.pf-time-tracker svg {
+    color: #1d4ed8;
+}
+
+.pf-time-tracker [data-time-elapsed] {
+    font-weight: 600;
+    color: #1d4ed8;
 }
 
 /* ========================================
@@ -311,6 +436,27 @@
         font-size: 0.8125rem;
         padding: 0.3125rem 0.625rem;
     }
+
+    .pf-progress-shell {
+        padding: 0.75rem 1.25rem 0.65rem;
+        gap: 0.4rem;
+    }
+
+    .pf-progress-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        font-size: 0.8125rem;
+    }
+
+    .pf-progress-label {
+        font-size: 0.9rem;
+    }
+
+    .pf-breadcrumbs {
+        font-size: 0.75rem;
+        letter-spacing: 0.03em;
+    }
 }
 
 /* ===== Compact spacing for workflow pages ===== */
@@ -374,26 +520,23 @@
   --pf-h-divider: rgba(0,0,0,.08);
 }
 
-/* Progressbar minimal */
-.pf-workflow-header .pf-progress-bar {
-  height: 3px;
-}
+/* Progressbar styling adjustments inherit from global definitions */
 
 /* Header-Content: Grid für responsive Wrap */
 .pf-workflow-header .pf-header-content {
   display: grid;
   align-items: center;
   gap: var(--pf-h-space-2);
-  /* Desktop: Titel | Actions rechts; Meta als gleiche Zeile */
   grid-template-columns: 1fr auto;
   grid-template-areas:
+    "crumbs crumbs"
     "title actions"
     "meta  actions"
     "tagline tagline";
-  padding: var(--pf-h-space-2) var(--pf-h-space-3);
+  padding: var(--pf-h-space-2) var(--pf-h-space-3) var(--pf-h-space-3);
   border-bottom: 1px solid var(--pf-h-divider);
   position: sticky;
-  top: 3px; /* Match progressbar height */
+  top: calc(0px + 0px); /* Sticks below progress shell */
   background: var(--pf-bg, #ffffff);
   z-index: 999;
 }
@@ -403,6 +546,11 @@
   grid-area: title;
   min-width: 0; /* allow truncation */
   margin-bottom: 0;
+}
+
+.pf-workflow-header .pf-breadcrumbs {
+  grid-area: crumbs;
+  margin-bottom: var(--pf-h-space-1);
 }
 
 .pf-workflow-header .pf-header-title-row {
@@ -498,8 +646,11 @@
 /* ≥1200px: alles in eine Zeile pressen, wenn Platz da ist */
 @media (min-width: 1200px) {
   .pf-workflow-header .pf-header-content {
-    grid-template-columns: 1fr auto auto;
-    grid-template-areas: "title meta actions";
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+    grid-template-areas:
+      "crumbs crumbs crumbs"
+      "title  meta    actions"
+      "tagline meta    actions";
     column-gap: var(--pf-h-space-3);
     row-gap: var(--pf-h-space-2);
   }
@@ -525,6 +676,7 @@
   .pf-workflow-header .pf-header-content {
     grid-template-columns: 1fr auto;
     grid-template-areas:
+      "crumbs crumbs"
       "title actions"
       "meta  actions"
       "tagline tagline";
@@ -543,6 +695,7 @@
   .pf-workflow-header .pf-header-content {
     grid-template-columns: 1fr auto;
     grid-template-areas:
+      "crumbs crumbs"
       "title actions"
       "meta  meta"
       "tagline tagline";
