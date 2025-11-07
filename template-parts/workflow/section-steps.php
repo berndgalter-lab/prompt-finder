@@ -248,12 +248,6 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                         </div>
                     <?php else: ?>
                         <!-- Full Step Content (only rendered if visible) -->
-                    <?php if (!empty($objective)): ?>
-                        <div class="pf-step-objective">
-                            <strong>Goal:</strong> <?php echo esc_html($objective); ?>
-                        </div>
-                    <?php endif; ?>
-                    
                     <!-- Prompt Type -->
                     <?php if ($step_type === 'prompt' && !empty($prompt)): ?>
 
@@ -265,27 +259,23 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                         <?php endif; ?>
                         <div class="pf-step-variables-section pf-variables--step" data-step-vars-ui></div>
 
-                        <div class="pf-prompt-container" data-prompt-wrapper>
-                            <div class="pf-prompt-header">
-                                <span class="pf-prompt-label">Prompt</span>
+                        <div class="pf-prompt-container">
+                            <div class="pf-prompt-wrapper" data-prompt-wrapper>
+                                <textarea class="pf-prompt-text pf-prompt"
+                                          data-prompt-id="<?php echo esc_attr($step_dom_id); ?>"
+                                          data-original-text="<?php echo esc_attr($prompt); ?>"
+                                          data-prompt-template
+                                          data-base="<?php echo esc_attr($prompt); ?>"
+                                          aria-label="Prompt text for step <?php echo esc_attr($step_number); ?>"
+                                          readonly></textarea>
                             </div>
-                            <textarea class="pf-prompt-text pf-prompt"
-                                      data-prompt-id="<?php echo esc_attr($step_dom_id); ?>"
-                                      data-original-text="<?php echo esc_attr($prompt); ?>"
-                                      data-prompt-template
-                                      data-base="<?php echo esc_attr($prompt); ?>"
-                                      aria-label="Prompt text for step <?php echo esc_attr($step_number); ?>"></textarea>
-
-                            <div class="pf-prompt-actions pf-prompt-actions--footer">
-                                <div class="pf-prompt-subheading">Ready to copy:</div>
-                                <button class="pf-btn pf-btn-copy" data-copy-target="<?php echo esc_attr($step_dom_id); ?>" type="button" aria-label="Copy prompt for step <?php echo esc_attr($step_number); ?>">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                                    </svg>
-                                    <span class="pf-btn-copy__text">Copy to Clipboard &rarr;</span>
-                                </button>
-                            </div>
+                            <button class="pf-btn-copy-primary" data-copy-target="<?php echo esc_attr($step_dom_id); ?>" type="button" aria-label="Copy prompt for step <?php echo esc_attr($step_number); ?>">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                                <span>Copy Prompt</span>
+                            </button>
                         </div>
                         
                         <?php if (!empty($paste_guidance)): ?>

@@ -777,10 +777,6 @@ function ensureStepToolbar(sectionEl){
     bar.className = 'pf-step-toolbar';
     bar.innerHTML = `
       <div class="pf-step-status" data-step-status></div>
-      <div class="pf-step-actions">
-        <button type="button" class="pf-btn pf-btn-copy" data-action="copy">Copy Prompt</button>
-        <button type="button" class="pf-btn pf-btn-reset" data-action="reset-step">Reset Step</button>
-      </div>
     `;
 
     const promptEl = sectionEl.querySelector('[data-prompt-template]');
@@ -932,33 +928,12 @@ boot = function(){
     const bar = ensureStepToolbar(section);
     if (!bar) return;
     const statusEl = bar.querySelector('[data-step-status]');
-    const promptEl = section.querySelector('[data-prompt-template]');
 
     function updateStatus(){
       const s = computeStatus(stepMap, workflowMap, allowProfile);
       renderStatus(statusEl, s);
     }
     updateStatus();
-
-    // Wiring: copy + reset
-    if (!bar.dataset.bound){
-      bar.dataset.bound = '1';
-      bar.addEventListener('click', async (e)=>{
-      const btn = e.target.closest('[data-action]');
-      if (!btn) return;
-      const action = btn.getAttribute('data-action');
-      if (action === 'copy'){
-        const text = (promptEl && (promptEl.value || promptEl.textContent)) || '';
-        await copyToClipboard(text);
-        btn.classList.add('pf-success');
-        setTimeout(()=>btn.classList.remove('pf-success'), 1200);
-      } else if (action === 'reset-step'){
-        resetStep(section);
-        renderStep(section, ctx);
-        updateStatus();
-      }
-      });
-    }
 
     // Recompute status on input changes
     if (!section.dataset.boundInputs){

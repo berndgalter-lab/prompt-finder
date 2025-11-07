@@ -315,7 +315,7 @@ function renderStepVarItem(item, stepId) {
       if (!button) return;
       button.classList.add('is-copied');
 
-      const labelEl = button.querySelector('.pf-btn-copy__text') || button.querySelector('span');
+      const labelEl = button.querySelector('span');
       if (labelEl) {
         if (!button.dataset.copyLabel) {
           button.dataset.copyLabel = labelEl.textContent || 'Copy';
@@ -433,7 +433,7 @@ function renderStepVarItem(item, stepId) {
         header.addEventListener('click', (e) => {
           // Don't toggle if clicking checkbox or copy button
           if (e.target.closest('.pf-step-checkbox') || 
-              e.target.closest('.pf-btn-copy') ||
+              e.target.closest('.pf-btn-copy-primary') ||
               (e.target.closest('.pf-step-header-actions') && !e.target.closest('.pf-step-toggle')) ||
               e.target.closest('.pf-btn')) {
             return;
