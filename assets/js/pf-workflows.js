@@ -961,10 +961,14 @@ function updateProgressBarFallback(){
   const total = steps.length;
   const completed = document.querySelectorAll('.pf-step-checkbox:checked').length;
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
-  document.querySelectorAll('.pf-progress-fill, .pf-progress-fill-large').forEach(bar => {
+  document.querySelectorAll('.pf-progress-fill, .pf-progress-fill-hero').forEach(bar => {
     bar.style.width = `${pct}%`;
     bar.dataset.progress = String(pct);
   });
+  const heroLabel = document.querySelector('.pf-progress-label[data-progress-label]');
+  if (heroLabel) {
+    heroLabel.textContent = `${pct}%`;
+  }
   const summary = document.querySelector('[data-progress-summary]');
   if (summary) summary.textContent = `${completed} of ${total} steps completed`;
 }

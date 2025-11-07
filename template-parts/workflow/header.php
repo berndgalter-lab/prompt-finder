@@ -42,148 +42,56 @@ if (!empty($breadcrumb_terms) && !is_wp_error($breadcrumb_terms)) {
 
 $start_timestamp = current_time('timestamp');
 $initial_step_number = $total_steps > 0 ? 1 : 0;
+$initial_progress_percent = 0;
 ?>
+
+<nav class="pf-breadcrumb-wrapper" aria-label="Breadcrumb">
+    <div class="pf-breadcrumb">
+        <a href="<?php echo esc_url($workflow_archive_link); ?>">Workflows</a>
+        <?php if ($breadcrumb_category): ?>
+            <span class="pf-breadcrumb-separator">/</span>
+            <a href="<?php echo esc_url(get_term_link($breadcrumb_category)); ?>"><?php echo esc_html($breadcrumb_category->name); ?></a>
+        <?php endif; ?>
+        <span class="pf-breadcrumb-separator">/</span>
+        <span class="pf-breadcrumb-current"><?php echo esc_html($post_title); ?></span>
+    </div>
+</nav>
 
 <header class="pf-workflow-header" role="banner" aria-label="Workflow Header">
 
-    <!-- Header Content -->
     <div class="pf-header-content">
-
-        <nav class="pf-breadcrumb" aria-label="Breadcrumb">
-            <a href="<?php echo esc_url($workflow_archive_link); ?>">Workflows</a>
-            <?php if ($breadcrumb_category): ?>
-                <span class="pf-breadcrumb-separator">/</span>
-                <a href="<?php echo esc_url(get_term_link($breadcrumb_category)); ?>"><?php echo esc_html($breadcrumb_category->name); ?></a>
-            <?php endif; ?>
-            <span class="pf-breadcrumb-separator">/</span>
-            <span class="pf-breadcrumb-current"><?php echo esc_html($post_title); ?></span>
-        </nav>
-
-        <!-- Title Section -->
-        <div class="pf-header-title-section">
-            <div class="pf-header-title-row">
-                <h1 class="pf-header-title">
-                    <?php echo esc_html($post_title); ?>
-                    <?php if (!empty($workflow_id_field)): ?>
-                        <span class="pf-header-id"><?php echo esc_html($workflow_id_field); ?></span>
-                    <?php endif; ?>
-                </h1>
-                
-                <div class="pf-header-actions">
-                    <button class="pf-action-btn pf-action-btn--favorite" 
-                            type="button" 
-                            aria-label="Add to favorites"
-                            data-action="toggle-favorite">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                        </svg>
-                    </button>
-                    
-                    <button class="pf-action-btn pf-action-btn--share" 
-                            type="button" 
-                            aria-label="Share workflow"
-                            data-action="share">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="18" cy="5" r="3"/>
-                            <circle cx="6" cy="12" r="3"/>
-                            <circle cx="18" cy="19" r="3"/>
-                            <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/>
-                        </svg>
-                    </button>
-                    
-                    <button class="pf-action-btn pf-action-btn--primary pf-action-btn--reset" 
-                            type="button" 
-                            aria-label="Reset progress"
-                            data-action="reset-progress">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 4v6h6M23 20v-6h-6"/>
-                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M20.5 14a9 9 0 0 1-14.85 3.36L1 14"/>
-                        </svg>
-                        <span>Reset</span>
-                    </button>
-                </div>
-            </div>
-            
+        <div class="pf-header-main">
+            <h1 class="pf-header-title"><?php echo esc_html($post_title); ?></h1>
             <?php if (!empty($tagline_field)): ?>
                 <p class="pf-header-tagline"><?php echo esc_html($tagline_field); ?></p>
             <?php endif; ?>
         </div>
-        
-        <!-- Meta Chips -->
-        <div class="pf-header-meta">
-            <div class="pf-meta-chip pf-meta-chip--time pf-time-tracker" data-workflow-start="<?php echo esc_attr($start_timestamp); ?>">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="12 6 12 12 16 14"/>
-                </svg>
-                <span class="pf-meta-chip-text">
-                    Started: <span data-time-elapsed>just now</span>
-                </span>
-            </div>
-            
+
+        <div class="pf-header-meta-compact">
             <?php if (!empty($estimated_time_min_field)): ?>
-                <div class="pf-meta-chip pf-meta-chip--time">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 6v6l4 2"/>
-                    </svg>
-                    <span class="pf-meta-chip-text"><?php echo esc_html($estimated_time_min_field); ?> min</span>
-                </div>
+                <span class="pf-meta-chip"><?php echo esc_html($estimated_time_min_field); ?> min</span>
             <?php endif; ?>
-            
+
             <?php if ($total_steps > 0): ?>
-                <div class="pf-meta-chip pf-meta-chip--steps">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="5 9 2 12 5 15"/>
-                        <polyline points="9 18 12 21 15 18"/>
-                        <polyline points="21 9 18 6 15 9"/>
-                        <polyline points="5 9 7 7 9 9"/>
-                    </svg>
-                    <span class="pf-meta-chip-text"><?php echo esc_html($total_steps); ?> <?php echo $total_steps === 1 ? 'step' : 'steps'; ?></span>
-                </div>
+                <span class="pf-meta-chip"><?php echo esc_html($total_steps); ?> <?php echo $total_steps === 1 ? 'step' : 'steps'; ?></span>
             <?php endif; ?>
-            
+
             <?php if (!empty($version_field)): ?>
-                <div class="pf-meta-chip pf-meta-chip--version">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 7h4V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/>
-                        <line x1="12" y1="12" x2="12" y2="16"/>
-                    </svg>
-                    <span class="pf-meta-chip-text"><?php echo esc_html($version_field); ?></span>
-                </div>
+                <span class="pf-meta-chip">v<?php echo esc_html($version_field); ?></span>
             <?php endif; ?>
-            
-            <?php 
-            // Access Mode Badge (using helper functions)
-            $access_badge_text = pf_mode_badge_text($access_mode);
-            $access_badge_css = pf_mode_badge_css($access_mode);
-            ?>
-            <div class="pf-meta-chip <?php echo esc_attr($access_badge_css); ?>">
-                <?php if ($access_mode === 'free'): ?>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
-                    </svg>
-                <?php else: ?>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                <?php endif; ?>
-                <span class="pf-meta-chip-text"><?php echo esc_html($access_badge_text); ?></span>
-            </div>
         </div>
-        
     </div>
 
-    <div class="pf-progress-container">
+    <div class="pf-progress-hero" data-workflow-start="<?php echo esc_attr($start_timestamp); ?>">
         <div class="pf-progress-info">
-            <span class="pf-progress-step" data-progress-step>Progress: Step <?php echo esc_html($initial_step_number); ?> of <?php echo esc_html($total_steps); ?></span>
+            <h2 class="pf-progress-title" data-progress-step>Step <?php echo esc_html($initial_step_number); ?> of <?php echo esc_html($total_steps); ?></h2>
+            <span class="pf-progress-time">Started <span data-time-elapsed>just now</span></span>
             <span class="pf-progress-summary pf-sr-only" data-progress-summary>0 of <?php echo esc_html($total_steps); ?> steps completed</span>
-            <span>Started <span data-time-elapsed>just now</span></span>
         </div>
-        <div class="pf-progress-bar-large" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-            <div class="pf-progress-fill-large" data-progress="0"></div>
+        <div class="pf-progress-bar-hero" role="progressbar" aria-valuenow="<?php echo esc_attr($initial_progress_percent); ?>" aria-valuemin="0" aria-valuemax="100">
+            <div class="pf-progress-fill-hero" style="width: <?php echo esc_attr($initial_progress_percent); ?>%" data-progress-fill>
+                <span class="pf-progress-label" data-progress-label><?php echo esc_html($initial_progress_percent); ?>%</span>
+            </div>
         </div>
     </div>
 </header>

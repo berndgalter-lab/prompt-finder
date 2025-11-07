@@ -1,425 +1,177 @@
 /**
  * Workflow Component: Header
- * Modern SAAS-style header with progress bar, title, meta chips, and actions
+ * Simplified header layout with prominent hero progress bar
  */
 
-/* Breadcrumb */
+/* Breadcrumb outside header */
+.pf-breadcrumb-wrapper {
+  padding: 12px 32px;
+  background: #fafbfc;
+  border-bottom: 1px solid #e5e7eb;
+}
+
 .pf-breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    margin-bottom: 16px;
-    color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
 }
 
 .pf-breadcrumb a {
-    color: #6b7280;
-    text-decoration: none;
-    transition: color 0.2s ease;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .pf-breadcrumb a:hover {
-    color: #3b82f6;
+  color: #3b82f6;
 }
 
 .pf-breadcrumb-separator {
-    color: #d1d5db;
+  color: #d1d5db;
 }
 
 .pf-breadcrumb-current {
-    color: #111827;
-    font-weight: 500;
+  color: #111827;
+  font-weight: 500;
 }
 
-/* Progress Bar - Prominent */
-.pf-progress-container {
-    padding: 20px 32px;
-    background: #f9fafb;
-    border-top: 1px solid #e5e7eb;
-}
-
-.pf-progress-info {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 14px;
-    color: #6b7280;
-    font-weight: 500;
-    gap: 12px;
-}
-
-.pf-progress-step {
-    color: #111827;
-    font-weight: 600;
-}
-
-.pf-progress-bar-large {
-    height: 8px;
-    background: #e5e7eb;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.pf-progress-fill-large {
-    height: 100%;
-    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-    border-radius: 4px;
-    transition: width 0.3s ease;
-    width: 0;
-}
-
-.pf-workflow-header .pf-progress-bar:not(.pf-progress-bar-large) {
-    display: none;
-}
-
-/* ========================================
-   TIME TRACKER
-   ======================================== */
-
-.pf-time-tracker {
-    background: rgba(37, 99, 235, 0.08);
-    border-color: rgba(37, 99, 235, 0.25);
-    color: #1e3a8a;
-}
-
-.pf-time-tracker svg {
-    color: #1d4ed8;
-}
-
-.pf-time-tracker [data-time-elapsed] {
-    font-weight: 600;
-    color: #1d4ed8;
-}
-
-/* ========================================
-   HEADER CONTENT
-   ======================================== */
-
-
+/* Simplified header */
 .pf-workflow-header {
-    background: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 0;
+  background: #ffffff;
+  padding: 24px 32px 0;
+  border-bottom: none;
 }
 
 .pf-header-content {
-    padding: 24px 32px 0;
-    background: #ffffff;
-    position: relative;
-    z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 24px;
 }
 
-/* ========================================
-   TITLE SECTION
-   ======================================== */
-
-.pf-header-title-section {
-    margin-bottom: 16px;
-}
-
-.pf-header-title-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
+.pf-header-main {
+  flex: 1;
 }
 
 .pf-header-title {
-    font-size: 32px;
-    font-weight: 700;
-    color: #111827;
-    line-height: 1.2;
-    margin: 0 0 8px 0;
-    flex: 1;
-    min-width: 0;
-    letter-spacing: -0.02em;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #111827;
 }
 
-/* Workflow ID Badge (inline mit Title) */
-.pf-header-title .pf-header-id {
-    display: inline-block;
-    font-family: ui-monospace, 'Courier New', monospace;
-    font-size: 0.5em;
-    font-weight: 400;
-    background: var(--pf-surface, #f9fafb);
-    color: var(--pf-text-dim, #666);
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    border: 1px solid var(--pf-border, #e5e7eb);
-    margin-left: 0.5rem;
-    vertical-align: middle;
-    vertical-align: baseline;
-    /* Ensure badge text is visible despite gradient text on parent */
-    -webkit-text-fill-color: currentColor;
-    -webkit-background-clip: initial;
-    background-clip: initial;
-}
-
-/* Tagline */
 .pf-header-tagline {
-    margin: 0;
-    font-size: 1rem;
-    color: var(--pf-text-dim, #666);
-    line-height: 1.5;
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
 }
 
-/* ========================================
-   ACTION BUTTONS
-   ======================================== */
-
-.pf-header-actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-shrink: 0;
-}
-
-.pf-action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: 1.5px solid var(--pf-border, #e5e7eb);
-    background: var(--pf-surface, #f9fafb);
-    color: var(--pf-text, #1a1a1a);
-    border-radius: var(--pf-radius-sm, 8px);
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 44px;
-}
-
-.pf-action-btn:hover {
-    background: var(--pf-accent, #6366f1);
-    color: #ffffff;
-    border-color: var(--pf-accent, #6366f1);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.2);
-}
-
-.pf-action-btn:active {
-    transform: translateY(0);
-}
-
-.pf-action-btn--primary {
-    background: var(--pf-accent, #6366f1);
-    color: #ffffff;
-    border-color: var(--pf-accent, #6366f1);
-}
-
-.pf-action-btn--primary:hover {
-    background: var(--pf-info, #3b82f6);
-    border-color: var(--pf-info, #3b82f6);
-}
-
-.pf-action-btn svg {
-    flex-shrink: 0;
-}
-
-.pf-action-btn--favorite,
-.pf-action-btn--share {
-    min-width: 44px;
-    padding: 0.5rem;
-}
-
-.pf-action-btn--favorite.is-favorited,
-.pf-action-btn--favorite.is-favorited:hover {
-    background: #fbbf24;
-    border-color: #fbbf24;
-    color: #ffffff;
-}
-
-/* ========================================
-   META CHIPS
-   ======================================== */
-
-.pf-header-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 16px 0;
+/* Compact meta badges */
+.pf-header-meta-compact {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .pf-meta-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background: #f3f4f6;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #4b5563;
-    font-weight: 500;
-    transition: background 0.15s ease, color 0.15s ease;
+  padding: 4px 10px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
 }
 
-.pf-meta-chip:hover {
-    background: #e5e7eb;
-    color: #1f2937;
+/* Hero Progress Bar */
+.pf-progress-hero {
+  background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin: 0 -32px;
 }
 
-
-.pf-meta-chip svg {
-    flex-shrink: 0;
-    opacity: 0.7;
+.pf-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  gap: 16px;
 }
 
-.pf-meta-chip:hover svg {
-    opacity: 1;
+.pf-progress-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e40af;
+  margin: 0;
 }
 
-.pf-meta-chip-text {
-    white-space: nowrap;
+.pf-progress-time {
+  font-size: 14px;
+  color: #64748b;
 }
 
-/* Access Mode Badges (new unified system) */
-.pf-meta-chip--free,
-.pf-badge--free {
-    background: #ecfdf5;
-    border-color: #a7f3d0;
-    color: #065f46;
+.pf-progress-bar-hero {
+  height: 12px;
+  background: #ffffff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
-.pf-meta-chip--free:hover,
-.pf-badge--free:hover {
-    background: #10b981;
-    border-color: #10b981;
-    color: #ffffff;
+.pf-progress-fill-hero {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
 }
 
-.pf-meta-chip--signin,
-.pf-badge--signin {
-    background: #fef3c7;
-    border-color: #fde68a;
-    color: #92400e;
+.pf-progress-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffffff;
 }
 
-.pf-meta-chip--signin:hover,
-.pf-badge--signin:hover {
-    background: #f59e0b;
-    border-color: #f59e0b;
-    color: #ffffff;
+/* Remove duplicate time displays */
+.pf-meta-chip--time:first-of-type,
+.pf-time-tracker,
+.pf-progress-container {
+  display: none !important;
 }
 
-.pf-meta-chip--pro,
-.pf-badge--pro {
-    background: #fef3c7;
-    border-color: #fde68a;
-    color: #92400e;
-}
-
-.pf-meta-chip--pro:hover,
-.pf-badge--pro:hover {
-    background: #f59e0b;
-    border-color: #f59e0b;
-    color: #ffffff;
-}
-
-/* Legacy Access Tier Chips (deprecated but kept for backward compatibility) */
-.pf-meta-chip--login,
-.pf-meta-chip--team,
-.pf-meta-chip--enterprise {
-    background: #fef3c7;
-    border-color: #fde68a;
-    color: #92400e;
-}
-
-.pf-meta-chip--login:hover,
-.pf-meta-chip--team:hover,
-.pf-meta-chip--enterprise:hover {
-    background: #f59e0b;
-    border-color: #f59e0b;
-    color: #ffffff;
-}
-
-/* ===== Compact spacing for workflow pages ===== */
-.pf-workflow-container .pf-header-content {
-    row-gap: var(--pf-row-gap) !important;
-}
-
-.pf-workflow-container .pf-header-title {
-    margin: 0 !important;
-    line-height: 1.2;
-}
-
-.pf-workflow-container .pf-header-actions {
-    gap: var(--pf-space-2) !important;
-}
-
-.pf-workflow-container .pf-header-meta {
-    gap: var(--pf-space-2) !important;
-}
-
-/* Meta Chips / Badges */
-.pf-workflow-container .pf-meta-chip {
-    height: var(--pf-chip-h) !important;
-    padding: 0 var(--pf-chip-pad-x) !important;
-    font-size: var(--pf-font-xs) !important;
-    border-radius: 9999px;
-    line-height: 1;
-}
-
-.pf-workflow-container .pf-meta-chip svg {
-    width: var(--pf-icon-sm);
-    height: var(--pf-icon-sm);
-}
-
-/* Progressbar */
-.pf-workflow-container .pf-progress-bar {
-    height: 4px;
-}
-
-.pf-workflow-container .pf-progress-fill {
-    height: 100%;
-}
-
-/* Responsive adjustments */
+/* Mobile responsive */
 @media (max-width: 768px) {
-    .pf-header-content {
-        padding: 16px;
-    }
+  .pf-breadcrumb-wrapper {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
 
-    .pf-progress-container {
-        padding: 16px;
-    }
+  .pf-workflow-header {
+    padding: 16px 16px 0;
+  }
 
-    .pf-header-title-row {
-        flex-direction: column;
-        gap: 12px;
-    }
+  .pf-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
 
-    .pf-header-title {
-        font-size: 24px;
-    }
+  .pf-progress-hero {
+    margin: 0 -16px;
+    border-radius: 0;
+  }
 
-    .pf-progress-info {
-        flex-direction: column;
-        align-items: flex-start;
-        font-size: 12px;
-        gap: 6px;
-    }
-
-    .pf-breadcrumb {
-        font-size: 12px;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-
-    .pf-header-actions {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 100;
-        background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.25);
-        padding: 8px;
-    }
-
-    .pf-header-actions .pf-action-btn {
-        min-height: 40px;
-    }
+  .pf-progress-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }
+

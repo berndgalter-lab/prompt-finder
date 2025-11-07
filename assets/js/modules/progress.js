@@ -41,8 +41,8 @@
       this.timeElapsedEl = this.timeTracker ? this.timeTracker.querySelector('[data-time-elapsed]') : null;
       this.progressInfoSummary = document.querySelector('.pf-progress-info [data-progress-summary]');
       this.progressInfoElapsed = document.querySelector('.pf-progress-info [data-time-elapsed]');
-      this.largeProgressBar = document.querySelector('.pf-progress-bar-large');
-      this.largeProgressFill = document.querySelector('.pf-progress-fill-large');
+      this.largeProgressBar = document.querySelector('.pf-progress-bar-hero');
+      this.largeProgressFill = document.querySelector('.pf-progress-fill-hero');
       this.progressStepLabel = document.querySelector('[data-progress-step]');
 
       if (!this.progressBar && this.largeProgressBar) {
@@ -238,7 +238,7 @@
       }
 
       if (!this.totalSteps || this.totalSteps <= 0) {
-        this.progressStepLabel.textContent = 'Progress: Step 0 of 0';
+        this.progressStepLabel.textContent = 'Step 0 of 0';
         return;
       }
 
@@ -261,7 +261,7 @@
         stepNumber = String(fallback);
       }
 
-      this.progressStepLabel.textContent = `Progress: Step ${stepNumber} of ${this.totalSteps}`;
+      this.progressStepLabel.textContent = `Step ${stepNumber} of ${this.totalSteps}`;
     },
 
     setupTimeTracking: function() {
