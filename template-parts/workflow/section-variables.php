@@ -73,6 +73,7 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
                     <h3 class="pf-variables-title">Your Profile Defaults</h3>
                     <p class="pf-variables-helper">These values are inherited from your profile settings.</p>
                     <p class="pf-variables-helper">These are your default values used across all workflows.</p>
+                    <p class="pf-variables-helper">Profile values are shared across all your workflows.</p>
                 </div>
                 <div class="pf-variables-counter" data-variables-tier="profile">
                     <span class="pf-counter-number"><?php echo esc_html(count($profile_values)); ?></span>
@@ -118,7 +119,7 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
                     <line x1="12" y1="12" x2="12" y2="16"/>
                     <line x1="12" y1="8" x2="12.01" y2="8"/>
                 </svg>
-                <span>Changes are autosaved and can be reset in the workflow toolbar.</span>
+                <span>These values apply to all steps in this workflow and are saved locally.</span>
             </div>
         </div>
     <?php else: ?>
