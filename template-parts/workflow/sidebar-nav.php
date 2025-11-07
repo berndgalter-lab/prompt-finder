@@ -70,15 +70,19 @@ $variable_count = $has_variables ? count($variables_workflow_field) : 0;
                     $step_title = $step['title'] ?? 'Untitled';
                     $step_anchor = 'step-' . $step_idx;
                     ?>
-                    <a href="#<?php echo esc_attr($step_anchor); ?>" 
-                       class="pf-sidebar-link pf-sidebar-link--step" 
+                    <a href="#<?php echo esc_attr($step_anchor); ?>"
+                       class="pf-sidebar-link pf-sidebar-link--step"
                        data-section="step-<?php echo esc_attr($step_idx); ?>"
                        data-step-index="<?php echo esc_attr($step_idx); ?>">
-                        <span class="pf-step-number"><?php echo esc_html($step_idx); ?></span>
-                        <span class="pf-step-title-text"><?php echo esc_html($step_title); ?></span>
-                        <svg class="pf-step-status pf-step-status--pending" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                        </svg>
+                        <span class="pf-step-status-indicator" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </span>
+                        <div class="pf-step-link-body">
+                            <span class="pf-step-number"><?php echo esc_html($step_idx); ?></span>
+                            <span class="pf-step-title-text"><?php echo esc_html($step_title); ?></span>
+                        </div>
                     </a>
                 <?php endforeach; ?>
             </div>
