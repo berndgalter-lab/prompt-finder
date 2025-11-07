@@ -255,11 +255,12 @@ function coerceBool(v){
     const resolved = resolveKey(key, ctx);
     const tier = resolved.resolved ? resolved.tier : 'unset';
     let badge = wrap.querySelector('.pf-var-source-badge[data-role="value-source"]');
-  if (!badge) {
+    if (!badge) {
+      const labelTarget = wrap.querySelector('.pf-field-label, .pf-var-label');
       badge = document.createElement('span');
       badge.className = 'pf-var-source-badge';
       badge.dataset.role = 'value-source';
-      wrap.appendChild(badge);
+      (labelTarget || wrap).appendChild(badge);
     }
     badge.classList.remove('pf-var-source-badge--profile', 'pf-var-source-badge--workflow', 'pf-var-source-badge--step');
     let label = '✓ From Step';
@@ -289,19 +290,26 @@ function coerceBool(v){
    * - def: map entry
    */
   function renderVarControl(container, level, key, def, ctx, onChange){
-    const wrap = document.createElement('div');
-    wrap.className = `pf-var pf-var-${level} pf-var-${def.type || 'text'}`;
-    wrap.classList.add('pf-var-item');
+    const type = (def.type || 'text').toLowerCase();
     const tierTag = getTierForVariable(key, ctx);
-    wrap.classList.add(`pf-var-item--${tierTag}`);
+    const wrap = document.createElement('div');
+    wrap.className = `pf-field pf-var pf-var-${level} pf-var-${type}`;
+    wrap.classList.add('pf-var-item', `pf-var-item--${tierTag}`);
     wrap.setAttribute('data-variable-tier', tierTag);
     wrap.dataset.variableTier = tierTag;
+    wrap.dataset.fieldName = key;
+    wrap.dataset.state = 'pristine';
     const workflowDef = ctx.workflowMap ? ctx.workflowMap[key] : undefined;
     const profileAlias = def.profileKey || workflowDef?.profileKey || '';
 
+    if (def.required) {
+      wrap.dataset.required = 'true';
+    }
+
+    const id = `${level}-${key}`;
     const label = document.createElement('label');
-    label.className = 'pf-var-label';
-    label.htmlFor = `${level}-${key}`;
+    label.className = 'pf-field-label pf-var-label';
+    label.htmlFor = id;
     label.textContent = def.label || key;
 
     if (def.required) {
@@ -323,17 +331,18 @@ function coerceBool(v){
       }
     }
 
-    let ctrl;
-    const id = `${level}-${key}`;
-    const initResolved = resolveKey(key, ctx);
-    const initialValue = initResolved.resolved ? initResolved.value : '';
+    const inputWrap = document.createElement('div');
+    inputWrap.className = 'pf-field-input-wrapper';
 
+    const initResolved = resolveKey(key, ctx);
+    const initialValue = initResolved.resolved ? initResolved.value : (def.defaultValue ?? '');
     const placeholder = def.placeholder || '';
 
-    switch ((def.type || 'text').toLowerCase()) {
+    let ctrl;
+    switch (type) {
       case 'textarea': {
         ctrl = document.createElement('textarea');
-        ctrl.rows = 3;
+        ctrl.rows = 4;
         ctrl.value = initialValue;
         if (placeholder) ctrl.setAttribute('placeholder', placeholder);
         break;
@@ -343,6 +352,7 @@ function coerceBool(v){
         ctrl.type = 'number';
         if (initialValue !== '') ctrl.value = initialValue;
         if (placeholder) ctrl.setAttribute('placeholder', placeholder);
+        ctrl.inputMode = 'decimal';
         break;
       }
       case 'email': {
@@ -365,19 +375,22 @@ function coerceBool(v){
         emptyOpt.value = '';
         emptyOpt.textContent = placeholder || '— select —';
         ctrl.appendChild(emptyOpt);
-        (def.options || []).forEach(o=>{
+        (def.options || []).forEach(optDef => {
           const opt = document.createElement('option');
-          opt.value = String(o.value);
-          opt.textContent = String(o.label ?? o.value);
+          opt.value = String(optDef.value);
+          opt.textContent = String(optDef.label ?? optDef.value);
           ctrl.appendChild(opt);
         });
-        if (initialValue !== '') ctrl.value = initialValue;
+        if (initialValue !== '') {
+          ctrl.value = initialValue;
+        }
         break;
       }
       case 'boolean': {
         ctrl = document.createElement('input');
         ctrl.type = 'checkbox';
         ctrl.checked = coerceBool(initialValue);
+        inputWrap.classList.add('pf-field-input-wrapper--checkbox');
         break;
       }
       default: {
@@ -390,51 +403,163 @@ function coerceBool(v){
 
     ctrl.id = id;
     ctrl.setAttribute('data-var-name', key);
-
-    if (def.required && ctrl.tagName !== 'INPUT' || (ctrl.tagName === 'INPUT' && ctrl.type !== 'checkbox')) {
+    ctrl.dataset.varName = key;
+    ctrl.dataset.fieldType = type;
+    ctrl.autocomplete = 'off';
+    if (def.required && ctrl.type !== 'checkbox') {
       ctrl.required = true;
     }
 
-    const hint = document.createElement('div');
-    hint.className = 'pf-var-hint';
-    if (def.description) {
-      hint.textContent = def.description;
-    } else if (def.hint) {
-      hint.textContent = def.hint;
+    ctrl.classList.add('pf-field-input');
+
+    if (ctrl.tagName === 'TEXTAREA') {
+      ctrl.classList.add('pf-field-input--textarea');
+    }
+    if (ctrl.type === 'checkbox') {
+      ctrl.classList.add('pf-field-input--checkbox');
     }
 
+    const validation = document.createElement('span');
+    validation.className = 'pf-field-validation';
+    validation.dataset.state = 'idle';
+    validation.setAttribute('aria-hidden', 'true');
+    validation.textContent = '✓';
+
+    inputWrap.appendChild(ctrl);
+    inputWrap.appendChild(validation);
+
     wrap.appendChild(label);
-    wrap.appendChild(ctrl);
-    if ((def.description && def.description.trim()) || (def.hint && def.hint.trim())) {
+    wrap.appendChild(inputWrap);
+
+    const hintText = (def.description && def.description.trim()) || (def.hint && def.hint.trim()) || '';
+    if (hintText) {
+      const hint = document.createElement('span');
+      hint.className = 'pf-field-hint pf-var-hint';
+      hint.textContent = hintText;
       wrap.appendChild(hint);
     }
+
+    const errorEl = document.createElement('span');
+    errorEl.className = 'pf-field-error';
+    errorEl.style.display = 'none';
+    errorEl.setAttribute('role', 'alert');
+    wrap.appendChild(errorEl);
+
     updateVariableSourceIndicator(wrap, key, ctx);
     container.appendChild(wrap);
+
+    const isBoolean = type === 'boolean';
+    const required = !!def.required;
+    let touched = false;
+
+    function storeValue(){
+      if (ctrl.type === 'checkbox') {
+        PF_FORM_STORE[key] = ctrl.checked ? '1' : '0';
+      } else {
+        PF_FORM_STORE[key] = ctrl.value;
+      }
+    }
+
+    function getValidationValue(){
+      if (isBoolean) {
+        return ctrl.checked ? '1' : '';
+      }
+      if (ctrl.tagName === 'SELECT') {
+        return ctrl.value;
+      }
+      return (ctrl.value || '').trim();
+    }
+
+    function applyState(state, message){
+      wrap.dataset.state = state;
+      validation.dataset.state = state;
+      if (state === 'valid') {
+        validation.style.opacity = '1';
+        validation.textContent = '✓';
+        errorEl.style.display = 'none';
+        errorEl.textContent = '';
+        ctrl.classList.remove('is-error');
+      } else if (state === 'invalid') {
+        validation.style.opacity = '1';
+        validation.textContent = '!';
+        errorEl.style.display = '';
+        errorEl.textContent = message || 'Check this field';
+        ctrl.classList.add('is-error');
+      } else {
+        validation.style.opacity = '0';
+        validation.textContent = '✓';
+        errorEl.style.display = 'none';
+        errorEl.textContent = '';
+        ctrl.classList.remove('is-error');
+      }
+    }
+
+    function runValidation(trigger){
+      if (isBoolean) {
+        const shouldFlagRequired = required && (trigger === 'blur' || trigger === 'change');
+        const state = ctrl.checked ? 'valid' : (shouldFlagRequired ? 'invalid' : 'pristine');
+        const message = state === 'invalid' ? 'This field is required' : '';
+        applyState(state, message);
+        return state;
+      }
+
+      if (trigger === 'blur' || trigger === 'change') {
+        touched = true;
+      }
+
+      const trimmed = getValidationValue();
+      if (!touched && trimmed !== '') {
+        touched = true;
+      }
+
+      const check = validateValueByType(type, trimmed);
+      let state = 'pristine';
+      let message = '';
+
+      if (trimmed !== '' && !check.ok) {
+        state = 'invalid';
+        message = check.msg || 'Invalid value';
+      } else if (trimmed !== '') {
+        state = 'valid';
+      } else if (required && touched) {
+        state = 'invalid';
+        message = 'This field is required';
+      }
+
+      applyState(state, message);
+      return state;
+    }
+
+    if (isBoolean) {
+      touched = ctrl.checked;
+    } else {
+      touched = getValidationValue() !== '';
+    }
+
+    runValidation('init');
 
     const emitChange = ()=>{
       markDirty();
       updateVariableSourceIndicator(wrap, key, ctx);
-      updateStatusBar(ctx.workflowMap);
+      updateStatusBar(ctx.workflowMap || {});
       if (typeof onChange === 'function') onChange();
     };
 
-    ctrl.addEventListener('input', ()=>{
-      const k = key;
-      if (ctrl.type === 'checkbox') {
-        PF_FORM_STORE[k] = ctrl.checked ? '1' : '0';
-      } else {
-        PF_FORM_STORE[k] = ctrl.value;
-      }
+    const handleValueChange = (trigger)=>{
+      storeValue();
+      runValidation(trigger);
       emitChange();
-    });
-    ctrl.addEventListener('change', ()=>{
-      const k = key;
-      if (ctrl.type === 'checkbox') {
-        PF_FORM_STORE[k] = ctrl.checked ? '1' : '0';
-      } else {
-        PF_FORM_STORE[k] = ctrl.value;
-      }
-      emitChange();
+    };
+
+    if (isBoolean || ctrl.tagName === 'SELECT') {
+      ctrl.addEventListener('change', ()=>handleValueChange('change'));
+    } else {
+      ctrl.addEventListener('input', ()=>handleValueChange('input'));
+      ctrl.addEventListener('change', ()=>handleValueChange('change'));
+    }
+
+    ctrl.addEventListener('blur', ()=>{
+      runValidation('blur');
     });
   }
 
@@ -442,6 +567,28 @@ function coerceBool(v){
 function isProfileEnabled(){
   const container = document.querySelector('.pf-workflow-container');
   return !!(container && container.getAttribute('data-profile-enabled') === 'true');
+}
+
+
+function updateWorkflowProgressVisual(filled, total){
+  const wrap = document.querySelector('[data-variables-progress]');
+  if (!wrap) return;
+  const pct = total > 0 ? Math.round((filled / total) * 100) : 0;
+  wrap.dataset.filled = String(filled);
+  wrap.dataset.total = String(total);
+  const textEl = wrap.querySelector('[data-variables-progress-text]');
+  if (textEl) {
+    textEl.textContent = `${filled} of ${total} completed`;
+  }
+  const barEl = wrap.querySelector('[role="progressbar"]');
+  if (barEl) {
+    barEl.setAttribute('aria-valuenow', String(pct));
+  }
+  const fillEl = wrap.querySelector('[data-variables-progress-fill]');
+  if (fillEl) {
+    fillEl.style.width = `${pct}%`;
+    fillEl.setAttribute('aria-valuenow', String(pct));
+  }
 }
 
 
@@ -461,6 +608,7 @@ function renderWorkflowCounter(workflowMap){
   const totalEl = counter.querySelector('.pf-counter-total');
   if (numberEl) numberEl.textContent = String(filled);
   if (totalEl) totalEl.textContent = keys.length ? `/ ${keys.length}` : '/ 0';
+  updateWorkflowProgressVisual(filled, keys.length);
   updateStatusBar(workflowMap);
 }
 
@@ -597,6 +745,7 @@ function renderStepForm(sectionEl, stepMap, ctx){
 const _orig_boot = boot;
 
 boot = function(){
+  bindMobileInputScroll();
   const wfEl = document.querySelector('[data-wf-vars]');
   const wfVarsJson = wfEl ? wfEl.getAttribute('data-wf-vars') : '[]';
   let wfRows = [];
@@ -658,6 +807,58 @@ function getStorageKey(){
 }
 
 
+const AUTOSAVE_DEBOUNCE_MS = 500;
+let autosaveTimer = null;
+let autosaveStatusEl = null;
+let mobileFocusBound = false;
+
+function getAutosaveStatusEl(){
+  if (!autosaveStatusEl) {
+    autosaveStatusEl = document.querySelector('.pf-autosave-status');
+  }
+  return autosaveStatusEl;
+}
+
+function setAutosaveStatus(state, message){
+  const el = getAutosaveStatusEl();
+  if (!el) return;
+  if (state) {
+    el.setAttribute('data-status', state);
+  }
+  if (message) {
+    const textEl = el.querySelector('.pf-autosave-text');
+    if (textEl) textEl.textContent = message;
+  }
+}
+
+function scheduleAutosave(){
+  const el = getAutosaveStatusEl();
+  if (el) setAutosaveStatus('saving', 'Saving...');
+  if (autosaveTimer) {
+    window.clearTimeout(autosaveTimer);
+  }
+  autosaveTimer = window.setTimeout(()=>{
+    autosaveTimer = null;
+    saveDraft();
+  }, AUTOSAVE_DEBOUNCE_MS);
+}
+
+function bindMobileInputScroll(){
+  if (mobileFocusBound) return;
+  const mq = window.matchMedia('(max-width: 768px)');
+  if (!mq.matches) return;
+  mobileFocusBound = true;
+  document.addEventListener('focusin', (event)=>{
+    const el = event.target;
+    if (!el || !el.classList || !el.classList.contains('pf-field-input')) return;
+    window.setTimeout(()=>{
+      try {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err) {}
+    }, 150);
+  });
+}
+
 // Load/save PF_FORM_STORE
 function loadDraft(){
   try {
@@ -673,6 +874,12 @@ function saveDraft(){
   try {
     localStorage.setItem(getStorageKey(), JSON.stringify(PF_FORM_STORE));
   } catch(e){}
+  if (autosaveTimer) {
+    window.clearTimeout(autosaveTimer);
+    autosaveTimer = null;
+  }
+  DIRTY = false;
+  setAutosaveStatus('saved', 'All changes saved');
 }
 
 
@@ -864,7 +1071,7 @@ function resetWorkflowVars(){
 
 // Dirty state
 let DIRTY = false;
-function markDirty(){ DIRTY = true; saveDraft(); }
+function markDirty(){ DIRTY = true; scheduleAutosave(); }
 window.addEventListener('beforeunload', function(e){
   if (DIRTY){
     e.preventDefault();
@@ -886,6 +1093,7 @@ window.addEventListener('beforeunload', function(e){
 const _boot5_prev = boot;
 
 boot = function(){
+  bindMobileInputScroll();
   // Ensure root dataset (workflow id, user uid) via PHP attributes
   const root = document.querySelector('[data-wf-root]');
   loadDraft(); // load local draft early (fills PF_FORM_STORE)

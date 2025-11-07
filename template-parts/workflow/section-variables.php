@@ -63,7 +63,25 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
 ?>
 
 <section id="variables" class="pf-section pf-section--variables" data-post-id="<?php echo esc_attr($workflow_id); ?>">
-    <h2 class="pf-section-heading">Configure Your Variables</h2>
+    <div class="pf-variables-header">
+        <div class="pf-variables-title-group">
+            <h2 class="pf-section-heading">Configure Your Variables</h2>
+            <span class="pf-autosave-status" data-status="saved" aria-live="polite">
+                <svg class="pf-autosave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span class="pf-autosave-text">All changes saved</span>
+            </span>
+        </div>
+        <?php if ($total_variables > 0): ?>
+            <div class="pf-variables-progress" data-variables-progress>
+                <span class="pf-progress-text" data-variables-progress-text>0 of <?php echo esc_html($total_variables); ?> completed</span>
+                <div class="pf-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <div class="pf-progress-fill" style="width: 0%" data-variables-progress-fill aria-hidden="true"></div>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
     <p class="pf-section-subheading">Fill these inputs before starting the workflow.</p>
 
     <?php if ($profile_defaults_enabled): ?>

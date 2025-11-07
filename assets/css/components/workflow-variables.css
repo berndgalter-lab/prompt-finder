@@ -159,6 +159,118 @@
   letter-spacing: 1px;
 }
 
+/* Stripe-inspired field styling */
+.pf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 24px;
+}
+
+.pf-field-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.pf-field-input-wrapper {
+  position: relative;
+}
+
+.pf-field-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 40px 0 12px;
+  font-size: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  transition: all 0.15s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+}
+
+.pf-field-input::placeholder {
+  color: #9ca3af;
+}
+
+.pf-field-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.pf-field-input-wrapper--checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pf-field-input--checkbox {
+  width: auto;
+  height: auto;
+  padding: 0;
+}
+
+.pf-field-input--textarea {
+  min-height: 120px;
+  padding: 12px;
+  resize: vertical;
+}
+
+.pf-field-validation {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  color: #10b981;
+}
+
+.pf-field-hint {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.pf-field-error {
+  font-size: 13px;
+  color: #ef4444;
+  display: none;
+}
+
+.pf-field[data-state="valid"] .pf-field-validation {
+  opacity: 1;
+  color: #10b981;
+}
+
+.pf-field[data-state="invalid"] .pf-field-validation {
+  opacity: 1;
+  color: #ef4444;
+}
+
+.pf-field[data-state="invalid"] .pf-field-input {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.pf-field[data-state="valid"] .pf-field-input {
+  border-color: #10b981;
+}
+
+.pf-field[data-state="invalid"] .pf-field-error {
+  display: block;
+}
+
+.pf-field-input.is-validating {
+  background-image: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
 /* Individual Variable Items by Tier */
 .pf-var-item[data-variable-tier="profile"] {
   border-left: 4px solid #2196F3 !important;
@@ -262,15 +374,82 @@
 .pf-variables-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
     margin-bottom: var(--pf-space-lg, 2rem);
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
 .pf-variables-header-text {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+}
+
+.pf-variables-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.pf-autosave-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #6b7280;
+    margin-left: 12px;
+    transition: color 0.2s ease;
+}
+
+.pf-autosave-status[data-status="saving"] {
+    color: #3b82f6;
+}
+
+.pf-autosave-status[data-status="saved"] {
+    color: #10b981;
+}
+
+.pf-autosave-icon {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pf-autosave-status[data-status="saving"] .pf-autosave-icon {
+    animation: rotate 1s linear infinite;
+}
+
+.pf-variables-progress {
+    min-width: 220px;
+    text-align: right;
+}
+
+.pf-progress-text {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+    display: block;
+}
+
+.pf-progress-bar {
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.pf-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.3s ease;
 }
 
 .pf-variables-title {
@@ -590,6 +769,15 @@
     opacity: 0.6;
 }
 
+@keyframes rotate {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
 /* ========================================
    VARIABLE STATUS BAR
    ======================================== */
@@ -605,31 +793,32 @@
 
 @media (max-width: 768px) {
     .pf-variables-card {
-        padding: var(--pf-space-md, 1.5rem);
+        padding: 16px;
+        margin: 0 -16px;
+        border-radius: 0;
     }
-    
+
     .pf-variables-header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 12px;
     }
-    
-    .pf-variables-counter {
-        align-self: flex-end;
-    }
-    
-    .pf-variables-actions {
-        flex-direction: column;
-    }
-    
-    .pf-btn {
+
+    .pf-variables-progress {
         width: 100%;
     }
 
-    .pf-variables--profile,
-    .pf-variables--workflow,
-    .pf-variables--step {
-        padding: 1rem;
-        margin-bottom: 1rem;
+    .pf-field-input {
+        font-size: 16px;
+        height: 48px;
+    }
+
+    .pf-field-input--textarea {
+        min-height: 150px;
+    }
+
+    .pf-autosave-status {
+        margin-left: 0;
     }
 
     .pf-variable-status-bar {
@@ -654,16 +843,16 @@
     gap: var(--pf-space-2) !important;
 }
 
-.pf-workflow-container .pf-var-item {
+.pf-workflow-container .pf-field {
     gap: var(--pf-space-1) !important;
 }
 
-.pf-workflow-container .pf-var-label {
+.pf-workflow-container .pf-field-label {
     margin: 0 !important;
     font-size: var(--pf-font-sm);
 }
 
-.pf-workflow-container .pf-var-input {
-    height: 36px;
+.pf-workflow-container .pf-field-input {
+    height: 40px;
     font-size: var(--pf-font-md);
 }
