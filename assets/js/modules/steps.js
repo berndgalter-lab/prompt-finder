@@ -92,6 +92,10 @@ function renderStepVarItem(item, stepId) {
     postId: null,
     storageKey: null,
     stickyActionsBar: null,
+    resizeTimer: null,
+    viewportMode: null,
+    activeStep: null,
+    stepObserver: null,
     
     // State
     collapsedSteps: [],
@@ -153,6 +157,173 @@ function renderStepVarItem(item, stepId) {
       
       console.log('WorkflowSteps: Synchronized', steps.length, 'step IDs with sidebar links');
     },
+
+    syncStepAria: function(step) {
+      if (!step) return;
+      const header = step.querySelector('.pf-step-header');
+      const toggle = step.querySelector('.pf-step-toggle');
+      const isCollapsed = step.classList.contains('is-collapsed');
+      const expanded = !isCollapsed;
+      if (header) {
+        header.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      }
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        toggle.setAttribute('aria-label', expanded ? 'Collapse step content' : 'Expand step content');
+      }
+    },
+
+    setActiveStep: function(stepElement, opts = {}) {
+      if (!stepElement || stepElement.classList.contains('pf-step--locked')) {
+        return;
+      }
+
+      if (this.activeStep === stepElement) {
+        return;
+      }
+
+      this.steps.forEach(step => step.classList.remove('pf-step--active'));
+      stepElement.classList.add('pf-step--active');
+      this.activeStep = stepElement;
+
+      if (opts.scrollIntoView) {
+        const headerOffset = 120;
+        const elementPosition = stepElement.offsetTop;
+        const offsetPosition = elementPosition - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+
+      this.updateMobileActionBarButtons();
+    },
+
+    observeSteps: function() {
+      if (typeof IntersectionObserver === 'undefined') {
+        return;
+      }
+
+      if (this.stepObserver) {
+        this.stepObserver.disconnect();
+      }
+
+      this.stepObserver = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter(entry => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible.length > 0) {
+          this.setActiveStep(visible[0].target);
+        }
+      }, {
+        threshold: [0.25, 0.5, 0.75],
+        rootMargin: '0px 0px -30% 0px'
+      });
+
+      this.steps.forEach(step => {
+        this.stepObserver.observe(step);
+      });
+    },
+
+    applyViewportLayout: function() {
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
+      const nextMode = isMobile ? 'mobile' : 'desktop';
+
+      if (this.viewportMode === nextMode && this.steps.length) {
+        this.steps.forEach(step => this.syncStepAria(step));
+        return;
+      }
+
+      this.viewportMode = nextMode;
+      const collapsedIds = [];
+
+      if (isMobile) {
+        const firstOpen = Array.from(this.steps).find(step => !step.classList.contains('pf-step--locked')) || this.steps[0];
+        this.steps.forEach((step) => {
+          if (step === firstOpen && firstOpen) {
+            step.classList.remove('is-collapsed');
+          } else {
+            step.classList.add('is-collapsed');
+            collapsedIds.push(step.dataset.stepId);
+          }
+          this.syncStepAria(step);
+        });
+      } else {
+        this.steps.forEach(step => {
+          step.classList.remove('is-collapsed');
+          this.syncStepAria(step);
+        });
+      }
+
+      this.collapsedSteps = collapsedIds;
+      this.saveProgress();
+
+      const fallbackActive = Array.from(this.steps).find(step => !step.classList.contains('pf-step--locked')) || this.steps[0];
+      if (fallbackActive) {
+        this.setActiveStep(fallbackActive);
+      }
+    },
+
+    initializeGuideCollapsibles: function() {
+      const bodies = document.querySelectorAll('[data-guide-body]');
+      bodies.forEach(body => {
+        const inner = body.querySelector('.pf-guide-body-inner');
+        const toggle = body.querySelector('.pf-guide-toggle');
+        if (!inner || !toggle) return;
+
+        const contentHeight = inner.scrollHeight;
+        if (contentHeight <= 320) {
+          toggle.hidden = true;
+          body.dataset.collapsible = 'false';
+          return;
+        }
+
+        body.dataset.collapsible = 'true';
+        body.classList.add('is-truncated');
+        toggle.hidden = false;
+        toggle.setAttribute('aria-expanded', 'false');
+
+        toggle.addEventListener('click', () => {
+          const currentlyExpanded = body.classList.toggle('is-expanded');
+          body.classList.toggle('is-truncated', !currentlyExpanded);
+          toggle.setAttribute('aria-expanded', currentlyExpanded ? 'true' : 'false');
+        });
+      });
+    },
+
+    handleViewportResize: function() {
+      if (this.resizeTimer) {
+        window.clearTimeout(this.resizeTimer);
+      }
+
+      this.resizeTimer = window.setTimeout(() => {
+        this.applyViewportLayout();
+        this.updateMobileActionBarVisibility();
+        this.updateMobileActionBarButtons();
+      }, 150);
+    },
+
+    handleCopySuccess: function(button) {
+      if (!button) return;
+      button.classList.add('is-copied');
+
+      const labelEl = button.querySelector('.pf-btn-copy__text') || button.querySelector('span');
+      if (labelEl) {
+        if (!button.dataset.copyLabel) {
+          button.dataset.copyLabel = labelEl.textContent || 'Copy';
+        }
+        labelEl.textContent = 'Copied!';
+      }
+
+      if (button.__copyTimer) {
+        window.clearTimeout(button.__copyTimer);
+      }
+
+      button.__copyTimer = window.setTimeout(() => {
+        button.classList.remove('is-copied');
+        if (labelEl && button.dataset.copyLabel) {
+          labelEl.textContent = button.dataset.copyLabel;
+        }
+      }, 2000);
+    },
     
     /**
      * Initialize the steps module
@@ -180,6 +351,10 @@ function renderStepVarItem(item, stepId) {
       
       // Load saved state
       this.loadProgress();
+
+      // Layout adjustments & helpers
+      this.initializeGuideCollapsibles();
+      this.applyViewportLayout();
       
       // Setup ARIA attributes for toggles
       this.bindStepToggles();
@@ -193,8 +368,13 @@ function renderStepVarItem(item, stepId) {
       // Auto-expand first incomplete step
       this.autoExpandFirstIncomplete();
       
+      this.observeSteps();
+      this.setActiveStep(this.getCurrentStep());
+
       // Setup mobile action bar
       this.setupMobileActionBar();
+
+      window.addEventListener('resize', () => this.handleViewportResize());
       
       console.log('WorkflowSteps: Initialized for', this.steps.length, 'steps');
     },
@@ -218,14 +398,14 @@ function renderStepVarItem(item, stepId) {
         // Set ARIA attributes on toggle button
         if (btn.tagName === 'BUTTON' || btn.getAttribute('role') === 'button') {
           btn.setAttribute('aria-controls', cid);
-          btn.setAttribute('aria-expanded', step.classList.contains('is-collapsed') ? 'false' : 'true');
         } else {
           // If header is clickable, ensure it has proper attributes
           btn.setAttribute('role', 'button');
           btn.setAttribute('tabindex', '0');
           btn.setAttribute('aria-controls', cid);
-          btn.setAttribute('aria-expanded', step.classList.contains('is-collapsed') ? 'false' : 'true');
         }
+
+        this.syncStepAria(step);
       });
     },
     
@@ -235,6 +415,7 @@ function renderStepVarItem(item, stepId) {
     setupToggle: function() {
       this.steps.forEach(step => {
         const header = step.querySelector('.pf-step-header');
+        const toggleBtn = step.querySelector('.pf-step-toggle');
         if (!header) return;
         
         // Click on header to toggle
@@ -242,12 +423,28 @@ function renderStepVarItem(item, stepId) {
           // Don't toggle if clicking checkbox or copy button
           if (e.target.closest('.pf-step-checkbox') || 
               e.target.closest('.pf-btn-copy') ||
+              (e.target.closest('.pf-step-header-actions') && !e.target.closest('.pf-step-toggle')) ||
               e.target.closest('.pf-btn')) {
             return;
           }
           
           this.toggleStep(step);
         });
+
+        header.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.toggleStep(step);
+          }
+        });
+
+        if (toggleBtn) {
+          toggleBtn.addEventListener('click', (evt) => {
+            evt.preventDefault();
+            evt.stopPropagation();
+            this.toggleStep(step);
+          });
+        }
       });
     },
     
@@ -256,29 +453,45 @@ function renderStepVarItem(item, stepId) {
      */
     toggleStep: function(stepElement) {
       const stepId = stepElement.dataset.stepId;
-      const btn = stepElement.querySelector('.pf-step-toggle') || stepElement.querySelector('.pf-step-header');
-      const content = stepElement.querySelector('.pf-step-content');
-      
       const isCollapsed = stepElement.classList.contains('is-collapsed');
       
       if (isCollapsed) {
         stepElement.classList.remove('is-collapsed');
         this.collapsedSteps = this.collapsedSteps.filter(id => id !== stepId);
+        this.setActiveStep(stepElement);
       } else {
         stepElement.classList.add('is-collapsed');
         if (!this.collapsedSteps.includes(stepId)) {
           this.collapsedSteps.push(stepId);
         }
+
+        if (this.activeStep === stepElement) {
+          const expandedSteps = Array.from(this.steps).filter(step => !step.classList.contains('is-collapsed'));
+          if (expandedSteps.length === 0) {
+            const defaultStep = Array.from(this.steps).find(step => step !== stepElement);
+            if (defaultStep) {
+              defaultStep.classList.remove('is-collapsed');
+              this.collapsedSteps = this.collapsedSteps.filter(id => id !== defaultStep.dataset.stepId);
+              this.syncStepAria(defaultStep);
+              this.setActiveStep(defaultStep);
+            }
+          } else {
+            const fallback = expandedSteps[0];
+            if (fallback && fallback !== stepElement) {
+              this.setActiveStep(fallback);
+            }
+          }
+        }
       }
       
       // Update ARIA attributes
-      if (btn && content) {
-        const isOpen = !stepElement.classList.contains('is-collapsed');
-        btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      }
+      this.syncStepAria(stepElement);
       
       // Save state
       this.saveProgress();
+
+      // update hud
+      this.updateMobileActionBarButtons();
     },
     
     /**
@@ -328,6 +541,9 @@ function renderStepVarItem(item, stepId) {
      * Load progress from localStorage
      */
     loadProgress: function() {
+      if (!window.WorkflowStorage) {
+        return;
+      }
       // Load collapsed steps
       const collapsed = window.WorkflowStorage.get(this.storageKey);
       if (collapsed && Array.isArray(collapsed)) {
@@ -338,6 +554,7 @@ function renderStepVarItem(item, stepId) {
           if (this.collapsedSteps.includes(stepId)) {
             step.classList.add('is-collapsed');
           }
+          this.syncStepAria(step);
         });
       }
       
@@ -354,6 +571,7 @@ function renderStepVarItem(item, stepId) {
             checkbox.checked = true;
             step.classList.add('is-completed');
           }
+          this.syncStepAria(step);
         });
       }
     },
@@ -362,6 +580,8 @@ function renderStepVarItem(item, stepId) {
      * Save progress to localStorage
      */
     saveProgress: function() {
+      if (!window.WorkflowStorage) return;
+      if (!this.storageKey) return;
       // Save collapsed steps
       window.WorkflowStorage.set(this.storageKey, this.collapsedSteps);
       
@@ -388,28 +608,45 @@ function renderStepVarItem(item, stepId) {
      * Auto-expand first incomplete step
      */
     autoExpandFirstIncomplete: function() {
-      for (let step of this.steps) {
-        if (!step.classList.contains('is-completed')) {
-          // Expand if collapsed
-          if (step.classList.contains('is-collapsed')) {
-            this.toggleStep(step);
+      const targetStep = Array.from(this.steps).find(step => !step.classList.contains('is-completed')) || this.steps[0];
+      if (!targetStep) return;
+
+      if (this.viewportMode === 'mobile') {
+        const collapsed = [];
+        this.steps.forEach(step => {
+          if (step === targetStep) {
+            step.classList.remove('is-collapsed');
+          } else {
+            step.classList.add('is-collapsed');
+            collapsed.push(step.dataset.stepId);
           }
-          
-          // Scroll to step
-          setTimeout(() => {
-            const headerOffset = 120;
-            const elementPosition = step.offsetTop;
-            const offsetPosition = elementPosition - headerOffset;
-            
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
-            });
-          }, 300);
-          
-          break;
-        }
+          this.syncStepAria(step);
+        });
+        this.collapsedSteps = collapsed;
+        this.saveProgress();
+        this.setActiveStep(targetStep);
+        return;
       }
+
+      if (targetStep.classList.contains('is-collapsed')) {
+        targetStep.classList.remove('is-collapsed');
+        this.collapsedSteps = this.collapsedSteps.filter(id => id !== targetStep.dataset.stepId);
+        this.syncStepAria(targetStep);
+        this.saveProgress();
+      }
+
+      this.setActiveStep(targetStep);
+
+      setTimeout(() => {
+        const headerOffset = 120;
+        const elementPosition = targetStep.offsetTop;
+        const offsetPosition = elementPosition - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }, 300);
     },
     
     /**
@@ -484,10 +721,6 @@ function renderStepVarItem(item, stepId) {
       
       // Update button states on scroll/resize
       window.addEventListener('scroll', () => this.updateMobileActionBarButtons());
-      window.addEventListener('resize', () => {
-        this.updateMobileActionBarVisibility();
-        this.updateMobileActionBarButtons();
-      });
       
       // Initial update
       this.updateMobileActionBarButtons();
@@ -509,7 +742,7 @@ function renderStepVarItem(item, stepId) {
     updateMobileActionBarButtons: function() {
       if (!this.stickyActionsBar) return;
       
-      const currentStep = this.getCurrentStep();
+      const currentStep = this.activeStep || this.getCurrentStep();
       const prevBtn = this.stickyActionsBar.querySelector('.pf-btn-prev');
       const copyBtn = this.stickyActionsBar.querySelector('.pf-btn-copy-sticky');
       const nextBtn = this.stickyActionsBar.querySelector('.pf-btn-next');
@@ -627,6 +860,8 @@ function renderStepVarItem(item, stepId) {
         this.toggleStep(stepElement);
       }
       
+      this.setActiveStep(stepElement);
+
       // Scroll into view with offset for sticky header
       setTimeout(() => {
         const headerOffset = 120;
@@ -662,19 +897,13 @@ function renderStepVarItem(item, stepId) {
       // Use WorkflowCopy module if available
       if (window.WorkflowCopy && window.WorkflowCopy.copyToClipboard) {
         window.WorkflowCopy.copyToClipboard(textToCopy, button);
+        this.handleCopySuccess(button);
       } else {
         // Fallback: use Clipboard API directly
         if (navigator.clipboard && window.isSecureContext) {
           navigator.clipboard.writeText(textToCopy)
             .then(() => {
-              if (button) {
-                button.classList.add('is-copied');
-                button.querySelector('span').textContent = 'Copied!';
-                setTimeout(() => {
-                  button.classList.remove('is-copied');
-                  button.querySelector('span').textContent = 'Copy';
-                }, 2000);
-              }
+              this.handleCopySuccess(button);
             })
             .catch(err => {
               console.error('WorkflowSteps: Failed to copy text', err);
@@ -701,49 +930,6 @@ function renderStepVarItem(item, stepId) {
     return text.replace(/[&<>"']/g, m => map[m]);
   }
 
-  // Helper: Render a single variable item for the UI
-  function renderStepVarItem(item, stepId) {
-    const varItem = document.createElement('div');
-    varItem.className = 'pf-var-item';
-    varItem.setAttribute('data-var-key', item.key);
-
-    const varKeySpan = document.createElement('span');
-    varKeySpan.className = 'pf-var-key';
-    varKeySpan.textContent = item.key;
-    varItem.appendChild(varKeySpan);
-
-    const varValueInput = document.createElement('input');
-    varValueInput.type = 'text';
-    varValueInput.className = 'pf-step-var-input';
-    varValueInput.setAttribute('data-var-key', item.key);
-    varValueInput.value = item.value || '';
-    varItem.appendChild(varValueInput);
-
-    const varRemoveBtn = document.createElement('button');
-    varRemoveBtn.className = 'pf-btn pf-btn--icon pf-btn--small pf-btn--danger';
-    varRemoveBtn.type = 'button';
-    varRemoveBtn.setAttribute('aria-label', 'Remove variable');
-    varRemoveBtn.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" x2="6" y1="6" y2="18"></line>
-        <line x1="6" x2="18" y1="6" y2="18"></line>
-      </svg>
-    `;
-    varRemoveBtn.addEventListener('click', () => {
-      varItem.remove();
-      // Update the data-step-vars attribute on the parent step
-      const stepEl = document.querySelector(`[data-pf-step][data-step-id="${stepId}"]`);
-      if (stepEl) {
-        const newSchema = JSON.parse(stepEl.getAttribute('data-step-vars') || '[]');
-        newSchema.splice(newSchema.findIndex(i => i.key === item.key), 1);
-        stepEl.setAttribute('data-step-vars', JSON.stringify(newSchema));
-      }
-    });
-    varItem.appendChild(varRemoveBtn);
-
-    return varItem;
-  }
-  
   // Listen for variable updates
   document.addEventListener('variablesUpdated', () => {
     WorkflowSteps.reInjectVariables();
