@@ -1,3 +1,6 @@
+.pf-step-header#active-step {
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.12);
+}
 /**
  * Workflow Component: Steps
  * Collapsible step cards with different types (prompt, guide, review)
@@ -28,35 +31,39 @@
 
 .pf-step {
     background: #ffffff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    border: 2px solid #f0f0f0;
     padding: 0;
-    margin-bottom: 1.75rem;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 12px 30px -18px rgba(15, 23, 42, 0.45);
-    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .pf-step:last-child {
     margin-bottom: 0;
 }
 
-.pf-step:focus-within {
-    outline: 2px solid rgba(79, 70, 229, 0.35);
-    outline-offset: 3px;
+.pf-step:hover {
+    border-color: #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* Step States */
 .pf-step.is-completed {
-    border-color: rgba(46, 125, 50, 0.35);
-    box-shadow: 0 18px 36px -20px rgba(46, 125, 50, 0.4);
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
 }
 
 .pf-step.pf-step--active,
 .pf-step.is-active {
-    border-color: rgba(79, 70, 229, 0.6);
-    box-shadow: 0 24px 44px -18px rgba(79, 70, 229, 0.55);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.pf-step:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 
 .pf-step.is-collapsed .pf-step-content {
@@ -87,20 +94,22 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 1.5rem;
+    padding: 20px;
     cursor: pointer;
-    border-radius: 18px;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-    position: relative;
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
 }
 
 .pf-step-header:hover,
 .pf-step-header:focus-visible {
-    background: rgba(15, 23, 42, 0.04);
+    background: #f2f4f7;
 }
 
-.pf-step.pf-step--active .pf-step-header {
-    background: rgba(79, 70, 229, 0.06);
+.pf-step.pf-step--active .pf-step-header,
+.pf-step.is-active .pf-step-header {
+    background: #f1f6ff;
+    border-bottom-color: #e0ecff;
 }
 
 /* ========================================
@@ -110,8 +119,8 @@
 .pf-step-number {
     width: 40px;
     height: 40px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%);
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -197,6 +206,26 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+}
+
+.pf-step-active-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #2563eb;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.25rem;
+}
+
+.pf-step-active-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 .pf-step-header-actions {
@@ -477,63 +506,66 @@
    ======================================== */
 
 .pf-prompt-container {
-    background: #1e1e1e;
-    border: 1px solid rgba(148, 163, 184, 0.35);
-    border-radius: 16px;
-    padding: 1.25rem;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
     margin-bottom: 1.5rem;
     position: relative;
-    color: #e2e8f0;
+    color: #1a1a1a;
 }
 
 .pf-prompt-header {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .pf-prompt-label {
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.85rem;
-    color: rgba(226, 232, 240, 0.85);
+    color: #3f3f46;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-}
-
-.pf-prompt-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    letter-spacing: 0.08em;
 }
 
 /* ========================================
    COPY BUTTON
    ======================================== */
 
-.pf-btn-copy {
-    display: inline-flex;
-    align-items: center;
+.pf-prompt-actions {
+    display: flex;
     justify-content: center;
-    gap: 0.65rem;
-    padding: 0.85rem 1.6rem;
-    background: #4caf50;
+    align-items: center;
+}
+
+.pf-btn-copy {
+    background: #10b981;
     color: #ffffff;
-    border: none;
-    border-radius: 999px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-    font-family: inherit;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
     width: 100%;
-    position: relative;
+    max-width: 200px;
+    margin: 1rem auto 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    font-family: inherit;
 }
 
 .pf-btn-copy:hover {
-    background: #43a047;
-    transform: translateY(-1px);
-    box-shadow: 0 12px 24px -18px rgba(76, 175, 80, 0.8);
+    background: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
 }
 
 .pf-btn-copy:active {
@@ -545,20 +577,14 @@
     flex-shrink: 0;
 }
 
+.pf-btn-copy.is-copied {
+    background: #0ea371;
+}
+
 .pf-btn-copy__text {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-}
-
-.pf-btn-copy.is-copied {
-    background: #22c55e;
-    transform: translateY(-2px);
-    box-shadow: 0 16px 32px -20px rgba(34, 197, 94, 0.65);
-}
-
-.pf-btn-copy.is-copied .pf-btn-copy__text {
-    position: relative;
+    gap: 6px;
 }
 
 /* ========================================
@@ -566,34 +592,35 @@
    ======================================== */
 
 .pf-prompt-text {
-    font-family: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: #e2e8f0;
-    background: #111827;
-    border: 1px solid rgba(148, 163, 184, 0.3);
-    border-radius: 12px;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
     white-space: pre-wrap;
     word-wrap: break-word;
     margin: 0;
     padding: 1rem;
-    min-height: 180px;
-    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.45);
+    min-height: 100px;
 }
 
 .pf-prompt-text:focus {
     outline: none;
-    border-color: #38bdf8;
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 
 /* Variable Injection Highlight */
-.pf-var-injected {
-    background: rgba(79, 195, 247, 0.25);
-    color: #0284c7;
-    font-weight: 600;
+.pf-var-injected,
+.pf-var-highlight {
+    background: #e3f2fd;
+    color: #1976d2;
     padding: 2px 6px;
-    border-radius: 4px;
+    border-radius: 3px;
+    font-weight: 600;
+    border: 1px solid #90caf9;
 }
 
 .pf-var-empty {
@@ -636,11 +663,11 @@
    ======================================== */
 
 .pf-guide-body {
-    padding: 1.25rem;
-    background: rgba(251, 191, 36, 0.08);
-    border-radius: 16px;
-    border: 1px solid rgba(251, 191, 36, 0.2);
-    margin-bottom: 1.5rem;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #374151;
+    max-width: 700px;
+    padding: 1rem 0;
     position: relative;
 }
 
@@ -666,29 +693,15 @@
     bottom: 56px;
     height: 100px;
     pointer-events: none;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(251, 191, 36, 0.08) 80%);
-    border-radius: 16px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 80%);
 }
 
 .pf-guide-body p {
     margin: 0 0 1rem 0;
-    line-height: 1.7;
 }
 
 .pf-guide-body p:last-child {
     margin-bottom: 0;
-}
-
-.pf-guide-body ul,
-.pf-guide-body ol {
-    margin: 0 0 1rem 0;
-    padding-left: 1.5rem;
-}
-
-.pf-guide-body ul li,
-.pf-guide-body ol li {
-    margin-bottom: 0.5rem;
-    line-height: 1.7;
 }
 
 .pf-guide-toggle {
@@ -697,18 +710,19 @@
     justify-content: center;
     gap: 0.35rem;
     margin-top: 1rem;
-    padding: 0.55rem 1.1rem;
+    padding: 0.5rem 1rem;
     border-radius: 999px;
-    border: none;
-    background: rgba(79, 70, 229, 0.12);
-    color: #312e81;
+    border: 1px solid #e0e7ff;
+    background: #edf2ff;
+    color: #1d4ed8;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .pf-guide-toggle:hover {
-    background: rgba(79, 70, 229, 0.2);
+    background: #e0e7ff;
+    border-color: #c7d2fe;
     transform: translateY(-1px);
 }
 
@@ -908,11 +922,6 @@
 
     .pf-prompt-actions {
         flex-direction: row;
-        width: auto;
-    }
-
-    .pf-btn-copy {
-        width: auto;
     }
 }
 

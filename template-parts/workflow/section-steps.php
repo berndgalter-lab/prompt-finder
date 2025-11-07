@@ -70,6 +70,7 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
     
     <!-- Steps List -->
     <ol class="pf-steps-list" aria-live="polite">
+        <?php $initial_active_assigned = false; ?>
         <?php foreach ($steps as $index => $step): ?>
             <?php
             // Determine if this step is visible or locked
@@ -130,9 +131,10 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
             $step_dom_id = 'step-' . $step_number;
             $step_heading_id = $step_dom_id . '-title';
             $step_content_id = $step_dom_id . '-content';
+            $is_initial_active = !$initial_active_assigned;
             ?>
             
-            <li class="pf-step <?php echo 'pf-step--' . esc_attr($step_type); ?> <?php echo $step_is_locked ? 'pf-step--locked' : ''; ?><?php echo $index === 0 ? ' pf-step--active' : ''; ?>" 
+            <li class="pf-step <?php echo 'pf-step--' . esc_attr($step_type); ?> <?php echo $step_is_locked ? 'pf-step--locked' : ''; ?><?php echo $is_initial_active ? ' pf-step--active' : ''; ?>" 
                 id="<?php echo esc_attr($step_dom_id); ?>" 
                 role="region"
                 aria-labelledby="<?php echo esc_attr($step_heading_id); ?>"
@@ -144,12 +146,13 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                 data-pf-step
                 data-step-vars="<?php echo esc_attr($step_vars_json); ?>"
                 data-uses-global-vars="<?php echo esc_attr($uses_global_numeric); ?>"
+                <?php if ($is_initial_active): ?>data-initial-active="true"<?php endif; ?>
                 <?php if ($step_is_locked): ?>
                 aria-disabled="true"
                 <?php endif; ?>>
 
                 <!-- Step Header (always visible) -->
-                <div class="pf-step-header" data-action="toggle-step" role="button" tabindex="0" aria-expanded="true" aria-controls="<?php echo esc_attr($step_content_id); ?>">
+                <div class="pf-step-header" data-action="toggle-step" role="button" tabindex="0" aria-expanded="true" aria-controls="<?php echo esc_attr($step_content_id); ?>"<?php echo $is_initial_active ? ' id="active-step"' : ''; ?>>
                     <div class="pf-step-number" aria-hidden="true">
                         <span class="pf-step-number-value"><?php echo esc_html($step_number); ?></span>
                     </div>
@@ -161,6 +164,13 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                                 <p class="pf-step-objective-preview"><?php echo esc_html($objective); ?></p>
                             <?php endif; ?>
                         </div>
+
+                        <?php if ($is_initial_active): ?>
+                            <div class="pf-step-active-banner" aria-hidden="true">
+                                <span class="pf-step-active-dot"></span>
+                                <span class="pf-step-active-text">Active Step</span>
+                            </div>
+                        <?php endif; ?>
 
                         <div class="pf-step-meta" aria-label="Step meta information">
                             <?php if ($estimated_time_min): ?>
@@ -253,15 +263,6 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                         <div class="pf-prompt-container" data-prompt-wrapper>
                             <div class="pf-prompt-header">
                                 <span class="pf-prompt-label">Prompt</span>
-                                <div class="pf-prompt-actions">
-                                    <button class="pf-btn pf-btn-copy" data-copy-target="<?php echo esc_attr($step_dom_id); ?>" type="button" aria-label="Copy prompt for step <?php echo esc_attr($step_number); ?>">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                                        </svg>
-                                        <span class="pf-btn-copy__text">Copy Prompt</span>
-                                    </button>
-                                </div>
                             </div>
                             <textarea class="pf-prompt-text pf-prompt"
                                       data-prompt-id="<?php echo esc_attr($step_dom_id); ?>"
@@ -269,6 +270,16 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                                       data-prompt-template
                                       data-base="<?php echo esc_attr($prompt); ?>"
                                       aria-label="Prompt text for step <?php echo esc_attr($step_number); ?>"></textarea>
+
+                            <div class="pf-prompt-actions pf-prompt-actions--footer">
+                                <button class="pf-btn pf-btn-copy" data-copy-target="<?php echo esc_attr($step_dom_id); ?>" type="button" aria-label="Copy prompt for step <?php echo esc_attr($step_number); ?>">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                    </svg>
+                                    <span class="pf-btn-copy__text">Copy to Clipboard</span>
+                                </button>
+                            </div>
                         </div>
                         
                         <?php if (!empty($paste_guidance)): ?>
@@ -283,9 +294,20 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                         <?php endif; ?>
                         
                     <?php elseif ($step_type === 'guide' && !empty($step_body)): ?>
-                        
+                        <?php
+                        $guide_paragraphs = array_filter(array_map('trim', preg_split("/\r?\n\s*\r?\n/", $step_body)));
+                        ?>
+
                         <div class="pf-guide-body" data-guide-body>
-                            <div class="pf-guide-body-inner"><?php echo nl2br(esc_html($step_body)); ?></div>
+                            <div class="pf-guide-body-inner">
+                                <?php if (!empty($guide_paragraphs)): ?>
+                                    <?php foreach ($guide_paragraphs as $paragraph): ?>
+                                        <p><?php echo esc_html($paragraph); ?></p>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <p><?php echo esc_html($step_body); ?></p>
+                                <?php endif; ?>
+                            </div>
                             <button class="pf-guide-toggle" type="button" aria-expanded="false" hidden>
                                 <span class="pf-guide-toggle__label--more">Show more</span>
                                 <span class="pf-guide-toggle__label--less">Show less</span>
@@ -354,7 +376,7 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                 </div>
                 
             </li>
-            
+            <?php if ($is_initial_active) { $initial_active_assigned = true; } ?>
         <?php endforeach; ?>
     </ol>
     
