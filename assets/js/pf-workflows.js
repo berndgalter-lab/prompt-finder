@@ -717,6 +717,7 @@ function renderWorkflowForm(containerEl, workflowMap, ctx, rerenderAllSteps){
   Object.keys(workflowMap).forEach(k=>{
     renderVarControl(containerEl, 'workflow', k, workflowMap[k], ctx, handleChange);
   });
+  initAutoSaveIntegration();
   renderWorkflowCounter(workflowMap);
 }
 
@@ -736,6 +737,7 @@ function renderStepForm(sectionEl, stepMap, ctx){
   Object.keys(stepMap).forEach(k=>{
     renderVarControl(target, 'step', k, stepMap[k], ctx, handleChange);
   });
+  initAutoSaveIntegration();
   updateStatusBar(ctx.workflowMap || {});
 }
 
@@ -807,10 +809,11 @@ function getStorageKey(){
 }
 
 
-const AUTOSAVE_DEBOUNCE_MS = 500;
+const AUTOSAVE_DEBOUNCE_MS = 10000;
 let autosaveTimer = null;
 let autosaveStatusEl = null;
 let mobileFocusBound = false;
+let hasUnsavedChanges = false;
 
 function getAutosaveStatusEl(){
   if (!autosaveStatusEl) {
@@ -832,13 +835,13 @@ function setAutosaveStatus(state, message){
 }
 
 function scheduleAutosave(){
-  const el = getAutosaveStatusEl();
-  if (el) setAutosaveStatus('saving', 'Saving...');
   if (autosaveTimer) {
     window.clearTimeout(autosaveTimer);
   }
   autosaveTimer = window.setTimeout(()=>{
     autosaveTimer = null;
+    if (!hasUnsavedChanges) return;
+    setAutosaveStatus('saving', 'Saving...');
     saveDraft();
   }, AUTOSAVE_DEBOUNCE_MS);
 }
@@ -859,6 +862,190 @@ function bindMobileInputScroll(){
   });
 }
 
+
+function initSmoothSidebarScroll(){
+  const links = document.querySelectorAll('.pf-sidebar-link[href^="#"]');
+  if (!links.length) return;
+  links.forEach(link => {
+    if (link.dataset.smoothScrollBound === '1') return;
+    link.dataset.smoothScrollBound = '1';
+    link.addEventListener('click', function(event){
+      const href = this.getAttribute('href');
+      if (!href || !href.startsWith('#')) return;
+      event.preventDefault();
+      const targetId = href.slice(1);
+      const targetEl = document.getElementById(targetId);
+      if (!targetEl) return;
+      const headerOffset = 100;
+      const offsetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      document.querySelectorAll('.pf-sidebar-link.is-active').forEach(l => l.classList.remove('is-active'));
+      this.classList.add('is-active');
+      if (targetEl.matches('[data-pf-step]')) {
+        focusStepElement(targetEl);
+      }
+    });
+  });
+}
+
+
+let keyboardShortcutsBound = false;
+function initKeyboardShortcuts(){
+  if (keyboardShortcutsBound) return;
+  keyboardShortcutsBound = true;
+  document.addEventListener('keydown', (event)=>{
+    if (event.defaultPrevented) return;
+    if (event.target && (event.target.matches('input, textarea, select') || event.target.isContentEditable)) return;
+    const steps = Array.from(document.querySelectorAll('.pf-step')).filter(step => !step.classList.contains('pf-step--locked'));
+    if (!steps.length) return;
+    const active = document.querySelector('.pf-step--active') || steps[0];
+    const currentIndex = steps.indexOf(active);
+    const key = event.key.toLowerCase();
+
+    if (key === 'j' && currentIndex < steps.length - 1) {
+      event.preventDefault();
+      const next = steps[currentIndex + 1];
+      focusStepElement(next, active);
+    } else if (key === 'k' && currentIndex > 0) {
+      event.preventDefault();
+      const prev = steps[currentIndex - 1];
+      focusStepElement(prev, active);
+    } else if (key === 'c' && (event.metaKey || event.ctrlKey)) {
+      const copyBtn = active ? active.querySelector('.pf-btn-copy-primary') : null;
+      if (copyBtn) {
+        event.preventDefault();
+        copyBtn.click();
+      }
+    }
+  });
+
+  console.log('Keyboard shortcuts: J (next), K (prev), Cmd/Ctrl+C (copy prompt)');
+}
+
+
+function focusStepElement(stepElement, previousStep){
+  if (!stepElement) return;
+  if (window.WorkflowSteps && typeof window.WorkflowSteps.navigateToStep === 'function') {
+    window.WorkflowSteps.navigateToStep(stepElement);
+  } else {
+    document.querySelectorAll('.pf-step').forEach(step => step.classList.remove('pf-step--active'));
+    stepElement.classList.add('pf-step--active');
+    stepElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  highlightSidebarLink(stepElement.id || stepElement.getAttribute('data-step-id'));
+}
+
+
+function highlightSidebarLink(stepId){
+  if (!stepId) return;
+  document.querySelectorAll('.pf-sidebar-link.is-active').forEach(link => link.classList.remove('is-active'));
+  try {
+    const selector = `.pf-sidebar-link[href="#${CSS.escape(stepId)}"]`;
+    const link = document.querySelector(selector);
+    if (link) link.classList.add('is-active');
+  } catch(e){
+    const link = document.querySelector(`.pf-sidebar-link[href="#${stepId}"]`);
+    if (link) link.classList.add('is-active');
+  }
+}
+
+
+function initAutoSaveIntegration(){
+  document.querySelectorAll('.pf-field-input, .pf-var-input').forEach(input => {
+    if (input.dataset.autosaveBound === '1') return;
+    input.dataset.autosaveBound = '1';
+    input.addEventListener('input', () => markDirty());
+    input.addEventListener('change', () => markDirty());
+  });
+}
+
+
+function updateProgressBarFallback(){
+  const steps = document.querySelectorAll('.pf-step');
+  const total = steps.length;
+  const completed = document.querySelectorAll('.pf-step-checkbox:checked').length;
+  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+  document.querySelectorAll('.pf-progress-fill, .pf-progress-fill-large').forEach(bar => {
+    bar.style.width = `${pct}%`;
+    bar.dataset.progress = String(pct);
+  });
+  const summary = document.querySelector('[data-progress-summary]');
+  if (summary) summary.textContent = `${completed} of ${total} steps completed`;
+}
+
+
+function bindProgressPersistence(){
+  const workflowId = getWorkflowId();
+  if (!workflowId) return;
+  const storageKey = `pf_workflow_${workflowId}_progress`;
+
+  function getStepStorageKey(step){
+    if (!step) return null;
+    if (step.dataset.progressKey) return step.dataset.progressKey;
+    const key = step.id || step.getAttribute('data-step-id') || step.getAttribute('data-step-number');
+    if (key) step.dataset.progressKey = key;
+    return key;
+  }
+
+  function saveProgressState(){
+    const progress = {};
+    document.querySelectorAll('.pf-step-checkbox').forEach(cb => {
+      const step = cb.closest('.pf-step');
+      const key = getStepStorageKey(step);
+      if (!key) return;
+      progress[key] = cb.checked;
+      if (step) step.classList.toggle('pf-step--completed', cb.checked);
+    });
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(progress));
+    } catch (e) {}
+    if (window.WorkflowProgress && typeof window.WorkflowProgress.update === 'function') {
+      window.WorkflowProgress.update();
+    } else {
+      updateProgressBarFallback();
+    }
+    if (window.WorkflowSteps && typeof window.WorkflowSteps.updateProgressCounter === 'function') {
+      window.WorkflowSteps.updateProgressCounter();
+    }
+  }
+
+  function restoreProgressState(){
+    let stored = {};
+    try {
+      stored = JSON.parse(localStorage.getItem(storageKey) || '{}') || {};
+    } catch (e) {
+      stored = {};
+    }
+
+    document.querySelectorAll('.pf-step-checkbox').forEach(cb => {
+      const step = cb.closest('.pf-step');
+      const key = getStepStorageKey(step);
+      const hasStored = key && Object.prototype.hasOwnProperty.call(stored, key);
+      const shouldCheck = hasStored ? !!stored[key] : cb.checked;
+      cb.checked = shouldCheck;
+      if (step) step.classList.toggle('pf-step--completed', cb.checked);
+    });
+
+    if (window.WorkflowProgress && typeof window.WorkflowProgress.update === 'function') {
+      window.WorkflowProgress.update();
+    } else {
+      updateProgressBarFallback();
+    }
+    if (window.WorkflowSteps && typeof window.WorkflowSteps.updateProgressCounter === 'function') {
+      window.WorkflowSteps.updateProgressCounter();
+    }
+  }
+
+  document.querySelectorAll('.pf-step-checkbox').forEach(cb => {
+    if (cb.dataset.progressBound === '1') return;
+    cb.dataset.progressBound = '1';
+    cb.addEventListener('change', saveProgressState);
+  });
+
+  restoreProgressState();
+  saveProgressState();
+}
+
 // Load/save PF_FORM_STORE
 function loadDraft(){
   try {
@@ -874,12 +1061,48 @@ function saveDraft(){
   try {
     localStorage.setItem(getStorageKey(), JSON.stringify(PF_FORM_STORE));
   } catch(e){}
+  persistWorkflowSnapshot();
   if (autosaveTimer) {
     window.clearTimeout(autosaveTimer);
     autosaveTimer = null;
   }
   DIRTY = false;
+  hasUnsavedChanges = false;
   setAutosaveStatus('saved', 'All changes saved');
+}
+
+
+function getWorkflowContainer(){
+  return document.querySelector('.pf-workflow-container');
+}
+
+
+function getWorkflowId(){
+  const container = getWorkflowContainer();
+  return container ? container.getAttribute('data-post-id') : null;
+}
+
+
+function persistWorkflowSnapshot(){
+  const workflowId = getWorkflowId();
+  if (!workflowId) return;
+  try {
+    localStorage.setItem(`pf_workflow_${workflowId}_vars`, JSON.stringify(PF_FORM_STORE));
+  } catch(e){}
+}
+
+
+function restoreLocalWorkflowVars(){
+  const workflowId = getWorkflowId();
+  if (!workflowId) return;
+  try {
+    const raw = localStorage.getItem(`pf_workflow_${workflowId}_vars`);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') {
+      Object.assign(PF_FORM_STORE, parsed);
+    }
+  } catch(e){}
 }
 
 
@@ -1071,7 +1294,12 @@ function resetWorkflowVars(){
 
 // Dirty state
 let DIRTY = false;
-function markDirty(){ DIRTY = true; scheduleAutosave(); }
+function markDirty(){
+  DIRTY = true;
+  hasUnsavedChanges = true;
+  setAutosaveStatus('unsaved', 'Unsaved changes');
+  scheduleAutosave();
+}
 window.addEventListener('beforeunload', function(e){
   if (DIRTY){
     e.preventDefault();
@@ -1096,6 +1324,7 @@ boot = function(){
   bindMobileInputScroll();
   // Ensure root dataset (workflow id, user uid) via PHP attributes
   const root = document.querySelector('[data-wf-root]');
+  restoreLocalWorkflowVars();
   loadDraft(); // load local draft early (fills PF_FORM_STORE)
 
   _boot5_prev(); // previous initialization renders everything
@@ -1162,6 +1391,10 @@ boot = function(){
   });
 
   // Save draft after initial render (to store defaults resolved by profile)
+  initSmoothSidebarScroll();
+  initKeyboardShortcuts();
+  initAutoSaveIntegration();
+  bindProgressPersistence();
   saveDraft();
 };
 

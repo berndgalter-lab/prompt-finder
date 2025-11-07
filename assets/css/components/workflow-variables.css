@@ -407,6 +407,10 @@
     color: #3b82f6;
 }
 
+.pf-autosave-status[data-status="unsaved"] {
+    color: #f59e0b;
+}
+
 .pf-autosave-status[data-status="saved"] {
     color: #10b981;
 }
