@@ -195,6 +195,13 @@ function renderStepVarItem(item, stepId) {
       }
 
       this.updateMobileActionBarButtons();
+
+      document.dispatchEvent(new CustomEvent('activeStepChange', {
+        detail: {
+          stepId: stepElement.getAttribute('data-step-id') || stepElement.id || null,
+          stepNumber: stepElement.getAttribute('data-step-number') || null
+        }
+      }));
     },
 
     observeSteps: function() {

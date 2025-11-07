@@ -14,6 +14,11 @@
     section: null,
     progressLabel: null,
     progressSummary: null,
+    progressInfoSummary: null,
+    progressInfoElapsed: null,
+    largeProgressBar: null,
+    largeProgressFill: null,
+    progressStepLabel: null,
     timeTracker: null,
     timeElapsedEl: null,
     startedAt: null,
@@ -34,6 +39,18 @@
       this.progressSummary = document.querySelector('[data-progress-summary]');
       this.timeTracker = document.querySelector('[data-workflow-start]');
       this.timeElapsedEl = this.timeTracker ? this.timeTracker.querySelector('[data-time-elapsed]') : null;
+      this.progressInfoSummary = document.querySelector('.pf-progress-info [data-progress-summary]');
+      this.progressInfoElapsed = document.querySelector('.pf-progress-info [data-time-elapsed]');
+      this.largeProgressBar = document.querySelector('.pf-progress-bar-large');
+      this.largeProgressFill = document.querySelector('.pf-progress-fill-large');
+      this.progressStepLabel = document.querySelector('[data-progress-step]');
+
+      if (!this.progressBar && this.largeProgressBar) {
+        this.progressBar = this.largeProgressBar;
+      }
+      if (!this.progressFill && this.largeProgressFill) {
+        this.progressFill = this.largeProgressFill;
+      }
       
       if (!this.progressBar || !this.progressFill) {
         console.warn('WorkflowProgress: Progress bar elements not found');
@@ -53,7 +70,11 @@
 
       // Initial update
       this.update();
-      
+
+      document.addEventListener('activeStepChange', () => {
+        this.updateStepIndicator();
+      });
+
       // Listen for step completion events
       document.addEventListener('stepCompleted', () => {
         this.update();
@@ -112,8 +133,15 @@
       const pct = this.totalSteps > 0 ? Math.round((checked / this.totalSteps) * 100) : 0;
       
       // Update progress bar aria-valuenow
+      const summaryText = this.totalSteps > 0 ? `${checked} of ${this.totalSteps} steps completed` : `${pct}% complete`;
+
       if (this.progressBar) {
         this.progressBar.setAttribute('aria-valuenow', String(pct));
+        this.progressBar.setAttribute('aria-valuetext', summaryText);
+      }
+      if (this.largeProgressBar) {
+        this.largeProgressBar.setAttribute('aria-valuenow', String(pct));
+        this.largeProgressBar.setAttribute('aria-valuetext', summaryText);
       }
       
       // Update fill width
@@ -121,14 +149,13 @@
         this.progressFill.style.width = pct + '%';
         this.progressFill.dataset.progress = String(pct);
       }
+      if (this.largeProgressFill) {
+        this.largeProgressFill.style.width = pct + '%';
+        this.largeProgressFill.dataset.progress = String(pct);
+      }
       
       this.updateMeta(pct, checked);
-      
-      // Set aria-valuetext
-      if (this.progressBar) {
-        const label = checked + ' of ' + this.totalSteps + ' steps completed';
-        this.progressBar.setAttribute('aria-valuetext', label);
-      }
+      this.updateStepIndicator();
       
       console.log('WorkflowProgress: Updated to', pct + '% (' + checked + ' of ' + this.totalSteps + ')');
     },
@@ -155,39 +182,90 @@
       bar.setAttribute('aria-valuenow', String(roundedPct));
       bar.setAttribute('aria-valuemin', '0');
       bar.setAttribute('aria-valuemax', '100');
+      if (this.largeProgressBar) {
+        this.largeProgressBar.setAttribute('aria-valuenow', String(roundedPct));
+      }
       
       // Set aria-valuetext with custom label or default
-      if (label) {
-        bar.setAttribute('aria-valuetext', label);
-      } else {
-        bar.setAttribute('aria-valuetext', roundedPct + '% complete');
+      const ariaText = label || `${roundedPct}% complete`;
+      if (bar) {
+        bar.setAttribute('aria-valuetext', ariaText);
+      }
+      if (this.largeProgressBar) {
+        this.largeProgressBar.setAttribute('aria-valuetext', ariaText);
       }
       
       // Update data attribute
       fill.dataset.progress = roundedPct;
+      if (this.largeProgressFill) {
+        this.largeProgressFill.style.width = roundedPct + '%';
+        this.largeProgressFill.dataset.progress = roundedPct;
+      }
       
       this.updateMeta(roundedPct, null, label);
+      this.updateStepIndicator();
 
       console.log('WorkflowProgress: Updated to', roundedPct + '% (' + (label || 'manual update') + ')');
     },
     
     updateMeta: function(pct, completed, label) {
+      var clampedPct = Math.max(0, Math.min(100, Math.round(pct)));
+
       if (this.progressLabel) {
-        var clampedPct = Math.max(0, Math.min(100, Math.round(pct)));
         this.progressLabel.textContent = clampedPct + '%';
       }
 
-      if (this.progressSummary) {
-        if (typeof completed === 'number' && this.totalSteps > 0) {
-          this.progressSummary.textContent = completed + ' of ' + this.totalSteps + ' steps completed';
-        } else if (label) {
-          this.progressSummary.textContent = label;
+      var summaryText = null;
+      if (typeof completed === 'number' && this.totalSteps > 0) {
+        summaryText = completed + ' of ' + this.totalSteps + ' steps completed';
+      } else if (label) {
+        summaryText = label;
+      }
+
+      if (summaryText) {
+        if (this.progressSummary) {
+          this.progressSummary.textContent = summaryText;
+        }
+        if (this.progressInfoSummary) {
+          this.progressInfoSummary.textContent = summaryText;
         }
       }
     },
 
+    updateStepIndicator: function() {
+      if (!this.progressStepLabel) {
+        return;
+      }
+
+      if (!this.totalSteps || this.totalSteps <= 0) {
+        this.progressStepLabel.textContent = 'Progress: Step 0 of 0';
+        return;
+      }
+
+      let activeStep = document.querySelector('.pf-step.pf-step--active');
+      if (!activeStep) {
+        activeStep = document.querySelector('.pf-step:not(.pf-step--locked)');
+      }
+
+      let stepNumber = activeStep ? activeStep.getAttribute('data-step-number') : null;
+      if (!stepNumber && activeStep) {
+        const steps = Array.from(document.querySelectorAll('.pf-step'));
+        const idx = steps.indexOf(activeStep);
+        if (idx >= 0) {
+          stepNumber = String(idx + 1);
+        }
+      }
+
+      if (!stepNumber) {
+        const fallback = this.totalSteps > 0 ? Math.min((this.getCompletedSteps()?.length || 0) + 1, this.totalSteps) : 0;
+        stepNumber = String(fallback);
+      }
+
+      this.progressStepLabel.textContent = `Progress: Step ${stepNumber} of ${this.totalSteps}`;
+    },
+
     setupTimeTracking: function() {
-      if (!this.timeTracker || !this.timeElapsedEl) {
+      if (!this.timeTracker) {
         return;
       }
 
@@ -218,7 +296,7 @@
     },
 
     updateTimeElapsed: function() {
-      if (!this.startedAt || !this.timeElapsedEl) {
+      if (!this.startedAt) {
         return;
       }
 
@@ -250,7 +328,12 @@
         label = minutesTotal + ' min ago';
       }
 
-      this.timeElapsedEl.textContent = label;
+      if (this.timeElapsedEl) {
+        this.timeElapsedEl.textContent = label;
+      }
+      if (this.progressInfoElapsed) {
+        this.progressInfoElapsed.textContent = label;
+      }
     },
 
     /**

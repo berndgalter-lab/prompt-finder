@@ -41,36 +41,24 @@ if (!empty($breadcrumb_terms) && !is_wp_error($breadcrumb_terms)) {
 }
 
 $start_timestamp = current_time('timestamp');
+$initial_step_number = $total_steps > 0 ? 1 : 0;
 ?>
 
 <header class="pf-workflow-header" role="banner" aria-label="Workflow Header">
-    
-    <!-- Progress Bar (Fixed Top) -->
-    <div class="pf-progress-shell">
-        <div class="pf-progress-track">
-            <div class="pf-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Workflow Progress" aria-live="polite">
-                <div class="pf-progress-fill" data-progress="0"></div>
-            </div>
-        </div>
-        <div class="pf-progress-meta">
-            <span class="pf-progress-label" data-progress-label>0%</span>
-            <span class="pf-progress-summary" data-progress-summary>0 of <?php echo esc_html($total_steps); ?> steps completed</span>
-        </div>
-    </div>
-    
-    <!-- Header Content (Sticky) -->
+
+    <!-- Header Content -->
     <div class="pf-header-content">
 
-        <nav class="pf-breadcrumbs" aria-label="Breadcrumb">
-            <ol>
-                <li><a href="<?php echo esc_url($workflow_archive_link); ?>">Workflows</a></li>
-                <?php if ($breadcrumb_category): ?>
-                    <li><a href="<?php echo esc_url(get_term_link($breadcrumb_category)); ?>"><?php echo esc_html($breadcrumb_category->name); ?></a></li>
-                <?php endif; ?>
-                <li aria-current="page"><?php echo esc_html($post_title); ?></li>
-            </ol>
+        <nav class="pf-breadcrumb" aria-label="Breadcrumb">
+            <a href="<?php echo esc_url($workflow_archive_link); ?>">Workflows</a>
+            <?php if ($breadcrumb_category): ?>
+                <span class="pf-breadcrumb-separator">/</span>
+                <a href="<?php echo esc_url(get_term_link($breadcrumb_category)); ?>"><?php echo esc_html($breadcrumb_category->name); ?></a>
+            <?php endif; ?>
+            <span class="pf-breadcrumb-separator">/</span>
+            <span class="pf-breadcrumb-current"><?php echo esc_html($post_title); ?></span>
         </nav>
-        
+
         <!-- Title Section -->
         <div class="pf-header-title-section">
             <div class="pf-header-title-row">
@@ -186,5 +174,16 @@ $start_timestamp = current_time('timestamp');
             </div>
         </div>
         
+    </div>
+
+    <div class="pf-progress-container">
+        <div class="pf-progress-info">
+            <span class="pf-progress-step" data-progress-step>Progress: Step <?php echo esc_html($initial_step_number); ?> of <?php echo esc_html($total_steps); ?></span>
+            <span class="pf-progress-summary pf-sr-only" data-progress-summary>0 of <?php echo esc_html($total_steps); ?> steps completed</span>
+            <span>Started <span data-time-elapsed>just now</span></span>
+        </div>
+        <div class="pf-progress-bar-large" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="pf-progress-fill-large" data-progress="0"></div>
+        </div>
     </div>
 </header>
