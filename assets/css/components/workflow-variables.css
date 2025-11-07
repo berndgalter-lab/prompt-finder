@@ -1,3 +1,170 @@
+/* ============================================
+   3-TIER VARIABLE SYSTEM STYLES
+   ============================================ */
+
+/* Status Bar - Fixed at top after header */
+.pf-variable-status-bar {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem 1.5rem;
+  background: white;
+  border-radius: 12px;
+  margin: 1.5rem auto;
+  max-width: 1200px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 1px solid #e0e0e0;
+  position: sticky;
+  top: 60px;
+  z-index: 100;
+}
+
+.pf-status-tier {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: #f8f9fa;
+  flex: 1;
+  justify-content: center;
+}
+
+.pf-status-tier .pf-status-icon {
+  font-size: 1.25rem;
+}
+
+.pf-status-tier .pf-status-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.7;
+}
+
+.pf-status-tier .pf-status-count {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* Tier-specific colors */
+.pf-status--profile {
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+  border: 1px solid #90CAF9;
+}
+
+.pf-status--profile .pf-status-count {
+  color: #1565C0;
+}
+
+.pf-status--workflow {
+  background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
+  border: 1px solid #CE93D8;
+}
+
+.pf-status--workflow .pf-status-count {
+  color: #6A1B9A;
+}
+
+.pf-status--step {
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  border: 1px solid #A5D6A7;
+}
+
+.pf-status--step .pf-status-count {
+  color: #2E7D32;
+}
+
+/* Variable Container Styling by Tier */
+.pf-variables--profile {
+  background: #F0F7FF;
+  border: 2px solid #90CAF9;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.pf-variables--profile::before {
+  content: "🌍 PROFILE DEFAULTS";
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: white;
+  padding: 0 10px;
+  color: #1565C0;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.pf-variables--workflow {
+  background: #FBF7FF;
+  border: 2px solid #CE93D8;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.pf-variables--workflow::before {
+  content: "📁 WORKFLOW CONFIGURATION";
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: white;
+  padding: 0 10px;
+  color: #6A1B9A;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.pf-variables--step,
+.pf-step-variables-section {
+  background: #F1FBF3;
+  border: 2px solid #A5D6A7;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.pf-variables--step::before,
+.pf-step-variables-section::before {
+  content: "✏️ STEP-SPECIFIC INPUTS";
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: white;
+  padding: 0 10px;
+  color: #2E7D32;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+/* Individual Variable Items by Tier */
+.pf-var-item[data-variable-tier="profile"] {
+  border-left: 4px solid #2196F3 !important;
+  background: rgba(33, 150, 243, 0.05);
+}
+
+.pf-var-item[data-variable-tier="workflow"] {
+  border-left: 4px solid #9C27B0 !important;
+  background: rgba(156, 39, 176, 0.05);
+}
+
+.pf-var-item[data-variable-tier="step"] {
+  border-left: 4px solid #4CAF50 !important;
+  background: rgba(76, 175, 80, 0.05);
+}
+
+/* Make profile variables read-only visually */
+.pf-variables--profile .pf-var-input {
+  background: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
 /**
  * Workflow Component: Variables Section
  * Interactive input fields with validation and storage
@@ -409,75 +576,9 @@
    VARIABLE STATUS BAR
    ======================================== */
 
+/* retain variable status wrapper for spacing */
 .pf-variable-status {
     margin: var(--pf-space-xl, 2.5rem) 0 var(--pf-space-lg, 2rem);
-}
-
-.pf-variable-status-bar {
-    display: flex;
-    gap: 2rem;
-    padding: 1rem;
-    background: #ffffff;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.pf-status-tier {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.pf-status--profile .pf-status-count {
-    color: #2196F3;
-    font-weight: bold;
-}
-
-.pf-status--workflow .pf-status-count {
-    color: #9C27B0;
-    font-weight: bold;
-}
-
-.pf-status--step .pf-status-count {
-    color: #4CAF50;
-    font-weight: bold;
-}
-
-.pf-status-icon {
-    font-size: 1rem;
-    line-height: 1;
-}
-
-.pf-status-count {
-    font-variant-numeric: tabular-nums;
-}
-
-/* Variable source badges */
-.pf-var-source-badge {
-    font-size: 0.75rem;
-    padding: 0.125rem 0.5rem;
-    border-radius: 12px;
-    margin-left: 0.5rem;
-    opacity: 0.8;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.pf-var-source-badge--profile {
-    background: #E3F2FD;
-    color: #1976D2;
-}
-
-.pf-var-source-badge--workflow {
-    background: #F3E5F5;
-    color: #7B1FA2;
-}
-
-.pf-var-source-badge--step {
-    background: #E8F5E9;
-    color: #2E7D32;
 }
 
 /* ========================================
@@ -504,6 +605,17 @@
     
     .pf-btn {
         width: 100%;
+    }
+
+    .pf-variable-status-bar {
+        flex-direction: column;
+        gap: 0.5rem;
+        position: relative;
+        top: 0;
+    }
+
+    .pf-status-tier {
+        padding: 0.75rem;
     }
 }
 

@@ -383,30 +383,6 @@ html, body {
     position: relative;
 }
 
-.pf-var-item--profile {
-    border-left: 3px solid #2196F3;
-    background: rgba(33, 150, 243, 0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 1rem;
-    border-radius: 12px;
-}
-
-.pf-var-item--workflow {
-    border-left: 3px solid #9C27B0;
-    background: rgba(156, 39, 176, 0.05);
-    padding: 1rem;
-    border-radius: 12px;
-}
-
-.pf-var-item--step {
-    border-left: 3px solid #4CAF50;
-    background: rgba(76, 175, 80, 0.05);
-    padding: 1rem;
-    border-radius: 12px;
-}
-
 .pf-var-label {
     display: inline-flex;
     align-items: center;
