@@ -647,10 +647,10 @@ function updateStatusBar(workflowMap){
   const bar = document.querySelector('.pf-variable-status-bar');
   if (!bar) return;
 
-  const profileTier = bar.querySelector('.pf-status--profile .pf-status-count');
-  if (profileTier) {
+  const userTier = bar.querySelector('.pf-status-tier[data-tier="user"] .pf-status-count');
+  if (userTier) {
     if (!isProfileEnabled()) {
-      profileTier.textContent = '—';
+      userTier.textContent = '0/0';
     } else {
       const profileData = (PF_USER_VARS.profile && typeof PF_USER_VARS.profile === 'object') ? PF_USER_VARS.profile : {};
       const keys = Object.keys(profileData).filter(k => !/^sys_/i.test(k));
@@ -658,11 +658,11 @@ function updateStatusBar(workflowMap){
         const val = profileData[k];
         return val != null && String(val).trim() !== '';
       }).length;
-      profileTier.textContent = `${filled}/${keys.length}`;
+      userTier.textContent = `${filled}/${keys.length}`;
     }
   }
 
-  const workflowTier = bar.querySelector('.pf-status--workflow .pf-status-count');
+  const workflowTier = bar.querySelector('.pf-status-tier[data-tier="workflow"] .pf-status-count');
   if (workflowTier) {
     const keys = Object.keys(workflowMap || {});
     const allowProfile = isProfileEnabled();
@@ -674,15 +674,11 @@ function updateStatusBar(workflowMap){
     workflowTier.textContent = keys.length ? `${filled}/${keys.length}` : '0/0';
   }
 
-  const stepTier = bar.querySelector('.pf-status--step .pf-status-count');
+  const stepTier = bar.querySelector('.pf-status-tier[data-tier="step"] .pf-status-count');
   if (stepTier) {
     const active = getActiveStepSection();
     const status = computeStepTierStatus(active, workflowMap);
-    if (!status.total) {
-      stepTier.textContent = '-';
-    } else {
-      stepTier.textContent = `${status.filled}/${status.total}`;
-    }
+    stepTier.textContent = status.total ? `${status.filled}/${status.total}` : '0/0';
   }
 }
 
