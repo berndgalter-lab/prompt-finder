@@ -139,7 +139,7 @@ body.single-workflows {
 /* ===== Compact spacing for workflow pages ===== */
 /* Additional compact overrides if needed - tokens defined in pf-core.css */
 
-/* PF v1.7 — Design Tokens + Scope */
+/* PF v1.7 — Design Tokens + Scope (ergänzend) */
 .pf-workflow-container {
   --pf-bg: #f7f8f9;
   --pf-surface: #ffffff;
@@ -147,46 +147,15 @@ body.single-workflows {
   --pf-text: #1f2937;
   --pf-text-dim: #6b7280;
   --pf-border: #e5e7eb;
-  --pf-accent: #2563eb; /* Blau, gern beibehalten */
-  --pf-accent-soft: color-mix(in srgb, var(--pf-accent) 12%, white);
+  --pf-accent: #2563eb;
+  --pf-accent-soft: rgba(37, 99, 235, 0.12);
   --pf-shadow: 0 8px 24px rgba(0,0,0,.06);
 }
 
-/* „Nuke & pave": Theme-Einflüsse im Scope neutralisieren */
-.pf-workflow-container * {
-  box-sizing: border-box;
-}
-
-/* Card-Primitive */
-.pf-card {
-  background: var(--pf-surface);
-  border: 1px solid var(--pf-border);
-  border-radius: 14px;
-  box-shadow: var(--pf-shadow);
-}
-
-/* Headline-Hierarchie in Sektionen */
-.pf-section .pf-section-heading {
-  margin: 0 0 .25rem 0;
-  font-size: 1.25rem;
-  line-height: 1.25;
-  font-weight: 700;
-  color: var(--pf-text);
-}
-.pf-section .pf-section-subheading {
-  margin: 0 0 1rem 0; color: var(--pf-text-dim); font-size: .95rem;
-}
-
-/* Entferne bunte/pinke/purpur-Rahmen & überdekorierte Placeholder */
-.pf-section *, .pf-card * {
-  outline: none !important;
-}
-.pf-section .pf-locked-premium,
-.pf-section .fancy-border,
-.pf-section .pf-debug,
-.pf-section .pf-box-outline,
-.pf-section .pf-outline--purple,
-.pf-section .pf-outline--pink {
+/* Entferne Debug-Rahmen (nur Debug-Klassen) */
+.pf-debug,
+.pf-outline--purple,
+.pf-outline--pink {
   border: none !important;
   box-shadow: none !important;
   background: transparent !important;
