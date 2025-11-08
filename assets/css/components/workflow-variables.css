@@ -2,100 +2,136 @@
    WORKFLOW VARIABLES — v1.7 (Single Card + Uniform Rows)
    ============================================ */
 
+/* ========== Scoped Containers ========== */
+[data-wf-form],
+[data-step-vars-ui] {
+  background: var(--pf-card, #ffffff);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: var(--pf-radius, 12px);
+  box-shadow: var(--pf-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  padding: var(--pf-space-6, 1.5rem);
+  margin-bottom: var(--pf-space-6, 1.5rem);
+}
+
 /* ========== Main Card ========== */
 .pf-vars-card {
-  background: var(--pf-c-card);
-  border: 1px solid var(--pf-c-border);
-  border-radius: var(--pf-radius);
-  box-shadow: var(--pf-shadow-md);
-  padding: var(--pf-sp-6);
-  margin-bottom: var(--pf-sp-8);
+  background: var(--pf-card, #ffffff);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: var(--pf-radius, 12px);
+  box-shadow: var(--pf-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  padding: var(--pf-space-6, 1.5rem);
+  margin-bottom: var(--pf-space-6, 1.5rem);
 }
 
 .pf-vars-card__head {
-  margin-bottom: var(--pf-sp-6);
+  margin-bottom: var(--pf-space-4, 1rem);
 }
 
 .pf-vars-card__title {
   margin: 0;
   font-size: 1.125rem;
-  font-weight: var(--pf-fw-semibold);
-  color: var(--pf-c-text);
+  font-weight: var(--pf-fw-semibold, 600);
+  color: var(--pf-text, #1f2937);
 }
 
 .pf-vars-card__sub {
-  margin-top: var(--pf-sp-2);
-  color: var(--pf-c-subtle);
-  font-size: var(--pf-fs-14);
+  margin-top: var(--pf-space-2, .5rem);
+  color: var(--pf-text-dim, #6b7280);
+  font-size: var(--pf-fs-sm, .875rem);
 }
 
 /* ========== Variable Row ========== */
+[data-wf-form] .pf-var,
+[data-step-vars-ui] .pf-var,
 .pf-var {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--pf-sp-2);
-  padding: var(--pf-sp-4);
-  border: 1px solid var(--pf-c-border);
-  border-radius: calc(var(--pf-radius) - .2rem);
+  gap: var(--pf-space-2, .5rem);
+  padding: var(--pf-space-3, .75rem);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: 8px;
   background: transparent;
-  margin-bottom: var(--pf-sp-3);
+  margin-bottom: var(--pf-space-3, .75rem);
+}
+
+@media (min-width: 960px) {
+  [data-wf-form] .pf-var,
+  [data-step-vars-ui] .pf-var {
+    grid-template-columns: 200px 1fr;
+    align-items: start;
+    gap: var(--pf-space-4, 1rem);
+  }
 }
 
 .pf-var__top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--pf-sp-2);
+  gap: var(--pf-space-2, .5rem);
 }
 
 .pf-var__label {
-  font-weight: var(--pf-fw-semibold);
-  color: var(--pf-c-text);
+  font-weight: var(--pf-fw-semibold, 600);
+  color: var(--pf-text, #1f2937);
+  font-size: var(--pf-fs-sm, .875rem);
 }
 
 .pf-var__badge {
   display: inline-flex;
   align-items: center;
   gap: .4ch;
-  padding: 0 var(--pf-sp-2);
+  padding: 0 var(--pf-space-2, .5rem);
   height: 1.4rem;
   border-radius: 999px;
-  background: var(--pf-c-badge);
-  font-size: var(--pf-fs-12);
-  color: var(--pf-c-subtle);
+  background: var(--pf-bg-soft, #f3f4f6);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  font-size: var(--pf-fs-xs, .75rem);
+  color: var(--pf-text-muted, #9ca3af);
+  font-weight: 500;
 }
 
 /* ========== Inputs ========== */
+[data-wf-form] .pf-var__input input,
+[data-wf-form] .pf-var__input textarea,
+[data-wf-form] .pf-var__input select,
+[data-step-vars-ui] .pf-var__input input,
+[data-step-vars-ui] .pf-var__input textarea,
+[data-step-vars-ui] .pf-var__input select,
 .pf-var__input input,
 .pf-var__input textarea,
 .pf-var__input select {
   width: 100%;
   padding: .65rem .8rem;
-  background: #0e1117;
-  color: var(--pf-c-text);
-  border: 1px solid var(--pf-c-border);
-  border-radius: .6rem;
+  background: var(--pf-bg, #ffffff);
+  color: var(--pf-text, #1f2937);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: var(--pf-radius-sm, .375rem);
   outline: none;
   font-family: inherit;
-  font-size: var(--pf-fs-14);
+  font-size: var(--pf-fs-base, 1rem);
+  transition: all var(--pf-transition-fast, 0.15s ease);
 }
 
+[data-wf-form] .pf-var__input :is(input, textarea, select):focus,
+[data-step-vars-ui] .pf-var__input :is(input, textarea, select):focus,
 .pf-var__input :is(input, textarea, select):focus {
-  border-color: var(--pf-c-focus);
-  box-shadow: 0 0 0 3px rgba(125, 179, 255, .18);
+  border-color: var(--pf-accent, #3b82f6);
+  box-shadow: var(--pf-focus-ring, 0 0 0 3px rgba(59, 130, 246, 0.1));
 }
 
 /* ========== Meta + Default ========== */
 .pf-var__meta {
   display: flex;
-  gap: var(--pf-sp-4);
+  gap: var(--pf-space-4, 1rem);
   justify-content: space-between;
-  color: var(--pf-c-subtle);
-  font-size: var(--pf-fs-12);
+  color: var(--pf-text-muted, #9ca3af);
+  font-size: var(--pf-fs-xs, .75rem);
+  margin-top: var(--pf-space-1, .25rem);
 }
 
 .pf-var__hint {
   opacity: .9;
+  line-height: 1.4;
 }
 
 .pf-var__default {
@@ -103,37 +139,44 @@
 }
 
 /* ========== Error & States ========== */
+[data-wf-form] .pf-var__error,
+[data-step-vars-ui] .pf-var__error,
 .pf-var__error {
-  margin-top: var(--pf-sp-2);
-  color: var(--pf-c-error);
-  font-size: var(--pf-fs-12);
+  margin-top: var(--pf-space-2, .5rem);
+  color: var(--pf-error, #ef4444);
+  font-size: var(--pf-fs-xs, .75rem);
   display: none;
+  line-height: 1.4;
 }
 
+[data-wf-form] .pf-var.is-invalid .pf-var__input :is(input, textarea, select),
+[data-step-vars-ui] .pf-var.is-invalid .pf-var__input :is(input, textarea, select),
 .pf-var.is-invalid .pf-var__input :is(input, textarea, select) {
-  border-color: var(--pf-c-error);
-  box-shadow: 0 0 0 3px rgba(255, 107, 107, .18);
+  border-color: var(--pf-error, #ef4444);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, .1);
 }
 
+[data-wf-form] .pf-var.is-invalid .pf-var__error,
+[data-step-vars-ui] .pf-var.is-invalid .pf-var__error,
 .pf-var.is-invalid .pf-var__error {
   display: block;
 }
 
 /* ========== Legacy Class Compatibility ========== */
-/* PHP templates use these classes */
+/* PHP templates use these classes - matched to scoped styles */
 
 .pf-workflow-vars-card {
-  background: var(--pf-c-card);
-  border: 1px solid var(--pf-c-border);
-  border-radius: var(--pf-radius);
-  box-shadow: var(--pf-shadow-md);
-  padding: var(--pf-sp-6);
-  margin-bottom: var(--pf-sp-8);
+  background: var(--pf-card, #ffffff);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: var(--pf-radius, 12px);
+  box-shadow: var(--pf-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  padding: var(--pf-space-6, 1.5rem);
+  margin-bottom: var(--pf-space-6, 1.5rem);
 }
 
 .pf-workflow-vars-list {
   display: grid;
-  gap: var(--pf-sp-3);
+  gap: var(--pf-space-3, .75rem);
 }
 
 .pf-var-input input,
@@ -141,33 +184,35 @@
 .pf-var-input select {
   width: 100%;
   padding: .65rem .8rem;
-  background: #0e1117;
-  color: var(--pf-c-text);
-  border: 1px solid var(--pf-c-border);
-  border-radius: .6rem;
+  background: var(--pf-bg, #ffffff);
+  color: var(--pf-text, #1f2937);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: var(--pf-radius-sm, .375rem);
   outline: none;
   font-family: inherit;
-  font-size: var(--pf-fs-14);
+  font-size: var(--pf-fs-base, 1rem);
+  transition: all var(--pf-transition-fast, 0.15s ease);
 }
 
 .pf-var-input :is(input, textarea, select):focus {
-  border-color: var(--pf-c-focus);
-  box-shadow: 0 0 0 3px rgba(125, 179, 255, .18);
+  border-color: var(--pf-accent, #3b82f6);
+  box-shadow: var(--pf-focus-ring, 0 0 0 3px rgba(59, 130, 246, 0.1));
 }
 
 .pf-var-hint,
 .pf-var-help {
-  font-size: var(--pf-fs-12);
-  color: var(--pf-c-subtle);
+  font-size: var(--pf-fs-xs, .75rem);
+  color: var(--pf-text-muted, #9ca3af);
   line-height: 1.4;
-  margin-top: var(--pf-sp-1);
+  margin-top: var(--pf-space-1, .25rem);
 }
 
 .pf-var-error {
-  font-size: var(--pf-fs-12);
-  color: var(--pf-c-error);
-  margin-top: var(--pf-sp-2);
+  font-size: var(--pf-fs-xs, .75rem);
+  color: var(--pf-error, #ef4444);
+  margin-top: var(--pf-space-2, .5rem);
   display: none;
+  line-height: 1.4;
 }
 
 .pf-var-item.is-invalid .pf-var-error,
@@ -177,8 +222,8 @@
 
 .pf-var-item.is-invalid .pf-var-input :is(input, textarea, select),
 .pf-row.is-invalid .pf-var-input :is(input, textarea, select) {
-  border-color: var(--pf-c-error);
-  box-shadow: 0 0 0 3px rgba(255, 107, 107, .18);
+  border-color: var(--pf-error, #ef4444);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, .1);
 }
 
 /* ========== Optional: Status Bar (3-Tier System) ========== */
