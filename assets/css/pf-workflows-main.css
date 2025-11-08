@@ -161,3 +161,10 @@ body.single-workflows {
   background: transparent !important;
 }
 
+/* PF v1.7 — PROOF-OF-LIFE (temporary dev rule, will be removed in Phase 2) */
+body.pf-body,
+body.single-workflows {
+  outline: 2px solid lime !important;
+  outline-offset: -2px !important;
+}
+

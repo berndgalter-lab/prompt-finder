@@ -1100,12 +1100,12 @@ function enqueue_new_workflow_assets() {
     }
     
     // Component CSS files (in correct order)
-    // NOTE: workflow-variables.css is deprecated - all styles now in pf-workflows.css
+    // Order: foundation → components → overrides
     $css_components = array(
         'workflow-header' => array('pf-workflows-main'),
         'workflow-sidebar' => array('pf-workflows-main'),
         'workflow-sections' => array('pf-workflows-main'),
-        // 'workflow-variables' => array('pf-workflows-main'), // DEPRECATED: Moved to pf-workflows.css
+        'workflow-variables' => array('pf-workflows-main'), // RE-ENABLED: Required for Variables v1
         'workflow-steps' => array('pf-workflows-main')
     );
     
@@ -1126,13 +1126,15 @@ function enqueue_new_workflow_assets() {
     }
     
     // === JAVASCRIPT - MODULES ===
+    // Order: foundation (storage) → features (variables, steps, etc.) → enhancements
     $js_modules = array(
-        'storage',
-        'navigation', 
-        'copy',
-        'progress',
-        'steps',
-        'keyboard'
+        'storage',      // Foundation: must be first
+        'variables',    // Variables v1 renderer (CRITICAL - was missing!)
+        'navigation',   // Sidebar navigation
+        'copy',         // Copy-to-clipboard
+        'progress',     // Progress tracking
+        'steps',        // Step management
+        'keyboard'      // Keyboard shortcuts
     );
     
     // Enqueue JS modules with correct dependencies
@@ -1200,6 +1202,153 @@ function dequeue_old_workflow_assets() {
     }
 }
 add_action('wp_enqueue_scripts', 'dequeue_old_workflow_assets', 100); // Priority 100 to run after all enqueues
+
+/* =====================================================
+   PF DEBUG PANEL - Enqueue Debugger
+===================================================== */
+/**
+ * Display debug panel showing all enqueued PF assets
+ * Accessible to admins via ?pfdebug=1
+ */
+function pf_debug_enqueues_panel() {
+    // Only for admins with ?pfdebug=1
+    if (!current_user_can('manage_options') || !isset($_GET['pfdebug'])) {
+        return;
+    }
+    
+    global $wp_styles, $wp_scripts;
+    
+    $pf_styles = array();
+    $pf_scripts = array();
+    
+    // Collect PF styles
+    if (!empty($wp_styles->queue)) {
+        foreach ($wp_styles->queue as $handle) {
+            if (strpos($handle, 'pf-') === 0 || strpos($handle, 'pf_') === 0) {
+                $style = $wp_styles->registered[$handle] ?? null;
+                if ($style) {
+                    $pf_styles[] = array(
+                        'handle' => $handle,
+                        'src' => $style->src,
+                        'ver' => $style->ver,
+                        'deps' => !empty($style->deps) ? implode(', ', $style->deps) : '(none)'
+                    );
+                }
+            }
+        }
+    }
+    
+    // Collect PF scripts
+    if (!empty($wp_scripts->queue)) {
+        foreach ($wp_scripts->queue as $handle) {
+            if (strpos($handle, 'pf-') === 0 || strpos($handle, 'pf_') === 0) {
+                $script = $wp_scripts->registered[$handle] ?? null;
+                if ($script) {
+                    $pf_scripts[] = array(
+                        'handle' => $handle,
+                        'src' => $script->src,
+                        'ver' => $script->ver,
+                        'deps' => !empty($script->deps) ? implode(', ', $script->deps) : '(none)'
+                    );
+                }
+            }
+        }
+    }
+    
+    // Output debug panel
+    ?>
+    <div id="pf-debug-panel" style="position:fixed;bottom:0;left:0;right:0;max-height:40vh;overflow:auto;background:rgba(0,0,0,0.95);color:#0f0;font-family:monospace;font-size:12px;padding:20px;z-index:999999;border-top:3px solid lime;box-shadow:0 -4px 20px rgba(0,255,0,0.3);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+            <h3 style="margin:0;color:lime;font-size:16px;font-weight:bold;">
+                🔍 PF DEBUG PANEL - Enqueued Assets
+            </h3>
+            <button onclick="this.parentElement.parentElement.remove()" style="background:lime;color:#000;border:none;padding:5px 12px;cursor:pointer;font-weight:bold;border-radius:3px;">
+                CLOSE [X]
+            </button>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+            <!-- STYLES -->
+            <div>
+                <h4 style="color:#0ff;margin:0 0 10px 0;border-bottom:1px solid #0ff;padding-bottom:5px;">
+                    📦 STYLES (<?php echo count($pf_styles); ?>)
+                </h4>
+                <?php if (empty($pf_styles)): ?>
+                    <p style="color:#ff0;margin:5px 0;">⚠️ No PF styles found!</p>
+                <?php else: ?>
+                    <table style="width:100%;border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:rgba(0,255,0,0.1);">
+                                <th style="text-align:left;padding:5px;border:1px solid #0f0;">Handle</th>
+                                <th style="text-align:left;padding:5px;border:1px solid #0f0;">Ver</th>
+                                <th style="text-align:left;padding:5px;border:1px solid #0f0;">Deps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($pf_styles as $style): ?>
+                                <tr>
+                                    <td style="padding:5px;border:1px solid #333;color:#0f0;">
+                                        <strong><?php echo esc_html($style['handle']); ?></strong><br>
+                                        <small style="color:#888;"><?php echo esc_html($style['src']); ?></small>
+                                    </td>
+                                    <td style="padding:5px;border:1px solid #333;color:#ff0;">
+                                        <?php echo esc_html($style['ver'] ?? 'none'); ?>
+                                    </td>
+                                    <td style="padding:5px;border:1px solid #333;color:#0ff;">
+                                        <small><?php echo esc_html($style['deps']); ?></small>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+            
+            <!-- SCRIPTS -->
+            <div>
+                <h4 style="color:#0ff;margin:0 0 10px 0;border-bottom:1px solid #0ff;padding-bottom:5px;">
+                    ⚡ SCRIPTS (<?php echo count($pf_scripts); ?>)
+                </h4>
+                <?php if (empty($pf_scripts)): ?>
+                    <p style="color:#ff0;margin:5px 0;">⚠️ No PF scripts found!</p>
+                <?php else: ?>
+                    <table style="width:100%;border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:rgba(0,255,0,0.1);">
+                                <th style="text-align:left;padding:5px;border:1px solid #0f0;">Handle</th>
+                                <th style="text-align:left;padding:5px;border:1px solid #0f0;">Ver</th>
+                                <th style="text-align:left;padding:5px;border:1px solid #0f0;">Deps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($pf_scripts as $script): ?>
+                                <tr>
+                                    <td style="padding:5px;border:1px solid #333;color:#0f0;">
+                                        <strong><?php echo esc_html($script['handle']); ?></strong><br>
+                                        <small style="color:#888;"><?php echo esc_html($script['src']); ?></small>
+                                    </td>
+                                    <td style="padding:5px;border:1px solid #333;color:#ff0;">
+                                        <?php echo esc_html($script['ver'] ?? 'none'); ?>
+                                    </td>
+                                    <td style="padding:5px;border:1px solid #333;color:#0ff;">
+                                        <small><?php echo esc_html($script['deps']); ?></small>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+        </div>
+        
+        <div style="margin-top:15px;padding-top:10px;border-top:1px solid #333;color:#888;font-size:11px;">
+            💡 Tip: Check "Ver" column for cache-busting (should show filemtime timestamps). 
+            Reload page to see changes. URL: <code style="color:#0ff;"><?php echo esc_url(add_query_arg('pfdebug', '1')); ?></code>
+        </div>
+    </div>
+    <?php
+}
+add_action('wp_footer', 'pf_debug_enqueues_panel', 999);
 
 add_action('wp_enqueue_scripts', function(){
     if (!is_singular('workflows')) {
