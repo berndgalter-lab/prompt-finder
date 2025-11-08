@@ -1047,55 +1047,65 @@ if (!function_exists('pf_ver')) {
     if (file_exists($abs)) {
       return filemtime($abs);
     }
-    // Fallback to theme version if file not found
-    return wp_get_theme()->get('Version');
+    // Fallback (avoid hardcoded "1.0.0")
+    return time();
   }
 }
 
 /**
  * Enqueue PF Assets (Single Bundle System)
  * All assets versioned with filemtime() for deterministic cache-busting
+ * Deregisters all handles first to prevent duplicates
  */
 add_action('wp_enqueue_scripts', function () {
-  $dir  = get_stylesheet_directory();
-  $uri  = get_stylesheet_directory_uri();
+  $dir = get_stylesheet_directory();
+  $uri = get_stylesheet_directory_uri();
 
-  // --- Dequeue legacy/accidental bundles (safety) ---
-  wp_dequeue_script('pf-workflows-new');
-  wp_deregister_script('pf-workflows-new');
-  
-  // Dequeue old legacy handles
-  foreach (['pf-module-storage', 'pf-module-variables', 'pf-module-navigation', 'pf-module-copy', 'pf-module-progress', 'pf-module-steps', 'pf-module-keyboard', 'pf-workflows-js', 'pf-workflow-navigation-js', 'pf-learn-use-mode-js'] as $old) {
-    wp_dequeue_script($old);
-    wp_deregister_script($old);
+  // --- Safety: remove legacy/duplicate enqueues ---
+  $all_styles = [
+    'pf-child', 'pf-core', 'pf-workflows-main',
+    'pf-workflow-header', 'pf-workflow-sidebar',
+    'pf-workflow-sections', 'pf-workflow-variables', 'pf-workflow-steps',
+    'pf-workflows' // old CSS
+  ];
+  foreach ($all_styles as $h) { 
+    wp_dequeue_style($h); 
+    wp_deregister_style($h); 
   }
-  wp_dequeue_style('pf-workflows'); // old CSS
+
+  $all_scripts = [
+    'pf-navigation-js', 'pf-workflows', 'pf-workflows-new',
+    'pf-module-storage', 'pf-module-variables', 'pf-module-navigation', 
+    'pf-module-copy', 'pf-module-progress', 'pf-module-steps', 'pf-module-keyboard',
+    'pf-workflows-js', 'pf-workflow-navigation-js', 'pf-learn-use-mode-js'
+  ];
+  foreach ($all_scripts as $h) { 
+    wp_dequeue_script($h); 
+    wp_deregister_script($h); 
+  }
 
   // --- Styles ---
-  // Child theme base (style.css)
-        wp_enqueue_style(
-            'pf-child',
-            get_stylesheet_uri(),
-            [],
+  wp_enqueue_style(
+    'pf-child',
+    get_stylesheet_uri(),
+    [],
     pf_ver('/style.css')
-        );
-    
-  // Core + bundle
-        wp_enqueue_style(
-            'pf-core',
+  );
+
+  wp_enqueue_style(
+    'pf-core',
     $uri . '/assets/css/pf-core.css',
     ['pf-child'],
     pf_ver('/assets/css/pf-core.css')
   );
 
-        wp_enqueue_style(
-            'pf-workflows-main',
+  wp_enqueue_style(
+    'pf-workflows-main',
     $uri . '/assets/css/pf-workflows-main.css',
     ['pf-core'],
     pf_ver('/assets/css/pf-workflows-main.css')
   );
 
-  // Components (all depend on pf-workflows-main)
   $components = [
     'workflow-header',
     'workflow-sidebar',
@@ -1104,7 +1114,7 @@ add_action('wp_enqueue_scripts', function () {
     'workflow-steps',
   ];
   foreach ($components as $c) {
-            wp_enqueue_style(
+    wp_enqueue_style(
       "pf-$c",
       $uri . "/assets/css/components/$c.css",
       ['pf-workflows-main'],
@@ -1113,39 +1123,37 @@ add_action('wp_enqueue_scripts', function () {
   }
 
   // --- Scripts ---
-  // Detect if pf-navigation.js uses jQuery
-  $nav_rel  = '/assets/js/pf-navigation.js';
-  $nav_abs  = $dir . $nav_rel;
+  $nav_rel = '/assets/js/pf-navigation.js';
+  $nav_abs = $dir . $nav_rel;
   $nav_deps = [];
   if (file_exists($nav_abs)) {
     $src = @file_get_contents($nav_abs);
     if ($src !== false && (strpos($src, '$(') !== false || strpos($src, 'jQuery(') !== false)) {
       $nav_deps[] = 'jquery';
     }
-            }
-            wp_enqueue_script(
+  }
+  wp_enqueue_script(
     'pf-navigation-js',
     $uri . $nav_rel,
     $nav_deps,
     pf_ver($nav_rel),
-    true // footer
+    true
   );
 
-  // Main workflow bundle always needs jquery
-        wp_enqueue_script(
+  wp_enqueue_script(
     'pf-workflows',
     $uri . '/assets/js/pf-workflows.js',
     ['jquery'],
     pf_ver('/assets/js/pf-workflows.js'),
-    true // footer
+    true
   );
   
   // Localize workflow data (only on workflow pages)
   if (is_singular('workflows')) {
     wp_localize_script('pf-workflows', 'workflowData', [
-            'postId' => get_the_ID(),
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('workflow_actions')
+      'postId' => get_the_ID(),
+      'ajaxUrl' => admin_url('admin-ajax.php'),
+      'nonce' => wp_create_nonce('workflow_actions')
     ]);
   }
 }, 20);
