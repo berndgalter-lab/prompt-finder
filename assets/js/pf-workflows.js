@@ -302,22 +302,20 @@ function coerceBool(v){
     const workflowDef = ctx.workflowMap ? ctx.workflowMap[key] : undefined;
     const profileAlias = def.profileKey || workflowDef?.profileKey || '';
 
-    if (def.required) {
-      wrap.dataset.required = 'true';
-    }
+    wrap.dataset.required = def.required ? 'true' : 'false';
 
     const id = `${level}-${key}`;
     const label = document.createElement('label');
     label.className = 'pf-field-label pf-var-label';
     label.htmlFor = id;
-    label.textContent = def.label || key;
+    const labelText = def.label || key;
+    label.textContent = labelText;
 
-    if (def.required) {
-      const star = document.createElement('span');
-      star.className = 'pf-var-required';
-      star.textContent = ' *';
-      label.appendChild(star);
-    }
+    const requirementBadge = document.createElement('span');
+    requirementBadge.className = def.required ? 'pf-label-required' : 'pf-label-optional';
+    requirementBadge.textContent = def.required ? 'Required' : 'Optional';
+    label.appendChild(document.createTextNode(' '));
+    label.appendChild(requirementBadge);
 
     if (level === 'workflow' && profileAlias) {
       ensureStaticBadge(label, 'profile-alias', 'Inherits Profile', 'pf-var-source-badge--profile');
@@ -406,8 +404,12 @@ function coerceBool(v){
     ctrl.dataset.varName = key;
     ctrl.dataset.fieldType = type;
     ctrl.autocomplete = 'off';
-    if (def.required && ctrl.type !== 'checkbox') {
+    if (def.required) {
       ctrl.required = true;
+      ctrl.setAttribute('aria-required', 'true');
+    } else {
+      ctrl.removeAttribute('required');
+      ctrl.removeAttribute('aria-required');
     }
 
     ctrl.classList.add('pf-field-input');

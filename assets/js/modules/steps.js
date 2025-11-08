@@ -18,12 +18,17 @@ function renderStepVarItem(item, stepId) {
   const wrap = document.createElement('div');
   wrap.className = 'pf-var-item';
   wrap.dataset.varKey = key;
-  if (required) wrap.dataset.varRequired = 'true';
+  wrap.dataset.varRequired = required ? 'true' : 'false';
 
   const lab = document.createElement('label');
   lab.className = 'pf-var-label';
   lab.setAttribute('for', `pf-step-${stepId}-var-input-${key}`);
-  lab.innerHTML = `${label}${required ? ' <span class="pf-var-required" aria-label="Required">*</span>' : ''}`;
+  lab.textContent = label;
+  const reqBadge = document.createElement('span');
+  reqBadge.className = required ? 'pf-label-required' : 'pf-label-optional';
+  reqBadge.textContent = required ? 'Required' : 'Optional';
+  lab.appendChild(document.createTextNode(' '));
+  lab.appendChild(reqBadge);
 
   let input;
   if (type === 'select' && item.step_var_options_json) {
@@ -57,6 +62,9 @@ function renderStepVarItem(item, stepId) {
   if (required) {
     input.required = true;
     input.setAttribute('aria-required', 'true');
+  } else {
+    input.removeAttribute('required');
+    input.removeAttribute('aria-required');
   }
   input.value = defaultVal;
 
