@@ -1797,6 +1797,296 @@ if (document.readyState === 'loading') {
   boot();
 }
 
+// ============================================================
+// UNIFIED RENDERERS (v2) — Exposed on PF namespace
+// ============================================================
+
+/**
+ * Unified Variable Renderer (Workflow-level)
+ * Outputs: <div class="pf-row pf-form-control">...</div>
+ */
+window.PF.renderWorkflowVar = function(item) {
+  const type = (item.workflow_var_type || 'text').toLowerCase();
+  const key = keyNorm(item.workflow_var_key || item.workflow_var_label || 'var');
+  const label = item.workflow_var_label || key;
+  const placeholder = item.workflow_var_placeholder || '';
+  const required = !!item.workflow_var_required;
+  const hint = item.workflow_var_hint || '';
+  const defaultVal = item.workflow_var_default_value || '';
+
+  // Main row wrapper (unified pattern)
+  const row = document.createElement('div');
+  row.className = 'pf-row pf-form-control';
+  row.dataset.key = key;
+
+  // LEFT COLUMN: Label + Badge
+  const leftCol = document.createElement('div');
+  
+  const lab = document.createElement('label');
+  lab.className = 'pf-label';
+  lab.setAttribute('for', `pf-var-input-${key}`);
+  lab.textContent = label;
+  
+  const badge = document.createElement('span');
+  badge.className = `pf-badge pf-badge--${required ? 'required' : 'optional'}`;
+  badge.textContent = required ? 'Required' : 'Optional';
+  
+  leftCol.appendChild(lab);
+  leftCol.appendChild(badge);
+
+  // RIGHT COLUMN: Input + Hint + Error
+  const rightCol = document.createElement('div');
+
+  let input;
+  if (type === 'select' && item.workflow_var_options_json) {
+    input = document.createElement('select');
+    input.className = 'pf-select';
+    try {
+      const opts = JSON.parse(item.workflow_var_options_json);
+      if (Array.isArray(opts)) {
+        const empty = document.createElement('option');
+        empty.value = '';
+        empty.textContent = placeholder || '— choose —';
+        input.appendChild(empty);
+        opts.forEach(o => {
+          const opt = document.createElement('option');
+          if (typeof o === 'string') {
+            opt.value = o;
+            opt.textContent = o;
+          } else {
+            opt.value = o.value ?? o.key ?? '';
+            opt.textContent = o.label ?? o.value ?? '';
+          }
+          input.appendChild(opt);
+        });
+      }
+    } catch(e) {
+      input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'pf-input';
+    }
+  } else if (type === 'textarea') {
+    input = document.createElement('textarea');
+    input.className = 'pf-textarea';
+    input.rows = 4;
+  } else {
+    input = document.createElement('input');
+    input.className = 'pf-input';
+    input.type = type === 'number' ? 'number' : (type === 'email' ? 'email' : (type === 'url' ? 'url' : 'text'));
+  }
+
+  input.id = `pf-var-input-${key}`;
+  input.dataset.varKey = key;
+  if (placeholder) input.placeholder = placeholder;
+  if (required) {
+    input.required = true;
+    input.setAttribute('aria-required', 'true');
+  }
+  input.value = defaultVal;
+
+  const hintId = `hint-${key}`;
+  const errorId = `error-${key}`;
+
+  if (hint) {
+    const hintEl = document.createElement('div');
+    hintEl.id = hintId;
+    hintEl.className = 'pf-hint';
+    hintEl.textContent = hint;
+    input.setAttribute('aria-describedby', `${hintId} ${errorId}`);
+    rightCol.appendChild(input);
+    rightCol.appendChild(hintEl);
+  } else {
+    input.setAttribute('aria-describedby', errorId);
+    rightCol.appendChild(input);
+  }
+
+  const errorEl = document.createElement('div');
+  errorEl.id = errorId;
+  errorEl.className = 'pf-error';
+  errorEl.textContent = 'Bitte Feld prüfen.';
+  rightCol.appendChild(errorEl);
+
+  // Assemble row
+  row.appendChild(leftCol);
+  row.appendChild(rightCol);
+
+  // Validation handlers
+  const validateInput = () => {
+    if (!required) {
+      row.classList.remove('is-invalid', 'is-valid');
+      input.removeAttribute('aria-invalid');
+      return;
+    }
+    const val = (input.value || '').trim();
+    const isInvalid = !val;
+    row.classList.toggle('is-invalid', isInvalid);
+    row.classList.toggle('is-valid', !isInvalid);
+    input.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
+  };
+
+  input.addEventListener('input', validateInput);
+  input.addEventListener('blur', validateInput);
+
+  // Initial validation
+  setTimeout(validateInput, 0);
+
+  return row;
+};
+
+/**
+ * Unified Variable Renderer (Step-level)
+ * Outputs: <div class="pf-row pf-form-control">...</div>
+ */
+window.PF.renderStepVar = function(item, stepId) {
+  const type = (item.step_var_type || 'text').toLowerCase();
+  const key = keyNorm(item.step_var_name || item.step_var_label || 'var');
+  const label = item.step_var_label || key;
+  const placeholder = item.step_var_placeholder || '';
+  const required = !!item.step_var_required;
+  const hint = item.step_var_hint || '';
+  const defaultVal = item.step_var_default || '';
+
+  // Main row wrapper (unified pattern)
+  const row = document.createElement('div');
+  row.className = 'pf-row pf-form-control';
+  row.dataset.key = key;
+  row.dataset.stepId = stepId;
+
+  // LEFT COLUMN: Label + Badge
+  const leftCol = document.createElement('div');
+  
+  const lab = document.createElement('label');
+  lab.className = 'pf-label';
+  lab.setAttribute('for', `pf-step-${stepId}-var-input-${key}`);
+  lab.textContent = label;
+  
+  const badge = document.createElement('span');
+  badge.className = `pf-badge pf-badge--${required ? 'required' : 'optional'}`;
+  badge.textContent = required ? 'Required' : 'Optional';
+  
+  leftCol.appendChild(lab);
+  leftCol.appendChild(badge);
+
+  // RIGHT COLUMN: Input + Hint + Error
+  const rightCol = document.createElement('div');
+
+  let input;
+  if (type === 'select' && item.step_var_options_json) {
+    input = document.createElement('select');
+    input.className = 'pf-select';
+    try {
+      const opts = JSON.parse(item.step_var_options_json);
+      const empty = document.createElement('option');
+      empty.value = '';
+      empty.textContent = placeholder || '— choose —';
+      input.appendChild(empty);
+      (opts || []).forEach(o => {
+        const opt = document.createElement('option');
+        if (typeof o === 'string') { opt.value = o; opt.textContent = o; }
+        else { opt.value = o.value ?? o.key ?? ''; opt.textContent = o.label ?? o.value ?? ''; }
+        input.appendChild(opt);
+      });
+    } catch(e) {
+      input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'pf-input';
+    }
+  } else if (type === 'textarea') {
+    input = document.createElement('textarea');
+    input.className = 'pf-textarea';
+    input.rows = 4;
+  } else {
+    input = document.createElement('input');
+    input.className = 'pf-input';
+    input.type = type === 'number' ? 'number' : (type === 'email' ? 'email' : (type === 'url' ? 'url' : 'text'));
+  }
+
+  input.id = `pf-step-${stepId}-var-input-${key}`;
+  input.dataset.varKey = key;
+  if (placeholder) input.placeholder = placeholder;
+  if (required) {
+    input.required = true;
+    input.setAttribute('aria-required', 'true');
+  }
+  input.value = defaultVal;
+
+  const hintId = `hint-step-${stepId}-${key}`;
+  const errorId = `error-step-${stepId}-${key}`;
+
+  if (hint) {
+    const hintEl = document.createElement('div');
+    hintEl.id = hintId;
+    hintEl.className = 'pf-hint';
+    hintEl.textContent = hint;
+    input.setAttribute('aria-describedby', `${hintId} ${errorId}`);
+    rightCol.appendChild(input);
+    rightCol.appendChild(hintEl);
+  } else {
+    input.setAttribute('aria-describedby', errorId);
+    rightCol.appendChild(input);
+  }
+
+  const errorEl = document.createElement('div');
+  errorEl.id = errorId;
+  errorEl.className = 'pf-error';
+  errorEl.textContent = 'Bitte Feld prüfen.';
+  rightCol.appendChild(errorEl);
+
+  // Assemble row
+  row.appendChild(leftCol);
+  row.appendChild(rightCol);
+
+  // Validation handlers
+  const validateInput = () => {
+    if (!required) {
+      row.classList.remove('is-invalid', 'is-valid');
+      input.removeAttribute('aria-invalid');
+      return;
+    }
+    const val = (input.value || '').trim();
+    const isInvalid = !val;
+    row.classList.toggle('is-invalid', isInvalid);
+    row.classList.toggle('is-valid', !isInvalid);
+    input.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
+  };
+
+  input.addEventListener('input', validateInput);
+  input.addEventListener('blur', validateInput);
+
+  // Initial validation
+  setTimeout(validateInput, 0);
+
+  return row;
+};
+
+/**
+ * Validation Helper
+ * Toggles .is-valid/.is-invalid on row, sets aria-invalid
+ */
+window.PF.validate = function(row) {
+  const input = row.querySelector('.pf-input, .pf-select, .pf-textarea');
+  if (!input) return;
+  
+  const required = input.required;
+  if (!required) {
+    row.classList.remove('is-invalid', 'is-valid');
+    input.removeAttribute('aria-invalid');
+    return;
+  }
+  
+  const val = (input.value || '').trim();
+  const isInvalid = !val;
+  row.classList.toggle('is-invalid', isInvalid);
+  row.classList.toggle('is-valid', !isInvalid);
+  input.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
+};
+
+// Expose state
+window.PF.state = { formStore: PF_FORM_STORE, userVars: PF_USER_VARS };
+
+// Log ready
+console.log('✓ PF ready — Unified renderers available: PF.renderWorkflowVar(), PF.renderStepVar(), PF.validate()');
+
 })();
 
 
