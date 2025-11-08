@@ -1,10 +1,11 @@
 /* ============================================
-   WORKFLOW VARIABLES — v1.7 (Single Card + Uniform Rows)
+   WORKFLOW VARIABLES — PF-UI Contract v1
+   Shared classes for workflow + step variables
    ============================================ */
 
-/* ========== Scoped Containers ========== */
-[data-wf-form],
-[data-step-vars-ui] {
+/* ========== PF-UI Contract: Card Wrapper ========== */
+[data-wf-form].pf-card,
+[data-step-vars-ui].pf-card {
   background: var(--pf-card, #ffffff);
   border: 1px solid var(--pf-border, #e5e7eb);
   border-radius: var(--pf-radius, 12px);
@@ -13,158 +14,165 @@
   margin-bottom: var(--pf-space-6, 1.5rem);
 }
 
-/* ========== Main Card ========== */
-.pf-vars-card {
-  background: var(--pf-card, #ffffff);
-  border: 1px solid var(--pf-border, #e5e7eb);
-  border-radius: var(--pf-radius, 12px);
-  box-shadow: var(--pf-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
-  padding: var(--pf-space-6, 1.5rem);
-  margin-bottom: var(--pf-space-6, 1.5rem);
+/* ========== PF-UI Contract: Stack (vertical spacing) ========== */
+[data-wf-form].pf-stack > * + *,
+[data-step-vars-ui].pf-stack > * + * {
+  margin-top: var(--pf-space-3, .75rem);
 }
 
-.pf-vars-card__head {
-  margin-bottom: var(--pf-space-4, 1rem);
-}
-
-.pf-vars-card__title {
-  margin: 0;
-  font-size: 1.125rem;
-  font-weight: var(--pf-fw-semibold, 600);
-  color: var(--pf-text, #1f2937);
-}
-
-.pf-vars-card__sub {
-  margin-top: var(--pf-space-2, .5rem);
-  color: var(--pf-text-dim, #6b7280);
-  font-size: var(--pf-fs-sm, .875rem);
-}
-
-/* ========== Variable Row ========== */
-[data-wf-form] .pf-var,
-[data-step-vars-ui] .pf-var,
-.pf-var {
+/* ========== PF-UI Contract: Grid Helpers ========== */
+[data-wf-form].pf-grid-1,
+[data-step-vars-ui].pf-grid-1 {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--pf-space-2, .5rem);
-  padding: var(--pf-space-3, .75rem);
-  border: 1px solid var(--pf-border, #e5e7eb);
-  border-radius: 8px;
-  background: transparent;
-  margin-bottom: var(--pf-space-3, .75rem);
+  gap: var(--pf-space-3, .75rem);
+}
+
+[data-wf-form].pf-grid-2,
+[data-step-vars-ui].pf-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--pf-space-3, .75rem);
 }
 
 @media (min-width: 960px) {
-  [data-wf-form] .pf-var,
-  [data-step-vars-ui] .pf-var {
+  [data-wf-form].pf-grid-2,
+  [data-step-vars-ui].pf-grid-2 {
     grid-template-columns: 200px 1fr;
-    align-items: start;
     gap: var(--pf-space-4, 1rem);
   }
 }
 
-.pf-var__top {
+/* ========== PF-UI Contract: Row Anatomy ========== */
+[data-wf-form] .pf-row,
+[data-step-vars-ui] .pf-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--pf-space-2, .5rem);
+}
+
+[data-wf-form] .pf-label-line,
+[data-step-vars-ui] .pf-label-line {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: var(--pf-space-2, .5rem);
 }
 
-.pf-var__label {
+[data-wf-form] .pf-label,
+[data-step-vars-ui] .pf-label {
   font-weight: var(--pf-fw-semibold, 600);
-  color: var(--pf-text, #1f2937);
   font-size: var(--pf-fs-sm, .875rem);
+  color: var(--pf-text, #1f2937);
+  margin: 0;
 }
 
-.pf-var__badge {
+[data-wf-form] .pf-badge,
+[data-step-vars-ui] .pf-badge {
   display: inline-flex;
   align-items: center;
-  gap: .4ch;
   padding: 0 var(--pf-space-2, .5rem);
   height: 1.4rem;
   border-radius: 999px;
+  font-size: var(--pf-fs-xs, .75rem);
+  font-weight: 500;
   background: var(--pf-bg-soft, #f3f4f6);
   border: 1px solid var(--pf-border, #e5e7eb);
-  font-size: var(--pf-fs-xs, .75rem);
   color: var(--pf-text-muted, #9ca3af);
-  font-weight: 500;
 }
 
-/* ========== Inputs ========== */
-[data-wf-form] .pf-var__input input,
-[data-wf-form] .pf-var__input textarea,
-[data-wf-form] .pf-var__input select,
-[data-step-vars-ui] .pf-var__input input,
-[data-step-vars-ui] .pf-var__input textarea,
-[data-step-vars-ui] .pf-var__input select,
-.pf-var__input input,
-.pf-var__input textarea,
-.pf-var__input select {
+[data-wf-form] .pf-badge.is-required,
+[data-step-vars-ui] .pf-badge.is-required {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+[data-wf-form] .pf-badge.is-optional,
+[data-step-vars-ui] .pf-badge.is-optional {
+  background: var(--pf-bg-soft, #f3f4f6);
+  border-color: var(--pf-border, #e5e7eb);
+  color: var(--pf-text-muted, #9ca3af);
+}
+
+/* ========== PF-UI Contract: Field Wrapper ========== */
+[data-wf-form] .pf-field,
+[data-step-vars-ui] .pf-field {
+  position: relative;
+}
+
+[data-wf-form] .pf-field input,
+[data-wf-form] .pf-field textarea,
+[data-wf-form] .pf-field select,
+[data-step-vars-ui] .pf-field input,
+[data-step-vars-ui] .pf-field textarea,
+[data-step-vars-ui] .pf-field select {
   width: 100%;
   padding: .65rem .8rem;
   background: var(--pf-bg, #ffffff);
   color: var(--pf-text, #1f2937);
   border: 1px solid var(--pf-border, #e5e7eb);
   border-radius: var(--pf-radius-sm, .375rem);
-  outline: none;
   font-family: inherit;
   font-size: var(--pf-fs-base, 1rem);
+  outline: none;
   transition: all var(--pf-transition-fast, 0.15s ease);
 }
 
-[data-wf-form] .pf-var__input :is(input, textarea, select):focus,
-[data-step-vars-ui] .pf-var__input :is(input, textarea, select):focus,
-.pf-var__input :is(input, textarea, select):focus {
+[data-wf-form] .pf-field:focus-within input,
+[data-wf-form] .pf-field:focus-within textarea,
+[data-wf-form] .pf-field:focus-within select,
+[data-step-vars-ui] .pf-field:focus-within input,
+[data-step-vars-ui] .pf-field:focus-within textarea,
+[data-step-vars-ui] .pf-field:focus-within select {
   border-color: var(--pf-accent, #3b82f6);
   box-shadow: var(--pf-focus-ring, 0 0 0 3px rgba(59, 130, 246, 0.1));
 }
 
-/* ========== Meta + Default ========== */
-.pf-var__meta {
-  display: flex;
-  gap: var(--pf-space-4, 1rem);
-  justify-content: space-between;
-  color: var(--pf-text-muted, #9ca3af);
-  font-size: var(--pf-fs-xs, .75rem);
-  margin-top: var(--pf-space-1, .25rem);
-}
-
-.pf-var__hint {
-  opacity: .9;
-  line-height: 1.4;
-}
-
-.pf-var__default {
-  opacity: .7;
-}
-
-/* ========== Error & States ========== */
-[data-wf-form] .pf-var__error,
-[data-step-vars-ui] .pf-var__error,
-.pf-var__error {
-  margin-top: var(--pf-space-2, .5rem);
-  color: var(--pf-error, #ef4444);
-  font-size: var(--pf-fs-xs, .75rem);
-  display: none;
-  line-height: 1.4;
-}
-
-[data-wf-form] .pf-var.is-invalid .pf-var__input :is(input, textarea, select),
-[data-step-vars-ui] .pf-var.is-invalid .pf-var__input :is(input, textarea, select),
-.pf-var.is-invalid .pf-var__input :is(input, textarea, select) {
+[data-wf-form] .pf-field.is-invalid input,
+[data-wf-form] .pf-field.is-invalid textarea,
+[data-wf-form] .pf-field.is-invalid select,
+[data-step-vars-ui] .pf-field.is-invalid input,
+[data-step-vars-ui] .pf-field.is-invalid textarea,
+[data-step-vars-ui] .pf-field.is-invalid select {
   border-color: var(--pf-error, #ef4444);
   box-shadow: 0 0 0 3px rgba(239, 68, 68, .1);
 }
 
-[data-wf-form] .pf-var.is-invalid .pf-var__error,
-[data-step-vars-ui] .pf-var.is-invalid .pf-var__error,
-.pf-var.is-invalid .pf-var__error {
+/* ========== PF-UI Contract: Hint & Error ========== */
+[data-wf-form] .pf-hint,
+[data-step-vars-ui] .pf-hint {
+  font-size: var(--pf-fs-xs, .75rem);
+  color: var(--pf-text-muted, #9ca3af);
+  line-height: 1.4;
+  margin-top: var(--pf-space-1, .25rem);
+}
+
+[data-wf-form] .pf-error,
+[data-step-vars-ui] .pf-error {
+  font-size: var(--pf-fs-xs, .75rem);
+  color: var(--pf-error, #ef4444);
+  line-height: 1.4;
+  margin-top: var(--pf-space-2, .5rem);
+  display: none;
+}
+
+[data-wf-form] .pf-field.is-invalid ~ .pf-error,
+[data-step-vars-ui] .pf-field.is-invalid ~ .pf-error {
   display: block;
 }
 
-/* ========== Legacy Class Compatibility ========== */
-/* PHP templates use these classes - matched to scoped styles */
+/* ========== Modifiers (for customization hooks) ========== */
+[data-wf-form].pf-vars--workflow {
+  /* Hook for workflow-specific overrides */
+}
 
+[data-step-vars-ui].pf-vars--steps {
+  /* Hook for step-specific overrides */
+}
+
+/* ========== Legacy Compatibility ========== */
+/* Keep old class names working for existing code */
 .pf-workflow-vars-card {
   background: var(--pf-card, #ffffff);
   border: 1px solid var(--pf-border, #e5e7eb);
@@ -179,6 +187,7 @@
   gap: var(--pf-space-3, .75rem);
 }
 
+/* Old var input classes - redirect to new contract */
 .pf-var-input input,
 .pf-var-input textarea,
 .pf-var-input select {
@@ -226,7 +235,7 @@
   box-shadow: 0 0 0 3px rgba(239, 68, 68, .1);
 }
 
-/* ========== Optional: Status Bar (3-Tier System) ========== */
+/* ========== Status Bar (Optional) ========== */
 .pf-variable-status {
   background: #f8f9fa;
   border-bottom: 1px solid var(--pf-border);

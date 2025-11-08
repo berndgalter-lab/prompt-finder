@@ -7,10 +7,10 @@
  */
 
 /* ========================================
-   STEP VARIABLES — Scoped Styles (matches workflow-variables.css)
+   STEP VARIABLES — PF-UI Contract v1 (matches workflow-variables.css)
    ======================================== */
 
-/* Step variables container - single card styling */
+/* Step variables container inherits from main contract */
 .pf-step [data-step-vars-ui] {
   background: var(--pf-card, #ffffff);
   border: 1px solid var(--pf-border, #e5e7eb);
@@ -21,10 +21,12 @@
 }
 
 /* Remove double borders when nested in step */
-.pf-step [data-step-vars-ui] .pf-var {
-  border-color: var(--pf-border, #e5e7eb);
+.pf-step [data-step-vars-ui] .pf-row {
+  border: none;
   background: transparent;
 }
+
+/* Step-specific modifier hook - reserved for future customization */
 
 /* ========================================
    STEPS SECTION
