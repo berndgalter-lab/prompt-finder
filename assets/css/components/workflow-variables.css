@@ -1,37 +1,187 @@
 /* ============================================
-   WORKFLOW VARIABLES — UNIFIED v2
+   WORKFLOW VARIABLES — v1.7 (Single Card + Uniform Rows)
    ============================================ */
 
-/* Variables Container */
-.pf-variables {
-  /* uses .pf-card from pf-core.css */
-  margin-bottom: var(--pf-space-8);
+/* ========== Main Card ========== */
+.pf-vars-card {
+  background: var(--pf-c-card);
+  border: 1px solid var(--pf-c-border);
+  border-radius: var(--pf-radius);
+  box-shadow: var(--pf-shadow-md);
+  padding: var(--pf-sp-6);
+  margin-bottom: var(--pf-sp-8);
 }
 
-/* Section Header, Form, Row, Label: inherit from pf-core.css */
-
-/* Badge */
-.pf-variables .pf-badge {
-  /* uses .pf-badge from pf-core.css */
-  margin-left: auto;
+.pf-vars-card__head {
+  margin-bottom: var(--pf-sp-6);
 }
 
-.pf-variables .pf-badge.pf-badge--required {
-  background: #fff1f2;
-  border-color: #fecaca;
-  color: #dc2626;
-  font-weight: 600;
+.pf-vars-card__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: var(--pf-fw-semibold);
+  color: var(--pf-c-text);
 }
 
-.pf-variables .pf-badge.pf-badge--optional {
-  background: #f3f4f6;
-  border-color: #e5e7eb;
-  color: #6b7280;
+.pf-vars-card__sub {
+  margin-top: var(--pf-sp-2);
+  color: var(--pf-c-subtle);
+  font-size: var(--pf-fs-14);
 }
 
-/* Input, Hint, Error: inherit from pf-core.css */
+/* ========== Variable Row ========== */
+.pf-var {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--pf-sp-2);
+  padding: var(--pf-sp-4);
+  border: 1px solid var(--pf-c-border);
+  border-radius: calc(var(--pf-radius) - .2rem);
+  background: transparent;
+  margin-bottom: var(--pf-sp-3);
+}
 
-/* Optional: Status Bar (3-Tier System) */
+.pf-var__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--pf-sp-2);
+}
+
+.pf-var__label {
+  font-weight: var(--pf-fw-semibold);
+  color: var(--pf-c-text);
+}
+
+.pf-var__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .4ch;
+  padding: 0 var(--pf-sp-2);
+  height: 1.4rem;
+  border-radius: 999px;
+  background: var(--pf-c-badge);
+  font-size: var(--pf-fs-12);
+  color: var(--pf-c-subtle);
+}
+
+/* ========== Inputs ========== */
+.pf-var__input input,
+.pf-var__input textarea,
+.pf-var__input select {
+  width: 100%;
+  padding: .65rem .8rem;
+  background: #0e1117;
+  color: var(--pf-c-text);
+  border: 1px solid var(--pf-c-border);
+  border-radius: .6rem;
+  outline: none;
+  font-family: inherit;
+  font-size: var(--pf-fs-14);
+}
+
+.pf-var__input :is(input, textarea, select):focus {
+  border-color: var(--pf-c-focus);
+  box-shadow: 0 0 0 3px rgba(125, 179, 255, .18);
+}
+
+/* ========== Meta + Default ========== */
+.pf-var__meta {
+  display: flex;
+  gap: var(--pf-sp-4);
+  justify-content: space-between;
+  color: var(--pf-c-subtle);
+  font-size: var(--pf-fs-12);
+}
+
+.pf-var__hint {
+  opacity: .9;
+}
+
+.pf-var__default {
+  opacity: .7;
+}
+
+/* ========== Error & States ========== */
+.pf-var__error {
+  margin-top: var(--pf-sp-2);
+  color: var(--pf-c-error);
+  font-size: var(--pf-fs-12);
+  display: none;
+}
+
+.pf-var.is-invalid .pf-var__input :is(input, textarea, select) {
+  border-color: var(--pf-c-error);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, .18);
+}
+
+.pf-var.is-invalid .pf-var__error {
+  display: block;
+}
+
+/* ========== Legacy Class Compatibility ========== */
+/* PHP templates use these classes */
+
+.pf-workflow-vars-card {
+  background: var(--pf-c-card);
+  border: 1px solid var(--pf-c-border);
+  border-radius: var(--pf-radius);
+  box-shadow: var(--pf-shadow-md);
+  padding: var(--pf-sp-6);
+  margin-bottom: var(--pf-sp-8);
+}
+
+.pf-workflow-vars-list {
+  display: grid;
+  gap: var(--pf-sp-3);
+}
+
+.pf-var-input input,
+.pf-var-input textarea,
+.pf-var-input select {
+  width: 100%;
+  padding: .65rem .8rem;
+  background: #0e1117;
+  color: var(--pf-c-text);
+  border: 1px solid var(--pf-c-border);
+  border-radius: .6rem;
+  outline: none;
+  font-family: inherit;
+  font-size: var(--pf-fs-14);
+}
+
+.pf-var-input :is(input, textarea, select):focus {
+  border-color: var(--pf-c-focus);
+  box-shadow: 0 0 0 3px rgba(125, 179, 255, .18);
+}
+
+.pf-var-hint,
+.pf-var-help {
+  font-size: var(--pf-fs-12);
+  color: var(--pf-c-subtle);
+  line-height: 1.4;
+  margin-top: var(--pf-sp-1);
+}
+
+.pf-var-error {
+  font-size: var(--pf-fs-12);
+  color: var(--pf-c-error);
+  margin-top: var(--pf-sp-2);
+  display: none;
+}
+
+.pf-var-item.is-invalid .pf-var-error,
+.pf-row.is-invalid .pf-var-error {
+  display: block;
+}
+
+.pf-var-item.is-invalid .pf-var-input :is(input, textarea, select),
+.pf-row.is-invalid .pf-var-input :is(input, textarea, select) {
+  border-color: var(--pf-c-error);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, .18);
+}
+
+/* ========== Optional: Status Bar (3-Tier System) ========== */
 .pf-variable-status {
   background: #f8f9fa;
   border-bottom: 1px solid var(--pf-border);
@@ -95,55 +245,4 @@
     background: #ffffff;
     border-radius: 6px;
   }
-}
-
-/* ============================================
-   LEGACY CLASS COMPATIBILITY
-   PHP templates use these classes
-   ============================================ */
-
-/* Main container: mirror .pf-card */
-.pf-workflow-vars-card {
-  background: var(--pf-surface);
-  border: 1px solid var(--pf-border);
-  border-radius: var(--pf-radius-lg);
-  box-shadow: var(--pf-shadow-1);
-  padding: var(--pf-space-6);
-  margin-bottom: var(--pf-space-8);
-}
-
-/* Form container */
-.pf-workflow-vars-list {
-  display: grid;
-  gap: var(--pf-space-5);
-}
-
-/* Individual variable items: old structure compatibility (no additional styles needed) */
-
-.pf-var-input input,
-.pf-var-input textarea,
-.pf-var-input select {
-  /* uses .pf-input, .pf-select, .pf-textarea */
-  width: 100%;
-}
-
-.pf-var-hint,
-.pf-var-help {
-  /* uses .pf-hint */
-  font-size: var(--pf-fs-xs);
-  color: var(--pf-text-muted);
-  line-height: 1.4;
-}
-
-.pf-var-error {
-  /* uses .pf-error */
-  font-size: var(--pf-fs-xs);
-  color: var(--pf-danger);
-  margin-top: .25rem;
-  display: none;
-}
-
-.pf-var-item.is-invalid .pf-var-error,
-.pf-row.is-invalid .pf-var-error {
-  display: block;
 }

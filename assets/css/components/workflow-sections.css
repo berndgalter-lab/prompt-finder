@@ -1,6 +1,6 @@
 /**
  * Workflow Component: Sections (Overview, Value, Prerequisites)
- * Modern SAAS-style info sections
+ * Modern SAAS-style info sections (v1.7 clean-up)
  */
 
 /* ========================================
@@ -19,6 +19,20 @@
     font-weight: 700;
     margin: 0 0 var(--pf-space-lg, 2rem) 0;
     color: var(--pf-text, #1a1a1a);
+}
+
+/* ========================================
+   VARIABLES AREA — CLEAN WRAPPER
+   Remove pink/purple/decorative frames
+   ======================================== */
+
+.pf-section--variables,
+.pf-variables-section {
+    /* Neutral wrapper only; card handles chrome */
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
 }
 
 /* ========================================

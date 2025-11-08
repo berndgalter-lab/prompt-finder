@@ -837,3 +837,39 @@ a.pf-btn.pf-btn--ghost:visited {
   background: var(--pf-border);
   margin: var(--pf-space-6) 0;
 }
+
+/* ========================================
+   PF v1.7 — DESIGN TOKENS (Dark Mode)
+   ======================================== */
+
+:root {
+  /* colors */
+  --pf-c-bg: #0b0c0f;
+  --pf-c-card: #12141a;
+  --pf-c-border: #2a2f3a;
+  --pf-c-text: #e6e7ea;
+  --pf-c-subtle: #a9aebb;
+  --pf-c-accent: #6aa0ff;
+  --pf-c-badge: #2f3644;
+  --pf-c-error: #ff6b6b;
+  --pf-c-focus: #7db3ff;
+
+  /* spacing */
+  --pf-sp-1: .25rem;
+  --pf-sp-2: .5rem;
+  --pf-sp-3: .75rem;
+  --pf-sp-4: 1rem;
+  --pf-sp-6: 1.5rem;
+  --pf-sp-8: 2rem;
+
+  /* radius & shadows */
+  --pf-radius: .8rem;
+  --pf-shadow-sm: 0 1px 2px rgba(0,0,0,.25);
+  --pf-shadow-md: 0 8px 24px rgba(0,0,0,.35);
+
+  /* typography */
+  --pf-fs-12: .75rem;
+  --pf-fs-14: .875rem;
+  --pf-fs-16: 1rem;
+  --pf-fw-semibold: 600;
+}

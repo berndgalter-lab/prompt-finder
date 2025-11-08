@@ -240,6 +240,127 @@
 
 // === UI helpers (append below existing code in pf-workflows.js) =============
 
+// ====== UNIFIED VARIABLE RENDERING (v1.7) ======================================
+
+/**
+ * Escape HTML for safe display
+ */
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/**
+ * Render input element based on type
+ */
+function renderInput({ id, type, placeholder, value, options }) {
+  switch ((type || 'text').toLowerCase()) {
+    case 'textarea':
+      return `<textarea id="${id}" placeholder="${escapeHtml(placeholder || '')}">${escapeHtml(value || '')}</textarea>`;
+    
+    case 'select':
+      const opts = (options || []).map(opt => {
+        const val = escapeHtml(String(opt.value ?? opt));
+        const label = escapeHtml(String(opt.label ?? opt.value ?? opt));
+        const selected = String(value) === String(opt.value ?? opt) ? ' selected' : '';
+        return `<option value="${val}"${selected}>${label}</option>`;
+      }).join('');
+      return `<select id="${id}"><option value="">— select —</option>${opts}</select>`;
+    
+    case 'number':
+      return `<input type="number" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
+    
+    case 'email':
+      return `<input type="email" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
+    
+    case 'url':
+      return `<input type="url" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
+    
+    case 'boolean':
+      const checked = (value === '1' || value === 'true' || value === true) ? ' checked' : '';
+      return `<input type="checkbox" id="${id}"${checked} />`;
+    
+    default:
+      return `<input type="text" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
+  }
+}
+
+/**
+ * Unified variable row renderer (v1.7)
+ * Returns HTML string for a single variable input row
+ */
+function renderVar({ id, label, required, type, placeholder, hint, defVal, value, options }) {
+  const badge = required ? 'Required' : 'Optional';
+  const hintHtml = hint ? escapeHtml(hint) : '';
+  const defaultHtml = (defVal !== undefined && defVal !== '') ? `Default: ${escapeHtml(String(defVal))}` : '';
+  
+  return `
+    <div class="pf-var ${required ? 'is-required' : 'is-optional'}" data-var="${id}">
+      <div class="pf-var__top">
+        <label class="pf-var__label" for="${id}">${escapeHtml(label)}</label>
+        <span class="pf-var__badge">${badge}</span>
+      </div>
+      <div class="pf-var__input">
+        ${renderInput({ id, type, placeholder, value, options })}
+      </div>
+      <div class="pf-var__meta">
+        <div class="pf-var__hint">${hintHtml}</div>
+        <div class="pf-var__default">${defaultHtml}</div>
+      </div>
+      <div class="pf-var__error" id="${id}-error"></div>
+    </div>
+  `;
+}
+
+/**
+ * Setup accessibility & validation after inserting a variable
+ */
+function afterInsertVar(id, required) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.setAttribute('aria-describedby', `${id}-error`);
+  if (required) el.setAttribute('aria-required', 'true');
+}
+
+/**
+ * Set validity state for a variable
+ */
+function setVarValidity(id, isValid, msg = '') {
+  const wrap = document.querySelector(`.pf-var[data-var="${id}"]`);
+  const err = document.getElementById(`${id}-error`);
+  if (!wrap || !err) return;
+  
+  wrap.classList.toggle('is-invalid', !isValid);
+  
+  const input = wrap.querySelector('.pf-var__input :is(input, textarea, select)');
+  if (input) input.setAttribute('aria-invalid', (!isValid).toString());
+  
+  err.textContent = isValid ? '' : msg;
+}
+
+/**
+ * Mount a variables area with single card wrapper
+ */
+function mountWorkflowVars(hostSel, title = 'Workflow variables', sub = 'Set required inputs to run this workflow.') {
+  const host = document.querySelector(hostSel);
+  if (!host) return null;
+  
+  host.innerHTML = [
+    '<section class="pf-vars-card">',
+      '<div class="pf-vars-card__head">',
+        `<h2 class="pf-vars-card__title">${escapeHtml(title)}</h2>`,
+        `<p class="pf-vars-card__sub">${escapeHtml(sub)}</p>`,
+      '</div>',
+      '<div class="pf-vars-list" id="pf-vars-list"></div>',
+    '</section>'
+  ].join('');
+  
+  return document.getElementById('pf-vars-list');
+}
+
+// ====== END UNIFIED RENDERING ======================================
+
 
 function coerceBool(v){
   const s = String(v ?? '').trim().toLowerCase();
@@ -2084,8 +2205,18 @@ window.PF.validate = function(row) {
 // Expose state
 window.PF.state = { formStore: PF_FORM_STORE, userVars: PF_USER_VARS };
 
+// ========== v1.7 Unified Variable Rendering API ==========
+// Expose new unified functions on PF namespace
+window.PF.renderVar = renderVar;
+window.PF.renderInput = renderInput;
+window.PF.afterInsertVar = afterInsertVar;
+window.PF.setVarValidity = setVarValidity;
+window.PF.mountWorkflowVars = mountWorkflowVars;
+window.PF.escapeHtml = escapeHtml;
+
 // Log ready
 console.log('✓ PF ready — Unified renderers available: PF.renderWorkflowVar(), PF.renderStepVar(), PF.validate()');
+console.log('✓ PF v1.7 — Unified Variable API: renderVar(), setVarValidity(), mountWorkflowVars()');
 
 })();
 
