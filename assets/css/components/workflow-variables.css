@@ -235,50 +235,117 @@
   box-shadow: 0 0 0 3px rgba(239, 68, 68, .1);
 }
 
-/* ========== Status Bar (Optional) ========== */
+/* ========== Status Bar (Simplified Single-Tier) ========== */
 .pf-variable-status {
-  background: #f8f9fa;
-  border-bottom: 1px solid var(--pf-border);
-  padding: 12px 0;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 12px 16px;
   margin-bottom: 24px;
 }
 
 .pf-variable-status-bar {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.pf-status-tier {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
 }
 
-.pf-status-header {
+.pf-status-simple {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
-.pf-status-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111827;
+.pf-status-icon {
+  flex-shrink: 0;
+  color: #0284c7;
+  transition: color 0.3s ease;
 }
 
-.pf-status-helper {
-  font-size: 12px;
-  color: #6b7280;
+.pf-status-simple.is-complete .pf-status-icon {
+  color: #10b981;
+}
+
+.pf-status-text {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
 }
 
 .pf-status-count {
   font-size: 18px;
   font-weight: 700;
-  color: #10b981;
-  min-width: 40px;
-  text-align: center;
+  color: #0c4a6e;
+  transition: color 0.3s ease;
+}
+
+.pf-status-simple.is-complete .pf-status-count {
+  color: #065f46;
+}
+
+.pf-status-label {
+  font-size: 14px;
+  color: #475569;
+}
+
+.pf-status-info {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pf-status-info:hover {
+  background: rgba(255, 255, 255, 0.5);
+  color: #0284c7;
+}
+
+.pf-status-info:focus {
+  outline: 2px solid #0284c7;
+  outline-offset: 2px;
+}
+
+.pf-status-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 320px;
+  width: max-content;
+  z-index: 100;
+}
+
+.pf-status-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #e5e7eb;
+}
+
+.pf-status-tooltip-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #374151;
 }
 
 .pf-variable-status.is-hidden {
@@ -286,17 +353,30 @@
 }
 
 @media (max-width: 768px) {
-  .pf-variable-status-bar {
-    flex-direction: column;
-    gap: 12px;
-    padding: 0 16px;
+  .pf-variable-status {
+    padding: 10px 12px;
   }
 
-  .pf-status-tier {
-    justify-content: space-between;
-    width: 100%;
-    padding: 8px;
-    background: #ffffff;
-    border-radius: 6px;
+  .pf-status-simple {
+    gap: 8px;
+  }
+
+  .pf-status-count {
+    font-size: 16px;
+  }
+
+  .pf-status-label {
+    font-size: 13px;
+  }
+
+  .pf-status-tooltip {
+    left: 8px;
+    right: 8px;
+    transform: none;
+    max-width: none;
+  }
+
+  .pf-status-tooltip::before {
+    left: 24px;
   }
 }

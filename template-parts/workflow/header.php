@@ -82,7 +82,7 @@ $initial_progress_percent = 0;
                 <?php endif; ?>
 
                 <?php if (!empty($version_field)): ?>
-                    <span class="pf-meta-chip">v<?php echo esc_html($version_field); ?></span>
+                    <span class="pf-meta-chip"><?php echo esc_html($version_field); ?></span>
                 <?php endif; ?>
             </div>
         </div>

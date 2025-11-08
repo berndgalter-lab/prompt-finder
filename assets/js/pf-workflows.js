@@ -844,39 +844,51 @@ function updateStatusBar(workflowMap){
   const bar = document.querySelector('.pf-variable-status-bar');
   if (!bar) return;
 
-  const userTier = bar.querySelector('.pf-status-tier[data-tier="user"] .pf-status-count');
-  if (userTier) {
-    if (!isProfileEnabled()) {
-      userTier.textContent = '0/0';
-    } else {
-      const profileData = (PF_USER_VARS.profile && typeof PF_USER_VARS.profile === 'object') ? PF_USER_VARS.profile : {};
-      const keys = Object.keys(profileData).filter(k => !/^sys_/i.test(k));
-      const filled = keys.filter(k => {
-        const val = profileData[k];
-        return val != null && String(val).trim() !== '';
-      }).length;
-      userTier.textContent = `${filled}/${keys.length}`;
-    }
-  }
+  const countEl = bar.querySelector('.pf-status-count');
+  const simpleEl = bar.querySelector('.pf-status-simple');
+  if (!countEl || !simpleEl) return;
 
-  const workflowTier = bar.querySelector('.pf-status-tier[data-tier="workflow"] .pf-status-count');
-  if (workflowTier) {
-    const keys = Object.keys(workflowMap || {});
-    const allowProfile = isProfileEnabled();
-    let filled = 0;
-    keys.forEach(k => {
-      const res = resolveKey(k, { stepMap: {}, workflowMap, allowProfile });
-      if (isResolved(res.value)) filled++;
+  let totalFilled = 0;
+  let totalCount = 0;
+
+  // 1. Count workflow-level variables
+  const workflowKeys = Object.keys(workflowMap || {});
+  totalCount += workflowKeys.length;
+  const allowProfile = isProfileEnabled();
+  workflowKeys.forEach(k => {
+    const res = resolveKey(k, { stepMap: {}, workflowMap, allowProfile });
+    if (isResolved(res.value)) totalFilled++;
+  });
+
+  // 2. Count ALL step variables (not just active step)
+  document.querySelectorAll('[data-pf-step]').forEach(sectionEl => {
+    const stepVarsJson = sectionEl.getAttribute('data-step-vars') || '[]';
+    let stepRows = [];
+    try { stepRows = JSON.parse(stepVarsJson); } catch(e) { stepRows = []; }
+    const stepMap = buildStepMap(stepRows);
+    const stepKeys = Object.keys(stepMap);
+    totalCount += stepKeys.length;
+    
+    stepKeys.forEach(k => {
+      const res = resolveKey(k, { stepMap, workflowMap, allowProfile });
+      if (isResolved(res.value)) totalFilled++;
     });
-    workflowTier.textContent = keys.length ? `${filled}/${keys.length}` : '0/0';
+  });
+
+  // Update display
+  countEl.textContent = `${totalFilled} of ${totalCount}`;
+  countEl.dataset.filled = String(totalFilled);
+  countEl.dataset.total = String(totalCount);
+
+  // Visual feedback when complete
+  if (totalCount > 0 && totalFilled === totalCount) {
+    simpleEl.classList.add('is-complete');
+  } else {
+    simpleEl.classList.remove('is-complete');
   }
 
-  const stepTier = bar.querySelector('.pf-status-tier[data-tier="step"] .pf-status-count');
-  if (stepTier) {
-    const active = getActiveStepSection();
-    const status = computeStepTierStatus(active, workflowMap);
-    stepTier.textContent = status.total ? `${status.filled}/${status.total}` : '0/0';
-  }
+  // Announce to screen readers
+  countEl.setAttribute('aria-label', `${totalFilled} of ${totalCount} inputs filled`);
 }
 
 
@@ -893,6 +905,41 @@ function bindVariableStatusListeners(workflowMap){
   document.addEventListener('stepCompleted', () => {
     updateStatusBar(workflowMap);
   });
+
+  // Tooltip toggle for info button
+  const infoBtn = document.querySelector('.pf-status-info');
+  const tooltip = document.querySelector('.pf-status-tooltip');
+  
+  if (infoBtn && tooltip) {
+    infoBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isHidden = tooltip.hasAttribute('hidden');
+      if (isHidden) {
+        tooltip.removeAttribute('hidden');
+        infoBtn.setAttribute('aria-expanded', 'true');
+      } else {
+        tooltip.setAttribute('hidden', '');
+        infoBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.pf-variable-status-bar')) {
+        tooltip.setAttribute('hidden', '');
+        infoBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !tooltip.hasAttribute('hidden')) {
+        tooltip.setAttribute('hidden', '');
+        infoBtn.setAttribute('aria-expanded', 'false');
+        infoBtn.focus();
+      }
+    });
+  }
 }
 
 
