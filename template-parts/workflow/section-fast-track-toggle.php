@@ -25,20 +25,16 @@ if (is_user_logged_in()) {
 
 <div class="pf-fast-track-toggle-wrapper" data-ft-ready="false" hidden>
     <div class="pf-fast-track-toggle-card">
-        <div class="pf-ft-content">
+        <header class="pf-ft-head">
             <div class="pf-ft-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
                 </svg>
             </div>
-            
-            <div class="pf-ft-text">
+            <div class="pf-ft-title-wrap">
+                <span class="pf-ft-kicker">Power users</span>
                 <h3 class="pf-ft-title">Fast Track Mode</h3>
-                <p class="pf-ft-description">
-                    Minimize explanations and show all steps at once for experienced users.
-                </p>
             </div>
-            
             <div class="pf-ft-toggle">
                 <button type="button" 
                         class="pf-toggle-switch <?php echo $ft_enabled ? 'is-active' : ''; ?>" 
@@ -55,26 +51,31 @@ if (is_user_logged_in()) {
                     </span>
                 </button>
             </div>
-        </div>
-        
-        <button type="button" class="pf-ft-info-btn" aria-label="Learn more about Fast Track Mode">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
-        </button>
+        </header>
+
+        <p class="pf-ft-description">
+            Hide onboarding content, expand all steps and minimize objective text once you know the workflow by heart.
+        </p>
+
+        <footer class="pf-ft-actions">
+            <button type="button" class="pf-ft-info-btn" aria-label="Learn more about Fast Track Mode">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                Details
+            </button>
+        </footer>
         
         <!-- Info Tooltip (hidden by default) -->
         <div class="pf-ft-info-tooltip" hidden>
             <p>
-                <strong>What changes with Fast Track Mode?</strong><br>
-                • Overview and prerequisites are collapsed<br>
-                • All steps are expanded<br>
-                • Step objectives are minimized<br>
-                • Example outputs are hidden<br>
-                <br>
-                You can toggle this anytime.
+                <strong>Was sich ändert</strong><br>
+                • Overview und Prereqs werden eingeklappt<br>
+                • Alle Schritte sind direkt geöffnet<br>
+                • Ziele nur als Einzeiler<br>
+                • Example Outputs ausgeblendet
             </p>
         </div>
     </div>
