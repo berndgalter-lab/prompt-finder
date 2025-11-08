@@ -440,7 +440,7 @@ function renderStepVarItem(item, stepId) {
         header.addEventListener('click', (e) => {
           // Don't toggle if clicking checkbox or copy button
           if (e.target.closest('.pf-step-checkbox') || 
-              e.target.closest('.pf-btn-copy-primary') ||
+              e.target.closest('.pf-btn-copy-hero') ||
               (e.target.closest('.pf-step-header-actions') && !e.target.closest('.pf-step-toggle')) ||
               e.target.closest('.pf-btn')) {
             return;

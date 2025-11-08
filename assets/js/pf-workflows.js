@@ -907,7 +907,7 @@ function initKeyboardShortcuts(){
       const prev = steps[currentIndex - 1];
       focusStepElement(prev, active);
     } else if (key === 'c' && (event.metaKey || event.ctrlKey)) {
-      const copyBtn = active ? active.querySelector('.pf-btn-copy-primary') : null;
+      const copyBtn = active ? active.querySelector('.pf-btn-copy-hero') : null;
       if (copyBtn) {
         event.preventDefault();
         copyBtn.click();

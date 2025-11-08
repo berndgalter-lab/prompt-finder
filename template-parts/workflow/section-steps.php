@@ -155,7 +155,7 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                 <?php if ($step_is_locked): ?>
                 aria-disabled="true"
                 <?php endif; ?>>
-
+                
                 <!-- Step Header (always visible) -->
                 <div class="pf-step-header" data-action="toggle-step" role="button" tabindex="0" aria-expanded="true" aria-controls="<?php echo esc_attr($step_content_id); ?>"<?php echo $is_initial_active ? ' id="active-step"' : ''; ?>>
                     <div class="pf-step-number" aria-hidden="true">
@@ -163,94 +163,92 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                     </div>
 
                     <div class="pf-step-header-main">
-                        <div class="pf-step-title-wrap">
+                    <div class="pf-step-title-wrap">
                             <h3 class="pf-step-title" id="<?php echo esc_attr($step_heading_id); ?>"><?php echo esc_html($title); ?></h3>
-                            <?php if (!empty($objective)): ?>
-                                <p class="pf-step-objective-preview"><?php echo esc_html($objective); ?></p>
-                            <?php endif; ?>
-                        </div>
-
-                        <?php if ($is_initial_active): ?>
-                            <div class="pf-step-active-banner" aria-hidden="true">
-                                <span class="pf-step-active-dot"></span>
-                                <span class="pf-step-active-text">Active Step</span>
-                            </div>
+                        <?php if (!empty($objective)): ?>
+                            <p class="pf-step-objective-preview"><?php echo esc_html($objective); ?></p>
                         <?php endif; ?>
-
+                    </div>
+                    
                         <div class="pf-step-meta" aria-label="Step meta information">
-                            <?php if ($estimated_time_min): ?>
+                        <?php if ($estimated_time_min): ?>
                                 <span class="pf-step-badge pf-step-badge--time" aria-label="Estimated time <?php echo esc_attr($estimated_time_min); ?> minutes">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <path d="M12 6v6l4 2"/>
-                                    </svg>
-                                    <?php echo esc_html($estimated_time_min); ?> min
-                                </span>
-                            <?php endif; ?>
-
-                            <span class="pf-step-badge pf-step-badge--<?php echo esc_attr($step_type); ?>" aria-label="Step type: <?php echo esc_attr($type_badge_text); ?>">
-                                <?php echo esc_html($type_badge_text); ?>
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 6v6l4 2"/>
+                                </svg>
+                                <?php echo esc_html($estimated_time_min); ?> min
                             </span>
-
-                            <?php if ($uses_global_vars): ?>
+                        <?php endif; ?>
+                        
+                            <span class="pf-step-badge pf-step-badge--<?php echo esc_attr($step_type); ?>" aria-label="Step type: <?php echo esc_attr($type_badge_text); ?>">
+                            <?php echo esc_html($type_badge_text); ?>
+                        </span>
+                        
+                        <?php if ($uses_global_vars): ?>
                                 <span class="pf-step-badge pf-step-badge--vars" title="Uses global variables" aria-label="Uses workflow variables">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <circle cx="12" cy="12" r="3"/>
-                                        <path d="M12 1v6m0 6v6M23 12h-6M7 12H1"/>
-                                    </svg>
-                                </span>
-                            <?php endif; ?>
-
-                            <?php if ($consumes_previous_output): ?>
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M12 1v6m0 6v6M23 12h-6M7 12H1"/>
+                                </svg>
+                            </span>
+                        <?php endif; ?>
+                        
+                        <?php if ($consumes_previous_output): ?>
                                 <span class="pf-step-badge pf-step-badge--consumes" title="Uses output from previous step" aria-label="Consumes previous step output">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                        <polyline points="14 2 14 8 20 8"/>
-                                        <line x1="16" y1="13" x2="8" y2="13"/>
-                                        <line x1="16" y1="17" x2="8" y2="17"/>
-                                        <polyline points="10 9 9 9 8 9"/>
-                                    </svg>
-                                </span>
-                            <?php endif; ?>
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10 9 9 9 8 9"/>
+                                </svg>
+                            </span>
+                        <?php endif; ?>
                         </div>
                     </div>
-
+                    
                     <div class="pf-step-header-actions">
                         <button class="pf-step-toggle" aria-label="Toggle step content" type="button">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <polyline points="6 9 12 15 18 9"/>
-                            </svg>
-                        </button>
-
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    
                         <label class="pf-step-checkbox-wrap" aria-label="Mark step <?php echo esc_attr($step_number); ?> as completed">
-                            <input type="checkbox" class="pf-step-checkbox" data-action="toggle-completion">
+                        <input type="checkbox" class="pf-step-checkbox" data-action="toggle-completion">
                             <span class="pf-checkmark" aria-hidden="true">✓</span>
-                        </label>
+                    </label>
                     </div>
                 </div>
-
+                
                 <!-- Step Content (collapsible) -->
                 <div class="pf-step-content" id="<?php echo esc_attr($step_content_id); ?>" role="group" aria-labelledby="<?php echo esc_attr($step_heading_id); ?>">
                     <?php if ($step_is_locked): ?>
-                        <!-- Locked Placeholder - NO sensitive content -->
+                        <!-- Locked Placeholder - premium upsell -->
                         <div class="pf-step-locked">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                            </svg>
-                            <h3>Step Locked</h3>
-                            <p>This step is not available in the free preview.</p>
-                            <?php if ($cta_info): ?>
-                                <a href="<?php echo esc_url($cta_info['url']); ?>" class="pf-btn pf-btn--primary">
-                                    <?php echo esc_html($cta_info['text']); ?>
+                            <div class="pf-locked-premium">
+                                <svg class="pf-locked-icon-premium" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M5 8l1 13h12l1-13" />
+                                    <path d="M4 8h16l-2.5-5h-11Z" />
+                                    <path d="M9 12l1 5" />
+                                    <path d="M15 12l-1 5" />
+                                </svg>
+                                <h3 class="pf-locked-title">Premium Step</h3>
+                                <p class="pf-locked-text">Upgrade to access advanced features.</p>
+                                <?php
+                                $unlock_url = $cta_info ? $cta_info['url'] : wp_login_url(get_permalink());
+                                ?>
+                                <a href="<?php echo esc_url($unlock_url); ?>" class="pf-btn-unlock">
+                                    Unlock Premium
                                 </a>
-                            <?php endif; ?>
+                            </div>
                         </div>
                     <?php else: ?>
                         <!-- Full Step Content (only rendered if visible) -->
                     <!-- Prompt Type -->
                     <?php if ($step_type === 'prompt' && !empty($prompt)): ?>
-
+                        
                         <?php if (!empty($variables_step)): ?>
                             <div class="pf-step-variables-intro">
                                 <h4 class="pf-step-variables-heading">Step-Specific Inputs</h4>
@@ -258,7 +256,7 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                             </div>
                         <?php endif; ?>
                         <div class="pf-step-variables-section pf-variables--step" data-step-vars-ui></div>
-
+                        
                         <div class="pf-prompt-container">
                             <div class="pf-prompt-wrapper" data-prompt-wrapper>
                                 <textarea class="pf-prompt-text pf-prompt"
@@ -269,13 +267,13 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                                           aria-label="Prompt text for step <?php echo esc_attr($step_number); ?>"
                                           readonly></textarea>
                             </div>
-                            <button class="pf-btn-copy-primary" data-copy-target="<?php echo esc_attr($step_dom_id); ?>" type="button" aria-label="Copy prompt for step <?php echo esc_attr($step_number); ?>">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                                </svg>
-                                <span>Copy Prompt</span>
-                            </button>
+                            <button class="pf-btn-copy-hero" data-copy-target="<?php echo esc_attr($step_dom_id); ?>" type="button" aria-label="Copy prompt for step <?php echo esc_attr($step_number); ?>">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                    </svg>
+                                <span>Copy to Clipboard</span>
+                                </button>
                         </div>
                         
                         <?php if (!empty($paste_guidance)): ?>
@@ -376,5 +374,5 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
         <?php endforeach; ?>
     </ol>
     
-    </section>
+</section>
 </div>
