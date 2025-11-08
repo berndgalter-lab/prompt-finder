@@ -1,0 +1,679 @@
+/**
+ * Modern Workflow Sections UI
+ * Complete visual overhaul - clean, beautiful, responsive
+ * 
+ * @package Prompt Finder
+ * @since 1.8.0
+ */
+
+/* ========================================
+   SECTION CONTAINER — MODERN SPACING
+   ======================================== */
+
+.pf-section {
+  margin: 0 0 32px 0;
+  max-width: 100%;
+  padding: 0;
+}
+
+.pf-section-heading {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+/* ========================================
+   OVERVIEW SECTION — BEAUTIFUL CARD
+   ======================================== */
+
+.pf-section--overview {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.pf-section--overview:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Overview Header with toggle */
+.pf-overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.pf-overview-toggle {
+  appearance: none;
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pf-overview-toggle:hover {
+  background: #ffffff;
+  border-color: #94a3b8;
+  color: #475569;
+}
+
+.pf-overview-toggle:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Overview Card */
+.pf-overview-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Summary text */
+.pf-overview-summary {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #334155;
+  margin-bottom: 24px;
+}
+
+.pf-overview-summary p {
+  margin: 0 0 12px 0;
+}
+
+.pf-overview-summary p:last-child {
+  margin-bottom: 0;
+}
+
+/* Metrics (inline badges) */
+.pf-overview-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.pf-metric-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.pf-metric-inline strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Overview Grid (Problem + Outcome) */
+.pf-overview-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .pf-overview-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pf-overview-block {
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.pf-overview-block:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.pf-overview-block h3 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pf-overview-block--problem h3 {
+  color: #dc2626;
+}
+
+.pf-overview-block--outcome h3 {
+  color: #16a34a;
+}
+
+.pf-overview-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #475569;
+}
+
+.pf-overview-text ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.pf-overview-text li {
+  margin-bottom: 6px;
+}
+
+/* ========================================
+   PREREQUISITES — CLEAN CARD
+   ======================================== */
+
+.pf-section--prereqs {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.pf-prereqs-header h2 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pf-prereqs-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.pf-reqs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pf-reqs-item {
+  display: flex;
+  align-items: start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.pf-reqs-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.pf-reqs-item:first-child {
+  padding-top: 0;
+}
+
+.pf-reqs-notes {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #475569;
+}
+
+.pf-prereqs-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #92400e;
+}
+
+.pf-prereqs-alert svg {
+  flex-shrink: 0;
+  color: #f59e0b;
+}
+
+/* ========================================
+   STEPS SECTION — MODERN DESIGN
+   ======================================== */
+
+.pf-section--steps {
+  margin-top: 40px;
+}
+
+.pf-section--steps .pf-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Steps Progress Badge */
+.pf-steps-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+}
+
+.pf-steps-progress-label {
+  opacity: 0.9;
+}
+
+/* Steps List */
+.pf-steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ========================================
+   STEP CARD — BEAUTIFUL DESIGN
+   ======================================== */
+
+.pf-step {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  position: relative;
+}
+
+.pf-step:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Active step highlight */
+.pf-step.is-active,
+.pf-step.pf-step--active {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Completed step */
+.pf-step.is-completed {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+/* Step number badge */
+.pf-step::before {
+  content: counter(step-counter);
+  counter-increment: step-counter;
+  position: absolute;
+  top: -12px;
+  left: 24px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  z-index: 10;
+}
+
+.pf-step.is-completed::before {
+  content: '✓';
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Step Header */
+.pf-step-header {
+  padding: 24px 24px 20px 24px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.pf-step-header:hover {
+  background: #f8fafc;
+}
+
+.pf-step-header-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.pf-step-title {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Step Type Badge */
+.pf-step-type-badge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pf-step-type-badge[data-type="prompt"] {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.pf-step-type-badge[data-type="guide"] {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.pf-step-type-badge[data-type="review"] {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+/* Step Meta (Description) */
+.pf-step-meta {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Toggle Icon */
+.pf-step-toggle-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  transition: transform 0.3s ease;
+}
+
+.pf-step[aria-expanded="true"] .pf-step-toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Step Body (Collapsible) */
+.pf-step-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.pf-step[aria-expanded="true"] .pf-step-body {
+  max-height: 5000px;
+}
+
+.pf-step-body-inner {
+  padding: 0 24px 24px 24px;
+}
+
+/* Step Content Sections */
+.pf-step-section {
+  margin-bottom: 20px;
+}
+
+.pf-step-section:last-child {
+  margin-bottom: 0;
+}
+
+.pf-step-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Step Objective */
+.pf-step-objective {
+  padding: 16px;
+  background: #f8fafc;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #334155;
+}
+
+/* Step Prompt Box */
+.pf-step-prompt {
+  position: relative;
+  margin-top: 16px;
+}
+
+.pf-step-prompt-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.pf-step-prompt-label h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pf-step-prompt-box {
+  position: relative;
+  background: #0f172a;
+  border-radius: 12px;
+  padding: 20px;
+  color: #e2e8f0;
+  font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Copy Button */
+.pf-btn-copy {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.pf-btn-copy:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.pf-btn-copy.is-copied {
+  background: #10b981;
+  border-color: #10b981;
+}
+
+/* Example Output */
+.pf-step-example {
+  margin-top: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #fbbf24;
+  border-radius: 12px;
+}
+
+.pf-step-example h4 {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pf-example-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #78350f;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Mobile: Smaller padding & font sizes */
+@media (max-width: 640px) {
+  .pf-section--overview,
+  .pf-section--prereqs {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .pf-overview-card,
+  .pf-prereqs-card {
+    padding: 16px;
+  }
+  
+  .pf-section-heading {
+    font-size: 20px;
+  }
+  
+  .pf-step {
+    border-radius: 12px;
+  }
+  
+  .pf-step::before {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+    top: -10px;
+    left: 16px;
+  }
+  
+  .pf-step-header {
+    padding: 20px 16px 16px 16px;
+  }
+  
+  .pf-step-body-inner {
+    padding: 0 16px 20px 16px;
+  }
+  
+  .pf-step-title {
+    font-size: 16px;
+  }
+  
+  .pf-overview-grid {
+    gap: 12px;
+  }
+  
+  .pf-metric-inline {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+}
+
+/* Tablet: Optimize spacing */
+@media (min-width: 641px) and (max-width: 960px) {
+  .pf-section--overview,
+  .pf-section--prereqs {
+    padding: 24px;
+  }
+  
+  .pf-step-header {
+    padding: 22px 20px 18px 20px;
+  }
+}
+
+/* Desktop: Maximum comfort */
+@media (min-width: 961px) {
+  .pf-step:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+/* Focus visible */
+.pf-step-header:focus-visible {
+  outline: 3px solid #3b82f6;
+  outline-offset: -3px;
+}
+
+.pf-btn-copy:focus-visible {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pf-step,
+  .pf-step-toggle-icon,
+  .pf-step-body {
+    transition: none;
+  }
+  
+  .pf-step:hover {
+    transform: none;
+  }
+}
+
+/* High contrast */
+@media (prefers-contrast: high) {
+  .pf-step {
+    border-width: 3px;
+  }
+  
+  .pf-overview-block,
+  .pf-prereqs-card {
+    border-width: 2px;
+  }
+}
+

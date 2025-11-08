@@ -1114,13 +1114,21 @@ add_action('wp_enqueue_scripts', function () {
     ['pf-core'],
     pf_ver('/assets/css/pf-workflows-main.css')
   );
+  
+  // Animations (global for all workflow pages)
+  wp_enqueue_style(
+    'pf-animations',
+    $uri . '/assets/css/pf-animations.css',
+    ['pf-core'],
+    pf_ver('/assets/css/pf-animations.css')
+  );
 
   $components = [
-    'workflow-header',
+    'workflow-header-modern', // NEW: Modern header UI
     'workflow-sidebar',
-    'workflow-sections',
+    'workflow-sections-modern', // NEW: Modern sections UI
     'workflow-variables',
-    'workflow-steps',
+    'workflow-steps-modern', // NEW: Modern steps UI
     'fast-track-toggle',
     'fast-track-content',
   ];
