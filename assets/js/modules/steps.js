@@ -16,7 +16,7 @@ function renderStepVarItem(item, stepId) {
   const defaultVal = item.step_var_default || '';
 
   const wrap = document.createElement('div');
-  wrap.className = 'pf-var-item';
+  wrap.className = 'pf-var pf-var-item';
   wrap.dataset.varKey = key;
   wrap.dataset.varRequired = required ? 'true' : 'false';
 
@@ -25,7 +25,7 @@ function renderStepVarItem(item, stepId) {
   lab.setAttribute('for', `pf-step-${stepId}-var-input-${key}`);
   lab.textContent = label;
   const reqBadge = document.createElement('span');
-  reqBadge.className = required ? 'pf-label-required' : 'pf-label-optional';
+  reqBadge.className = `pf-var-badge ${required ? 'required' : 'optional'}`;
   reqBadge.textContent = required ? 'Required' : 'Optional';
   lab.appendChild(document.createTextNode(' '));
   lab.appendChild(reqBadge);
@@ -62,15 +62,17 @@ function renderStepVarItem(item, stepId) {
   if (required) {
     input.required = true;
     input.setAttribute('aria-required', 'true');
+    input.classList.add('required');
   } else {
     input.removeAttribute('required');
     input.removeAttribute('aria-required');
+    input.classList.remove('required');
   }
   input.value = defaultVal;
 
   let hintEl = null;
   if (hint) {
-    hintEl = document.createElement('p');
+    hintEl = document.createElement('div');
     hintEl.className = 'pf-var-hint';
     hintEl.textContent = hint;
   }
@@ -79,9 +81,44 @@ function renderStepVarItem(item, stepId) {
   wrap.appendChild(input);
   if (hintEl) wrap.appendChild(hintEl);
 
+  const errorEl = document.createElement('div');
+  errorEl.className = 'pf-var-error';
+  errorEl.style.display = 'none';
+  errorEl.textContent = 'This field is required';
+  wrap.appendChild(errorEl);
+
   input.addEventListener('input', () => {
-    if (required) wrap.classList.toggle('pf-var--invalid', !input.value.trim());
+    if (!required) {
+      input.classList.remove('invalid');
+      input.classList.remove('valid');
+      errorEl.style.display = 'none';
+      errorEl.textContent = '';
+      return;
+    }
+    if (!input.value.trim()) {
+      wrap.classList.add('pf-var--invalid');
+      input.classList.add('invalid');
+      input.classList.remove('valid');
+      input.setAttribute('aria-invalid', 'true');
+      errorEl.style.display = 'block';
+      errorEl.textContent = 'This field is required';
+    } else {
+      wrap.classList.remove('pf-var--invalid');
+      input.classList.remove('invalid');
+      input.classList.add('valid');
+      input.setAttribute('aria-invalid', 'false');
+      errorEl.style.display = 'none';
+      errorEl.textContent = '';
+    }
   });
+
+  if (required && !input.value.trim()) {
+    wrap.classList.add('pf-var--invalid');
+    input.classList.add('invalid');
+    input.setAttribute('aria-invalid', 'true');
+    errorEl.style.display = 'block';
+    errorEl.textContent = 'This field is required';
+  }
 
   return wrap;
 }

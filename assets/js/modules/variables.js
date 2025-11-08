@@ -19,7 +19,44 @@
     if (!itemEl) return;
     itemEl.classList.toggle('pf-var--invalid', !!isInvalid);
     const input = itemEl.querySelector('.pf-var-input');
-    if (input) input.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
+    const error = itemEl.querySelector('.pf-var-error');
+    if (!input) return;
+
+    if (input.classList.contains('required')) {
+      if (isInvalid) {
+        input.classList.add('invalid');
+        input.classList.remove('valid');
+        input.setAttribute('aria-invalid', 'true');
+        if (error) {
+          error.style.display = 'block';
+          error.textContent = 'This field is required';
+        }
+      } else {
+        input.classList.remove('invalid');
+        if (input.value && input.value.trim() !== '') {
+          input.classList.add('valid');
+        } else {
+          input.classList.remove('valid');
+        }
+        input.setAttribute('aria-invalid', 'false');
+        if (error) {
+          error.style.display = 'none';
+          error.textContent = '';
+        }
+      }
+    } else {
+      input.classList.remove('invalid');
+      input.classList.remove('valid');
+      if (isInvalid) {
+        input.setAttribute('aria-invalid', 'true');
+      } else {
+        input.removeAttribute('aria-invalid');
+      }
+      if (error) {
+        error.style.display = 'none';
+        error.textContent = '';
+      }
+    }
   }
 
   function updateVarCounter(scope = document) {
@@ -60,19 +97,19 @@
     const defaultVal = item.workflow_var_default_value || '';
 
     const wrap = document.createElement('div');
-    wrap.className = 'pf-var-item';
+    wrap.className = 'pf-var pf-var-item';
     wrap.dataset.varKey = key;
-  wrap.dataset.varRequired = required ? 'true' : 'false';
+    wrap.dataset.varRequired = required ? 'true' : 'false';
 
     const lab = document.createElement('label');
     lab.className = 'pf-var-label';
     lab.setAttribute('for', `pf-var-input-${key}`);
-  lab.textContent = label;
-  const reqBadge = document.createElement('span');
-  reqBadge.className = required ? 'pf-label-required' : 'pf-label-optional';
-  reqBadge.textContent = required ? 'Required' : 'Optional';
-  lab.appendChild(document.createTextNode(' '));
-  lab.appendChild(reqBadge);
+    lab.textContent = label;
+    const badge = document.createElement('span');
+    badge.className = `pf-var-badge ${required ? 'required' : 'optional'}`;
+    badge.textContent = required ? 'Required' : 'Optional';
+    lab.appendChild(document.createTextNode(' '));
+    lab.appendChild(badge);
 
     let input;
     if (type === 'select' && item.workflow_var_options_json) {
@@ -111,17 +148,19 @@
     input.dataset.varKey = key;
     if (placeholder) input.placeholder = placeholder;
         if (required) {
-    input.required = true;
-    input.setAttribute('aria-required', 'true');
-  } else {
-    input.removeAttribute('required');
-    input.removeAttribute('aria-required');
+          input.required = true;
+          input.setAttribute('aria-required', 'true');
+      input.classList.add('required');
+    } else {
+      input.removeAttribute('required');
+      input.removeAttribute('aria-required');
+      input.classList.remove('required');
     }
     input.value = defaultVal;
 
     let hintEl = null;
     if (hint) {
-      hintEl = document.createElement('p');
+      hintEl = document.createElement('div');
       hintEl.className = 'pf-var-hint';
       hintEl.textContent = hint;
     }
@@ -129,6 +168,12 @@
     wrap.appendChild(lab);
     wrap.appendChild(input);
     if (hintEl) wrap.appendChild(hintEl);
+
+    const errorEl = document.createElement('div');
+    errorEl.className = 'pf-var-error';
+    errorEl.style.display = 'none';
+    errorEl.textContent = 'This field is required';
+    wrap.appendChild(errorEl);
 
     input.addEventListener('input', () => updateVarCounter(document));
     input.addEventListener('blur', () => updateVarCounter(document));

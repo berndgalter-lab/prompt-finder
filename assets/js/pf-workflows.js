@@ -293,7 +293,7 @@ function coerceBool(v){
     const type = (def.type || 'text').toLowerCase();
     const tierTag = getTierForVariable(key, ctx);
     const wrap = document.createElement('div');
-    wrap.className = `pf-field pf-var pf-var-${level} pf-var-${type}`;
+    wrap.className = `pf-var pf-field pf-var-${level} pf-var-${type}`;
     wrap.classList.add('pf-var-item', `pf-var-item--${tierTag}`);
     wrap.setAttribute('data-variable-tier', tierTag);
     wrap.dataset.variableTier = tierTag;
@@ -306,13 +306,13 @@ function coerceBool(v){
 
     const id = `${level}-${key}`;
     const label = document.createElement('label');
-    label.className = 'pf-field-label pf-var-label';
+    label.className = 'pf-var-label';
     label.htmlFor = id;
     const labelText = def.label || key;
     label.textContent = labelText;
 
     const requirementBadge = document.createElement('span');
-    requirementBadge.className = def.required ? 'pf-label-required' : 'pf-label-optional';
+    requirementBadge.className = `pf-var-badge ${def.required ? 'required' : 'optional'}`;
     requirementBadge.textContent = def.required ? 'Required' : 'Optional';
     label.appendChild(document.createTextNode(' '));
     label.appendChild(requirementBadge);
@@ -412,7 +412,12 @@ function coerceBool(v){
       ctrl.removeAttribute('aria-required');
     }
 
-    ctrl.classList.add('pf-field-input');
+    ctrl.classList.add('pf-field-input', 'pf-var-input');
+    if (def.required) {
+      ctrl.classList.add('required');
+    } else {
+      ctrl.classList.remove('required');
+    }
 
     if (ctrl.tagName === 'TEXTAREA') {
       ctrl.classList.add('pf-field-input--textarea');
@@ -435,14 +440,14 @@ function coerceBool(v){
 
     const hintText = (def.description && def.description.trim()) || (def.hint && def.hint.trim()) || '';
     if (hintText) {
-      const hint = document.createElement('span');
-      hint.className = 'pf-field-hint pf-var-hint';
+      const hint = document.createElement('div');
+      hint.className = 'pf-var-hint pf-field-hint';
       hint.textContent = hintText;
       wrap.appendChild(hint);
     }
 
-    const errorEl = document.createElement('span');
-    errorEl.className = 'pf-field-error';
+    const errorEl = document.createElement('div');
+    errorEl.className = 'pf-var-error';
     errorEl.style.display = 'none';
     errorEl.setAttribute('role', 'alert');
     wrap.appendChild(errorEl);
@@ -478,21 +483,51 @@ function coerceBool(v){
       if (state === 'valid') {
         validation.style.opacity = '1';
         validation.textContent = '✓';
-        errorEl.style.display = 'none';
-        errorEl.textContent = '';
-        ctrl.classList.remove('is-error');
       } else if (state === 'invalid') {
         validation.style.opacity = '1';
         validation.textContent = '!';
-        errorEl.style.display = '';
-        errorEl.textContent = message || 'Check this field';
-        ctrl.classList.add('is-error');
       } else {
         validation.style.opacity = '0';
         validation.textContent = '✓';
+      }
+
+      if (required) {
+        if (state === 'invalid') {
+          errorEl.style.display = 'block';
+          errorEl.textContent = message || 'This field is required';
+          ctrl.classList.add('invalid');
+          ctrl.classList.remove('valid');
+          ctrl.setAttribute('aria-invalid', 'true');
+        } else {
+          errorEl.style.display = 'none';
+          errorEl.textContent = '';
+          ctrl.classList.remove('invalid');
+          if (state === 'valid') {
+            ctrl.classList.add('valid');
+            ctrl.setAttribute('aria-invalid', 'false');
+          } else {
+            ctrl.classList.remove('valid');
+            ctrl.removeAttribute('aria-invalid');
+          }
+        }
+      } else {
         errorEl.style.display = 'none';
         errorEl.textContent = '';
-        ctrl.classList.remove('is-error');
+        ctrl.classList.remove('invalid');
+        ctrl.classList.remove('valid');
+        if (state === 'invalid') {
+          ctrl.setAttribute('aria-invalid', 'true');
+          errorEl.style.display = 'block';
+          errorEl.textContent = message || 'This field is required';
+        } else if (state === 'valid') {
+          ctrl.setAttribute('aria-invalid', 'false');
+          errorEl.style.display = 'none';
+          errorEl.textContent = '';
+        } else {
+          ctrl.removeAttribute('aria-invalid');
+          errorEl.style.display = 'none';
+          errorEl.textContent = '';
+        }
       }
     }
 

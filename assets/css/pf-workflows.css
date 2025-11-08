@@ -487,16 +487,68 @@ html, body {
     color: #2E7D32;
 }
 
+.pf-var {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.25rem;
+}
+
+.pf-var-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.pf-var-badge {
+    font-size: 0.75rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+}
+
+.pf-var-badge.required {
+    color: #B71C1C;
+    background-color: #FFEBEE;
+}
+
+.pf-var-badge.optional {
+    color: #616161;
+    background-color: #F5F5F5;
+}
+
+.pf-var-input {
+    border: 1px solid #CCCCCC;
+    border-radius: 6px;
+    padding: 0.6rem;
+    font-size: 1rem;
+}
+
+.pf-var-input.required.invalid {
+    border-color: #D32F2F;
+}
+
+.pf-var-input.required.valid {
+    border-color: #388E3C;
+}
+
 .pf-var-help {
-    display: block;
-    color: var(--pf-text-muted);
-    font-size: var(--pf-fs-xs);
-    margin-top: var(--pf-space-1);
+    font-size: 0.75rem;
+    color: #616161;
+    margin-top: 0.25rem;
 }
 
 .pf-req {
     color: var(--pf-error);
     margin-left: var(--pf-space-1);
+}
+
+.pf-var-error {
+    font-size: 0.75rem;
+    color: #D32F2F;
+    margin-top: 0.25rem;
+    display: none;
 }
 
 /* Variable Highlighting */
