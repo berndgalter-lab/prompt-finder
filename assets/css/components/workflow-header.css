@@ -66,23 +66,32 @@
 .pf-header-tagline {
   font-size: 16px;
   color: #6b7280;
-  margin: 0;
+  margin: 0 0 12px 0;
 }
 
-/* Compact meta badges */
+/* Compact meta badges - positioned under tagline on desktop */
 .pf-header-meta-compact {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  margin-top: 12px;
 }
 
 .pf-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 4px 10px;
   background: #f3f4f6;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
   color: #6b7280;
+}
+
+.pf-meta-chip svg {
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 /* Hero Progress Bar */
@@ -140,7 +149,6 @@
 }
 
 /* Remove duplicate time displays */
-.pf-meta-chip--time:first-of-type,
 .pf-time-tracker,
 .pf-progress-container {
   display: none !important;

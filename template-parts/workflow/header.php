@@ -65,20 +65,26 @@ $initial_progress_percent = 0;
             <?php if (!empty($tagline_field)): ?>
                 <p class="pf-header-tagline"><?php echo esc_html($tagline_field); ?></p>
             <?php endif; ?>
-        </div>
 
-        <div class="pf-header-meta-compact">
-            <?php if (!empty($estimated_time_min_field)): ?>
-                <span class="pf-meta-chip"><?php echo esc_html($estimated_time_min_field); ?> min</span>
-            <?php endif; ?>
+            <div class="pf-header-meta-compact">
+                <?php if (!empty($estimated_time_min_field)): ?>
+                    <span class="pf-meta-chip pf-meta-chip--time">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <?php echo esc_html($estimated_time_min_field); ?> min
+                    </span>
+                <?php endif; ?>
 
-            <?php if ($total_steps > 0): ?>
-                <span class="pf-meta-chip"><?php echo esc_html($total_steps); ?> <?php echo $total_steps === 1 ? 'step' : 'steps'; ?></span>
-            <?php endif; ?>
+                <?php if ($total_steps > 0): ?>
+                    <span class="pf-meta-chip"><?php echo esc_html($total_steps); ?> <?php echo $total_steps === 1 ? 'step' : 'steps'; ?></span>
+                <?php endif; ?>
 
-            <?php if (!empty($version_field)): ?>
-                <span class="pf-meta-chip">v<?php echo esc_html($version_field); ?></span>
-            <?php endif; ?>
+                <?php if (!empty($version_field)): ?>
+                    <span class="pf-meta-chip">v<?php echo esc_html($version_field); ?></span>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 
