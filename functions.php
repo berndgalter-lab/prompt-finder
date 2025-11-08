@@ -1123,6 +1123,12 @@ add_action('wp_enqueue_scripts', function () {
     'workflow-steps',
     'fast-track-toggle',
     'fast-track-content',
+    // Modern namespace styles (scoped to `.pf-ui-modern`)
+    'workflow-header-modern',
+    'workflow-sidebar-modern',
+    'workflow-info-modern',
+    'workflow-variables-modern',
+    'workflow-steps-modern',
   ];
   foreach ($components as $c) {
     wp_enqueue_style(

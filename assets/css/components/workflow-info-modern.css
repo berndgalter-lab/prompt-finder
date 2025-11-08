@@ -1,0 +1,196 @@
+/* =========================================================
+   Workflow Info (Overview + Prerequisites) — Modern Variant
+   Scoped to .pf-ui-modern namespace
+   ========================================================= */
+
+.pf-ui-modern .pf-section--overview,
+.pf-ui-modern .pf-section--prereqs {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-slate-200);
+  border-radius: 22px;
+  padding: clamp(24px, 4vw, 36px);
+  box-shadow: var(--pf-shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.pf-ui-modern .pf-section--overview::after {
+  content: '';
+  position: absolute;
+  inset: auto -20% -40% auto;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.pf-ui-modern .pf-overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.pf-ui-modern .pf-overview-toggle {
+  appearance: none;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--pf-slate-600);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--pf-transition-fast), transform var(--pf-transition-fast);
+}
+
+.pf-ui-modern .pf-overview-toggle:hover {
+  background: rgba(99, 102, 241, 0.18);
+  color: #312e81;
+}
+
+.pf-ui-modern .pf-overview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pf-ui-modern .pf-overview-summary {
+  font-size: clamp(16px, 2.1vw, 18px);
+  line-height: 1.7;
+  color: var(--pf-slate-600);
+}
+
+.pf-ui-modern .pf-overview-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 0 18px;
+  border-block: 1px solid var(--pf-slate-200);
+}
+
+.pf-ui-modern .pf-metric-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.14);
+  color: var(--pf-slate-600);
+  font-size: 14px;
+}
+
+.pf-ui-modern .pf-metric-inline strong {
+  color: var(--pf-slate-700);
+}
+
+.pf-ui-modern .pf-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(18px, 3vw, 28px);
+}
+
+.pf-ui-modern .pf-overview-block {
+  background: rgba(248, 250, 252, 0.9);
+  border-radius: 16px;
+  padding: clamp(18px, 3vw, 24px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform var(--pf-transition-base), box-shadow var(--pf-transition-base);
+}
+
+.pf-ui-modern .pf-overview-block:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(148, 163, 184, 0.18);
+}
+
+.pf-ui-modern .pf-overview-block h3 {
+  margin: 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.pf-ui-modern .pf-overview-block--problem h3 {
+  color: #b91c1c;
+}
+
+.pf-ui-modern .pf-overview-block--outcome h3 {
+  color: #047857;
+}
+
+.pf-ui-modern .pf-overview-text {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--pf-slate-600);
+}
+
+.pf-ui-modern .pf-overview-text ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+/* Prerequisites */
+.pf-ui-modern .pf-prereqs-card {
+  background: rgba(248, 250, 252, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 18px;
+  padding: clamp(18px, 3vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pf-ui-modern .pf-reqs {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pf-ui-modern .pf-reqs-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  color: var(--pf-slate-600);
+}
+
+.pf-ui-modern .pf-reqs-item::before {
+  content: '•';
+  color: var(--pf-slate-400);
+  margin-top: 2px;
+}
+
+.pf-ui-modern .pf-prereqs-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(251, 191, 36, 0.18);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #92400e;
+  font-weight: 600;
+}
+
+.pf-ui-modern .pf-prereqs-alert svg {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .pf-ui-modern .pf-section--overview,
+  .pf-ui-modern .pf-section--prereqs {
+    padding: 22px 20px;
+    border-radius: 18px;
+  }
+
+  .pf-ui-modern .pf-overview-grid {
+    grid-template-columns: 1fr;
+  }
+}

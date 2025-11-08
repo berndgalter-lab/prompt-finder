@@ -1,0 +1,135 @@
+/* =========================================================
+   Workflow Variables — Modern Variant
+   Scoped to .pf-ui-modern namespace
+   ========================================================= */
+
+.pf-ui-modern [data-wf-form].pf-card,
+.pf-ui-modern [data-step-vars-ui].pf-card {
+  border-radius: 22px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.95) 100%);
+  padding: clamp(24px, 4vw, 36px);
+}
+
+.pf-ui-modern [data-wf-form].pf-card .pf-vars-card__head,
+.pf-ui-modern [data-step-vars-ui].pf-card .pf-vars-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: clamp(18px, 3vw, 24px);
+}
+
+.pf-ui-modern .pf-vars-card__title {
+  font-size: clamp(20px, 2.6vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--pf-slate-900);
+  margin: 0;
+}
+
+.pf-ui-modern .pf-vars-card__sub {
+  margin: 0;
+  font-size: 14px;
+  color: var(--pf-slate-500);
+}
+
+.pf-ui-modern [data-wf-form] .pf-row,
+.pf-ui-modern [data-step-vars-ui] .pf-row {
+  padding: clamp(16px, 2.4vw, 22px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 16px;
+  background: rgba(248, 250, 252, 0.65);
+  gap: 14px;
+  transition: transform var(--pf-transition-base), box-shadow var(--pf-transition-base);
+}
+
+.pf-ui-modern [data-wf-form] .pf-row:hover,
+.pf-ui-modern [data-step-vars-ui] .pf-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 28px rgba(148, 163, 184, 0.18);
+}
+
+.pf-ui-modern [data-wf-form] .pf-label,
+.pf-ui-modern [data-step-vars-ui] .pf-label {
+  font-size: 15px;
+  color: var(--pf-slate-700);
+  letter-spacing: -0.01em;
+}
+
+.pf-ui-modern [data-wf-form] .pf-badge,
+.pf-ui-modern [data-step-vars-ui] .pf-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.16);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: var(--pf-slate-600);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.pf-ui-modern [data-wf-form] .pf-badge.is-required,
+.pf-ui-modern [data-step-vars-ui] .pf-badge.is-required {
+  background: rgba(248, 113, 113, 0.16);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #b91c1c;
+}
+
+.pf-ui-modern [data-wf-form] .pf-field input,
+.pf-ui-modern [data-wf-form] .pf-field textarea,
+.pf-ui-modern [data-wf-form] .pf-field select,
+.pf-ui-modern [data-step-vars-ui] .pf-field input,
+.pf-ui-modern [data-step-vars-ui] .pf-field textarea,
+.pf-ui-modern [data-step-vars-ui] .pf-field select {
+  border-radius: 14px;
+  padding: 14px 15px;
+  border: 1px solid rgba(203, 213, 225, 0.95);
+  background: rgba(255, 255, 255, 0.95);
+  transition: border-color var(--pf-transition-fast), box-shadow var(--pf-transition-fast), transform var(--pf-transition-fast);
+}
+
+.pf-ui-modern [data-wf-form] .pf-field:focus-within input,
+.pf-ui-modern [data-wf-form] .pf-field:focus-within textarea,
+.pf-ui-modern [data-wf-form] .pf-field:focus-within select,
+.pf-ui-modern [data-step-vars-ui] .pf-field:focus-within input,
+.pf-ui-modern [data-step-vars-ui] .pf-field:focus-within textarea,
+.pf-ui-modern [data-step-vars-ui] .pf-field:focus-within select {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.pf-ui-modern [data-wf-form] .pf-field.is-invalid input,
+.pf-ui-modern [data-wf-form] .pf-field.is-invalid textarea,
+.pf-ui-modern [data-wf-form] .pf-field.is-invalid select,
+.pf-ui-modern [data-step-vars-ui] .pf-field.is-invalid input,
+.pf-ui-modern [data-step-vars-ui] .pf-field.is-invalid textarea,
+.pf-ui-modern [data-step-vars-ui] .pf-field.is-invalid select {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+.pf-ui-modern [data-wf-form] .pf-hint,
+.pf-ui-modern [data-step-vars-ui] .pf-hint {
+  font-size: 13px;
+  color: var(--pf-slate-500);
+}
+
+.pf-ui-modern [data-wf-form] .pf-error,
+.pf-ui-modern [data-step-vars-ui] .pf-error {
+  font-size: 13px;
+  color: #b91c1c;
+}
+
+@media (max-width: 768px) {
+  .pf-ui-modern [data-wf-form].pf-card,
+  .pf-ui-modern [data-step-vars-ui].pf-card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .pf-ui-modern [data-wf-form] .pf-row,
+  .pf-ui-modern [data-step-vars-ui] .pf-row {
+    padding: 14px;
+  }
+}

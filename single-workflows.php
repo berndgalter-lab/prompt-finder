@@ -36,7 +36,7 @@ if (is_user_logged_in()) {
 }
 ?>
 
-<div class="pf-workflow-container <?php echo $ft_enabled ? 'pf-fast-track-active' : ''; ?>" 
+<div class="pf-workflow-container pf-ui-modern <?php echo $ft_enabled ? 'pf-fast-track-active' : ''; ?>" 
      data-post-id="<?php echo esc_attr($post_id); ?>" 
      data-profile-enabled="<?php echo get_field('use_profile_defaults') ? 'true' : 'false'; ?>"
      data-ft-trigger-this="<?php echo esc_attr($ft_trigger_this); ?>"
