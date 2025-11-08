@@ -13,6 +13,17 @@
 
   'use strict';
 
+  // ============================================================
+  // INIT GUARD: Prevent double initialization
+  // ============================================================
+  window.PF = window.PF || {};
+  if (window.PF.__INIT_DONE__) {
+    console.warn('[PF Workflows] Init skipped (already initialized)');
+    return; // Abort early – do not bind events again
+  }
+  window.PF.__INIT_DONE__ = true;
+  console.log('[PF Workflows] Initializing (single orchestrator mode)...');
+
   // Localized from PHP (Prompt 2). Always includes sys_*; profile keys only when allowed.
   const PF_USER_VARS = (typeof window.PF_USER_VARS === 'object' && window.PF_USER_VARS) ? window.PF_USER_VARS : {};
 
