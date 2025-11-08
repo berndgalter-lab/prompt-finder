@@ -5,23 +5,28 @@
 
 .pf-ui-modern .pf-section--overview,
 .pf-ui-modern .pf-section--prereqs {
-  background: var(--pf-card);
-  border: 1px solid var(--pf-slate-200);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(241, 245, 249, 0.94) 100%);
+  border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 22px;
   padding: clamp(24px, 4vw, 36px);
-  box-shadow: var(--pf-shadow-lg);
+  box-shadow: 0 22px 42px rgba(148, 163, 184, 0.25);
   position: relative;
   overflow: hidden;
 }
 
-.pf-ui-modern .pf-section--overview::after {
+.pf-ui-modern .pf-section--overview::before,
+.pf-ui-modern .pf-section--prereqs::before {
   content: '';
   position: absolute;
-  inset: auto -20% -40% auto;
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
-  pointer-events: none;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(59, 130, 246, 0.25));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
 }
 
 .pf-ui-modern .pf-overview-header {
@@ -55,8 +60,13 @@
   gap: 24px;
 }
 
+.pf-ui-modern .pf-section-heading {
+  margin-bottom: clamp(18px, 3vw, 26px);
+  color: var(--pf-slate-800);
+}
+
 .pf-ui-modern .pf-overview-summary {
-  font-size: clamp(16px, 2.1vw, 18px);
+  font-size: clamp(16px, 2.1vw, 19px);
   line-height: 1.7;
   color: var(--pf-slate-600);
 }
@@ -73,10 +83,11 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
-  border-radius: 12px;
-  background: rgba(148, 163, 184, 0.14);
-  color: var(--pf-slate-600);
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.25);
   font-size: 14px;
 }
 
@@ -91,11 +102,11 @@
 }
 
 .pf-ui-modern .pf-overview-block {
-  background: rgba(248, 250, 252, 0.9);
-  border-radius: 16px;
+  background: rgba(248, 250, 252, 0.92);
+  border-radius: 18px;
   padding: clamp(18px, 3vw, 24px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 16px 32px rgba(148, 163, 184, 0.2);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -136,13 +147,14 @@
 
 /* Prerequisites */
 .pf-ui-modern .pf-prereqs-card {
-  background: rgba(248, 250, 252, 0.9);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.85);
   border-radius: 18px;
-  padding: clamp(18px, 3vw, 24px);
+  padding: clamp(20px, 3.2vw, 26px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+  box-shadow: 0 18px 36px rgba(148, 163, 184, 0.22);
 }
 
 .pf-ui-modern .pf-reqs {
@@ -171,12 +183,13 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 14px 18px;
   border-radius: 14px;
   background: rgba(251, 191, 36, 0.18);
   border: 1px solid rgba(251, 191, 36, 0.4);
   color: #92400e;
   font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .pf-ui-modern .pf-prereqs-alert svg {
