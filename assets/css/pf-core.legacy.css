@@ -192,9 +192,16 @@ a.pf-btn:visited {
 /* -----------------------------
    Cards (Basis)
    -----------------------------*/
-/* @removed: .pf-grid - ref report 2025-11-08 - CSS only, no template usage */
-/* @dedupe: .pf-card consolidated into v2 section (line 720+) - 2025-11-08 */
+/* @unused? see report - Only found in CSS, not in templates/JS */
+.pf-grid{ display:grid; gap:18px; grid-template-columns:repeat(3,1fr); }
+@media (max-width:1100px){ .pf-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:720px){ .pf-grid{ grid-template-columns:1fr; } }
 
+.pf-card{
+  position:relative; display:flex; flex-direction:column; min-height:100%;
+  background:var(--pf-card); border:1px solid var(--pf-border);
+  border-radius:var(--pf-radius); overflow:hidden; transition:.18s ease;
+}
 .pf-card:hover{ transform:translateY(-3px); box-shadow:0 16px 30px rgba(0,0,0,.28); border-color:#2b3447; }
 .pf-card-link{ position:absolute; inset:0; z-index:2; }
 .pf-card-body{ padding:14px; display:flex; flex-direction:column; gap:8px; flex:1; }
@@ -207,7 +214,12 @@ a.pf-btn:visited {
 /* -----------------------------
    Utilities
    -----------------------------*/
-/* @dedupe: .pf-badge moved to v2 unified section (line 768) - 2025-11-08 */
+.pf-badge{
+  display:inline-flex; align-items:center; gap:.5ch;
+  padding:.35rem .6rem; border:1px solid #1e293b; border-radius:999px;
+  background:linear-gradient(180deg,#0c111a,#0a0e14);
+  color:#bfefff; font-weight:600; font-size:.8rem; letter-spacing:.06em;
+}
 
 /* ----------------------------------------
    Color Safety (PF-Bereiche immer lesbar)
@@ -713,19 +725,13 @@ a.pf-btn.pf-btn--ghost:visited {
   --pf-fw-semibold: 600;
 }
 
-/* card primitive (merged with original definition) */
+/* card primitive */
 .pf-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
   background: var(--pf-surface);
   border: 1px solid var(--pf-border);
   border-radius: var(--pf-radius-lg);
   box-shadow: var(--pf-shadow-1);
   padding: var(--pf-space-6);
-  overflow: hidden;
-  transition: .18s ease;
 }
 
 /* form primitives */
@@ -821,8 +827,19 @@ a.pf-btn.pf-btn--ghost:visited {
   display: none;
 }
 
-/* @removed: .pf-section-title - ref report 2025-11-08 - Part of v2 unified, no usage found */
-/* @removed: .pf-divider - ref report 2025-11-08 - Self-referential only, no dynamic usage */
+/* @unused? see report - Part of v2 unified, verify usage in workflow variables */
+.pf-section-title {
+  font-size: var(--pf-fs-lg);
+  font-weight: var(--pf-fw-semibold);
+  margin: 0 0 var(--pf-space-4);
+}
+
+/* @unused? see report - Self-referential only, check for dynamic JS generation */
+.pf-divider {
+  height: 1px;
+  background: var(--pf-border);
+  margin: var(--pf-space-6) 0;
+}
 
 /* ========================================
    PF v1.7 — DESIGN TOKENS (Dark Mode)
