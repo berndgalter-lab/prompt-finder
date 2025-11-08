@@ -20,6 +20,10 @@ define('PF_FAV_LIMIT_DURATION', 60); // seconds
 // Cache constants
 define('PF_CACHE_DURATION', 3600); // 1 hour
 
+// Fast Track Mode constants
+define('PF_FT_TRIGGER_THIS_WORKFLOW', 2); // visits to THIS workflow
+define('PF_FT_TRIGGER_ANY_WORKFLOW', 5); // visits to ANY workflow
+
 /* =====================================================
    Helper Functions
 ===================================================== */
@@ -28,6 +32,11 @@ define('PF_CACHE_DURATION', 3600); // 1 hour
  * Load Access Control Helpers
  */
 require_once get_stylesheet_directory() . '/inc/pf-access.php';
+
+/**
+ * Load User Tracking (Fast Track Mode)
+ */
+require_once get_stylesheet_directory() . '/inc/class-pf-user-tracking.php';
 
 /**
  * Load PF configuration from JSON file
@@ -1112,6 +1121,8 @@ add_action('wp_enqueue_scripts', function () {
     'workflow-sections',
     'workflow-variables',
     'workflow-steps',
+    'fast-track-toggle',
+    'fast-track-content',
   ];
   foreach ($components as $c) {
     wp_enqueue_style(
@@ -1145,6 +1156,33 @@ add_action('wp_enqueue_scripts', function () {
     $uri . '/assets/js/pf-workflows.js',
     ['jquery'],
     pf_ver('/assets/js/pf-workflows.js'),
+    true
+  );
+  
+  // Tracking module (Fast Track Mode) - no jQuery dependency
+  wp_enqueue_script(
+    'pf-tracking',
+    $uri . '/assets/js/modules/tracking.js',
+    [],
+    pf_ver('/assets/js/modules/tracking.js'),
+    true
+  );
+  
+  // Tracking init (auto-track visit on page load) - must load AFTER tracking module
+  wp_enqueue_script(
+    'pf-tracking-init',
+    $uri . '/assets/js/pf-tracking-init.js',
+    ['pf-tracking'],
+    pf_ver('/assets/js/pf-tracking-init.js'),
+    true
+  );
+  
+  // Fast Track module (toggle & content adaptation) - must load AFTER tracking
+  wp_enqueue_script(
+    'pf-fast-track',
+    $uri . '/assets/js/modules/fast-track.js',
+    ['pf-tracking'],
+    pf_ver('/assets/js/modules/fast-track.js'),
     true
   );
   
