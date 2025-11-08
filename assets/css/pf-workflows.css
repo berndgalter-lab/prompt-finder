@@ -2527,7 +2527,7 @@ html, body {
 .pf-wf-storage { font-size:.85rem; color:#4b5563; margin-right:auto; }
 
 /* ========== UNIFIED WORKFLOW VARIABLES CARD ========== */
-/* Unified workflow variables card */
+/* Base card structure - used for both profile and workflow variables */
 .pf-workflow-vars-card {
   background: var(--pf-card);
   border: 1px solid var(--pf-border);
@@ -2546,6 +2546,11 @@ html, body {
   background: linear-gradient(135deg, rgba(59,130,246,0.05), rgba(139,92,246,0.05));
   border-bottom: 1px solid var(--pf-border);
   flex-wrap: wrap;
+}
+
+/* Profile card variant - subtle blue theme */
+.pf-workflow-vars-card--profile .pf-workflow-vars-card-header {
+  background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(96,165,250,0.05));
 }
 
 .pf-workflow-vars-icon {
@@ -2577,15 +2582,40 @@ html, body {
   margin-bottom: var(--pf-space-5); /* 20px */
 }
 
-/* Hide the old purple/pink nested border */
-.pf-variables-card.pf-variables--workflow {
-  border: none;
-  padding: 0;
-  background: transparent;
+/* Read-only variables (profile defaults) */
+.pf-workflow-vars-list--readonly .pf-var {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--pf-space-3); /* 12px */
+  align-items: center;
+  padding: var(--pf-space-3) var(--pf-space-4); /* 12px 16px */
+  background: var(--pf-bg-soft);
+  border-radius: var(--pf-r-2); /* 8px */
+  border-left: 3px solid var(--pf-info);
 }
-.pf-variables-card.pf-variables--workflow .pf-variables-header,
-.pf-variables-card.pf-variables--workflow .pf-variables-counter {
-  display: none;
+
+.pf-var--readonly .pf-var-label {
+  font-weight: 600;
+  font-size: var(--pf-fs-sm); /* 0.875rem */
+  color: var(--pf-text-dim);
+}
+
+.pf-var--readonly .pf-var-value {
+  font-size: var(--pf-fs-base); /* 1rem */
+  color: var(--pf-text);
+  padding: var(--pf-space-2) var(--pf-space-3); /* 8px 12px */
+  background: var(--pf-card);
+  border-radius: var(--pf-r-1); /* 4px */
+  border: 1px solid var(--pf-border);
+}
+
+/* Hide ALL old 3-tier variable styles to prevent conflicts */
+.pf-variables-card,
+.pf-variables--profile,
+.pf-variables--workflow,
+.pf-variables--step {
+  all: unset;
+  display: none !important;
 }
 
 /* Mobile responsive adjustments */
@@ -2609,6 +2639,11 @@ html, body {
   
   .pf-workflow-vars-subtitle {
     font-size: var(--pf-fs-xs); /* 0.75rem */
+  }
+  
+  .pf-workflow-vars-list--readonly .pf-var {
+    grid-template-columns: 1fr;
+    gap: var(--pf-space-2); /* 8px */
   }
 }
 

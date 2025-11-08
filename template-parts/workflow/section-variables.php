@@ -64,35 +64,28 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
 
 <section id="variables" class="pf-section pf-section--variables" data-post-id="<?php echo esc_attr($workflow_id); ?>">
 
-    <?php if ($profile_defaults_enabled): ?>
-        <div class="pf-variables-card pf-variables--profile">
-            <div class="pf-variables-header">
-                <div class="pf-variables-header-text">
-                    <h3 class="pf-variables-title">Your Profile Defaults</h3>
-                    <p class="pf-variables-helper">These values are inherited from your profile settings.</p>
-                    <p class="pf-variables-helper">These are your default values used across all workflows.</p>
-                    <p class="pf-variables-helper">Profile values are shared across all your workflows.</p>
+    <?php if ($profile_defaults_enabled && !empty($profile_values)): ?>
+        <!-- Profile Defaults Card (Read-only) -->
+        <div class="pf-workflow-vars-card pf-workflow-vars-card--profile">
+            <div class="pf-workflow-vars-card-header">
+                <span class="pf-workflow-vars-icon">👤</span>
+                <div>
+                    <h3 class="pf-workflow-vars-title">Your Profile Defaults</h3>
+                    <p class="pf-workflow-vars-subtitle">These values are shared across all your workflows.</p>
                 </div>
                 <div class="pf-variables-counter" data-variables-tier="profile">
                     <span class="pf-counter-number"><?php echo esc_html(count($profile_values)); ?></span>
                     <span class="pf-counter-total">/ <?php echo esc_html(count($profile_values)); ?></span>
                 </div>
             </div>
-
-            <?php if (!empty($profile_values)): ?>
-                <div class="pf-variables-list pf-variables--profile">
-                    <?php foreach ($profile_values as $profile_key => $profile_value): ?>
-                        <div class="pf-var-item pf-var-item--profile" data-var-key="<?php echo esc_attr($profile_key); ?>">
-                            <span class="pf-var-label"><?php echo esc_html(ucwords(str_replace('_', ' ', $profile_key))); ?></span>
-                            <span class="pf-var-value" title="<?php echo esc_attr($profile_value); ?>"><?php echo esc_html($profile_value); ?></span>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <div class="pf-variables-notice">
-                    <p>No profile defaults have been saved yet.</p>
-                </div>
-            <?php endif; ?>
+            <div class="pf-workflow-vars-list pf-workflow-vars-list--readonly">
+                <?php foreach ($profile_values as $profile_key => $profile_value): ?>
+                    <div class="pf-var pf-var--readonly" data-var-key="<?php echo esc_attr($profile_key); ?>">
+                        <label class="pf-var-label"><?php echo esc_html(ucwords(str_replace('_', ' ', $profile_key))); ?></label>
+                        <div class="pf-var-value"><?php echo esc_html($profile_value); ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
     <?php endif; ?>
 

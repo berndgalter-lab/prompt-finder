@@ -1100,11 +1100,12 @@ function enqueue_new_workflow_assets() {
     }
     
     // Component CSS files (in correct order)
+    // NOTE: workflow-variables.css is deprecated - all styles now in pf-workflows.css
     $css_components = array(
         'workflow-header' => array('pf-workflows-main'),
         'workflow-sidebar' => array('pf-workflows-main'),
         'workflow-sections' => array('pf-workflows-main'),
-        'workflow-variables' => array('pf-workflows-main'),
+        // 'workflow-variables' => array('pf-workflows-main'), // DEPRECATED: Moved to pf-workflows.css
         'workflow-steps' => array('pf-workflows-main')
     );
     
