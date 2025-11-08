@@ -685,3 +685,155 @@ a.pf-btn.pf-btn--ghost:visited {
     min-height: 40px;
   }
 }
+
+/* ========================================
+   PF v2 — UNIFIED DESIGN TOKENS & BASE COMPONENTS
+   ======================================== */
+
+:root {
+  /* spacing scale (8pt system) */
+  --pf-space-0: 0;
+  --pf-space-1: .25rem;
+  --pf-space-2: .5rem;
+  --pf-space-3: .75rem;
+  --pf-space-4: 1rem;
+  --pf-space-5: 1.25rem;
+  --pf-space-6: 1.5rem;
+  --pf-space-8: 2rem;
+
+  /* radii & shadow */
+  --pf-radius-sm: .375rem;
+  --pf-radius-md: .75rem;
+  --pf-radius-lg: 1rem;
+  --pf-shadow-1: 0 1px 2px rgba(0,0,0,.06), 0 1px 1px rgba(0,0,0,.04);
+
+  /* colors (neutral defaults; existing variables take precedence) */
+  --pf-surface: var(--pf-card, #fff);
+  --pf-danger: var(--pf-error, #ef4444);
+  --pf-success: var(--pf-success, #16a34a);
+  --pf-badge-bg: var(--pf-chip-bg, #f1f5f9);
+
+  /* typography */
+  --pf-font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --pf-fs-xs: .75rem;
+  --pf-fs-sm: .875rem;
+  --pf-fs-base: 1rem;
+  --pf-fs-lg: 1.125rem;
+  --pf-fw-regular: 400;
+  --pf-fw-medium: 500;
+  --pf-fw-semibold: 600;
+}
+
+/* card primitive */
+.pf-card {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-lg);
+  box-shadow: var(--pf-shadow-1);
+  padding: var(--pf-space-6);
+}
+
+/* form primitives */
+.pf-form {
+  display: grid;
+  gap: var(--pf-space-5);
+}
+
+.pf-form-control {
+  display: grid;
+  gap: .375rem;
+}
+
+.pf-row {
+  /* wrapper for label/badge and control */
+  display: grid;
+  gap: var(--pf-space-3);
+}
+
+@media (min-width: 768px) {
+  .pf-row {
+    grid-template-columns: minmax(220px, 28%) 1fr;
+    align-items: start;
+  }
+}
+
+.pf-label {
+  font-family: var(--pf-font);
+  font-size: var(--pf-fs-sm);
+  font-weight: var(--pf-fw-medium);
+  color: var(--pf-text);
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.pf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  background: var(--pf-badge-bg);
+  border: 1px solid var(--pf-border);
+  color: var(--pf-text-muted);
+  padding: .15rem .5rem;
+  border-radius: 999px;
+  font-size: var(--pf-fs-xs);
+}
+
+.pf-input,
+.pf-select,
+.pf-textarea {
+  width: 100%;
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-sm);
+  padding: .6rem .7rem;
+  font-size: var(--pf-fs-base);
+  color: var(--pf-text);
+  background: var(--pf-bg);
+  outline: none;
+}
+
+.pf-input:focus,
+.pf-select:focus,
+.pf-textarea:focus {
+  border-color: var(--pf-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pf-accent) 20%, transparent);
+}
+
+.pf-hint {
+  font-size: var(--pf-fs-xs);
+  color: var(--pf-text-muted);
+  line-height: 1.4;
+}
+
+.pf-error {
+  font-size: var(--pf-fs-xs);
+  color: var(--pf-danger);
+  margin-top: .25rem;
+  display: none;
+}
+
+.is-invalid .pf-input,
+.is-invalid .pf-select,
+.is-invalid .pf-textarea {
+  border-color: var(--pf-danger);
+}
+
+.is-invalid .pf-error {
+  display: block;
+}
+
+.is-valid .pf-error {
+  display: none;
+}
+
+.pf-section-title {
+  font-size: var(--pf-fs-lg);
+  font-weight: var(--pf-fw-semibold);
+  margin: 0 0 var(--pf-space-4);
+}
+
+.pf-divider {
+  height: 1px;
+  background: var(--pf-border);
+  margin: var(--pf-space-6) 0;
+}

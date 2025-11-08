@@ -17,61 +17,35 @@
 
   function setInvalidState(itemEl, isInvalid) {
     if (!itemEl) return;
-    itemEl.classList.toggle('pf-var--invalid', !!isInvalid);
-    const input = itemEl.querySelector('.pf-var-input');
-    const error = itemEl.querySelector('.pf-var-error');
+    const input = itemEl.querySelector('.pf-input, .pf-select, .pf-textarea, .pf-var-input');
+    const error = itemEl.querySelector('.pf-error, .pf-var-error');
     if (!input) return;
 
-    if (input.classList.contains('required')) {
-      if (isInvalid) {
-        input.classList.add('invalid');
-        input.classList.remove('valid');
-        input.setAttribute('aria-invalid', 'true');
-        if (error) {
-          error.style.display = 'block';
-          error.textContent = 'This field is required';
-        }
-      } else {
-        input.classList.remove('invalid');
-        if (input.value && input.value.trim() !== '') {
-          input.classList.add('valid');
-        } else {
-          input.classList.remove('valid');
-        }
-        input.setAttribute('aria-invalid', 'false');
-        if (error) {
-          error.style.display = 'none';
-          error.textContent = '';
-        }
-      }
+    const isRequired = input.required || input.classList.contains('required');
+
+    if (isRequired) {
+      itemEl.classList.toggle('is-invalid', !!isInvalid);
+      itemEl.classList.toggle('is-valid', !isInvalid);
+      input.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
     } else {
-      input.classList.remove('invalid');
-      input.classList.remove('valid');
-      if (isInvalid) {
-        input.setAttribute('aria-invalid', 'true');
-      } else {
-        input.removeAttribute('aria-invalid');
-      }
-      if (error) {
-        error.style.display = 'none';
-        error.textContent = '';
-      }
+      itemEl.classList.remove('is-invalid', 'is-valid');
+      input.removeAttribute('aria-invalid');
     }
   }
 
   function updateVarCounter(scope = document) {
-    const card = scope.querySelector('.pf-variables-card');
+    const card = scope.querySelector('.pf-variables-card, .pf-variables, .pf-card');
     if (!card) return;
     const counter = card.querySelector('.pf-variables-counter');
-    const host = card.querySelector('[data-vars-host]') || scope.querySelector('.pf-wf-form');
+    const host = card.querySelector('[data-vars-host]') || card.querySelector('.pf-form') || scope.querySelector('.pf-wf-form');
     if (!counter || !host) return;
 
-    const items = host.querySelectorAll('.pf-var-item');
+    const items = host.querySelectorAll('.pf-row, .pf-var-item');
     const total = items.length;
 
     let filled = 0;
     items.forEach(item => {
-      const input = item.querySelector('.pf-var-input');
+      const input = item.querySelector('.pf-input, .pf-select, .pf-textarea, .pf-var-input');
       const required = input?.required;
       const val = (input?.value || '').trim();
       const invalid = required && !val;
@@ -96,35 +70,33 @@
     const hint = item.workflow_var_hint || '';
     const defaultVal = item.workflow_var_default_value || '';
 
-    const wrap = document.createElement('div');
-    wrap.className = 'pf-var pf-var-item';
-    wrap.dataset.varKey = key;
-    wrap.dataset.varRequired = required ? 'true' : 'false';
+    // Main row wrapper (unified pattern)
+    const row = document.createElement('div');
+    row.className = 'pf-row pf-form-control';
+    row.dataset.key = key;
 
+    // LEFT COLUMN: Label + Badge
+    const leftCol = document.createElement('div');
+    
     const lab = document.createElement('label');
-    lab.className = 'pf-var-label';
+    lab.className = 'pf-label';
     lab.setAttribute('for', `pf-var-input-${key}`);
-    lab.textContent = label + ' ';
+    lab.textContent = label;
     
-    // Add required indicator
-    if (required) {
-      const reqIndicator = document.createElement('span');
-      reqIndicator.className = 'pf-req pf-var-required';
-      reqIndicator.setAttribute('aria-label', 'Required');
-      reqIndicator.textContent = '*';
-      lab.appendChild(reqIndicator);
-      lab.appendChild(document.createTextNode(' '));
-    }
-    
-    // Add badge
     const badge = document.createElement('span');
-    badge.className = `pf-var-badge ${required ? 'required' : 'optional'}`;
+    badge.className = `pf-badge pf-badge--${required ? 'required' : 'optional'}`;
     badge.textContent = required ? 'Required' : 'Optional';
-    lab.appendChild(badge);
+    
+    leftCol.appendChild(lab);
+    leftCol.appendChild(badge);
+
+    // RIGHT COLUMN: Input + Hint + Error
+    const rightCol = document.createElement('div');
 
     let input;
     if (type === 'select' && item.workflow_var_options_json) {
       input = document.createElement('select');
+      input.className = 'pf-select';
       try {
         const opts = JSON.parse(item.workflow_var_options_json);
         if (Array.isArray(opts)) {
@@ -147,55 +119,80 @@
       } catch(e) {
         input = document.createElement('input');
         input.type = 'text';
+        input.className = 'pf-input';
       }
     } else if (type === 'textarea') {
       input = document.createElement('textarea');
+      input.className = 'pf-textarea';
       input.rows = 4;
     } else {
       input = document.createElement('input');
+      input.className = 'pf-input';
       input.type = type === 'number' ? 'number' : (type === 'email' ? 'email' : (type === 'url' ? 'url' : 'text'));
     }
 
     input.id = `pf-var-input-${key}`;
-    input.className = 'pf-var-input';
     input.dataset.varKey = key;
     if (placeholder) input.placeholder = placeholder;
     if (required) {
       input.required = true;
       input.setAttribute('aria-required', 'true');
-      input.classList.add('required');
     }
     input.value = defaultVal;
 
-    let hintEl = null;
+    const hintId = `hint-${key}`;
+    const errorId = `error-${key}`;
+
     if (hint) {
-      const hintId = `pf-var-input-${key}-hint`;
-      hintEl = document.createElement('div');
+      const hintEl = document.createElement('div');
       hintEl.id = hintId;
-      hintEl.className = 'pf-var-hint pf-var-help';
+      hintEl.className = 'pf-hint';
       hintEl.textContent = hint;
-      input.setAttribute('aria-describedby', hintId);
+      input.setAttribute('aria-describedby', `${hintId} ${errorId}`);
+      rightCol.appendChild(input);
+      rightCol.appendChild(hintEl);
+    } else {
+      input.setAttribute('aria-describedby', errorId);
+      rightCol.appendChild(input);
     }
 
-    wrap.appendChild(lab);
-    wrap.appendChild(input);
-    if (hintEl) wrap.appendChild(hintEl);
-
     const errorEl = document.createElement('div');
-    errorEl.className = 'pf-var-error';
-    errorEl.style.display = 'none';
-    errorEl.textContent = 'This field is required';
-    wrap.appendChild(errorEl);
+    errorEl.id = errorId;
+    errorEl.className = 'pf-error';
+    errorEl.textContent = 'Bitte Feld prüfen.';
+    rightCol.appendChild(errorEl);
 
-    input.addEventListener('input', () => updateVarCounter(document));
-    input.addEventListener('blur', () => updateVarCounter(document));
+    // Assemble row
+    row.appendChild(leftCol);
+    row.appendChild(rightCol);
 
-    return wrap;
+    // Validation handlers
+    const validateInput = () => {
+      if (!required) {
+        row.classList.remove('is-invalid', 'is-valid');
+        input.removeAttribute('aria-invalid');
+        return;
+      }
+      const val = (input.value || '').trim();
+      const isInvalid = !val;
+      row.classList.toggle('is-invalid', isInvalid);
+      row.classList.toggle('is-valid', !isInvalid);
+      input.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
+      updateVarCounter(document);
+    };
+
+    input.addEventListener('input', validateInput);
+    input.addEventListener('blur', validateInput);
+
+    // Initial validation
+    setTimeout(validateInput, 0);
+
+    return row;
   }
 
   function renderWorkflowVars(host, schema) {
     if (!host) return;
-    if (host.querySelector('.pf-var-item')) return;
+    if (host.querySelector('.pf-row, .pf-var-item')) return;
 
     const frag = document.createDocumentFragment();
     (schema || []).forEach(item => {

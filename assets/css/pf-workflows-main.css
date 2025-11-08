@@ -139,32 +139,19 @@ body.single-workflows {
 /* ===== Compact spacing for workflow pages ===== */
 /* Additional compact overrides if needed - tokens defined in pf-core.css */
 
-/* PF v1.7 — Design Tokens + Scope (ergänzend) */
-.pf-workflow-container {
-  --pf-bg: #f7f8f9;
-  --pf-surface: #ffffff;
-  --pf-surface-soft: #f3f5f7;
-  --pf-text: #1f2937;
-  --pf-text-dim: #6b7280;
-  --pf-border: #e5e7eb;
-  --pf-accent: #2563eb;
-  --pf-accent-soft: rgba(37, 99, 235, 0.12);
-  --pf-shadow: 0 8px 24px rgba(0,0,0,.06);
-}
+/* ========================================
+   PF v2 — CLEANUP: Remove visual noise
+   ======================================== */
 
-/* Entferne Debug-Rahmen (nur Debug-Klassen) */
+/* Remove debug/decorative frames */
 .pf-debug,
 .pf-outline--purple,
-.pf-outline--pink {
+.pf-outline--pink,
+.pf-locked-premium,
+.fancy-border,
+.pf-box-outline {
   border: none !important;
   box-shadow: none !important;
   background: transparent !important;
-}
-
-/* PF v1.7 — PROOF-OF-LIFE (temporary dev rule, will be removed in Phase 2) */
-body.pf-body,
-body.single-workflows {
-  outline: 2px solid lime !important;
-  outline-offset: -2px !important;
 }
 

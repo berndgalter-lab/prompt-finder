@@ -15,35 +15,34 @@ function renderStepVarItem(item, stepId) {
   const hint = item.step_var_hint || '';
   const defaultVal = item.step_var_default || '';
 
-  const wrap = document.createElement('div');
-  wrap.className = 'pf-var pf-var-item';
-  wrap.dataset.varKey = key;
-  wrap.dataset.varRequired = required ? 'true' : 'false';
+  // Main row wrapper (unified pattern)
+  const row = document.createElement('div');
+  row.className = 'pf-row pf-form-control';
+  row.dataset.key = key;
+  row.dataset.stepId = stepId;
 
+  // LEFT COLUMN: Label + Badge
+  const leftCol = document.createElement('div');
+  
   const lab = document.createElement('label');
-  lab.className = 'pf-var-label';
+  lab.className = 'pf-label';
   lab.setAttribute('for', `pf-step-${stepId}-var-input-${key}`);
-  lab.textContent = label + ' ';
+  lab.textContent = label;
   
-  // Add required indicator
-  if (required) {
-    const reqIndicator = document.createElement('span');
-    reqIndicator.className = 'pf-req pf-var-required';
-    reqIndicator.setAttribute('aria-label', 'Required');
-    reqIndicator.textContent = '*';
-    lab.appendChild(reqIndicator);
-    lab.appendChild(document.createTextNode(' '));
-  }
+  const badge = document.createElement('span');
+  badge.className = `pf-badge pf-badge--${required ? 'required' : 'optional'}`;
+  badge.textContent = required ? 'Required' : 'Optional';
   
-  // Add badge
-  const reqBadge = document.createElement('span');
-  reqBadge.className = `pf-var-badge ${required ? 'required' : 'optional'}`;
-  reqBadge.textContent = required ? 'Required' : 'Optional';
-  lab.appendChild(reqBadge);
+  leftCol.appendChild(lab);
+  leftCol.appendChild(badge);
+
+  // RIGHT COLUMN: Input + Hint + Error
+  const rightCol = document.createElement('div');
 
   let input;
   if (type === 'select' && item.step_var_options_json) {
     input = document.createElement('select');
+    input.className = 'pf-select';
     try {
       const opts = JSON.parse(item.step_var_options_json);
       const empty = document.createElement('option');
@@ -59,80 +58,74 @@ function renderStepVarItem(item, stepId) {
     } catch(e) {
       input = document.createElement('input');
       input.type = 'text';
+      input.className = 'pf-input';
     }
   } else if (type === 'textarea') {
     input = document.createElement('textarea');
+    input.className = 'pf-textarea';
     input.rows = 4;
   } else {
     input = document.createElement('input');
+    input.className = 'pf-input';
     input.type = type === 'number' ? 'number' : (type === 'email' ? 'email' : (type === 'url' ? 'url' : 'text'));
   }
 
   input.id = `pf-step-${stepId}-var-input-${key}`;
-  input.className = 'pf-var-input';
   input.dataset.varKey = key;
   if (placeholder) input.placeholder = placeholder;
   if (required) {
     input.required = true;
     input.setAttribute('aria-required', 'true');
-    input.classList.add('required');
   }
   input.value = defaultVal;
 
-  let hintEl = null;
-  if (hint) {
-    const hintId = `pf-step-${stepId}-var-input-${key}-hint`;
-    hintEl = document.createElement('div');
-    hintEl.id = hintId;
-    hintEl.className = 'pf-var-hint pf-var-help';
-    hintEl.textContent = hint;
-    input.setAttribute('aria-describedby', hintId);
-  }
+  const hintId = `hint-step-${stepId}-${key}`;
+  const errorId = `error-step-${stepId}-${key}`;
 
-  wrap.appendChild(lab);
-  wrap.appendChild(input);
-  if (hintEl) wrap.appendChild(hintEl);
+  if (hint) {
+    const hintEl = document.createElement('div');
+    hintEl.id = hintId;
+    hintEl.className = 'pf-hint';
+    hintEl.textContent = hint;
+    input.setAttribute('aria-describedby', `${hintId} ${errorId}`);
+    rightCol.appendChild(input);
+    rightCol.appendChild(hintEl);
+  } else {
+    input.setAttribute('aria-describedby', errorId);
+    rightCol.appendChild(input);
+  }
 
   const errorEl = document.createElement('div');
-  errorEl.className = 'pf-var-error';
-  errorEl.style.display = 'none';
-  errorEl.textContent = 'This field is required';
-  wrap.appendChild(errorEl);
+  errorEl.id = errorId;
+  errorEl.className = 'pf-error';
+  errorEl.textContent = 'Bitte Feld prüfen.';
+  rightCol.appendChild(errorEl);
 
-  input.addEventListener('input', () => {
+  // Assemble row
+  row.appendChild(leftCol);
+  row.appendChild(rightCol);
+
+  // Validation handlers
+  const validateInput = () => {
     if (!required) {
-      input.classList.remove('invalid');
-      input.classList.remove('valid');
-      errorEl.style.display = 'none';
-      errorEl.textContent = '';
+      row.classList.remove('is-invalid', 'is-valid');
+      input.removeAttribute('aria-invalid');
       return;
     }
-    if (!input.value.trim()) {
-      wrap.classList.add('pf-var--invalid');
-      input.classList.add('invalid');
-      input.classList.remove('valid');
-      input.setAttribute('aria-invalid', 'true');
-      errorEl.style.display = 'block';
-      errorEl.textContent = 'This field is required';
-    } else {
-      wrap.classList.remove('pf-var--invalid');
-      input.classList.remove('invalid');
-      input.classList.add('valid');
-      input.setAttribute('aria-invalid', 'false');
-      errorEl.style.display = 'none';
-      errorEl.textContent = '';
-    }
-  });
+    const val = (input.value || '').trim();
+    const isInvalid = !val;
+    row.classList.toggle('is-invalid', isInvalid);
+    row.classList.toggle('is-valid', !isInvalid);
+    input.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
+  };
 
-  if (required && !input.value.trim()) {
-    wrap.classList.add('pf-var--invalid');
-    input.classList.add('invalid');
-    input.setAttribute('aria-invalid', 'true');
-    errorEl.style.display = 'block';
-    errorEl.textContent = 'This field is required';
-  }
+  input.addEventListener('input', validateInput);
+  input.addEventListener('blur', validateInput);
 
-  return wrap;
+  // Initial validation
+  setTimeout(validateInput, 0);
+
+  return row;
 }
 /**
  * Workflow Module: Steps
