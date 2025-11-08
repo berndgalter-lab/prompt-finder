@@ -70,13 +70,14 @@
     const hint = item.workflow_var_hint || '';
     const defaultVal = item.workflow_var_default_value || '';
 
-    // Main row wrapper (unified pattern)
+    // Main row wrapper (PF-UI Contract v1)
     const row = document.createElement('div');
-    row.className = 'pf-row pf-form-control';
+    row.className = 'pf-row';
     row.dataset.key = key;
 
-    // LEFT COLUMN: Label + Badge
-    const leftCol = document.createElement('div');
+    // Label line: Label + Badge
+    const labelLine = document.createElement('div');
+    labelLine.className = 'pf-label-line';
     
     const lab = document.createElement('label');
     lab.className = 'pf-label';
@@ -84,19 +85,19 @@
     lab.textContent = label;
     
     const badge = document.createElement('span');
-    badge.className = `pf-badge pf-badge--${required ? 'required' : 'optional'}`;
+    badge.className = `pf-badge ${required ? 'is-required' : 'is-optional'}`;
     badge.textContent = required ? 'Required' : 'Optional';
     
-    leftCol.appendChild(lab);
-    leftCol.appendChild(badge);
+    labelLine.appendChild(lab);
+    labelLine.appendChild(badge);
 
-    // RIGHT COLUMN: Input + Hint + Error
-    const rightCol = document.createElement('div');
+    // Field wrapper
+    const fieldWrap = document.createElement('div');
+    fieldWrap.className = 'pf-field';
 
     let input;
     if (type === 'select' && item.workflow_var_options_json) {
       input = document.createElement('select');
-      input.className = 'pf-select';
       try {
         const opts = JSON.parse(item.workflow_var_options_json);
         if (Array.isArray(opts)) {
@@ -119,15 +120,12 @@
       } catch(e) {
         input = document.createElement('input');
         input.type = 'text';
-        input.className = 'pf-input';
       }
     } else if (type === 'textarea') {
       input = document.createElement('textarea');
-      input.className = 'pf-textarea';
       input.rows = 4;
     } else {
       input = document.createElement('input');
-      input.className = 'pf-input';
       input.type = type === 'number' ? 'number' : (type === 'email' ? 'email' : (type === 'url' ? 'url' : 'text'));
     }
 
@@ -140,44 +138,42 @@
     }
     input.value = defaultVal;
 
-    const hintId = `hint-${key}`;
     const errorId = `error-${key}`;
+    input.setAttribute('aria-describedby', errorId);
 
-    if (hint) {
-      const hintEl = document.createElement('div');
-      hintEl.id = hintId;
-      hintEl.className = 'pf-hint';
-      hintEl.textContent = hint;
-      input.setAttribute('aria-describedby', `${hintId} ${errorId}`);
-      rightCol.appendChild(input);
-      rightCol.appendChild(hintEl);
-    } else {
-      input.setAttribute('aria-describedby', errorId);
-      rightCol.appendChild(input);
-    }
+    fieldWrap.appendChild(input);
 
+    // Hint
+    const hintEl = document.createElement('div');
+    hintEl.className = 'pf-hint';
+    hintEl.textContent = hint || '';
+
+    // Error
     const errorEl = document.createElement('div');
     errorEl.id = errorId;
     errorEl.className = 'pf-error';
-    errorEl.textContent = 'Bitte Feld prüfen.';
-    rightCol.appendChild(errorEl);
+    errorEl.setAttribute('aria-live', 'polite');
+    errorEl.textContent = '';
 
     // Assemble row
-    row.appendChild(leftCol);
-    row.appendChild(rightCol);
+    row.appendChild(labelLine);
+    row.appendChild(fieldWrap);
+    row.appendChild(hintEl);
+    row.appendChild(errorEl);
 
     // Validation handlers
     const validateInput = () => {
       if (!required) {
-        row.classList.remove('is-invalid', 'is-valid');
+        fieldWrap.classList.remove('is-invalid');
         input.removeAttribute('aria-invalid');
+        errorEl.textContent = '';
         return;
       }
       const val = (input.value || '').trim();
       const isInvalid = !val;
-      row.classList.toggle('is-invalid', isInvalid);
-      row.classList.toggle('is-valid', !isInvalid);
+      fieldWrap.classList.toggle('is-invalid', isInvalid);
       input.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
+      errorEl.textContent = isInvalid ? 'This field is required.' : '';
       updateVarCounter(document);
     };
 
@@ -193,6 +189,12 @@
   function renderWorkflowVars(host, schema) {
     if (!host) return;
     if (host.querySelector('.pf-row, .pf-var-item')) return;
+
+    // Apply PF-UI Contract classes to root
+    const root = host.closest('[data-wf-form]');
+    if (root && !root.classList.contains('pf-card')) {
+      root.classList.add('pf-card', 'pf-stack', 'pf-grid-2', 'pf-vars--workflow');
+    }
 
     const frag = document.createDocumentFragment();
     (schema || []).forEach(item => {

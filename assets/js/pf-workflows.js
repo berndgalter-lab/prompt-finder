@@ -902,6 +902,12 @@ function bindVariableStatusListeners(workflowMap){
  */
 function renderWorkflowForm(containerEl, workflowMap, ctx, rerenderAllSteps){
   if (!containerEl) return;
+  
+  // Apply PF-UI Contract classes to root
+  if (!containerEl.classList.contains('pf-card')) {
+    containerEl.classList.add('pf-card', 'pf-stack', 'pf-grid-2', 'pf-vars--workflow');
+  }
+  
   containerEl.innerHTML = '';
   const handleChange = ()=>{
     if (typeof rerenderAllSteps === 'function') rerenderAllSteps();
@@ -922,6 +928,12 @@ function renderWorkflowForm(containerEl, workflowMap, ctx, rerenderAllSteps){
 function renderStepForm(sectionEl, stepMap, ctx){
   const target = sectionEl.querySelector('[data-step-vars-ui]');
   if (!target) return;
+  
+  // Apply PF-UI Contract classes to root
+  if (!target.classList.contains('pf-card')) {
+    target.classList.add('pf-card', 'pf-stack', 'pf-grid-2', 'pf-vars--steps');
+  }
+  
   target.innerHTML = '';
   const handleChange = ()=>{
     renderStep(sectionEl, ctx);
