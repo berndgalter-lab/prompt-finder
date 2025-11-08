@@ -311,6 +311,16 @@ function coerceBool(v){
     const labelText = def.label || key;
     label.textContent = labelText;
 
+    // Add required indicator using .pf-req class
+    if (def.required) {
+      const reqIndicator = document.createElement('span');
+      reqIndicator.className = 'pf-req';
+      reqIndicator.setAttribute('aria-label', 'Required');
+      reqIndicator.textContent = '*';
+      label.appendChild(reqIndicator);
+    }
+    
+    // Optional: Add badge for visual clarity
     const requirementBadge = document.createElement('span');
     requirementBadge.className = `pf-var-badge ${def.required ? 'required' : 'optional'}`;
     requirementBadge.textContent = def.required ? 'Required' : 'Optional';
@@ -440,10 +450,15 @@ function coerceBool(v){
 
     const hintText = (def.description && def.description.trim()) || (def.hint && def.hint.trim()) || '';
     if (hintText) {
+      const hintId = `${id}-hint`;
       const hint = document.createElement('div');
-      hint.className = 'pf-var-hint pf-field-hint';
+      hint.id = hintId;
+      hint.className = 'pf-var-hint pf-var-help pf-field-hint';
       hint.textContent = hintText;
       wrap.appendChild(hint);
+      
+      // Link input to hint for accessibility
+      ctrl.setAttribute('aria-describedby', hintId);
     }
 
     const errorEl = document.createElement('div');
@@ -480,6 +495,19 @@ function coerceBool(v){
     function applyState(state, message){
       wrap.dataset.state = state;
       validation.dataset.state = state;
+      
+      // Toggle .is-empty class for required fields
+      const isEmpty = !getValidationValue();
+      if (required && isEmpty) {
+        ctrl.classList.add('is-empty');
+        wrap.classList.add('is-required');
+      } else {
+        ctrl.classList.remove('is-empty');
+        if (!required) {
+          wrap.classList.remove('is-required');
+        }
+      }
+      
       if (state === 'valid') {
         validation.style.opacity = '1';
         validation.textContent = '✓';

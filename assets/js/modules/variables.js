@@ -105,6 +105,16 @@
     lab.className = 'pf-var-label';
     lab.setAttribute('for', `pf-var-input-${key}`);
     lab.textContent = label;
+    
+    // Add .pf-req indicator for required fields
+    if (required) {
+      const reqIndicator = document.createElement('span');
+      reqIndicator.className = 'pf-req';
+      reqIndicator.setAttribute('aria-label', 'Required');
+      reqIndicator.textContent = '*';
+      lab.appendChild(reqIndicator);
+    }
+    
     const badge = document.createElement('span');
     badge.className = `pf-var-badge ${required ? 'required' : 'optional'}`;
     badge.textContent = required ? 'Required' : 'Optional';
@@ -160,9 +170,13 @@
 
     let hintEl = null;
     if (hint) {
+      const hintId = `pf-var-input-${key}-hint`;
       hintEl = document.createElement('div');
-      hintEl.className = 'pf-var-hint';
+      hintEl.id = hintId;
+      hintEl.className = 'pf-var-hint pf-var-help';
       hintEl.textContent = hint;
+      // Link input to hint for accessibility
+      input.setAttribute('aria-describedby', hintId);
     }
 
     wrap.appendChild(lab);

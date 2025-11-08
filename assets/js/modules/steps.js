@@ -24,6 +24,16 @@ function renderStepVarItem(item, stepId) {
   lab.className = 'pf-var-label';
   lab.setAttribute('for', `pf-step-${stepId}-var-input-${key}`);
   lab.textContent = label;
+  
+  // Add .pf-req indicator for required fields
+  if (required) {
+    const reqIndicator = document.createElement('span');
+    reqIndicator.className = 'pf-req';
+    reqIndicator.setAttribute('aria-label', 'Required');
+    reqIndicator.textContent = '*';
+    lab.appendChild(reqIndicator);
+  }
+  
   const reqBadge = document.createElement('span');
   reqBadge.className = `pf-var-badge ${required ? 'required' : 'optional'}`;
   reqBadge.textContent = required ? 'Required' : 'Optional';
@@ -72,9 +82,13 @@ function renderStepVarItem(item, stepId) {
 
   let hintEl = null;
   if (hint) {
+    const hintId = `pf-step-${stepId}-var-input-${key}-hint`;
     hintEl = document.createElement('div');
-    hintEl.className = 'pf-var-hint';
+    hintEl.id = hintId;
+    hintEl.className = 'pf-var-hint pf-var-help';
     hintEl.textContent = hint;
+    // Link input to hint for accessibility
+    input.setAttribute('aria-describedby', hintId);
   }
 
   wrap.appendChild(lab);
