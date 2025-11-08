@@ -865,3 +865,78 @@
     height: 40px;
     font-size: var(--pf-font-md);
 }
+
+/* PF v1.7 — Variables Card */
+.pf-section--variables .pf-variables-card {
+  padding: 16px;
+}
+.pf-variables-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.pf-variables-title { margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--pf-text); }
+.pf-variables-helper { margin: 2px 0 0; color: var(--pf-text-dim); font-size: .9rem; }
+
+.pf-variables-progress { display: flex; align-items: center; gap: 10px; }
+.pf-variables-progress .pf-progress-bar {
+  flex: 1; height: 6px; background: var(--pf-surface-soft); border-radius: 999px; overflow: hidden;
+}
+.pf-variables-progress .pf-progress-fill {
+  height: 100%; background: var(--pf-accent); width: 0;
+}
+
+/* Grid der Inputs */
+.pf-vars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+/* Einzeilige Variable */
+.pf-var {
+  display: block;
+  padding: 10px 12px;
+  border: 1px solid var(--pf-border);
+  border-radius: 10px;
+  background: var(--pf-surface);
+}
+.pf-var-label {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 600; color: var(--pf-text);
+  margin-bottom: 6px;
+}
+
+/* Badges */
+.pf-var-badges { margin-left: auto; display: inline-flex; gap: 6px; }
+.pf-badge {
+  font-size: .7rem; line-height: 1;
+  padding: 4px 6px; border-radius: 999px; border: 1px solid var(--pf-border);
+  color: var(--pf-text-dim); background: var(--pf-surface-soft);
+}
+.pf-badge--required { color: #dc2626; border-color: #fecaca; background: #fff1f2; }
+
+/* Input */
+.pf-var-input { width: 100%; }
+.pf-var-input input,
+.pf-var-input textarea,
+.pf-var-input select {
+  width: 100%; padding: 9px 10px; border-radius: 8px;
+  border: 1px solid var(--pf-border);
+  background: #fff; color: var(--pf-text);
+  font: inherit;
+}
+.pf-var-input input:focus,
+.pf-var-input textarea:focus,
+.pf-var-input select:focus {
+  outline: none; border-color: var(--pf-accent);
+  box-shadow: 0 0 0 3px var(--pf-accent-soft);
+}
+
+/* Hint */
+.pf-var-hint { margin-top: 6px; font-size: .85rem; color: var(--pf-text-dim); }
+
+/* Validierung */
+.pf-var.is-required .pf-var-input .is-empty {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 3px rgba(248,113,113,.18);
+}

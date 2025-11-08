@@ -1005,6 +1005,21 @@
     }
 }
 
+/* PF v1.7 — Steps clean */
+.pf-section--steps .pf-steps-list {
+  margin-top: 12px;
+}
+.pf-step {
+  border: 1px solid var(--pf-border);
+  border-radius: 12px;
+  background: var(--pf-surface);
+  padding: 10px 12px;
+}
+.pf-step + .pf-step { margin-top: 10px; }
+.pf-step-header { margin-bottom: 6px; }
+.pf-step-title { margin: 0; font-weight: 600; color: var(--pf-text); }
+.pf-step-objective-preview { margin: 0; color: var(--pf-text-dim); font-size: .9rem; }
+
 /* ========================================
    LOCKED STEPS
    ======================================== */

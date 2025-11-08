@@ -97,29 +97,29 @@
     const defaultVal = item.workflow_var_default_value || '';
 
     const wrap = document.createElement('div');
-    wrap.className = 'pf-var pf-var-item';
+    wrap.className = `pf-var ${required ? 'is-required' : ''}`;
     wrap.dataset.varKey = key;
-    wrap.dataset.varRequired = required ? 'true' : 'false';
 
-    const lab = document.createElement('label');
-    lab.className = 'pf-var-label';
-    lab.setAttribute('for', `pf-var-input-${key}`);
-    lab.textContent = label;
+    // Label Container
+    const labelContainer = document.createElement('div');
+    labelContainer.className = 'pf-var-label';
     
-    // Add .pf-req indicator for required fields
-    if (required) {
-      const reqIndicator = document.createElement('span');
-      reqIndicator.className = 'pf-req';
-      reqIndicator.setAttribute('aria-label', 'Required');
-      reqIndicator.textContent = '*';
-      lab.appendChild(reqIndicator);
-    }
-    
+    const labelText = document.createElement('span');
+    labelText.textContent = label;
+    labelContainer.appendChild(labelText);
+
+    // Badges
+    const badgesContainer = document.createElement('span');
+    badgesContainer.className = 'pf-var-badges';
     const badge = document.createElement('span');
-    badge.className = `pf-var-badge ${required ? 'required' : 'optional'}`;
+    badge.className = `pf-badge ${required ? 'pf-badge--required' : 'pf-badge--optional'}`;
     badge.textContent = required ? 'Required' : 'Optional';
-    lab.appendChild(document.createTextNode(' '));
-    lab.appendChild(badge);
+    badgesContainer.appendChild(badge);
+    labelContainer.appendChild(badgesContainer);
+
+    // Input Container
+    const inputContainer = document.createElement('div');
+    inputContainer.className = 'pf-var-input';
 
     let input;
     if (type === 'select' && item.workflow_var_options_json) {
@@ -147,49 +147,49 @@
         input = document.createElement('input');
         input.type = 'text';
       }
-    }
-    if (!input) {
+    } else if (type === 'textarea') {
+      input = document.createElement('textarea');
+      input.rows = 4;
+    } else {
       input = document.createElement('input');
-      input.type = type === 'number' ? 'number' : 'text';
+      input.type = type === 'number' ? 'number' : (type === 'email' ? 'email' : (type === 'url' ? 'url' : 'text'));
     }
 
     input.id = `pf-var-input-${key}`;
-    input.className = 'pf-var-input';
     input.dataset.varKey = key;
     if (placeholder) input.placeholder = placeholder;
         if (required) {
           input.required = true;
           input.setAttribute('aria-required', 'true');
-      input.classList.add('required');
-    } else {
-      input.removeAttribute('required');
-      input.removeAttribute('aria-required');
-      input.classList.remove('required');
+      input.classList.add('is-empty');
     }
     input.value = defaultVal;
+    if (defaultVal) input.classList.remove('is-empty');
 
+    inputContainer.appendChild(input);
+
+    // Hint
     let hintEl = null;
     if (hint) {
       const hintId = `pf-var-input-${key}-hint`;
-      hintEl = document.createElement('div');
+      hintEl = document.createElement('small');
       hintEl.id = hintId;
-      hintEl.className = 'pf-var-hint pf-var-help';
+      hintEl.className = 'pf-var-hint';
       hintEl.textContent = hint;
-      // Link input to hint for accessibility
       input.setAttribute('aria-describedby', hintId);
     }
 
-    wrap.appendChild(lab);
-    wrap.appendChild(input);
+    wrap.appendChild(labelContainer);
+    wrap.appendChild(inputContainer);
     if (hintEl) wrap.appendChild(hintEl);
 
-    const errorEl = document.createElement('div');
-    errorEl.className = 'pf-var-error';
-    errorEl.style.display = 'none';
-    errorEl.textContent = 'This field is required';
-    wrap.appendChild(errorEl);
-
-    input.addEventListener('input', () => updateVarCounter(document));
+    // Event listeners for validation
+    input.addEventListener('input', () => {
+      if (required) {
+        input.classList.toggle('is-empty', !input.value.trim());
+      }
+      updateVarCounter(document);
+    });
     input.addEventListener('blur', () => updateVarCounter(document));
 
     return wrap;
