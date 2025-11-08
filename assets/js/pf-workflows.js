@@ -630,7 +630,7 @@ function updateWorkflowProgressVisual(filled, total){
 
 
 function renderWorkflowCounter(workflowMap){
-  const counter = document.querySelector('.pf-variables--workflow .pf-variables-counter');
+  const counter = document.querySelector('.pf-workflow-vars-card .pf-variables-counter') || document.querySelector('.pf-variables--workflow .pf-variables-counter');
   if (!counter) return;
   const keys = Object.keys(workflowMap || {});
   const allowProfile = isProfileEnabled();

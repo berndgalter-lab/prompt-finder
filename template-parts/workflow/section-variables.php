@@ -63,26 +63,6 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
 ?>
 
 <section id="variables" class="pf-section pf-section--variables" data-post-id="<?php echo esc_attr($workflow_id); ?>">
-    <div class="pf-variables-header">
-        <div class="pf-variables-title-group">
-            <h2 class="pf-section-heading">Configure Your Variables</h2>
-            <span class="pf-autosave-status" data-status="saved" aria-live="polite">
-                <svg class="pf-autosave-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                </svg>
-                <span class="pf-autosave-text">All changes saved</span>
-            </span>
-        </div>
-        <?php if ($total_variables > 0): ?>
-            <div class="pf-variables-progress" data-variables-progress>
-                <span class="pf-progress-text" data-variables-progress-text>0 of <?php echo esc_html($total_variables); ?> completed</span>
-                <div class="pf-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                    <div class="pf-progress-fill" style="width: 0%" data-variables-progress-fill aria-hidden="true"></div>
-                </div>
-            </div>
-        <?php endif; ?>
-    </div>
-    <p class="pf-section-subheading">Fill these inputs before starting the workflow.</p>
 
     <?php if ($profile_defaults_enabled): ?>
         <div class="pf-variables-card pf-variables--profile">
@@ -117,31 +97,49 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
     <?php endif; ?>
 
     <?php if ($has_workflow_variables): ?>
-        <div class="pf-variables-card pf-variables--workflow">
-            <div class="pf-variables-header">
-                <div class="pf-variables-header-text">
-                    <h3 class="pf-variables-title">Workflow Configuration</h3>
-                    <p class="pf-variables-helper">These values apply to all steps in this workflow.</p>
+        <!-- Unified workflow variables card -->
+        <div class="pf-workflow-vars-card">
+            <div class="pf-workflow-vars-card-header">
+                <span class="pf-workflow-vars-icon">⚙️</span>
+                <div>
+                    <h3 class="pf-workflow-vars-title">Configure Your Variables</h3>
+                    <p class="pf-workflow-vars-subtitle">These values apply to all steps in this workflow.</p>
                 </div>
-                <div class="pf-variables-counter" data-variables-total="<?php echo esc_attr($total_variables); ?>" data-variables-filled="0">
+                <?php if ($total_variables > 0): ?>
+                    <div class="pf-variables-progress" data-variables-progress>
+                        <span class="pf-progress-text" data-variables-progress-text>
+                            0 of <?php echo esc_html($total_variables); ?> completed
+                        </span>
+                        <div class="pf-progress-bar" role="progressbar" aria-valuenow="0"
+                             aria-valuemin="0" aria-valuemax="100">
+                            <div class="pf-progress-fill" style="width:0%" data-variables-progress-fill aria-hidden="true"></div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <div class="pf-variables-counter"
+                     data-variables-total="<?php echo esc_attr($total_variables); ?>"
+                     data-variables-filled="0">
                     <span class="pf-counter-number">0</span>
                     <span class="pf-counter-total">/ <?php echo esc_html($total_variables); ?></span>
                 </div>
             </div>
 
-            <div class="pf-variables-list pf-variables--workflow" data-wf-form></div>
+            <!-- Variable list: JavaScript will inject the controls here -->
+            <div class="pf-workflow-vars-list" data-wf-form></div>
 
             <div class="pf-variables-note">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    <line x1="12" y1="12" x2="12" y2="16"/>
-                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <line x1="12" y1="12" x2="12" y2="16"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
                 </svg>
                 <span>These values apply to all steps in this workflow and are saved locally.</span>
             </div>
         </div>
     <?php else: ?>
-        <div class="pf-variables-card pf-variables--workflow">
+        <div class="pf-workflow-vars-card">
             <div class="pf-variables-notice">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>

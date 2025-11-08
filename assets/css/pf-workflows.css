@@ -2526,6 +2526,92 @@ html, body {
 .pf-btn-file input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
 .pf-wf-storage { font-size:.85rem; color:#4b5563; margin-right:auto; }
 
+/* ========== UNIFIED WORKFLOW VARIABLES CARD ========== */
+/* Unified workflow variables card */
+.pf-workflow-vars-card {
+  background: var(--pf-card);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-r-6); /* 16px */
+  margin-bottom: var(--pf-space-8); /* 32px */
+  overflow: hidden;
+  box-shadow: var(--pf-elev-1);
+}
+
+.pf-workflow-vars-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--pf-space-4); /* 16px */
+  padding: var(--pf-space-6) var(--pf-space-8); /* 24px 32px */
+  background: linear-gradient(135deg, rgba(59,130,246,0.05), rgba(139,92,246,0.05));
+  border-bottom: 1px solid var(--pf-border);
+  flex-wrap: wrap;
+}
+
+.pf-workflow-vars-icon {
+  font-size: var(--pf-fs-xl); /* 1.5rem */
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.pf-workflow-vars-title {
+  margin: 0 0 var(--pf-space-1) 0; /* 0 0 4px 0 */
+  font-size: var(--pf-fs-md); /* 1.125rem */
+  font-weight: 600;
+  color: var(--pf-text);
+}
+
+.pf-workflow-vars-subtitle {
+  margin: 0;
+  font-size: var(--pf-fs-sm); /* 0.875rem */
+  color: var(--pf-text-dim);
+}
+
+.pf-workflow-vars-list {
+  display: flex;
+  flex-direction: column;
+  padding: var(--pf-space-6) var(--pf-space-8); /* 24px 32px */
+}
+
+.pf-workflow-vars-list .pf-var {
+  margin-bottom: var(--pf-space-5); /* 20px */
+}
+
+/* Hide the old purple/pink nested border */
+.pf-variables-card.pf-variables--workflow {
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+.pf-variables-card.pf-variables--workflow .pf-variables-header,
+.pf-variables-card.pf-variables--workflow .pf-variables-counter {
+  display: none;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .pf-workflow-vars-card-header {
+    padding: var(--pf-space-4) var(--pf-space-5); /* 16px 20px */
+    gap: var(--pf-space-3); /* 12px */
+  }
+  
+  .pf-workflow-vars-list {
+    padding: var(--pf-space-4) var(--pf-space-5); /* 16px 20px */
+  }
+  
+  .pf-workflow-vars-icon {
+    font-size: var(--pf-fs-lg); /* 1.25rem */
+  }
+  
+  .pf-workflow-vars-title {
+    font-size: var(--pf-fs-base); /* 1rem */
+  }
+  
+  .pf-workflow-vars-subtitle {
+    font-size: var(--pf-fs-xs); /* 0.75rem */
+  }
+}
+
 /* ========== PRINT STYLES ========== */
 @media print {
     .pf-mode-toggle,
