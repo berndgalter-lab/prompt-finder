@@ -126,7 +126,7 @@
   padding: clamp(var(--pf-space-4), 5vw, var(--pf-space-6))
     clamp(var(--pf-space-4), 6vw, var(--pf-space-7));
   background: var(--pf-card);
-  border-bottom: 1px solid var(--pf-border);
+  border-bottom: none; /* Removed - seamless flow to hero value */
   color: var(--pf-text);
   position: relative;
   --pf-header-title-color: var(--pf-text);
@@ -144,6 +144,7 @@
   --pf-header-progress-label-color: #ffffff;
   border-radius: 0;
   box-shadow: none;
+  margin-bottom: 0; /* Seamless connection to hero value */
 }
 
 .pf-header-content {

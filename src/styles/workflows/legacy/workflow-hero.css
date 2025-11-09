@@ -8,7 +8,7 @@
    ======================================== */
 
 .pf-hero-value {
-  margin: clamp(var(--pf-space-4), 4vw, var(--pf-space-6)) auto;
+  margin: 0 auto clamp(var(--pf-space-4), 4vw, var(--pf-space-6)); /* No top margin - seamless flow from header */
   max-width: 1400px;
   padding: 0 clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
 }
@@ -20,7 +20,8 @@
     color-mix(in srgb, var(--pf-info) 5%, transparent) 100%
   );
   border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
-  border-radius: clamp(var(--pf-r-4), 2vw, var(--pf-r-6));
+  border-top: 1px solid color-mix(in srgb, var(--pf-accent) 8%, var(--pf-border)); /* Subtle top border for separation */
+  border-radius: 0 0 clamp(var(--pf-r-4), 2vw, var(--pf-r-6)) clamp(var(--pf-r-4), 2vw, var(--pf-r-6)); /* Only bottom corners rounded */
   padding: clamp(var(--pf-space-5), 4vw, var(--pf-space-7));
   box-shadow: 
     0 1px 3px rgba(0, 0, 0, 0.05),

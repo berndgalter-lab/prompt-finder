@@ -2,6 +2,14 @@
 
 ## [Aktuell] - 2025-11-09
 
+### 🎨 Visual Flow: Nahtloser Header → Hero Übergang
+- ✅ **Header border-bottom entfernt** – Keine Trennlinie mehr
+- ✅ **Hero Value margin-top auf 0** – Kein Gap zwischen Header und Hero
+- ✅ **Hero Value border-radius angepasst** – Nur untere Ecken abgerundet (0 0 r r)
+- ✅ **Subtile Trennung** – Leichter Top-Border für visuelle Hierarchie
+- ✅ **Nahtloser Flow** – Header und Hero wirken wie eine zusammenhängende Card
+- ✅ **Moderne UX** – Pattern wie bei Notion, Linear, Stripe
+
 ### 🧹 Cleanup: Redundante Komponenten entfernt
 - ✅ **Progress Hero entfernt** – War redundant, ersetzt durch Compact Progress
 - ✅ **Variable Status entfernt** – Input-Status jetzt in Compact Progress integriert
