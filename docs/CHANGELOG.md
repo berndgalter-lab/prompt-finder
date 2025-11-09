@@ -2,13 +2,15 @@
 
 ## [Aktuell] - 2025-11-09
 
-### 🎨 Visual Flow: Nahtloser Header → Hero Übergang
-- ✅ **Header border-bottom entfernt** – Keine Trennlinie mehr
-- ✅ **Hero Value margin-top auf 0** – Kein Gap zwischen Header und Hero
-- ✅ **Hero Value border-radius angepasst** – Nur untere Ecken abgerundet (0 0 r r)
-- ✅ **Subtile Trennung** – Leichter Top-Border für visuelle Hierarchie
-- ✅ **Nahtloser Flow** – Header und Hero wirken wie eine zusammenhängende Card
-- ✅ **Moderne UX** – Pattern wie bei Notion, Linear, Stripe
+### 🎨 Visual Flow: Unified Card Design (Header + Hero + Progress)
+- ✅ **Einheitlicher Gradient** – Header, Hero und Progress teilen denselben Accent-Gradient Background
+- ✅ **Eine zusammenhängende Card** – Alle drei Bereiche wirken als eine Einheit
+- ✅ **Header**: Top-Radius, Gradient-Background, reduziertes Bottom-Padding
+- ✅ **Hero Value**: Transparent Background, keine eigene Border, subtile Top-Trennung
+- ✅ **Compact Progress**: Bottom-Radius, integriert in die Card, nicht separat
+- ✅ **Gemeinsamer Shadow** – Einheitlicher Schatten für die gesamte Card
+- ✅ **Moderne UX** – Unified Card Pattern wie bei Notion, Linear, Stripe
+- ✅ **Kein visueller Bruch** – Nahtloser Flow von oben nach unten
 
 ### 🧹 Cleanup: Redundante Komponenten entfernt
 - ✅ **Progress Hero entfernt** – War redundant, ersetzt durch Compact Progress

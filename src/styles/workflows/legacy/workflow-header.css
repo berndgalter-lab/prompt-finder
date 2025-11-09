@@ -123,17 +123,24 @@
 .pf-workflow-header {
   display: grid;
   gap: clamp(var(--pf-space-4), 4vw, var(--pf-space-6));
-  padding: clamp(var(--pf-space-4), 5vw, var(--pf-space-6))
-    clamp(var(--pf-space-4), 6vw, var(--pf-space-7));
-  background: var(--pf-card);
-  border-bottom: none; /* Removed - seamless flow to hero value */
+  padding: clamp(var(--pf-space-5), 5vw, var(--pf-space-7))
+    clamp(var(--pf-space-4), 6vw, var(--pf-space-7))
+    clamp(var(--pf-space-4), 4vw, var(--pf-space-5)); /* Reduced bottom padding */
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--pf-accent) 8%, var(--pf-card)) 0%,
+    color-mix(in srgb, var(--pf-info) 5%, var(--pf-card)) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
+  border-bottom: none; /* Seamless flow to hero value */
+  border-radius: clamp(var(--pf-r-4), 2vw, var(--pf-r-6)) clamp(var(--pf-r-4), 2vw, var(--pf-r-6)) 0 0; /* Only top corners rounded */
   color: var(--pf-text);
   position: relative;
   --pf-header-title-color: var(--pf-text);
   --pf-header-tagline-color: var(--pf-text-dim);
-  --pf-header-chip-bg: var(--pf-chip-bg);
+  --pf-header-chip-bg: color-mix(in srgb, var(--pf-card) 90%, transparent);
   --pf-header-chip-color: var(--pf-slate-600);
-  --pf-header-chip-border: var(--pf-border);
+  --pf-header-chip-border: color-mix(in srgb, var(--pf-accent) 20%, var(--pf-border));
   --pf-header-chip-time-bg: color-mix(in srgb, var(--pf-accent-light) 55%, var(--pf-chip-bg));
   --pf-header-chip-time-border: color-mix(in srgb, var(--pf-accent) 35%, var(--pf-border));
   --pf-header-chip-time-color: var(--pf-accent-dark);
@@ -142,9 +149,11 @@
   --pf-header-progress-time-color: var(--pf-text-dim);
   --pf-header-progress-fill: linear-gradient(90deg, var(--pf-primary) 0%, #2563eb 100%);
   --pf-header-progress-label-color: #ffffff;
-  border-radius: 0;
-  box-shadow: none;
-  margin-bottom: 0; /* Seamless connection to hero value */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin: 0 auto;
+  max-width: 1400px;
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
 }
 
 .pf-header-content {

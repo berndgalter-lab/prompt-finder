@@ -8,26 +8,23 @@
    ======================================== */
 
 .pf-hero-value {
-  margin: 0 auto clamp(var(--pf-space-4), 4vw, var(--pf-space-6)); /* No top margin - seamless flow from header */
+  margin: 0 auto; /* No margins - seamless flow */
   max-width: 1400px;
-  padding: 0 clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  padding: 0;
 }
 
 .pf-hero-value-inner {
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--pf-accent) 8%, transparent) 0%,
-    color-mix(in srgb, var(--pf-info) 5%, transparent) 100%
-  );
+  background: transparent; /* No background - inherits from header */
   border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
-  border-top: 1px solid color-mix(in srgb, var(--pf-accent) 8%, var(--pf-border)); /* Subtle top border for separation */
-  border-radius: 0 0 clamp(var(--pf-r-4), 2vw, var(--pf-r-6)) clamp(var(--pf-r-4), 2vw, var(--pf-r-6)); /* Only bottom corners rounded */
-  padding: clamp(var(--pf-space-5), 4vw, var(--pf-space-7));
-  box-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 10px 40px color-mix(in srgb, var(--pf-accent) 8%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--pf-accent) 8%, var(--pf-border)); /* Subtle separator */
+  border-bottom: none; /* Seamless flow to compact progress */
+  border-radius: 0; /* No radius - middle section */
+  padding: clamp(var(--pf-space-4), 4vw, var(--pf-space-6)) clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  box-shadow: none; /* No shadow - part of unified card */
   position: relative;
   overflow: hidden;
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
 }
 
 /* Subtle gradient overlay */
