@@ -121,24 +121,48 @@
    Header Layout
    ============================= */
 .pf-workflow-header {
-  background: var(--pf-card);
-  padding: var(--pf-space-6) var(--pf-space-7) 0;
-  border-bottom: none;
+  display: grid;
+  gap: clamp(var(--pf-space-4), 4vw, var(--pf-space-6));
+  padding: clamp(var(--pf-space-4), 5vw, var(--pf-space-7))
+    clamp(var(--pf-space-4), 6vw, var(--pf-space-7));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--pf-slate-50) 95%, transparent) 0%,
+    color-mix(in srgb, var(--pf-slate-50) 88%, var(--pf-slate-100)) 40%,
+    color-mix(in srgb, var(--pf-slate-100) 82%, transparent) 100%
+  );
+  border-bottom: 1px solid color-mix(in srgb, var(--pf-slate-300) 55%, transparent);
   color: var(--pf-text);
+  position: relative;
+  isolation: isolate;
+  border-radius: 0 0 calc(var(--pf-radius) * 1.3) calc(var(--pf-radius) * 1.3);
+  box-shadow: 0 22px 48px color-mix(in srgb, var(--pf-slate-900) 12%, transparent);
+}
+
+.pf-workflow-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 15% 5%,
+    color-mix(in srgb, var(--pf-accent) 12%, transparent) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: -1;
 }
 
 .pf-header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--pf-space-5);
-  gap: var(--pf-space-5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(var(--pf-space-3), 3vw, var(--pf-space-5));
+  align-items: start;
 }
 
 .pf-header-main {
-  flex: 1;
   display: grid;
-  gap: var(--pf-space-2);
+  gap: clamp(var(--pf-space-2), 2vw, var(--pf-space-3));
+  min-width: 0;
 }
 
 .pf-header-title {
@@ -151,9 +175,10 @@
 
 .pf-header-tagline {
   margin: 0;
-  font-size: 1rem;
+  font-size: clamp(1rem, 2vw, 1.0625rem);
   line-height: 1.6;
-  color: var(--pf-text-dim);
+  color: color-mix(in srgb, var(--pf-slate-600) 85%, transparent);
+  max-width: 56ch;
 }
 
 .pf-header-meta-compact {
@@ -161,6 +186,7 @@
   flex-wrap: wrap;
   gap: var(--pf-space-2);
   margin-top: var(--pf-space-2);
+  padding: var(--pf-space-1) 0;
 }
 
 .pf-meta-chip {
@@ -168,13 +194,27 @@
   align-items: center;
   gap: 0.4rem;
   padding: calc(var(--pf-space-2) * 0.75) var(--pf-space-3);
-  border-radius: calc(var(--pf-radius) * 0.5);
+  border-radius: calc(var(--pf-radius) * 0.65);
   font-size: 0.8125rem;
   font-weight: 600;
-  background: var(--pf-chip-bg);
-  color: var(--pf-slate-600);
-  border: 1px solid var(--pf-border);
-  transition: transform var(--pf-transition-fast);
+  background: color-mix(in srgb, var(--pf-slate-100) 75%, transparent);
+  color: color-mix(in srgb, var(--pf-slate-600) 95%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pf-slate-300) 55%, transparent);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--pf-slate-900) 08%, transparent);
+  transition: transform var(--pf-transition-fast), box-shadow var(--pf-transition-fast);
+}
+
+.pf-meta-chip:hover,
+.pf-meta-chip:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--pf-slate-900) 12%, transparent);
+}
+
+.pf-meta-chip:focus-visible {
+  outline: none;
+  box-shadow:
+    0 10px 24px color-mix(in srgb, var(--pf-slate-900) 12%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--pf-accent) 20%, transparent);
 }
 
 .pf-meta-chip svg {
@@ -183,57 +223,86 @@
 }
 
 .pf-meta-chip--time {
-  background: color-mix(in srgb, var(--pf-accent) 12%, var(--pf-chip-bg));
+  background: color-mix(in srgb, var(--pf-accent) 18%, var(--pf-slate-50));
   color: var(--pf-accent-dark);
-  border-color: color-mix(in srgb, var(--pf-accent) 35%, var(--pf-border));
+  border-color: color-mix(in srgb, var(--pf-accent) 38%, transparent);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--pf-accent) 16%, transparent);
 }
 
 /* =============================
    Progress Hero
    ============================= */
 .pf-progress-hero {
+  display: grid;
+  gap: var(--pf-space-4);
+  background: color-mix(in srgb, var(--pf-slate-50) 96%, transparent);
+  padding: clamp(var(--pf-space-4), 4vw, var(--pf-space-6));
+  border-radius: calc(var(--pf-radius) * 1.2);
+  border: 1px solid color-mix(in srgb, var(--pf-slate-300) 45%, transparent);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--pf-slate-900) 10%, transparent);
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.pf-progress-hero::before {
+  content: '';
+  position: absolute;
+  inset: -40% 40% auto -40%;
+  height: 140%;
   background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--pf-accent-light) 70%, var(--pf-bg)) 0%,
-    color-mix(in srgb, var(--pf-accent) 25%, var(--pf-bg)) 100%
+    120deg,
+    color-mix(in srgb, var(--pf-accent) 22%, transparent) 0%,
+    transparent 70%
   );
-  padding: var(--pf-space-5);
-  border-radius: var(--pf-radius);
-  margin: 0 calc(var(--pf-space-7) * -1);
-  box-shadow: var(--pf-shadow-md);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.pf-progress-hero > * {
+  position: relative;
+  z-index: 1;
 }
 
 .pf-progress-info {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  gap: var(--pf-space-4);
-  margin-bottom: var(--pf-space-3);
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--pf-space-3);
+  margin: 0;
 }
 
 .pf-progress-title {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: clamp(1.0625rem, 2vw, 1.25rem);
   font-weight: 600;
-  color: var(--pf-accent-dark);
+  color: color-mix(in srgb, var(--pf-slate-800) 92%, transparent);
+  letter-spacing: -0.01em;
 }
 
 .pf-progress-time {
   font-size: 0.875rem;
-  color: var(--pf-slate-500);
+  color: color-mix(in srgb, var(--pf-slate-500) 85%, transparent);
 }
 
 .pf-progress-bar-hero {
-  height: 0.75rem;
-  background: var(--pf-bg);
-  border-radius: calc(var(--pf-radius) * 0.5);
+  position: relative;
+  height: 0.7rem;
+  background: color-mix(in srgb, var(--pf-slate-200) 70%, transparent);
+  border-radius: 999px;
   overflow: hidden;
-  box-shadow: inset 0 1px 3px color-mix(in srgb, var(--pf-slate-400) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pf-slate-300) 45%, transparent);
+  box-shadow: inset 0 1px 2px color-mix(in srgb, var(--pf-slate-50) 35%, transparent);
 }
 
 .pf-progress-fill-hero {
   height: 100%;
-  background: var(--pf-accent-purple);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--pf-accent) 65%, transparent) 0%,
+    color-mix(in srgb, var(--pf-accent-purple) 65%, transparent) 100%
+  );
   border-radius: inherit;
   transition: width var(--pf-transition-base);
   display: flex;
@@ -245,7 +314,7 @@
 .pf-progress-label {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: var(--pf-slate-50);
+  color: color-mix(in srgb, var(--pf-slate-50) 92%, transparent);
   letter-spacing: 0.08em;
 }
 
@@ -273,17 +342,19 @@
   }
 
   .pf-workflow-header {
-    padding: var(--pf-space-4) var(--pf-space-4) 0;
+    padding: clamp(var(--pf-space-3), 6vw, var(--pf-space-4)) var(--pf-space-4);
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .pf-header-content {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: var(--pf-space-3);
   }
 
   .pf-progress-hero {
-    margin: 0 calc(var(--pf-space-4) * -1);
-    border-radius: 0;
+    padding: var(--pf-space-4);
+    border-radius: calc(var(--pf-radius) * 0.9);
   }
 
   .pf-progress-info {
@@ -373,37 +444,50 @@
   overflow: hidden;
   color: var(--pf-slate-50);
   background: linear-gradient(
-    160deg,
-    var(--pf-slate-900) 0%,
-    color-mix(in srgb, var(--pf-slate-900) 60%, var(--pf-slate-800)) 50%,
-    var(--pf-slate-700) 100%
-  );
-  border-radius: calc(var(--pf-radius) * 2);
-  padding: clamp(var(--pf-space-5), 5vw, calc(var(--pf-space-8) + var(--pf-space-2)));
-  margin-bottom: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
-  box-shadow: var(--pf-shadow-xl);
+      180deg,
+      color-mix(in srgb, var(--pf-slate-950) 92%, transparent) 0%,
+      color-mix(in srgb, var(--pf-slate-900) 88%, transparent) 55%,
+      color-mix(in srgb, var(--pf-slate-800) 82%, transparent) 100%
+    )
+    padding-box;
+  border-bottom: 1px solid color-mix(in srgb, var(--pf-slate-700) 60%, transparent);
+  border-radius: 0 0 calc(var(--pf-radius) * 1.6) calc(var(--pf-radius) * 1.6);
+  padding: clamp(var(--pf-space-4), 5vw, var(--pf-space-7))
+    clamp(var(--pf-space-4), 6vw, var(--pf-space-7));
+  box-shadow: 0 32px 82px color-mix(in srgb, var(--pf-slate-950) 45%, transparent);
+  isolation: isolate;
 }
 
 .pf-ui-modern .pf-workflow-header::before,
 .pf-ui-modern .pf-workflow-header::after {
   content: '';
   position: absolute;
-  border-radius: 50%;
+  inset: 0;
   pointer-events: none;
 }
 
 .pf-ui-modern .pf-workflow-header::before {
-  inset: calc(var(--pf-space-8) * -1) calc(var(--pf-space-6) * -0.5) auto auto;
-  width: calc(var(--pf-space-8) * 6);
-  height: calc(var(--pf-space-8) * 6);
-  background: radial-gradient(circle, color-mix(in srgb, var(--pf-accent) 45%, transparent) 0%, transparent 70%);
+  background: linear-gradient(
+    130deg,
+    color-mix(in srgb, var(--pf-accent) 26%, transparent) 0%,
+    transparent 65%
+  );
+  opacity: 0.55;
 }
 
 .pf-ui-modern .pf-workflow-header::after {
-  inset: calc(55% + var(--pf-space-4)) auto auto calc(var(--pf-space-8) * -1);
-  width: calc(var(--pf-space-8) * 5);
-  height: calc(var(--pf-space-8) * 5);
-  background: radial-gradient(circle, color-mix(in srgb, var(--pf-accent-purple) 55%, transparent) 0%, transparent 75%);
+  background: radial-gradient(
+    120% 120% at 110% 10%,
+    color-mix(in srgb, var(--pf-accent-purple) 45%, transparent) 0%,
+    transparent 68%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.6;
+}
+
+.pf-ui-modern .pf-workflow-header > * {
+  position: relative;
+  z-index: 1;
 }
 
 .pf-ui-modern .pf-header-title {
@@ -421,44 +505,65 @@
 }
 
 .pf-ui-modern .pf-meta-chip {
-  background: color-mix(in srgb, var(--pf-slate-200) 25%, transparent);
-  border-color: color-mix(in srgb, var(--pf-slate-200) 50%, transparent);
-  color: color-mix(in srgb, var(--pf-slate-100) 90%, transparent);
-  box-shadow: 0 14px 28px color-mix(in srgb, var(--pf-slate-900) 35%, transparent);
+  background: color-mix(in srgb, var(--pf-slate-800) 65%, transparent);
+  border-color: color-mix(in srgb, var(--pf-slate-300) 38%, transparent);
+  color: color-mix(in srgb, var(--pf-slate-100) 92%, transparent);
+  box-shadow: 0 18px 36px color-mix(in srgb, var(--pf-slate-950) 40%, transparent);
 }
 
 .pf-ui-modern .pf-meta-chip--time {
-  background: color-mix(in srgb, var(--pf-accent) 30%, transparent);
-  border-color: color-mix(in srgb, var(--pf-accent) 45%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--pf-accent) 45%, transparent) 0%,
+    color-mix(in srgb, var(--pf-accent-purple) 45%, transparent) 100%
+  );
+  border-color: color-mix(in srgb, var(--pf-accent) 55%, transparent);
   color: var(--pf-slate-50);
+  box-shadow: 0 22px 44px color-mix(in srgb, var(--pf-accent) 35%, transparent);
 }
 
 .pf-ui-modern .pf-progress-hero {
-  margin-top: clamp(var(--pf-space-4), 3vw, var(--pf-space-6));
-  margin-bottom: 0;
-  background: color-mix(in srgb, var(--pf-slate-900) 65%, transparent);
-  border-radius: calc(var(--pf-radius) * 1.5);
-  border: 1px solid color-mix(in srgb, var(--pf-slate-200) 25%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--pf-slate-50) 15%, transparent),
-    0 18px 36px color-mix(in srgb, var(--pf-slate-900) 32%, transparent);
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--pf-slate-950) 82%, transparent) 0%,
+    color-mix(in srgb, var(--pf-slate-900) 72%, transparent) 60%,
+    color-mix(in srgb, var(--pf-slate-850) 68%, transparent) 100%
+  );
+  border-radius: calc(var(--pf-radius) * 1.2);
+  border: 1px solid color-mix(in srgb, var(--pf-slate-300) 32%, transparent);
+  box-shadow: 0 28px 64px color-mix(in srgb, var(--pf-slate-950) 40%, transparent);
+}
+
+.pf-ui-modern .pf-progress-hero::before {
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--pf-accent) 40%, transparent) 0%,
+    transparent 75%
+  );
+  opacity: 0.45;
 }
 
 .pf-ui-modern .pf-progress-title {
-  color: var(--pf-slate-100);
+  color: var(--pf-slate-50);
   letter-spacing: -0.01em;
 }
 
 .pf-ui-modern .pf-progress-time {
-  color: color-mix(in srgb, var(--pf-slate-200) 70%, transparent);
+  color: color-mix(in srgb, var(--pf-slate-200) 75%, transparent);
 }
 
 .pf-ui-modern .pf-progress-bar-hero {
-  background: color-mix(in srgb, var(--pf-slate-900) 70%, transparent);
-  box-shadow: inset 0 2px 6px color-mix(in srgb, var(--pf-slate-900) 55%, transparent);
+  background: color-mix(in srgb, var(--pf-slate-800) 70%, transparent);
+  border-color: color-mix(in srgb, var(--pf-slate-400) 40%, transparent);
+  box-shadow: inset 0 2px 6px color-mix(in srgb, var(--pf-slate-950) 55%, transparent);
 }
 
 .pf-ui-modern .pf-progress-fill-hero {
-  background: linear-gradient(90deg, var(--pf-accent) 0%, color-mix(in srgb, var(--pf-accent-purple) 70%, var(--pf-accent)) 100%);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--pf-accent) 75%, transparent) 0%,
+    color-mix(in srgb, var(--pf-accent-purple) 75%, transparent) 100%
+  );
 }
 
 .pf-ui-modern .pf-progress-label {
@@ -548,8 +653,9 @@
 
 @media (max-width: 768px) {
   .pf-ui-modern .pf-workflow-header {
-    border-radius: calc(var(--pf-radius) * 1.6);
-    padding: clamp(var(--pf-space-4), 6vw, var(--pf-space-6));
+    border-radius: 0;
+    padding: clamp(var(--pf-space-3), 6vw, var(--pf-space-4)) var(--pf-space-4);
+    box-shadow: none;
   }
 
   .pf-ui-modern .pf-status-cluster {
@@ -559,6 +665,11 @@
   .pf-ui-modern .pf-fast-track-toggle-wrapper,
   .pf-ui-modern .pf-variable-status {
     border-radius: calc(var(--pf-radius) * 1.5);
+  }
+
+  .pf-ui-modern .pf-progress-hero {
+    border-radius: calc(var(--pf-radius) * 1.05);
+    padding: var(--pf-space-4);
   }
 }
 
