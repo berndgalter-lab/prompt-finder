@@ -129,6 +129,19 @@
   border-bottom: 1px solid var(--pf-border);
   color: var(--pf-text);
   position: relative;
+  --pf-header-title-color: var(--pf-text);
+  --pf-header-tagline-color: var(--pf-text-dim);
+  --pf-header-chip-bg: var(--pf-chip-bg);
+  --pf-header-chip-color: var(--pf-slate-600);
+  --pf-header-chip-border: var(--pf-border);
+  --pf-header-chip-time-bg: color-mix(in srgb, var(--pf-accent-light) 55%, var(--pf-chip-bg));
+  --pf-header-chip-time-border: color-mix(in srgb, var(--pf-accent) 35%, var(--pf-border));
+  --pf-header-chip-time-color: var(--pf-accent-dark);
+  --pf-header-progress-bg: var(--pf-bg-soft);
+  --pf-header-progress-title-color: var(--pf-text);
+  --pf-header-progress-time-color: var(--pf-text-dim);
+  --pf-header-progress-fill: linear-gradient(90deg, var(--pf-primary) 0%, #2563eb 100%);
+  --pf-header-progress-label-color: #ffffff;
   border-radius: 0;
   box-shadow: none;
 }
@@ -150,7 +163,7 @@
   margin: 0;
   font-size: clamp(1.75rem, 3vw, 2.5rem);
   font-weight: 700;
-  color: var(--pf-text);
+  color: var(--pf-header-title-color);
   letter-spacing: -0.015em;
 }
 
@@ -158,7 +171,7 @@
   margin: 0;
   font-size: clamp(1rem, 2vw, 1.05rem);
   line-height: 1.6;
-  color: var(--pf-text-dim);
+  color: var(--pf-header-tagline-color);
   max-width: 56ch;
 }
 
@@ -178,9 +191,9 @@
   border-radius: calc(var(--pf-radius) * 0.65);
   font-size: 0.8125rem;
   font-weight: 600;
-  background: var(--pf-chip-bg);
-  color: var(--pf-slate-600);
-  border: 1px solid var(--pf-border);
+  background: var(--pf-header-chip-bg);
+  color: var(--pf-header-chip-color);
+  border: 1px solid var(--pf-header-chip-border);
   box-shadow: none;
   transition: transform var(--pf-transition-fast), box-shadow var(--pf-transition-fast);
 }
@@ -204,9 +217,9 @@
 }
 
 .pf-meta-chip--time {
-  background: color-mix(in srgb, var(--pf-accent-light) 55%, var(--pf-chip-bg));
-  color: var(--pf-accent-dark);
-  border-color: color-mix(in srgb, var(--pf-accent) 35%, var(--pf-border));
+  background: var(--pf-header-chip-time-bg);
+  color: var(--pf-header-chip-time-color);
+  border-color: var(--pf-header-chip-time-border);
   box-shadow: none;
 }
 
@@ -216,7 +229,7 @@
 .pf-progress-hero {
   display: grid;
   gap: var(--pf-space-4);
-  background: var(--pf-bg-soft);
+  background: var(--pf-header-progress-bg);
   padding: clamp(var(--pf-space-4), 4vw, var(--pf-space-5));
   border-radius: calc(var(--pf-radius) * 0.9);
   border: 1px solid var(--pf-border);
@@ -237,13 +250,13 @@
   margin: 0;
   font-size: clamp(1.0625rem, 2vw, 1.25rem);
   font-weight: 600;
-  color: var(--pf-text);
+  color: var(--pf-header-progress-title-color);
   letter-spacing: -0.01em;
 }
 
 .pf-progress-time {
   font-size: 0.875rem;
-  color: var(--pf-text-dim);
+  color: var(--pf-header-progress-time-color);
 }
 
 .pf-progress-bar-hero {
@@ -257,7 +270,7 @@
 
 .pf-progress-fill-hero {
   height: 100%;
-  background: linear-gradient(90deg, var(--pf-primary) 0%, #2563eb 100%);
+  background: var(--pf-header-progress-fill);
   border-radius: inherit;
   transition: width var(--pf-transition-base);
   display: flex;
@@ -269,7 +282,7 @@
 .pf-progress-label {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--pf-header-progress-label-color);
   letter-spacing: 0.08em;
 }
 
@@ -408,6 +421,23 @@
   padding: clamp(var(--pf-space-4), 5vw, var(--pf-space-6))
     clamp(var(--pf-space-4), 6vw, var(--pf-space-7));
   box-shadow: 0 18px 42px color-mix(in srgb, var(--pf-slate-950) 30%, transparent);
+  --pf-header-title-color: var(--pf-slate-50);
+  --pf-header-tagline-color: color-mix(in srgb, var(--pf-slate-200) 85%, transparent);
+  --pf-header-chip-bg: color-mix(in srgb, var(--pf-slate-900) 60%, var(--pf-slate-800));
+  --pf-header-chip-color: color-mix(in srgb, var(--pf-slate-100) 90%, transparent);
+  --pf-header-chip-border: color-mix(in srgb, var(--pf-slate-700) 45%, transparent);
+  --pf-header-chip-time-bg: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+  --pf-header-chip-time-border: color-mix(in srgb, var(--pf-accent) 50%, transparent);
+  --pf-header-chip-time-color: var(--pf-slate-50);
+  --pf-header-progress-bg: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--pf-slate-950) 80%, transparent) 0%,
+    color-mix(in srgb, var(--pf-slate-900) 68%, transparent) 100%
+  );
+  --pf-header-progress-title-color: var(--pf-slate-50);
+  --pf-header-progress-time-color: color-mix(in srgb, var(--pf-slate-200) 75%, transparent);
+  --pf-header-progress-fill: linear-gradient(90deg, #60a5fa 0%, #6366f1 100%);
+  --pf-header-progress-label-color: var(--pf-slate-50);
 }
 
 .pf-ui-modern .pf-header-title {
