@@ -114,17 +114,4 @@ $initial_progress_percent = 0;
             </div>
         </div>
     </div>
-
-    <div class="pf-progress-hero" data-workflow-start="<?php echo esc_attr($start_timestamp); ?>">
-        <div class="pf-progress-info">
-            <h2 class="pf-progress-title" data-progress-step>Step <?php echo esc_html($initial_step_number); ?> of <?php echo esc_html($total_steps); ?></h2>
-            <span class="pf-progress-time">Started <span data-time-elapsed>just now</span></span>
-            <span class="pf-progress-summary pf-sr-only" data-progress-summary>0 of <?php echo esc_html($total_steps); ?> steps completed</span>
-        </div>
-        <div class="pf-progress-bar-hero" role="progressbar" aria-valuenow="<?php echo esc_attr($initial_progress_percent); ?>" aria-valuemin="0" aria-valuemax="100">
-            <div class="pf-progress-fill-hero" style="width: <?php echo esc_attr($initial_progress_percent); ?>%" data-progress-fill>
-                <span class="pf-progress-label" data-progress-label><?php echo esc_html($initial_progress_percent); ?>%</span>
-            </div>
-        </div>
-    </div>
 </header>

@@ -48,10 +48,7 @@ if (is_user_logged_in()) {
     
     <?php get_template_part('src/php/template-parts/workflow/progress-compact'); ?>
     
-    <div class="pf-status-cluster">
-        <?php get_template_part('src/php/template-parts/workflow/section-variable-status'); ?>
-        <?php get_template_part('src/php/template-parts/workflow/section-fast-track-toggle'); ?>
-    </div>
+    <?php get_template_part('src/php/template-parts/workflow/section-fast-track-toggle'); ?>
     
     <div class="pf-workflow-layout">
         <?php get_template_part('src/php/template-parts/workflow/sidebar-nav'); ?>

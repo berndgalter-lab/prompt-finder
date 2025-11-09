@@ -246,9 +246,11 @@
 }
 
 /* =============================
-   Progress Hero
+   Progress Hero (DEPRECATED - replaced by progress-compact.php)
+   Kept for backward compatibility only
    ============================= */
 .pf-progress-hero {
+  display: none !important; /* Hidden - replaced by new compact progress */
   display: grid;
   gap: var(--pf-space-4);
   background: linear-gradient(

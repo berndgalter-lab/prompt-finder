@@ -235,8 +235,10 @@
   box-shadow: 0 0 0 3px rgba(239, 68, 68, .1);
 }
 
-/* ========== Status Bar (Simplified Single-Tier) ========== */
+/* ========== Status Bar (DEPRECATED - replaced by progress-compact.php) ========== */
+/* Kept for backward compatibility only */
 .pf-variable-status {
+  display: none !important; /* Hidden - replaced by new compact progress */
   background: var(--pf-bg-soft, #f3f4f6);
   border: 1px solid var(--pf-border, #e5e7eb);
   border-radius: var(--pf-radius, 12px);

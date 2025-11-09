@@ -2,6 +2,15 @@
 
 ## [Aktuell] - 2025-11-09
 
+### 🧹 Cleanup: Redundante Komponenten entfernt
+- ✅ **Progress Hero entfernt** – War redundant, ersetzt durch Compact Progress
+- ✅ **Variable Status entfernt** – Input-Status jetzt in Compact Progress integriert
+- ✅ **Status Cluster vereinfacht** – Nur noch Fast Track Toggle, kein Grid mehr nötig
+- ✅ **CSS als deprecated markiert** – Alte Styles bleiben für Backward Compatibility
+  - `.pf-progress-hero` → `display: none !important`
+  - `.pf-variable-status` → `display: none !important`
+  - `.pf-status-cluster` → Removed
+
 ### 🚀 UX Overhaul: Hero Value & Sticky Progress
 - ✅ **Hero Value Section** – Above-the-fold Value Proposition für SEO-Traffic
   - Zeigt `expected_outcome`, `time_saved_min`, `difficulty_without_ai`, `pain_points`

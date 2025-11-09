@@ -98,22 +98,10 @@ body.single-workflows {
 }
 
 /* ========================================
-   STATUS CLUSTER (Variable Status + Fast Track)
+   STATUS CLUSTER (DEPRECATED - no longer needed)
+   Variable Status removed, Fast Track Toggle now standalone
    ======================================== */
-
-.pf-status-cluster {
-    display: grid;
-    gap: clamp(var(--pf-space-3), 3vw, var(--pf-space-4));
-    margin: clamp(var(--pf-space-4), 4vw, var(--pf-space-6)) auto;
-    max-width: 1400px;
-    padding: 0 clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
-}
-
-@media (min-width: 1080px) {
-    .pf-status-cluster {
-        grid-template-columns: 1.4fr 1fr;
-    }
-}
+/* Removed - no longer in use */
 
 /* ========================================
    ANCHOR TARGET SCROLL OFFSET
