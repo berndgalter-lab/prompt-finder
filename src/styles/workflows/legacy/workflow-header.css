@@ -9,25 +9,24 @@
 .pf-breadcrumb-wrapper {
   display: flex;
   align-items: center;
-  min-height: clamp(3rem, 8vw, 3.75rem);
-  padding: var(--pf-space-3) clamp(var(--pf-space-4), 6vw, var(--pf-space-7));
+  min-height: clamp(2.5rem, 6vw, 3rem);
+  padding: clamp(var(--pf-space-3), 2vw, var(--pf-space-4)) clamp(var(--pf-space-4), 6vw, var(--pf-space-7));
   background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--pf-slate-50) 95%, transparent) 0%,
-    color-mix(in srgb, var(--pf-slate-100) 88%, transparent) 100%
+    135deg,
+    color-mix(in srgb, var(--pf-accent) 8%, var(--pf-card)) 0%,
+    color-mix(in srgb, var(--pf-info) 5%, var(--pf-card)) 100%
   );
-  border-bottom: 1px solid color-mix(in srgb, var(--pf-slate-300) 65%, transparent);
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--pf-slate-900) 12%, transparent);
-  color: color-mix(in srgb, var(--pf-slate-600) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
+  border-bottom: 1px solid color-mix(in srgb, var(--pf-accent) 8%, var(--pf-border)); /* Subtle separator */
+  border-radius: clamp(var(--pf-r-4), 2vw, var(--pf-r-6)) clamp(var(--pf-r-4), 2vw, var(--pf-r-6)) 0 0; /* Top corners rounded */
+  box-shadow: none; /* Shadow moved to bottom of card */
+  color: var(--pf-text);
   position: relative;
   z-index: 20;
-}
-
-@supports (backdrop-filter: blur(12px)) {
-  .pf-breadcrumb-wrapper {
-    background: color-mix(in srgb, var(--pf-slate-50) 82%, transparent);
-    backdrop-filter: blur(12px) saturate(140%);
-  }
+  max-width: 1400px;
+  margin: 0 auto;
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
 }
 
 .pf-breadcrumb {
@@ -126,14 +125,11 @@
   padding: clamp(var(--pf-space-5), 5vw, var(--pf-space-7))
     clamp(var(--pf-space-4), 6vw, var(--pf-space-7))
     clamp(var(--pf-space-4), 4vw, var(--pf-space-5)); /* Reduced bottom padding */
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--pf-accent) 8%, var(--pf-card)) 0%,
-    color-mix(in srgb, var(--pf-info) 5%, var(--pf-card)) 100%
-  );
+  background: transparent; /* Inherits gradient from breadcrumb */
   border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
+  border-top: 1px solid color-mix(in srgb, var(--pf-accent) 8%, var(--pf-border)); /* Subtle top separator */
   border-bottom: none; /* Seamless flow to hero value */
-  border-radius: clamp(var(--pf-r-4), 2vw, var(--pf-r-6)) clamp(var(--pf-r-4), 2vw, var(--pf-r-6)) 0 0; /* Only top corners rounded */
+  border-radius: 0; /* No radius - middle section */
   color: var(--pf-text);
   position: relative;
   --pf-header-title-color: var(--pf-text);
@@ -149,7 +145,7 @@
   --pf-header-progress-time-color: var(--pf-text-dim);
   --pf-header-progress-fill: linear-gradient(90deg, var(--pf-primary) 0%, #2563eb 100%);
   --pf-header-progress-label-color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: none; /* Shadow moved to bottom of card */
   margin: 0 auto;
   max-width: 1400px;
   margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));

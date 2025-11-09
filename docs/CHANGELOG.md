@@ -2,15 +2,16 @@
 
 ## [Aktuell] - 2025-11-09
 
-### 🎨 Visual Flow: Unified Card Design (Header + Hero + Progress)
-- ✅ **Einheitlicher Gradient** – Header, Hero und Progress teilen denselben Accent-Gradient Background
-- ✅ **Eine zusammenhängende Card** – Alle drei Bereiche wirken als eine Einheit
-- ✅ **Header**: Top-Radius, Gradient-Background, reduziertes Bottom-Padding
+### 🎨 Visual Flow: Unified Card Design (Breadcrumbs + Header + Hero + Progress)
+- ✅ **Einheitlicher Gradient** – Breadcrumbs, Header, Hero und Progress teilen denselben Accent-Gradient Background
+- ✅ **Eine zusammenhängende Card** – Alle vier Bereiche wirken als eine Einheit
+- ✅ **Breadcrumbs**: Top-Radius, Gradient-Background, oberster Teil der Card
+- ✅ **Header**: Transparent Background, keine eigene Border, subtile Top-Trennung
 - ✅ **Hero Value**: Transparent Background, keine eigene Border, subtile Top-Trennung
 - ✅ **Compact Progress**: Bottom-Radius, integriert in die Card, nicht separat
 - ✅ **Gemeinsamer Shadow** – Einheitlicher Schatten für die gesamte Card
 - ✅ **Moderne UX** – Unified Card Pattern wie bei Notion, Linear, Stripe
-- ✅ **Kein visueller Bruch** – Nahtloser Flow von oben nach unten
+- ✅ **Kein visueller Bruch** – Nahtloser Flow von ganz oben bis ganz unten
 
 ### 🧹 Cleanup: Redundante Komponenten entfernt
 - ✅ **Progress Hero entfernt** – War redundant, ersetzt durch Compact Progress
