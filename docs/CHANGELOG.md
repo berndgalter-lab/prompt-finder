@@ -11,6 +11,9 @@
 - ✅ README aktualisiert
 - ✨ Breadcrumb-Navigation visuell & hinsichtlich Accessibility modernisiert (`src/styles/workflows/legacy/workflow-header.css`)
 - ✨ Workflow-Header überarbeitet (klare Kontraste, einheitliche Tokens, Progress-Karte) (`src/styles/workflows/legacy/workflow-header.css`)
+- ✅ **Komplette Entfernung aller `.pf-ui-modern` Styles** – Sauberer Neustart für zukünftiges Design-System
+  - Entfernt aus: `workflow-header.css`, `workflow-sidebar.css`, `workflow-variables.css`, `pf-core.css`
+  - Gelöscht: `workflow-info-modern.css`, `fast-track-content.css`
 - ⏳ Noch zu tun: PHP-Struktur & Dokumenten-Konsolidierung (siehe CLEANUP-PLAN)
 
 ### Aktive Dateien identifiziert
