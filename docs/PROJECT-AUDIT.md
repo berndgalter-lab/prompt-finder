@@ -102,6 +102,7 @@
 - Archivierte Styles (`archive/styles/pf-components.css`) final prüfen und ggf. entfernen.  
 - Header- und Sidebar-Modernvarianten sind jetzt in den Legacy-Dateien integriert; entsprechende `*-modern.css` wurden archiviert.  
 - Variablen-/Status-Styling (`workflow-variables.css`, Fast-Track-Toggle) bündelt jetzt Basis + `.pf-ui-modern` Enhancements; `workflow-variables-modern.css` und `fast-track-toggle.css` liegen im Archiv.  
+- Schritt-Layout (`workflow-steps.css`) liefert nun Base + Modern in einem File; `workflow-steps-modern.css` wurde archiviert, Enqueue entfernt.  
 
 ---
 

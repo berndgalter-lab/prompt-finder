@@ -1140,7 +1140,6 @@ add_action('wp_enqueue_scripts', function () {
 
   $modern_components = [
     'workflow-info-modern'      => '/src/styles/workflows/modern/workflow-info-modern.css',
-    'workflow-steps-modern'     => '/src/styles/workflows/modern/workflow-steps-modern.css',
     'fast-track-content'        => '/src/styles/workflows/modern/fast-track-content.css',
   ];
 
