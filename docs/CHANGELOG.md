@@ -2,6 +2,41 @@
 
 ## [Aktuell] - 2025-11-09
 
+### 🚀 UX Overhaul: Hero Value & Sticky Progress
+- ✅ **Hero Value Section** – Above-the-fold Value Proposition für SEO-Traffic
+  - Zeigt `expected_outcome`, `time_saved_min`, `difficulty_without_ai`, `pain_points`
+  - Moderne Glassmorphism-Optik mit Accent-Gradients
+  - Expandable Details für Pain Points
+  - Conversion-optimiert nach AIDA-Modell
+- ✅ **Compact Progress Bar** – Platzsparende Progress-Anzeige
+  - Kombiniert Step-Progress + Input-Status in einer Zeile
+  - Responsive Grid-Layout (Mobile: Stack, Desktop: Inline)
+- ✅ **Sticky Progress Bar** – Kontexterhalt beim Scrollen
+  - Erscheint nach 200px Scroll
+  - Zeigt Workflow-Titel + Step + Progress + Inputs
+  - Smooth Transitions mit RAF-Throttling
+  - Backdrop-Filter für moderne Glassmorphism
+- ✅ **Removed `.pf-ui-modern`** – Cleanup für saubere Codebase
+- ✅ **Neue Dateien**:
+  - PHP: `hero-value.php`, `progress-compact.php`
+  - CSS: `workflow-hero.css`, `workflow-progress-compact.css`
+  - JS: `sticky-progress.js`
+- ✅ **Psychologie & Best Practices**:
+  - F-Pattern Reading berücksichtigt
+  - Jobs-to-be-Done Framework
+  - Progressive Disclosure (expandable pain points)
+  - Gamification (Progress-Visualisierung)
+
+### CSS Token-Konsolidierung
+- ✅ **Design Tokens konsolidiert** – `style.css` ist jetzt Single Source of Truth
+  - Alle Tokens (Spacing, Colors, Shadows, Typography, etc.) zentral in `style.css` definiert
+  - `pf-core.css`: Token-Duplikate entfernt, nur noch Komponenten + Legacy-Aliases
+  - `base.css`: Token-Duplikate entfernt, nur noch Workflow-Layouts + Overrides
+- ✅ **`base.css` korrekt enqueued** – Kritischer Fix für Workflow-Layout
+  - `pf-workflows-base` wird jetzt in `functions.php` geladen (vor `pf-workflows`)
+  - Betrifft: Frontend, Editor, Archives/Taxonomies
+  - Ohne diese Datei funktionierten `.pf-workflow-container`, `.pf-status-cluster`, `.pf-workflow-layout` nicht!
+
 ### Projekt-Aufräumaktion
 - ✅ Projekt-Audit durchgeführt (`docs/PROJECT-AUDIT.md`)
 - ✅ Struktur-Vorschlag dokumentiert (`docs/PROPOSED-STRUCTURE.md`)

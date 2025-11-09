@@ -1,9 +1,16 @@
 /**
- * Workflow Frontend CSS - Main Entry Point
+ * Workflow Frontend CSS - Layout & Structure
  * 
- * Single consolidated CSS file that imports all workflow components
- * This file is the ONLY CSS file enqueued for workflows
+ * Workflow-specific layout and structure styles
+ * All design tokens are inherited from style.css (theme root)
+ * This file only contains workflow-specific overrides and layouts
  */
+
+/* === Workflow-Specific Token Overrides === */
+/* Sticky header offset for anchor scrolling */
+:root {
+    --pf-sticky-offset: 88px;
+}
 
 /* === Accessibility Utilities === */
 /* Screen reader only class - visually hidden but accessible to screen readers */
@@ -111,11 +118,6 @@ body.single-workflows {
 /* ========================================
    ANCHOR TARGET SCROLL OFFSET
    ======================================== */
-
-/* Sticky header offset: 4px (progress bar) + ~84px (header content) = 88px */
-:root {
-    --pf-sticky-offset: 88px;
-}
 
 /* Ensure anchor targets aren't hidden under sticky header */
 :target {

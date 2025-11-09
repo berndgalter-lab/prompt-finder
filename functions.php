@@ -370,13 +370,19 @@ add_action('wp_enqueue_scripts', function () {
         // For archives/taxonomies: Old system bleibt aktiv (falls benötigt)
         if (!is_singular('workflows')) {
             // Archive/Taxonomy: Old system
+            // Workflow base layout (must load first)
+            $f_base = $base . '/src/styles/workflows/base.css';
+            if (file_exists($f_base)) {
+                wp_enqueue_style('pf-workflows-base', $uri . '/src/styles/workflows/base.css', ['pf-core'], filemtime($f_base));
+            }
+            
             // OLD: Legacy workflow CSS
             $f = $base . '/src/styles/workflows/legacy/pf-workflows.css';
             if (file_exists($f)) {
                 $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
                     ? wp_get_theme()->get('Version') 
                     : filemtime($f);
-                wp_enqueue_style('pf-workflows', $uri . '/src/styles/workflows/legacy/pf-workflows.css', ['pf-core'], $version);
+                wp_enqueue_style('pf-workflows', $uri . '/src/styles/workflows/legacy/pf-workflows.css', ['pf-workflows-base'], $version);
             }
         }
         
@@ -460,12 +466,18 @@ add_action('enqueue_block_editor_assets', function(){
 
     // Workflows
     if ($screen->post_type === 'workflows') {
+        // Workflow base layout (must load first)
+        $f_base = $base . '/src/styles/workflows/base.css';
+        if (file_exists($f_base)) {
+            wp_enqueue_style('pf-workflows-base-editor', $uri . '/src/styles/workflows/base.css', ['pf-core-editor'], filemtime($f_base));
+        }
+        
         $f = $base . '/src/styles/workflows/legacy/pf-workflows.css';
         if (file_exists($f)) {
             $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
                 ? wp_get_theme()->get('Version') 
                 : filemtime($f);
-            wp_enqueue_style('pf-workflows-editor', $uri . '/src/styles/workflows/legacy/pf-workflows.css', ['pf-core-editor'], $version);
+            wp_enqueue_style('pf-workflows-editor', $uri . '/src/styles/workflows/legacy/pf-workflows.css', ['pf-workflows-base-editor'], $version);
         }
     }
 
@@ -593,10 +605,16 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('pf-core', $base_uri . '/src/styles/core/pf-core.css', [], $version);
     }
 
+    // Workflow base layout (must load first)
+    $wf_base_css = $base_dir . '/src/styles/workflows/base.css';
+    if (file_exists($wf_base_css)) {
+        wp_enqueue_style('pf-workflows-base', $base_uri . '/src/styles/workflows/base.css', ['pf-core'], filemtime($wf_base_css));
+    }
+
     // Reuse workflow visual language
     $wf_css = $base_dir . '/src/styles/workflows/legacy/pf-workflows.css';
     if (file_exists($wf_css)) {
-        wp_enqueue_style('pf-workflows', $base_uri . '/src/styles/workflows/legacy/pf-workflows.css', ['pf-core'], filemtime($wf_css));
+        wp_enqueue_style('pf-workflows', $base_uri . '/src/styles/workflows/legacy/pf-workflows.css', ['pf-workflows-base'], filemtime($wf_css));
     }
 
     $landing_css = $base_dir . '/src/styles/pages/pf-landing.css';
@@ -1123,6 +1141,8 @@ add_action('wp_enqueue_scripts', function () {
 
   $legacy_components = [
     'workflow-header'    => '/src/styles/workflows/legacy/workflow-header.css',
+    'workflow-hero'      => '/src/styles/workflows/legacy/workflow-hero.css',
+    'workflow-progress'  => '/src/styles/workflows/legacy/workflow-progress-compact.css',
     'workflow-sidebar'   => '/src/styles/workflows/legacy/workflow-sidebar.css',
     'workflow-sections'  => '/src/styles/workflows/legacy/workflow-sections.css',
     'workflow-variables' => '/src/styles/workflows/legacy/workflow-variables.css',
@@ -1175,6 +1195,15 @@ add_action('wp_enqueue_scripts', function () {
     $uri . '/src/scripts/workflows/pf-workflows.js',
     ['jquery'],
     pf_ver('/src/scripts/workflows/pf-workflows.js'),
+    true
+  );
+  
+  // Sticky progress bar (no dependencies)
+  wp_enqueue_script(
+    'pf-sticky-progress',
+    $uri . '/src/scripts/workflows/sticky-progress.js',
+    [],
+    pf_ver('/src/scripts/workflows/sticky-progress.js'),
     true
   );
   

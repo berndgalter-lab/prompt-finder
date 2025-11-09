@@ -14,7 +14,7 @@ Text Domain: prompt-finder
 
 :root {
   /* ============================================================
-     Layout & Spacing
+     Layout & Spacing (8pt System)
      ============================================================ */
   --pf-wrap: 1100px;
   --pf-radius: 14px;
@@ -23,6 +23,9 @@ Text Domain: prompt-finder
   --pf-space-md: 48px;
   --pf-space-lg: 72px;
   --pf-space-xl: 96px;
+  
+  /* Granular spacing scale */
+  --pf-space-0: 0;
   --pf-space-1: 4px;
   --pf-space-2: 8px;
   --pf-space-3: 12px;
@@ -45,11 +48,15 @@ Text Domain: prompt-finder
   --pf-r-4: 12px;
   --pf-r-5: 14px; /* Matches legacy --pf-radius */
   --pf-r-6: 16px;
+  --pf-radius-sm: 0.375rem;
+  --pf-radius-md: 0.75rem;
+  --pf-radius-lg: 1rem;
 
   /* ============================================================
      Surfaces & Backgrounds (Dark Mode Default)
      ============================================================ */
   --pf-bg: #0b0c10;
+  --pf-bg-light: #f9fafb;
   --pf-bg-soft: #111217;
   --pf-surface-soft: #0e1015;
   --pf-card: #0f1116;
@@ -74,9 +81,16 @@ Text Domain: prompt-finder
   --pf-accent-hover: #7c3aed;
   --pf-accent-light: #e9d5ff;
   --pf-accent-dark: #6d28d9;
+  --pf-primary: #3b82f6;
   
-  /* Legacy alias for backward compatibility */
+  /* Legacy aliases for backward compatibility */
   --pf-accent-2: var(--pf-accent-secondary);
+  
+  /* Accent gradients */
+  --pf-accent-purple: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --pf-accent-blue: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --pf-accent-green: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --pf-accent-amber: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
 
   /* ============================================================
      Status & Feedback Colors
@@ -132,7 +146,49 @@ Text Domain: prompt-finder
      ============================================================ */
   --pf-transition-fast: 150ms ease-in-out;
   --pf-transition-normal: 250ms ease-in-out;
+  --pf-transition-base: 0.18s ease;
   --pf-transition-slow: 350ms ease-in-out;
+  
+  /* ============================================================
+     Additional Tokens
+     ============================================================ */
+  /* Slate scale */
+  --pf-slate-50: #f8fafc;
+  --pf-slate-100: #f1f5f9;
+  --pf-slate-200: #e2e8f0;
+  --pf-slate-300: #cbd5e1;
+  --pf-slate-400: #94a3b8;
+  --pf-slate-500: #64748b;
+  --pf-slate-600: #475569;
+  --pf-slate-700: #334155;
+  --pf-slate-800: #1e293b;
+  --pf-slate-900: #0f172a;
+  
+  /* Chip & Badge Colors */
+  --pf-chip-bg: #f3f4f6;
+  --pf-badge-bg: var(--pf-chip-bg);
+  
+  /* Aliases for compatibility */
+  --pf-surface: var(--pf-card);
+  --pf-danger: var(--pf-error);
+  
+  /* Typography */
+  --pf-font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --pf-fw-regular: 400;
+  --pf-fw-medium: 500;
+  --pf-fw-semibold: 600;
+  
+  /* Density tokens (workflow compact mode) */
+  --pf-font-xs: 12px;
+  --pf-font-sm: 13px;
+  --pf-font-md: 14px;
+  --pf-font-lg: 16px;
+  --pf-icon-sm: 14px;
+  --pf-icon-md: 16px;
+  --pf-chip-h: 28px;
+  --pf-chip-pad-x: 10px;
+  --pf-sec-pad-y: var(--pf-space-4);
+  --pf-row-gap: var(--pf-space-3);
 }
 
 /* ============================================================

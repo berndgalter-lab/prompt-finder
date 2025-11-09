@@ -1,0 +1,363 @@
+/**
+ * Workflow Component: Hero Value Proposition
+ * Modern, conversion-optimized design for above-the-fold value communication
+ */
+
+/* ========================================
+   HERO VALUE SECTION
+   ======================================== */
+
+.pf-hero-value {
+  margin: clamp(var(--pf-space-4), 4vw, var(--pf-space-6)) auto;
+  max-width: 1400px;
+  padding: 0 clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+}
+
+.pf-hero-value-inner {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--pf-accent) 8%, transparent) 0%,
+    color-mix(in srgb, var(--pf-info) 5%, transparent) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
+  border-radius: clamp(var(--pf-r-4), 2vw, var(--pf-r-6));
+  padding: clamp(var(--pf-space-5), 4vw, var(--pf-space-7));
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 10px 40px color-mix(in srgb, var(--pf-accent) 8%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle gradient overlay */
+.pf-hero-value-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--pf-accent) 30%, transparent) 50%,
+    transparent
+  );
+}
+
+/* ========================================
+   PRIMARY OUTCOME
+   ======================================== */
+
+.pf-hero-primary {
+  margin-bottom: clamp(var(--pf-space-5), 3vw, var(--pf-space-6));
+}
+
+.pf-hero-outcome {
+  display: flex;
+  gap: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+  align-items: flex-start;
+}
+
+.pf-hero-icon {
+  flex-shrink: 0;
+  width: clamp(28px, 5vw, 36px);
+  height: clamp(28px, 5vw, 36px);
+  color: var(--pf-accent);
+  background: color-mix(in srgb, var(--pf-accent) 12%, transparent);
+  border-radius: 50%;
+  padding: clamp(6px, 1vw, 8px);
+  margin-top: 2px;
+}
+
+.pf-hero-outcome-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.pf-hero-kicker {
+  display: block;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pf-accent);
+  margin-bottom: var(--pf-space-2);
+}
+
+.pf-hero-outcome-text {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--pf-text);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.pf-hero-summary {
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--pf-text-dim);
+  margin: 0;
+}
+
+/* ========================================
+   BENEFITS GRID
+   ======================================== */
+
+.pf-hero-benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+  margin-bottom: clamp(var(--pf-space-4), 3vw, var(--pf-space-5));
+}
+
+.pf-benefit {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-3);
+  padding: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+  background: var(--pf-bg-soft);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-r-3);
+  transition: all var(--pf-transition-fast);
+}
+
+.pf-benefit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: color-mix(in srgb, var(--pf-accent) 30%, var(--pf-border));
+}
+
+.pf-benefit svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--pf-accent);
+}
+
+.pf-benefit-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.pf-benefit-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--pf-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.pf-benefit-value {
+  display: block;
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  font-weight: 700;
+  color: var(--pf-text);
+  line-height: 1.2;
+}
+
+/* Specific benefit colors */
+.pf-benefit--time svg {
+  color: #10b981;
+}
+
+.pf-benefit--time:hover {
+  border-color: color-mix(in srgb, #10b981 30%, var(--pf-border));
+}
+
+.pf-benefit--difficulty svg {
+  color: #f59e0b;
+}
+
+.pf-benefit--difficulty:hover {
+  border-color: color-mix(in srgb, #f59e0b 30%, var(--pf-border));
+}
+
+/* ========================================
+   PAIN POINTS (EXPANDABLE)
+   ======================================== */
+
+.pf-hero-details {
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-r-3);
+  background: var(--pf-bg-soft);
+  overflow: hidden;
+  transition: all var(--pf-transition-normal);
+}
+
+.pf-hero-details[open] {
+  background: var(--pf-card);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.pf-hero-details-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-2);
+  padding: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+  cursor: pointer;
+  user-select: none;
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  font-weight: 600;
+  color: var(--pf-text);
+  list-style: none;
+  transition: all var(--pf-transition-fast);
+}
+
+.pf-hero-details-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.pf-hero-details-trigger:hover {
+  color: var(--pf-accent);
+}
+
+.pf-hero-details-trigger svg:first-child {
+  flex-shrink: 0;
+  color: var(--pf-accent);
+}
+
+.pf-hero-details-trigger span {
+  flex: 1;
+}
+
+.pf-hero-details-arrow {
+  flex-shrink: 0;
+  color: var(--pf-text-muted);
+  transition: transform var(--pf-transition-fast);
+}
+
+.pf-hero-details[open] .pf-hero-details-arrow {
+  transform: rotate(180deg);
+}
+
+.pf-hero-details-content {
+  padding: 0 clamp(var(--pf-space-3), 2vw, var(--pf-space-4)) clamp(var(--pf-space-4), 2vw, var(--pf-space-5));
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pf-hero-details-content p {
+  margin: 0;
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  line-height: 1.6;
+  color: var(--pf-text-dim);
+}
+
+.pf-pain-points-list {
+  margin: 0;
+  padding-left: var(--pf-space-5);
+  list-style: none;
+}
+
+.pf-pain-points-list li {
+  position: relative;
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  line-height: 1.6;
+  color: var(--pf-text-dim);
+  padding-left: var(--pf-space-2);
+  margin-bottom: var(--pf-space-2);
+}
+
+.pf-pain-points-list li:last-child {
+  margin-bottom: 0;
+}
+
+.pf-pain-points-list li::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--pf-space-5) * -1);
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  background: var(--pf-accent);
+  border-radius: 50%;
+}
+
+/* ========================================
+   MOBILE OPTIMIZATIONS
+   ======================================== */
+
+@media (max-width: 640px) {
+  .pf-hero-benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .pf-hero-outcome {
+    flex-direction: column;
+    gap: var(--pf-space-3);
+  }
+
+  .pf-hero-icon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ========================================
+   TABLET OPTIMIZATIONS
+   ======================================== */
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  .pf-hero-benefits {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .pf-hero-value-inner {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--pf-accent) 12%, transparent) 0%,
+      color-mix(in srgb, var(--pf-info) 8%, transparent) 100%
+    );
+    box-shadow: 
+      0 1px 3px rgba(0, 0, 0, 0.3),
+      0 10px 40px color-mix(in srgb, var(--pf-accent) 15%, transparent);
+  }
+
+  .pf-benefit {
+    background: color-mix(in srgb, var(--pf-bg-soft) 80%, transparent);
+  }
+
+  .pf-hero-details {
+    background: color-mix(in srgb, var(--pf-bg-soft) 80%, transparent);
+  }
+
+  .pf-hero-details[open] {
+    background: var(--pf-card);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+  .pf-hero-value {
+    page-break-inside: avoid;
+  }
+
+  .pf-hero-details[open] {
+    box-shadow: none;
+  }
+}
+

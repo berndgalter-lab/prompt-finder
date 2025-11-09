@@ -1,0 +1,321 @@
+/**
+ * Workflow Component: Compact Progress Bar
+ * Sticky progress indicator that appears when scrolling
+ */
+
+/* ========================================
+   COMPACT PROGRESS BAR (Initial State)
+   ======================================== */
+
+.pf-progress-compact {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--pf-space-4), 3vw, var(--pf-space-6));
+  padding: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+  background: var(--pf-bg-soft);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-r-4);
+  margin: clamp(var(--pf-space-4), 4vw, var(--pf-space-6)) auto;
+  max-width: 1400px;
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+}
+
+.pf-progress-compact-inner {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+  flex: 1;
+  min-width: 0;
+}
+
+/* Step Info */
+.pf-progress-step-info {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-2);
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  font-weight: 600;
+  color: var(--pf-text);
+  white-space: nowrap;
+}
+
+.pf-progress-step-info svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--pf-accent);
+}
+
+/* Progress Bar */
+.pf-progress-bar-compact {
+  flex: 1;
+  height: 8px;
+  background: color-mix(in srgb, var(--pf-slate-200) 60%, transparent);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  min-width: 100px;
+}
+
+.pf-progress-fill-compact {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pf-accent) 0%, var(--pf-accent-secondary) 100%);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.pf-progress-fill-compact::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Input Status */
+.pf-progress-input-status {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-2);
+  font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
+  color: var(--pf-text-dim);
+  white-space: nowrap;
+}
+
+.pf-progress-input-status svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--pf-accent);
+}
+
+/* ========================================
+   STICKY COMPACT BAR (Scrolled State)
+   ======================================== */
+
+.pf-sticky-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--pf-card) 95%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--pf-border);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pf-sticky-progress.is-visible {
+  transform: translateY(0);
+}
+
+.pf-sticky-progress-inner {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+  padding: var(--pf-space-3) clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Workflow Title (in sticky bar) */
+.pf-sticky-title {
+  font-size: clamp(0.875rem, 1.8vw, 1rem);
+  font-weight: 700;
+  color: var(--pf-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  flex-shrink: 0;
+}
+
+/* Divider */
+.pf-sticky-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--pf-border);
+  flex-shrink: 0;
+}
+
+/* Progress Info (in sticky bar) */
+.pf-sticky-progress-info {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+  flex: 1;
+  min-width: 0;
+}
+
+.pf-sticky-step {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-2);
+  font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
+  font-weight: 600;
+  color: var(--pf-text);
+  white-space: nowrap;
+}
+
+.pf-sticky-step svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--pf-accent);
+}
+
+.pf-sticky-bar {
+  flex: 1;
+  height: 6px;
+  background: color-mix(in srgb, var(--pf-slate-200) 60%, transparent);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  min-width: 80px;
+}
+
+.pf-sticky-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pf-accent) 0%, var(--pf-accent-secondary) 100%);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pf-sticky-inputs {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-2);
+  font-size: clamp(0.75rem, 1.5vw, 0.8125rem);
+  color: var(--pf-text-dim);
+  white-space: nowrap;
+}
+
+.pf-sticky-inputs svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: var(--pf-accent);
+}
+
+/* ========================================
+   MOBILE OPTIMIZATIONS
+   ======================================== */
+
+@media (max-width: 640px) {
+  .pf-progress-compact {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--pf-space-3);
+  }
+
+  .pf-progress-compact-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pf-progress-step-info {
+    justify-content: space-between;
+  }
+
+  .pf-progress-input-status {
+    justify-content: center;
+  }
+
+  /* Sticky bar mobile */
+  .pf-sticky-title {
+    display: none;
+  }
+
+  .pf-sticky-divider {
+    display: none;
+  }
+
+  .pf-sticky-progress-info {
+    flex-wrap: wrap;
+  }
+
+  .pf-sticky-bar {
+    width: 100%;
+  }
+
+  .pf-sticky-inputs {
+    font-size: 0.75rem;
+  }
+}
+
+/* ========================================
+   TABLET OPTIMIZATIONS
+   ======================================== */
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  .pf-sticky-title {
+    max-width: 150px;
+  }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .pf-progress-compact {
+    background: color-mix(in srgb, var(--pf-bg-soft) 80%, transparent);
+  }
+
+  .pf-sticky-progress {
+    background: color-mix(in srgb, var(--pf-card) 90%, transparent);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .pf-progress-bar-compact,
+  .pf-sticky-bar {
+    background: color-mix(in srgb, var(--pf-slate-700) 40%, transparent);
+  }
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-sticky-progress {
+    transition: none;
+  }
+
+  .pf-progress-fill-compact,
+  .pf-sticky-fill {
+    transition: none;
+  }
+
+  .pf-progress-fill-compact::after {
+    animation: none;
+  }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+  .pf-sticky-progress {
+    display: none;
+  }
+
+  .pf-progress-compact {
+    page-break-inside: avoid;
+  }
+}
+
