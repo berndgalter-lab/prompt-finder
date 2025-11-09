@@ -51,10 +51,10 @@ Tokens must reuse existing names where possible; new names follow `--pf-` prefix
 ## 5. Implementation Roadmap
 1. **Token update** – extend `:root` in `pf-core.css`
 2. **Namespace scaffold** – append `.pf-ui-modern` base styles (typography, spacing)
-3. **Header module** – new CSS file `workflow-header-modern.css` (scoped)
-4. **Sidebar module** – `workflow-sidebar-modern.css`
+3. **Header module** – integriere `.pf-ui-modern` Varianten direkt in `workflow-header.css`
+4. **Sidebar module** – `.pf-ui-modern` Varianten in `workflow-sidebar.css`, Legacy & Modern zusammenführen
 5. **Info module** – `workflow-info-modern.css`
-6. **Variables module** – `workflow-variables-modern.css`
+6. **Variables module** – integriert in bestehendes `workflow-variables.css` (inkl. Fast-Track Toggle)
 7. **Steps module** – `workflow-steps-modern.css`
 8. **Animations** – optional `pf-animations-modern.css` (namespaced, reduced motion aware)
 9. **Template opt-in** – add `.pf-ui-modern` class in PHP templates after CSS ready

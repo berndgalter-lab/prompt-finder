@@ -42,32 +42,32 @@ if (is_user_logged_in()) {
      data-ft-trigger-this="<?php echo esc_attr($ft_trigger_this); ?>"
      data-ft-trigger-any="<?php echo esc_attr($ft_trigger_any); ?>">
     
-    <?php get_template_part('template-parts/workflow/header'); ?>
+    <?php get_template_part('src/php/template-parts/workflow/header'); ?>
     <div class="pf-status-cluster">
-        <?php get_template_part('template-parts/workflow/section-variable-status'); ?>
-        <?php get_template_part('template-parts/workflow/section-fast-track-toggle'); ?>
+        <?php get_template_part('src/php/template-parts/workflow/section-variable-status'); ?>
+        <?php get_template_part('src/php/template-parts/workflow/section-fast-track-toggle'); ?>
     </div>
     
     <div class="pf-workflow-layout">
-        <?php get_template_part('template-parts/workflow/sidebar-nav'); ?>
+        <?php get_template_part('src/php/template-parts/workflow/sidebar-nav'); ?>
         
         <div class="pf-workflow-main">
             <?php 
             // Fast Track: Workflow Info Accordion (shown only in FT mode via CSS)
-            get_template_part('template-parts/workflow/section-workflow-info-accordion');
+            get_template_part('src/php/template-parts/workflow/section-workflow-info-accordion');
             
             // Default: Full sections (hidden in FT mode via CSS)
-            get_template_part('template-parts/workflow/section-overview');
-            get_template_part('template-parts/workflow/section-prerequisites');
+            get_template_part('src/php/template-parts/workflow/section-overview');
+            get_template_part('src/php/template-parts/workflow/section-prerequisites');
             
             // Always visible
-            get_template_part('template-parts/workflow/section-variables');
-            get_template_part('template-parts/workflow/section-steps');
+            get_template_part('src/php/template-parts/workflow/section-variables');
+            get_template_part('src/php/template-parts/workflow/section-steps');
             ?>
         </div>
     </div>
     
-    <?php get_template_part('template-parts/workflow/footer'); ?>
+    <?php get_template_part('src/php/template-parts/workflow/footer'); ?>
     
 </div>
 

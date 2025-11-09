@@ -157,8 +157,8 @@
 | `single-workflows.php` | Workflow-Template | Alle PHP-Variablen |
 | `functions.php` | Theme-Funktionen | Admin-Columns, AJAX |
 | `inc/pf-access.php` | Access-Control Helper | Alle `pf_*()` Access-Funktionen |
-| `template-parts/workflow/header.php` | Workflow-Header | Access-Mode Badge |
-| `template-parts/workflow/section-steps.php` | Steps-Rendering | Access-Control Logic, Locked Placeholders |
+| `src/php/template-parts/workflow/header.php` | Workflow-Header | Access-Mode Badge |
+| `src/php/template-parts/workflow/section-steps.php` | Steps-Rendering | Access-Control Logic, Locked Placeholders |
 | `pf-workflows.js` | JavaScript-Logic | `window.PF_VARS`, Copy-Funktionen |
 | `pf-workflows.css` | Styling | CSS-Klassen für UI |
 | `assets/css/components/workflow-header.css` | Header Styles | Badge-Styles (Free/Sign-in/Pro) |

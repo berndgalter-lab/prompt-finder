@@ -31,12 +31,12 @@ define('PF_FT_TRIGGER_ANY_WORKFLOW', 5); // visits to ANY workflow
 /**
  * Load Access Control Helpers
  */
-require_once get_stylesheet_directory() . '/inc/pf-access.php';
+require_once get_stylesheet_directory() . '/src/php/inc/pf-access.php';
 
 /**
  * Load User Tracking (Fast Track Mode)
  */
-require_once get_stylesheet_directory() . '/inc/class-pf-user-tracking.php';
+require_once get_stylesheet_directory() . '/src/php/inc/class-pf-user-tracking.php';
 
 /**
  * Load PF configuration from JSON file
@@ -342,22 +342,22 @@ add_action('wp_enqueue_scripts', function () {
     
     // Core (immer) - mit Caching für bessere Performance
     // Depend on child style (either 'pf-child' or GeneratePress handle)
-    $core = $base . '/assets/css/pf-core.css';
+    $core = $base . '/src/styles/core/pf-core.css';
     if (file_exists($core)) {
         $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
             ? wp_get_theme()->get('Version') 
             : filemtime($core);
-        wp_enqueue_style('pf-core', $uri . '/assets/css/pf-core.css', [$child_style_handle], $version);
+        wp_enqueue_style('pf-core', $uri . '/src/styles/core/pf-core.css', [$child_style_handle], $version);
     }
 
     // Landing (nur Front Page)
     if (is_front_page()) {
-        $f = $base . '/assets/css/pf-landing.css';
+        $f = $base . '/src/styles/pages/pf-landing.css';
         if (file_exists($f)) {
             $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
                 ? wp_get_theme()->get('Version') 
                 : filemtime($f);
-            wp_enqueue_style('pf-landing', $uri . '/assets/css/pf-landing.css', ['pf-core'], $version);
+            wp_enqueue_style('pf-landing', $uri . '/src/styles/pages/pf-landing.css', ['pf-core'], $version);
         }
     }
 
@@ -371,12 +371,12 @@ add_action('wp_enqueue_scripts', function () {
         if (!is_singular('workflows')) {
             // Archive/Taxonomy: Old system
             // OLD: Legacy workflow CSS
-            $f = $base . '/assets/css/pf-workflows.css';
+            $f = $base . '/src/styles/workflows/legacy/pf-workflows.css';
             if (file_exists($f)) {
                 $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
                     ? wp_get_theme()->get('Version') 
                     : filemtime($f);
-                wp_enqueue_style('pf-workflows', $uri . '/assets/css/pf-workflows.css', ['pf-core'], $version);
+                wp_enqueue_style('pf-workflows', $uri . '/src/styles/workflows/legacy/pf-workflows.css', ['pf-core'], $version);
             }
         }
         
@@ -395,12 +395,12 @@ add_action('wp_enqueue_scripts', function () {
 
     // Blog
     if (is_home() || is_singular('post') || is_category() || is_tag() || is_date() || is_author()) {
-        $f = $base . '/assets/css/pf-blog.css';
+        $f = $base . '/src/styles/pages/pf-blog.css';
         if (file_exists($f)) {
             $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
                 ? wp_get_theme()->get('Version') 
                 : filemtime($f);
-            wp_enqueue_style('pf-blog', $uri . '/assets/css/pf-blog.css', ['pf-core'], $version);
+            wp_enqueue_style('pf-blog', $uri . '/src/styles/pages/pf-blog.css', ['pf-core'], $version);
         }
     }
 
@@ -439,44 +439,44 @@ add_action('enqueue_block_editor_assets', function(){
     $uri  = get_stylesheet_directory_uri();
 
     // Core
-    $core = $base . '/assets/css/pf-core.css';
+    $core = $base . '/src/styles/core/pf-core.css';
     if (file_exists($core)) {
         $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
             ? wp_get_theme()->get('Version') 
             : filemtime($core);
-        wp_enqueue_style('pf-core-editor', $uri . '/assets/css/pf-core.css', [], $version);
+        wp_enqueue_style('pf-core-editor', $uri . '/src/styles/core/pf-core.css', [], $version);
     }
 
     // Landing
     if ($screen->post_type === 'page') {
-        $f = $base . '/assets/css/pf-landing.css';
+        $f = $base . '/src/styles/pages/pf-landing.css';
         if (file_exists($f)) {
             $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
                 ? wp_get_theme()->get('Version') 
                 : filemtime($f);
-            wp_enqueue_style('pf-landing-editor', $uri . '/assets/css/pf-landing.css', ['pf-core-editor'], $version);
+            wp_enqueue_style('pf-landing-editor', $uri . '/src/styles/pages/pf-landing.css', ['pf-core-editor'], $version);
         }
     }
 
     // Workflows
     if ($screen->post_type === 'workflows') {
-        $f = $base . '/assets/css/pf-workflows.css';
+        $f = $base . '/src/styles/workflows/legacy/pf-workflows.css';
         if (file_exists($f)) {
             $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
                 ? wp_get_theme()->get('Version') 
                 : filemtime($f);
-            wp_enqueue_style('pf-workflows-editor', $uri . '/assets/css/pf-workflows.css', ['pf-core-editor'], $version);
+            wp_enqueue_style('pf-workflows-editor', $uri . '/src/styles/workflows/legacy/pf-workflows.css', ['pf-core-editor'], $version);
         }
     }
 
     // Blog
     if ($screen->post_type === 'post') {
-        $f = $base . '/assets/css/pf-blog.css';
+        $f = $base . '/src/styles/pages/pf-blog.css';
         if (file_exists($f)) {
             $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
                 ? wp_get_theme()->get('Version') 
                 : filemtime($f);
-            wp_enqueue_style('pf-blog-editor', $uri . '/assets/css/pf-blog.css', ['pf-core-editor'], $version);
+            wp_enqueue_style('pf-blog-editor', $uri . '/src/styles/pages/pf-blog.css', ['pf-core-editor'], $version);
         }
     }
 
@@ -585,40 +585,40 @@ add_action('wp_enqueue_scripts', function () {
     $base_dir = get_stylesheet_directory();
     $base_uri = get_stylesheet_directory_uri();
 
-    $core_css = $base_dir . '/assets/css/pf-core.css';
+    $core_css = $base_dir . '/src/styles/core/pf-core.css';
     if (file_exists($core_css)) {
         $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
             ? wp_get_theme()->get('Version') 
             : filemtime($core_css);
-        wp_enqueue_style('pf-core', $base_uri . '/assets/css/pf-core.css', [], $version);
+        wp_enqueue_style('pf-core', $base_uri . '/src/styles/core/pf-core.css', [], $version);
     }
 
     // Reuse workflow visual language
-    $wf_css = $base_dir . '/assets/css/pf-workflows.css';
+    $wf_css = $base_dir . '/src/styles/workflows/legacy/pf-workflows.css';
     if (file_exists($wf_css)) {
-        wp_enqueue_style('pf-workflows', $base_uri . '/assets/css/pf-workflows.css', ['pf-core'], filemtime($wf_css));
+        wp_enqueue_style('pf-workflows', $base_uri . '/src/styles/workflows/legacy/pf-workflows.css', ['pf-core'], filemtime($wf_css));
     }
 
-    $landing_css = $base_dir . '/assets/css/pf-landing.css';
+    $landing_css = $base_dir . '/src/styles/pages/pf-landing.css';
     if (file_exists($landing_css)) {
-        wp_enqueue_style('pf-landing', $base_uri . '/assets/css/pf-landing.css', ['pf-core'], filemtime($landing_css));
+        wp_enqueue_style('pf-landing', $base_uri . '/src/styles/pages/pf-landing.css', ['pf-core'], filemtime($landing_css));
     }
 
-    $pricing_css = $base_dir . '/assets/css/pf-pricing.css';
+    $pricing_css = $base_dir . '/src/styles/pages/pf-pricing.css';
     if (file_exists($pricing_css)) {
         $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
             ? wp_get_theme()->get('Version') 
             : filemtime($pricing_css);
-        wp_enqueue_style('pf-pricing-css', $base_uri . '/assets/css/pf-pricing.css', ['pf-core'], $version);
+        wp_enqueue_style('pf-pricing-css', $base_uri . '/src/styles/pages/pf-pricing.css', ['pf-core'], $version);
     }
 
     // Pricing JS (includes Lemon Squeezy loader)
-    $pricing_js = $base_dir . '/assets/js/pf-pricing.js';
+    $pricing_js = $base_dir . '/src/scripts/pages/pricing.js';
     if (file_exists($pricing_js)) {
         $version = (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'production') 
             ? wp_get_theme()->get('Version') 
             : filemtime($pricing_js);
-        wp_enqueue_script('pf-pricing-js', $base_uri . '/assets/js/pf-pricing.js', [], $version, true);
+        wp_enqueue_script('pf-pricing-js', $base_uri . '/src/scripts/pages/pricing.js', [], $version, true);
     }
 }, 110);
 
@@ -1101,41 +1101,55 @@ add_action('wp_enqueue_scripts', function () {
     pf_ver('/style.css')
   );
 
-  wp_enqueue_style(
-    'pf-core',
-    $uri . '/assets/css/pf-core.css',
-    ['pf-child'],
-    pf_ver('/assets/css/pf-core.css')
-  );
-
-  wp_enqueue_style(
-    'pf-workflows-main',
-    $uri . '/assets/css/pf-workflows-main.css',
-    ['pf-core'],
-    pf_ver('/assets/css/pf-workflows-main.css')
-  );
-
-  $components = [
-    'workflow-header',
-    'workflow-sidebar',
-    'workflow-sections',
-    'workflow-variables',
-    'workflow-steps',
-    'fast-track-toggle',
-    'fast-track-content',
-    // Modern namespace styles (scoped to `.pf-ui-modern`)
-    'workflow-header-modern',
-    'workflow-sidebar-modern',
-    'workflow-info-modern',
-    'workflow-variables-modern',
-    'workflow-steps-modern',
+  $core_styles = [
+    'pf-core' => [
+      'path' => '/src/styles/core/pf-core.css',
+      'deps' => ['pf-child'],
+    ],
+    'pf-workflows-main' => [
+      'path' => '/src/styles/workflows/base.css',
+      'deps' => ['pf-core'],
+    ],
   ];
-  foreach ($components as $c) {
+
+  foreach ($core_styles as $handle => $data) {
     wp_enqueue_style(
-      "pf-$c",
-      $uri . "/assets/css/components/$c.css",
+      $handle,
+      $uri . $data['path'],
+      $data['deps'],
+      pf_ver($data['path'])
+    );
+  }
+
+  $legacy_components = [
+    'workflow-header'    => '/src/styles/workflows/legacy/workflow-header.css',
+    'workflow-sidebar'   => '/src/styles/workflows/legacy/workflow-sidebar.css',
+    'workflow-sections'  => '/src/styles/workflows/legacy/workflow-sections.css',
+    'workflow-variables' => '/src/styles/workflows/legacy/workflow-variables.css',
+    'workflow-steps'     => '/src/styles/workflows/legacy/workflow-steps.css',
+  ];
+
+  foreach ($legacy_components as $handle => $path) {
+    wp_enqueue_style(
+      "pf-$handle",
+      $uri . $path,
       ['pf-workflows-main'],
-      pf_ver("/assets/css/components/$c.css")
+      pf_ver($path)
+    );
+  }
+
+  $modern_components = [
+    'workflow-info-modern'      => '/src/styles/workflows/modern/workflow-info-modern.css',
+    'workflow-steps-modern'     => '/src/styles/workflows/modern/workflow-steps-modern.css',
+    'fast-track-content'        => '/src/styles/workflows/modern/fast-track-content.css',
+  ];
+
+  foreach ($modern_components as $handle => $path) {
+    wp_enqueue_style(
+      "pf-$handle",
+      $uri . $path,
+      ['pf-workflows-main'],
+      pf_ver($path)
     );
   }
 
@@ -1159,36 +1173,36 @@ add_action('wp_enqueue_scripts', function () {
 
   wp_enqueue_script(
     'pf-workflows',
-    $uri . '/assets/js/pf-workflows.js',
+    $uri . '/src/scripts/workflows/pf-workflows.js',
     ['jquery'],
-    pf_ver('/assets/js/pf-workflows.js'),
+    pf_ver('/src/scripts/workflows/pf-workflows.js'),
     true
   );
   
   // Tracking module (Fast Track Mode) - no jQuery dependency
   wp_enqueue_script(
     'pf-tracking',
-    $uri . '/assets/js/modules/tracking.js',
+    $uri . '/src/scripts/workflows/modules/tracking.js',
     [],
-    pf_ver('/assets/js/modules/tracking.js'),
+    pf_ver('/src/scripts/workflows/modules/tracking.js'),
     true
   );
   
   // Tracking init (auto-track visit on page load) - must load AFTER tracking module
   wp_enqueue_script(
     'pf-tracking-init',
-    $uri . '/assets/js/pf-tracking-init.js',
+    $uri . '/src/scripts/workflows/entry/pf-tracking-init.js',
     ['pf-tracking'],
-    pf_ver('/assets/js/pf-tracking-init.js'),
+    pf_ver('/src/scripts/workflows/entry/pf-tracking-init.js'),
     true
   );
   
   // Fast Track module (toggle & content adaptation) - must load AFTER tracking
   wp_enqueue_script(
     'pf-fast-track',
-    $uri . '/assets/js/modules/fast-track.js',
+    $uri . '/src/scripts/workflows/modules/fast-track.js',
     ['pf-tracking'],
-    pf_ver('/assets/js/modules/fast-track.js'),
+    pf_ver('/src/scripts/workflows/modules/fast-track.js'),
     true
   );
   
@@ -1475,6 +1489,6 @@ add_action('wp_head', function () {
 }, 99);
 
 // Prompt Finder autoload + variables localize bootstrap
-require_once __DIR__ . '/app/bootstrap/pf-autoload.php';
-require_once __DIR__ . '/app/bootstrap/pf-variables-localize.php';
+require_once __DIR__ . '/src/php/app/bootstrap/pf-autoload.php';
+require_once __DIR__ . '/src/php/app/bootstrap/pf-variables-localize.php';
 

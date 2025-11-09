@@ -269,7 +269,7 @@ THEN
 ### Phase 1: Tracking Foundation
 **Files:**
 - `assets/js/modules/tracking.js` (new)
-- `inc/class-pf-user-tracking.php` (new)
+- `src/php/inc/class-pf-user-tracking.php` (new)
 
 **Tasks:**
 1. Create `PF_Tracking` JS module
@@ -290,7 +290,7 @@ THEN
 
 ### Phase 2: Fast Track Toggle UI
 **Files:**
-- `template-parts/workflow/section-fast-track-toggle.php` (new)
+- `src/php/template-parts/workflow/section-fast-track-toggle.php` (new)
 - `assets/css/components/fast-track-toggle.css` (new)
 - `assets/js/modules/fast-track.js` (new)
 
@@ -309,8 +309,8 @@ THEN
 
 ### Phase 3: Content Adaptation (Fast Track Mode)
 **Files:**
-- `template-parts/workflow/section-overview.php` (modify)
-- `template-parts/workflow/section-prerequisites.php` (modify)
+- `src/php/template-parts/workflow/section-overview.php` (modify)
+- `src/php/template-parts/workflow/section-prerequisites.php` (modify)
 - `assets/css/components/workflow-sections.css` (modify)
 - `assets/js/modules/fast-track.js` (expand)
 

@@ -52,7 +52,7 @@ function pf_hook_localize_user_vars() {
   if (!wp_script_is($script_handle, 'registered')) {
     wp_register_script(
       $script_handle,
-      get_stylesheet_directory_uri() . '/assets/js/pf-workflows.js',
+      get_stylesheet_directory_uri() . '/src/scripts/workflows/pf-workflows.js',
       ['jquery'],
       null,
       true

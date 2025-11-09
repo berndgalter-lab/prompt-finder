@@ -68,4 +68,43 @@ Step > Workflow > Global (Profile) > Default (ACF) > Fallback (in prompt)
 5) `*_prefer_system` pushes system values (e.g., `sys_today`) before workflow/global (after Step).
 6) Default `workflow_var_injection_mode` = `conditional`.
 
+# Cursor Projekt-Regeln
+
+## Ordnerstruktur
+- CSS-Dateien gehören in `/src/styles/` (Unterordner: `core/`, `workflows/`, `pages/`)
+- JS-Dateien gehören in `/src/scripts/` (Unterordner: `workflows/`, `pages/`, `workflows/modules/`)
+- PHP/Template-Dateien liegen unter `/src/php/` oder im Theme-Root (WP-Anforderungen beachten)
+- Dokumentation in `/docs/`
+- Ungenutzte Dateien nach `/archive/`
+
+## Namenskonventionen
+- CSS: kebab-case (`button-primary.css`)
+- JS: camelCase (`userAuth.js`)
+- Komponenten/Classes (falls JS-Module): PascalCase
+- Ordner: kebab-case
+
+## Code-Standards
+- Jede neue Datei enthält einen Header-Kommentar mit Zweck und Verwendung
+- Keine Inline-Styles direkt in PHP/HTML Templates
+- Keine ungenutzten Imports, keine globalen Leaks
+- Funktionen >20 Zeilen kurz kommentieren
+- JavaScript nutzt das `PF`-Namespace oder ES-Module, vermeidet `window`-Leaks
+- CSS nutzt Token aus `pf-core.css`; keine Hardcoded Farben
+
+## Datei-Header-Format
+```javascript
+/**
+ * Dateiname: [name.js]
+ * Zweck: [Was macht diese Datei?]
+ * Genutzt in: [Wo wird sie importiert?]
+ * Letzte Änderung: [Datum]
+ */
+```
+
+## Vor jedem Commit
+- Entferne `console.log` & Debug-Ausgaben
+- Prüfe auf ungenutzte Imports/Variablen
+- Linter/Formatter ausführen (wenn vorhanden)
+- `docs/CHANGELOG.md` aktualisieren
+
 
