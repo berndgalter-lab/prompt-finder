@@ -9,6 +9,7 @@
 - ✅ Aufräum-Plan erarbeitet (`CLEANUP-PLAN.md`)
 - ✅ Styles/Scripts nach `/src/` migriert, Legacy-Assets archiviert
 - ✅ README aktualisiert
+- ✨ Breadcrumb-Navigation visuell & hinsichtlich Accessibility modernisiert (`src/styles/workflows/legacy/workflow-header.css`)
 - ⏳ Noch zu tun: PHP-Struktur & Dokumenten-Konsolidierung (siehe CLEANUP-PLAN)
 
 ### Aktive Dateien identifiziert

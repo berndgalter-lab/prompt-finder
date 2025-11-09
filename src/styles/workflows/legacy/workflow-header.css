@@ -7,37 +7,114 @@
    Breadcrumb
    ============================= */
 .pf-breadcrumb-wrapper {
-  padding: var(--pf-space-3) var(--pf-space-7);
-  background: var(--pf-bg-soft);
-  border-bottom: 1px solid var(--pf-border);
+  display: flex;
+  align-items: center;
+  min-height: clamp(3rem, 8vw, 3.75rem);
+  padding: var(--pf-space-3) clamp(var(--pf-space-4), 6vw, var(--pf-space-7));
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--pf-slate-50) 95%, transparent) 0%,
+    color-mix(in srgb, var(--pf-slate-100) 88%, transparent) 100%
+  );
+  border-bottom: 1px solid color-mix(in srgb, var(--pf-slate-300) 65%, transparent);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--pf-slate-900) 12%, transparent);
+  color: color-mix(in srgb, var(--pf-slate-600) 92%, transparent);
+  position: relative;
+  z-index: 20;
+}
+
+@supports (backdrop-filter: blur(12px)) {
+  .pf-breadcrumb-wrapper {
+    background: color-mix(in srgb, var(--pf-slate-50) 82%, transparent);
+    backdrop-filter: blur(12px) saturate(140%);
+  }
 }
 
 .pf-breadcrumb {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--pf-space-2);
-  font-size: 0.875rem;
-  color: var(--pf-slate-500);
+  gap: calc(var(--pf-space-2) * 0.75);
+  font-size: clamp(0.8125rem, 1.5vw, 0.9375rem);
+  font-weight: 500;
+  line-height: 1.4;
+  min-width: 0;
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+}
+
+.pf-breadcrumb::-webkit-scrollbar {
+  height: 6px;
+}
+
+.pf-breadcrumb::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pf-breadcrumb::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--pf-slate-300) 70%, transparent);
+  border-radius: 999px;
+}
+
+.pf-breadcrumb a,
+.pf-breadcrumb-current {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--pf-space-1) * 1.2);
+  padding: 0.4rem 0.7rem;
+  border-radius: calc(var(--pf-radius) * 0.75);
+  position: relative;
+  scroll-snap-align: center;
+  flex-shrink: 0;
 }
 
 .pf-breadcrumb a {
-  color: inherit;
+  color: color-mix(in srgb, var(--pf-slate-700) 94%, transparent);
+  background: color-mix(in srgb, var(--pf-slate-100) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pf-slate-300) 45%, transparent);
   text-decoration: none;
-  transition: color var(--pf-transition-fast);
+  transition: background var(--pf-transition-fast), color var(--pf-transition-fast),
+    border-color var(--pf-transition-fast), box-shadow var(--pf-transition-fast);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--pf-slate-900) 8%, transparent);
 }
 
 .pf-breadcrumb a:hover,
 .pf-breadcrumb a:focus {
-  color: var(--pf-accent);
+  color: var(--pf-accent-dark);
+  background: color-mix(in srgb, var(--pf-accent) 20%, var(--pf-slate-50));
+  border-color: color-mix(in srgb, var(--pf-accent) 45%, transparent);
+}
+
+.pf-breadcrumb a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pf-accent) 28%, transparent);
 }
 
 .pf-breadcrumb-separator {
-  color: var(--pf-slate-300);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--pf-space-1);
+  color: color-mix(in srgb, var(--pf-slate-400) 85%, transparent);
+  font-size: 0.875em;
+  font-weight: 500;
+  opacity: 0.75;
+  flex-shrink: 0;
 }
 
 .pf-breadcrumb-current {
-  color: var(--pf-text);
+  color: var(--pf-slate-900);
   font-weight: 600;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--pf-accent) 22%, var(--pf-slate-100)) 0%,
+    color-mix(in srgb, var(--pf-accent-purple) 18%, var(--pf-slate-50)) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 32%, var(--pf-slate-200));
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--pf-accent) 14%, transparent);
 }
 
 /* =============================
@@ -183,7 +260,16 @@
 @media (max-width: 768px) {
   .pf-breadcrumb-wrapper {
     padding: var(--pf-space-2) var(--pf-space-4);
-    font-size: 0.75rem;
+    min-height: clamp(2.75rem, 12vw, 3.25rem);
+  }
+
+  .pf-breadcrumb {
+    gap: calc(var(--pf-space-1) * 0.85);
+  }
+
+  .pf-breadcrumb a,
+  .pf-breadcrumb-current {
+    padding: 0.35rem 0.6rem;
   }
 
   .pf-workflow-header {
@@ -207,22 +293,79 @@
   }
 }
 
+@media (max-width: 480px) {
+  .pf-breadcrumb {
+    font-size: 0.75rem;
+  }
+
+  .pf-breadcrumb a,
+  .pf-breadcrumb-current {
+    padding: 0.3rem 0.5rem;
+  }
+}
+
 /* =============================
    PF UI Modern Enhancements
    ============================= */
 .pf-ui-modern .pf-breadcrumb-wrapper {
-  background: color-mix(in srgb, var(--pf-slate-900) 20%, var(--pf-bg));
-  border-bottom: 1px solid color-mix(in srgb, var(--pf-slate-700) 40%, transparent);
-  color: var(--pf-slate-200);
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--pf-slate-900) 88%, transparent) 0%,
+    color-mix(in srgb, var(--pf-slate-800) 70%, transparent) 100%
+  );
+  border-bottom: 1px solid color-mix(in srgb, var(--pf-slate-700) 55%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--pf-slate-50) 12%, transparent),
+    0 18px 46px color-mix(in srgb, var(--pf-slate-900) 32%, transparent);
+  color: color-mix(in srgb, var(--pf-slate-200) 92%, transparent);
+}
+
+@supports (backdrop-filter: blur(14px)) {
+  .pf-ui-modern .pf-breadcrumb-wrapper {
+    background: color-mix(in srgb, var(--pf-slate-900) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(160%);
+  }
 }
 
 .pf-ui-modern .pf-breadcrumb {
-  color: color-mix(in srgb, var(--pf-slate-200) 80%, transparent);
+  color: color-mix(in srgb, var(--pf-slate-200) 90%, transparent);
+}
+
+.pf-ui-modern .pf-breadcrumb a {
+  color: color-mix(in srgb, var(--pf-slate-50) 96%, transparent);
+  background: color-mix(in srgb, var(--pf-slate-900) 62%, transparent);
+  border-color: color-mix(in srgb, var(--pf-slate-200) 28%, transparent);
+  box-shadow: 0 16px 32px color-mix(in srgb, var(--pf-slate-900) 45%, transparent);
 }
 
 .pf-ui-modern .pf-breadcrumb a:hover,
 .pf-ui-modern .pf-breadcrumb a:focus {
-  color: var(--pf-accent);
+  background: color-mix(in srgb, var(--pf-accent) 24%, var(--pf-slate-800));
+  border-color: color-mix(in srgb, var(--pf-accent) 45%, transparent);
+  color: var(--pf-slate-50);
+}
+
+.pf-ui-modern .pf-breadcrumb a:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pf-accent) 35%, transparent);
+}
+
+.pf-ui-modern .pf-breadcrumb-current {
+  color: var(--pf-slate-50);
+  background: linear-gradient(
+    130deg,
+    color-mix(in srgb, var(--pf-accent) 65%, transparent) 0%,
+    color-mix(in srgb, var(--pf-accent-purple) 70%, transparent) 100%
+  );
+  border-color: color-mix(in srgb, var(--pf-accent) 55%, transparent);
+  box-shadow: 0 22px 40px color-mix(in srgb, var(--pf-accent) 28%, transparent);
+}
+
+.pf-ui-modern .pf-breadcrumb-separator {
+  color: color-mix(in srgb, var(--pf-slate-300) 65%, transparent);
+  opacity: 0.6;
+}
+
+.pf-ui-modern .pf-breadcrumb::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--pf-slate-600) 65%, transparent);
 }
 
 .pf-ui-modern .pf-workflow-header {
