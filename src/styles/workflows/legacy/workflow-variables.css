@@ -237,16 +237,32 @@
 
 /* ========== Status Bar (Simplified Single-Tier) ========== */
 .pf-variable-status {
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--pf-accent-light, #dbeafe) 68%, var(--pf-bg, #ffffff) 32%) 0%,
-    color-mix(in srgb, var(--pf-accent, #3b82f6) 22%, var(--pf-bg, #ffffff) 78%) 100%
-  );
-  border: 1px solid color-mix(in srgb, var(--pf-accent, #3b82f6) 28%, var(--pf-border, #e5e7eb));
+  background: var(--pf-bg-soft, #f3f4f6);
+  border: 1px solid var(--pf-border, #e5e7eb);
   border-radius: var(--pf-radius, 12px);
-  padding: var(--pf-space-5, 1.25rem);
-  margin-bottom: var(--pf-space-5, 1.25rem);
-  box-shadow: var(--pf-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  padding: clamp(var(--pf-space-4), 3vw, var(--pf-space-5));
+  margin-bottom: 0;
+  box-shadow: none;
+  transition: opacity var(--pf-transition-base, 0.2s ease), 
+              transform var(--pf-transition-base, 0.2s ease),
+              max-height 0.4s ease;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.pf-variable-status.is-complete {
+  border-color: color-mix(in srgb, var(--pf-success, #10b981) 35%, var(--pf-border));
+  background: color-mix(in srgb, var(--pf-success, #10b981) 6%, var(--pf-bg-soft));
+}
+
+.pf-variable-status.is-celebrating {
+  animation: celebrate 0.6s ease-out;
+}
+
+@keyframes celebrate {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
 }
 
 .pf-variable-status-bar {
@@ -356,7 +372,54 @@
 }
 
 .pf-variable-status.is-hidden {
+  opacity: 0;
+  transform: translateY(-8px);
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  pointer-events: none;
+}
+
+.pf-variable-status-success {
   display: none;
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--pf-success) 18%, var(--pf-bg-soft)) 0%,
+    color-mix(in srgb, var(--pf-success) 12%, var(--pf-bg-soft)) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--pf-success) 30%, var(--pf-border));
+  border-radius: var(--pf-radius, 12px);
+  padding: var(--pf-space-4);
+  margin-bottom: var(--pf-space-4);
+  animation: slideInDown 0.4s ease-out;
+}
+
+.pf-variable-status-success.is-visible {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-3);
+}
+
+.pf-variable-status-success svg {
+  flex-shrink: 0;
+  color: var(--pf-success);
+}
+
+.pf-variable-status-success-text {
+  flex: 1;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--pf-success) 85%, var(--pf-text));
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {

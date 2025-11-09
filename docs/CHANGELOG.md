@@ -14,6 +14,12 @@
 - ✅ **Komplette Entfernung aller `.pf-ui-modern` Styles** – Sauberer Neustart für zukünftiges Design-System
   - Entfernt aus: `workflow-header.css`, `workflow-sidebar.css`, `workflow-variables.css`, `pf-core.css`
   - Gelöscht: `workflow-info-modern.css`, `fast-track-content.css`
+- ✅ **Access-Level Chip implementiert** (Free/Sign-In/Pro) mit passenden Icons und Farbgebung
+- ✅ **UX-Optimierung: Hierarchie Progress Hero vs. Variable Status** (Option A)
+  - Variable Status: Sekundäres Design (subtile Farben, auto-hide bei 100%)
+  - Progress Hero: Prominentes Design (Accent-Gradient, größere Schrift, immer sichtbar)
+  - Micro-Celebration: Success-Message + Animation bei 100% Input-Completion
+  - Status Cluster: Responsive Grid-Layout (Desktop: 1.4fr + 1fr, Mobile: Stack)
 - ⏳ Noch zu tun: PHP-Struktur & Dokumenten-Konsolidierung (siehe CLEANUP-PLAN)
 
 ### Aktive Dateien identifiziert

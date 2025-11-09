@@ -881,10 +881,41 @@ function updateStatusBar(workflowMap){
   countEl.dataset.total = String(totalCount);
 
   // Visual feedback when complete
+  const statusContainer = document.querySelector('.pf-variable-status');
+  const successMessage = document.querySelector('.pf-variable-status-success');
+  
   if (totalCount > 0 && totalFilled === totalCount) {
     simpleEl.classList.add('is-complete');
+    
+    // Auto-hide logic with celebration
+    if (statusContainer && statusContainer.dataset.autoHide === 'true') {
+      // Add complete state
+      statusContainer.classList.add('is-complete');
+      
+      // Celebrate first
+      statusContainer.classList.add('is-celebrating');
+      
+      // Show success message
+      if (successMessage) {
+        successMessage.classList.add('is-visible');
+      }
+      
+      // Hide after 2 seconds
+      setTimeout(() => {
+        statusContainer.classList.add('is-hidden');
+        statusContainer.classList.remove('is-celebrating');
+      }, 2000);
+    }
   } else {
     simpleEl.classList.remove('is-complete');
+    
+    // Reset if user unfills inputs
+    if (statusContainer) {
+      statusContainer.classList.remove('is-complete', 'is-hidden', 'is-celebrating');
+    }
+    if (successMessage) {
+      successMessage.classList.remove('is-visible');
+    }
   }
 
   // Announce to screen readers

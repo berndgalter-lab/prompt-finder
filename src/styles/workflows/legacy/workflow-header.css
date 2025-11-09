@@ -251,12 +251,17 @@
 .pf-progress-hero {
   display: grid;
   gap: var(--pf-space-4);
-  background: var(--pf-header-progress-bg);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--pf-accent) 14%, var(--pf-bg-soft)) 0%,
+    color-mix(in srgb, var(--pf-accent) 8%, var(--pf-bg-soft)) 100%
+  );
   padding: clamp(var(--pf-space-4), 4vw, var(--pf-space-5));
   border-radius: calc(var(--pf-radius) * 0.9);
-  border: 1px solid var(--pf-border);
-  box-shadow: var(--pf-shadow-sm);
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 25%, var(--pf-border));
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--pf-accent) 12%, transparent);
   margin: 0;
+  position: relative;
 }
 
 .pf-progress-info {
@@ -270,10 +275,10 @@
 
 .pf-progress-title {
   margin: 0;
-  font-size: clamp(1.0625rem, 2vw, 1.25rem);
-  font-weight: 600;
-  color: var(--pf-header-progress-title-color);
-  letter-spacing: -0.01em;
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  font-weight: 700;
+  color: var(--pf-text);
+  letter-spacing: -0.015em;
 }
 
 .pf-progress-time {
@@ -282,30 +287,32 @@
 }
 
 .pf-progress-bar-hero {
-  height: 0.7rem;
-  background: var(--pf-chip-bg);
+  height: 0.875rem;
+  background: var(--pf-bg);
   border-radius: 999px;
   overflow: hidden;
   border: 1px solid var(--pf-border);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .pf-progress-fill-hero {
   height: 100%;
-  background: var(--pf-header-progress-fill);
+  background: linear-gradient(90deg, var(--pf-accent) 0%, #2563eb 100%);
   border-radius: inherit;
   transition: width var(--pf-transition-base);
   display: flex;
   align-items: center;
   justify-content: flex-end;
   padding-right: var(--pf-space-2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .pf-progress-label {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: var(--pf-header-progress-label-color);
+  color: #ffffff;
   letter-spacing: 0.08em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .pf-time-tracker,

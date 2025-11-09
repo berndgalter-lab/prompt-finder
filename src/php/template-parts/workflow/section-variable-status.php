@@ -3,6 +3,7 @@
  * Workflow Template Part: Variable Status Bar
  *
  * Simplified single-tier display showing total input completion.
+ * Auto-hides when 100% complete with celebration animation.
  *
  * @package GeneratePress_Child
  */
@@ -12,7 +13,15 @@ if (!defined('ABSPATH')) {
 }
 ?>
 
-<div class="pf-variable-status" role="status" aria-live="polite">
+<div class="pf-variable-status-success" role="status" aria-live="polite">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span class="pf-variable-status-success-text">✨ All inputs filled! Ready to start.</span>
+</div>
+
+<div class="pf-variable-status" role="status" aria-live="polite" data-auto-hide="true">
     <div class="pf-variable-status-inner">
         <header class="pf-status-head">
             <span class="pf-status-kicker">Workflow setup</span>
