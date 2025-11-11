@@ -2,6 +2,13 @@
 
 ## [Aktuell] - 2025-11-09
 
+### 🎯 SEO: Summary prominent im Hero Value integriert
+- ✅ **Summary ganz oben** – Wichtiger SEO-Text jetzt prominent platziert
+- ✅ **Neue Summary Box** – Subtil hervorgehoben mit Accent-Background
+- ✅ **Hierarchie optimiert** – Summary → Expected Outcome → Benefits → Pain Points
+- ✅ **Responsive Design** – Flüssige Schrift- und Abstandsgrößen
+- ℹ️ **SEO-Vorteil** – Summary erscheint früh im DOM für besseres Crawling
+
 ### 🧹 Cleanup: Workflow Info Accordion entfernt
 - ✅ **Template gelöscht** – `section-workflow-info-accordion.php` war redundant
 - ✅ **JavaScript bereinigt** – Accordion-Code aus `fast-track.js` entfernt

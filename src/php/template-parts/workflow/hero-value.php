@@ -54,6 +54,14 @@ if ($time_saved_min) {
         
         <!-- Primary Value -->
         <div class="pf-hero-primary">
+            <!-- Summary (SEO-optimized, always first if present) -->
+            <?php if ($summary): ?>
+                <div class="pf-hero-summary-box">
+                    <p class="pf-hero-summary"><?php echo esc_html($summary); ?></p>
+                </div>
+            <?php endif; ?>
+            
+            <!-- Expected Outcome (What you'll create) -->
             <?php if ($expected_outcome): ?>
                 <div class="pf-hero-outcome">
                     <svg class="pf-hero-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -63,18 +71,6 @@ if ($time_saved_min) {
                     <div class="pf-hero-outcome-content">
                         <span class="pf-hero-kicker">What you'll create</span>
                         <h2 class="pf-hero-outcome-text"><?php echo esc_html($expected_outcome); ?></h2>
-                    </div>
-                </div>
-            <?php elseif ($summary): ?>
-                <div class="pf-hero-outcome">
-                    <svg class="pf-hero-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                    <div class="pf-hero-outcome-content">
-                        <span class="pf-hero-kicker">Overview</span>
-                        <p class="pf-hero-summary"><?php echo esc_html($summary); ?></p>
                     </div>
                 </div>
             <?php endif; ?>
