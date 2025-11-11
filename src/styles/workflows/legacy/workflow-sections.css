@@ -828,46 +828,10 @@
 
 /* Stelle sicher, dass die Section selbst ihre Breite behält */
 
-/* === Prereqs (Before you start) === */
-.pf-section--prereqs { 
-  --pr-gap: 12px; 
-  --pr-pad: 14px; 
-}
-
-.pf-prereqs-header { 
-  margin: 18px 0 var(--pr-gap) 0; 
-}
-
-.pf-prereqs-body { 
-  display: block; 
-}
-
-.pf-reqs { 
-  list-style: none; 
-  padding: 0; 
-  margin: 0; 
-  display: grid; 
-  gap: 8px; 
-}
-
-.pf-reqs-item { 
-  border: 1px solid var(--base, #e5e7eb); 
-  border-radius: 10px; 
-  padding: 10px; 
-  background: var(--base-3, #f9fafb); 
-}
-
-.pf-reqs-label { 
-  font-weight: 600; 
-  font-size: .95rem; 
-}
-
-.pf-reqs-notes { 
-  margin-top: 4px; 
-  font-size: .95rem; 
-  line-height: 1.4; 
-  color: var(--contrast, #1a1a1a); 
-}
+/* === Prerequisites Section - MOVED ===
+ * Prerequisites styles moved to workflow-prerequisites.css
+ * Date: 2025-11-11
+ */
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -878,16 +842,5 @@
   
 }
 
-/* === pf:prereqs compact card === */
-.pf-prereqs-card {
-  background: var(--base-3, #f9fafb);
-  border: 1px solid var(--base, #e5e7eb);
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin: 6px 0 10px 0;
-}
-
-.pf-reqs { margin: 0; padding-left: 18px; }
-
-.pf-reqs li { margin: 6px 0; line-height: 1.4; }
+/* Prerequisites styles removed - see workflow-prerequisites.css */
 

@@ -2,6 +2,22 @@
 
 ## [Aktuell] - 2025-11-11
 
+### 🎨 UX Overhaul: Prerequisites Section modernisiert
+- ✅ **Neues Design** – Konsistent mit Hero Value Section
+  - Icon-basiert für schnelles Scannen
+  - Checkmark-Icons für jeden Punkt
+  - Clean Card-Design mit Accent-Border
+  - Hover-Effekte für bessere Interaktivität
+- ✅ **Eigenes CSS-File** – `workflow-prerequisites.css` (modular & wartbar)
+- ✅ **Verbesserte Struktur**:
+  - Automatisches Splitting von Zeilenumbrüchen zu List-Items
+  - Empty State mit positiver Message
+  - Header mit Icon
+  - Accessibility-optimiert (ARIA, role)
+- ✅ **Responsive Design** – Mobile-optimiert, Dark Mode Support
+- ✅ **Wiederverwendbares Pattern** – Template für Steps Section
+- ℹ️ **Alte Styles entfernt** – aus `workflow-sections.css` (deprecated)
+
 ### 🗑️ Cleanup: Overview Section komplett entfernt
 - ✅ **Template gelöscht** – `section-overview.php` war vollständig redundant
 - ✅ **CSS bereinigt** – Alle `.pf-overview-*` und `.pf-metric-inline` Styles entfernt (~300 Zeilen)
