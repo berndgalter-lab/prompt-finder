@@ -15,9 +15,9 @@
 ```
 single-workflows.php
  ├─ src/php/template-parts/workflow/header.php
- ├─ src/php/template-parts/workflow/section-variable-status.php
+ ├─ src/php/template-parts/workflow/hero-value.php
+ ├─ src/php/template-parts/workflow/progress-compact.php
  ├─ src/php/template-parts/workflow/section-fast-track-toggle.php
- ├─ src/php/template-parts/workflow/section-overview.php
  ├─ src/php/template-parts/workflow/section-prerequisites.php
  ├─ src/php/template-parts/workflow/section-variables.php
  └─ src/php/template-parts/workflow/section-steps.php

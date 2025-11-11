@@ -56,7 +56,6 @@ if (is_user_logged_in()) {
         <div class="pf-workflow-main">
             <?php 
             // Default: Full sections (hidden in FT mode via CSS)
-            get_template_part('src/php/template-parts/workflow/section-overview');
             get_template_part('src/php/template-parts/workflow/section-prerequisites');
             
             // Always visible

@@ -2,6 +2,17 @@
 
 ## [Aktuell] - 2025-11-11
 
+### 🗑️ Cleanup: Overview Section komplett entfernt
+- ✅ **Template gelöscht** – `section-overview.php` war vollständig redundant
+- ✅ **CSS bereinigt** – Alle `.pf-overview-*` und `.pf-metric-inline` Styles entfernt (~300 Zeilen)
+- ✅ **single-workflows.php** – Template-Part Aufruf entfernt
+- ℹ️ **Grund** – 100% Redundanz mit Hero Value Section:
+  - Summary → jetzt expandable in Hero Value
+  - Expected Outcome → prominent in Hero Value
+  - Pain Points → sichtbar als Chips in Hero Value
+  - Time saved + Without AI → als Benefits in Hero Value
+- ℹ️ **Fast Track Mode** – Bleibt unberührt, kann später frei konfiguriert werden
+
 ### 🧠 UX Psychology: Setup A - Conversion-optimierte Hero Value Hierarchie
 - ✅ **Pain Points SICHTBAR** – Jetzt als Chips direkt unter Expected Outcome (nicht mehr collapsed!)
   - Max. 4 Pain Points für optimales Scanning (F-Pattern)
