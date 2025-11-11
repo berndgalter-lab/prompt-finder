@@ -51,8 +51,6 @@ if (is_user_logged_in()) {
     <?php get_template_part('src/php/template-parts/workflow/section-fast-track-toggle'); ?>
     
     <div class="pf-workflow-layout">
-        <?php get_template_part('src/php/template-parts/workflow/sidebar-nav'); ?>
-        
         <div class="pf-workflow-main">
             <?php 
             // Default: Full sections (hidden in FT mode via CSS)

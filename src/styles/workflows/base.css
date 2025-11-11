@@ -72,16 +72,14 @@
 
 @media (min-width: 1024px) {
     .pf-workflow-layout {
-        display: grid;
-        grid-template-columns: 280px minmax(0, 1fr);
-        column-gap: 2.5rem;
-        align-items: flex-start;
+        display: block;
+        /* Sidebar removed - single column layout */
     }
 
     .pf-workflow-main {
         max-width: 1400px;
-        margin: 0;
-        padding: 2.5rem 3rem;
+        margin: 0 auto;
+        padding: 0;
     }
 }
 

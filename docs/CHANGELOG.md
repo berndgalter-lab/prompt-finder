@@ -2,7 +2,28 @@
 
 ## [Aktuell] - 2025-11-11
 
+### 🗑️ Cleanup: Sidebar Navigation entfernt
+- ✅ **Sidebar gelöscht** – Keine redundante Navigation mehr
+  - Sidebar-Template nicht mehr geladen in `single-workflows.php`
+  - Grid-Layout entfernt aus `base.css` (→ Single-Column)
+  - Full-width Content für bessere Lesbarkeit
+- ✅ **Gründe**:
+  - Compact Progress macht Sidebar überflüssig (zeigt Step & Progress)
+  - "Overview" Link war broken (Section gelöscht)
+  - Mehr Platz für Workflow-Content
+  - Mobile-first Approach (konsistent über alle Devices)
+  - Modern 2025 Best Practice (Notion, Linear, Coda Style)
+- ℹ️ **Sidebar-Files bleiben** – Für mögliche zukünftige Nutzung
+
 ### 🎨 UX Overhaul: Prerequisites Section modernisiert
+- ✅ **Spacing optimiert (Option A)**:
+  - Top-Margin reduziert: 16-20px (vorher 24-32px)
+  - Kompakterer Flow zwischen Hero und Prerequisites
+  - Margins konsistent mit Hero Value (aligned)
+- ✅ **Conditional Rendering**:
+  - Section wird komplett ausgeblendet wenn `inputs_prerequisites` leer ist
+  - Kein unnötiger Empty State mehr
+  - Cleaner Page-Flow
 - ✅ **Neues Design** – Konsistent mit Hero Value Section
   - Icon-basiert für schnelles Scannen
   - Checkmark-Icons für jeden Punkt
