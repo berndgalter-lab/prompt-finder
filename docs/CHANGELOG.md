@@ -2,6 +2,12 @@
 
 ## [Aktuell] - 2025-11-09
 
+### 🧹 Cleanup: Workflow Info Accordion entfernt
+- ✅ **Template gelöscht** – `section-workflow-info-accordion.php` war redundant
+- ✅ **JavaScript bereinigt** – Accordion-Code aus `fast-track.js` entfernt
+- ✅ **single-workflows.php** – Template-Part Aufruf entfernt
+- ℹ️ **Grund** – Duplikat zur neuen Hero Value Section (zeigt bereits Overview, Pain Points, Expected Outcome)
+
 ### 🎨 Visual Flow: Unified Card Design (Breadcrumbs + Header + Hero + Progress)
 - ✅ **Einheitlicher Gradient** – Breadcrumbs, Header, Hero und Progress teilen denselben Accent-Gradient Background
 - ✅ **Eine zusammenhängende Card** – Alle vier Bereiche wirken als eine Einheit

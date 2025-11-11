@@ -15,7 +15,6 @@
   let infoButton = null;
   let infoTooltip = null;
   let container = null;
-  let accordion = null;
 
   /**
    * Initialize Fast Track Module
@@ -42,9 +41,6 @@
       showToggle(); // Show toggle if already active
     }
 
-    // Initialize accordion
-    initAccordion();
-    
     // Initialize step objectives (add "Read more" buttons)
     initStepObjectives();
     
@@ -220,34 +216,6 @@
     infoTooltip.hidden = true;
   }
 
-  /**
-   * Initialize Workflow Info Accordion
-   */
-  function initAccordion() {
-    accordion = document.querySelector('.pf-workflow-info-accordion .pf-accordion-toggle');
-    if (!accordion) return;
-
-    accordion.addEventListener('click', toggleAccordion);
-  }
-
-  /**
-   * Toggle accordion open/closed
-   */
-  function toggleAccordion(event) {
-    event.preventDefault();
-    
-    const button = event.currentTarget;
-    const content = document.getElementById('pf-workflow-info-content');
-    
-    if (!content) return;
-    
-    const isExpanded = button.getAttribute('aria-expanded') === 'true';
-    
-    button.setAttribute('aria-expanded', !isExpanded);
-    content.setAttribute('aria-hidden', isExpanded);
-    
-    console.log('[PF Fast Track] Accordion toggled:', !isExpanded ? 'open' : 'closed');
-  }
 
   /**
    * Initialize Step Objectives (add "Read more" buttons)

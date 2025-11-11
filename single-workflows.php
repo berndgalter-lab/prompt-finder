@@ -55,9 +55,6 @@ if (is_user_logged_in()) {
         
         <div class="pf-workflow-main">
             <?php 
-            // Fast Track: Workflow Info Accordion (shown only in FT mode via CSS)
-            get_template_part('src/php/template-parts/workflow/section-workflow-info-accordion');
-            
             // Default: Full sections (hidden in FT mode via CSS)
             get_template_part('src/php/template-parts/workflow/section-overview');
             get_template_part('src/php/template-parts/workflow/section-prerequisites');
