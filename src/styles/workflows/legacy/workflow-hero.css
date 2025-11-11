@@ -54,21 +54,7 @@
   gap: clamp(var(--pf-space-4), 3vw, var(--pf-space-5));
 }
 
-/* Summary Box (SEO-optimized, prominent placement) */
-.pf-hero-summary-box {
-  background: color-mix(in srgb, var(--pf-accent) 5%, var(--pf-card));
-  border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
-  border-radius: clamp(var(--pf-r-2), 1vw, var(--pf-r-3));
-  padding: clamp(var(--pf-space-3), 2.5vw, var(--pf-space-4));
-}
-
-.pf-hero-summary {
-  font-size: clamp(0.9375rem, 2vw, 1.0625rem);
-  line-height: 1.6;
-  color: var(--pf-text);
-  margin: 0;
-  font-weight: 450;
-}
+/* Summary is now in expandable details - no box needed */
 
 /* Expected Outcome */
 
@@ -109,15 +95,51 @@
   font-weight: 700;
   line-height: 1.3;
   color: var(--pf-text);
-  margin: 0;
+  margin: 0 0 clamp(var(--pf-space-3), 2vw, var(--pf-space-4)) 0;
   letter-spacing: -0.01em;
 }
 
-.pf-hero-summary {
-  font-size: clamp(1rem, 2vw, 1.125rem);
-  line-height: 1.6;
-  color: var(--pf-text-dim);
-  margin: 0;
+/* Pain Points Chips (visible, not collapsed) */
+.pf-pain-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pf-space-2);
+  margin-top: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+}
+
+.pf-pain-label {
+  font-size: clamp(0.75rem, 1.5vw, 0.8125rem);
+  font-weight: 600;
+  color: var(--pf-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: var(--pf-space-1);
+}
+
+.pf-pain-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: color-mix(in srgb, var(--pf-accent) 8%, var(--pf-card));
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 20%, var(--pf-border));
+  border-radius: var(--pf-r-2);
+  font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
+  font-weight: 500;
+  color: var(--pf-text);
+  transition: all var(--pf-transition-fast);
+}
+
+.pf-pain-chip svg {
+  flex-shrink: 0;
+  color: var(--pf-accent);
+}
+
+.pf-pain-chip:hover {
+  background: color-mix(in srgb, var(--pf-accent) 12%, var(--pf-card));
+  border-color: color-mix(in srgb, var(--pf-accent) 35%, var(--pf-border));
+  transform: translateY(-1px);
 }
 
 /* ========================================
@@ -196,7 +218,7 @@
 }
 
 /* ========================================
-   PAIN POINTS (EXPANDABLE)
+   SUMMARY (EXPANDABLE - OPTIONAL DETAILS)
    ======================================== */
 
 .pf-hero-details {
@@ -276,36 +298,6 @@
   color: var(--pf-text-dim);
 }
 
-.pf-pain-points-list {
-  margin: 0;
-  padding-left: var(--pf-space-5);
-  list-style: none;
-}
-
-.pf-pain-points-list li {
-  position: relative;
-  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
-  line-height: 1.6;
-  color: var(--pf-text-dim);
-  padding-left: var(--pf-space-2);
-  margin-bottom: var(--pf-space-2);
-}
-
-.pf-pain-points-list li:last-child {
-  margin-bottom: 0;
-}
-
-.pf-pain-points-list li::before {
-  content: '';
-  position: absolute;
-  left: calc(var(--pf-space-5) * -1);
-  top: 0.6em;
-  width: 6px;
-  height: 6px;
-  background: var(--pf-accent);
-  border-radius: 50%;
-}
-
 /* ========================================
    MOBILE OPTIMIZATIONS
    ======================================== */
@@ -323,6 +315,15 @@
   .pf-hero-icon {
     width: 32px;
     height: 32px;
+  }
+
+  .pf-pain-chips {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pf-pain-chip {
+    width: 100%;
   }
 }
 

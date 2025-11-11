@@ -54,13 +54,6 @@ if ($time_saved_min) {
         
         <!-- Primary Value -->
         <div class="pf-hero-primary">
-            <!-- Summary (SEO-optimized, always first if present) -->
-            <?php if ($summary): ?>
-                <div class="pf-hero-summary-box">
-                    <p class="pf-hero-summary"><?php echo esc_html($summary); ?></p>
-                </div>
-            <?php endif; ?>
-            
             <!-- Expected Outcome (What you'll create) -->
             <?php if ($expected_outcome): ?>
                 <div class="pf-hero-outcome">
@@ -71,6 +64,27 @@ if ($time_saved_min) {
                     <div class="pf-hero-outcome-content">
                         <span class="pf-hero-kicker">What you'll create</span>
                         <h2 class="pf-hero-outcome-text"><?php echo esc_html($expected_outcome); ?></h2>
+                        
+                        <!-- Pain Points (visible as chips) -->
+                        <?php if ($pain_points): ?>
+                            <?php 
+                            // Convert line breaks to array (max 4 pain points for visual clarity)
+                            $pain_points_lines = array_filter(array_map('trim', explode("\n", $pain_points)));
+                            $pain_points_display = array_slice($pain_points_lines, 0, 4); // Limit to 4
+                            if (!empty($pain_points_display)): ?>
+                                <div class="pf-pain-chips">
+                                    <span class="pf-pain-label">Solves:</span>
+                                    <?php foreach ($pain_points_display as $point): ?>
+                                        <span class="pf-pain-chip">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                            </svg>
+                                            <?php echo esc_html($point); ?>
+                                        </span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endif; ?>
@@ -106,33 +120,22 @@ if ($time_saved_min) {
             </div>
         <?php endif; ?>
 
-        <!-- Pain Points (Expandable) -->
-        <?php if ($pain_points): ?>
+        <!-- Summary (Expandable, optional details) -->
+        <?php if ($summary): ?>
             <details class="pf-hero-details">
                 <summary class="pf-hero-details-trigger">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                         <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
                     </svg>
-                    <span>What problems does this solve?</span>
+                    <span>About this workflow</span>
                     <svg class="pf-hero-details-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                 </summary>
                 <div class="pf-hero-details-content">
-                    <?php 
-                    // Convert line breaks to list items if pain_points contains multiple lines
-                    $pain_points_lines = array_filter(array_map('trim', explode("\n", $pain_points)));
-                    if (count($pain_points_lines) > 1): ?>
-                        <ul class="pf-pain-points-list">
-                            <?php foreach ($pain_points_lines as $point): ?>
-                                <li><?php echo esc_html($point); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php else: ?>
-                        <p><?php echo nl2br(esc_html($pain_points)); ?></p>
-                    <?php endif; ?>
+                    <p><?php echo nl2br(esc_html($summary)); ?></p>
                 </div>
             </details>
         <?php endif; ?>

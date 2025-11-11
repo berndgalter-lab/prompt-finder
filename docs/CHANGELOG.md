@@ -1,6 +1,26 @@
 # Changelog
 
-## [Aktuell] - 2025-11-09
+## [Aktuell] - 2025-11-11
+
+### 🧠 UX Psychology: Setup A - Conversion-optimierte Hero Value Hierarchie
+- ✅ **Pain Points SICHTBAR** – Jetzt als Chips direkt unter Expected Outcome (nicht mehr collapsed!)
+  - Max. 4 Pain Points für optimales Scanning (F-Pattern)
+  - Chip-Design mit Checkmarks und Hover-Effekten
+  - Label "Solves:" macht Kontext sofort klar
+  - Psychologie: 70% kaufen wegen Pain Avoidance > Gain Seeking
+- ✅ **Summary EXPANDABLE** – Jetzt als "About this workflow" Details-Element
+  - Reduziert Clutter im Above-the-Fold Bereich
+  - Bleibt im DOM für SEO (Crawlbar!)
+  - Neues Info-Icon statt Question-Icon
+- ✅ **Neue Hierarchie nach AIDA**:
+  1. Expected Outcome (Desire)
+  2. Pain Points visible (Emotional Trigger)
+  3. Benefits (Rational Proof)
+  4. Summary expandable (Optional Context)
+- ✅ **Mobile-optimiert** – Pain Chips stacken vertikal, 100% Breite
+- ℹ️ **Tagline wird emotional genutzt** (Text-Anpassung erfolgt in ACF)
+
+## [2025-11-09]
 
 ### 🎯 SEO: Summary prominent im Hero Value integriert
 - ✅ **Summary ganz oben** – Wichtiger SEO-Text jetzt prominent platziert

@@ -40,7 +40,7 @@
       toggleButton.setAttribute('aria-checked', 'true');
       showToggle(); // Show toggle if already active
     }
-
+    
     // Initialize step objectives (add "Read more" buttons)
     initStepObjectives();
     
