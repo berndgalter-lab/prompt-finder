@@ -159,8 +159,10 @@
 
 /* Reuse Variables Card styling for consistency */
 .pf-section--steps .pf-workflow-vars-card {
-  /* Inherits all styles from workflow-variables-modern.css */
-  /* Ensures exact same appearance as Variables Section */
+  /* Ensure same margins as Variables and Prerequisites sections */
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
 }
 
 /* Steps-specific progress counter */
@@ -223,6 +225,15 @@
     justify-content: center;
     margin-left: 0;
     margin-top: var(--pf-space-2, .5rem);
+  }
+}
+
+/* Mobile padding consistency */
+@media (max-width: 640px) {
+  .pf-section--steps .pf-workflow-vars-card {
+    padding: var(--pf-space-4) var(--pf-space-3);
+    margin-left: var(--pf-space-3);
+    margin-right: var(--pf-space-3);
   }
 }
 
