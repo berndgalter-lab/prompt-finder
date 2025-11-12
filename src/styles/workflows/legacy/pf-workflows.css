@@ -2373,6 +2373,9 @@ body.pf-body {
     border: 1px solid var(--pf-border);
     border-radius: 16px;
     padding: 0;
+    margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+    margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+    margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
@@ -2791,7 +2794,9 @@ body.pf-body {
   background: var(--pf-card);
   border: 1px solid var(--pf-border);
   border-radius: var(--pf-r-6); /* 16px */
-  margin-bottom: var(--pf-space-8); /* 32px */
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
   overflow: hidden;
   box-shadow: var(--pf-elev-1);
 }
@@ -2895,6 +2900,16 @@ body.pf-body {
   .pf-workflow-vars-title {
     font-size: var(--pf-fs-base); /* 1rem */
   }
+}
+
+/* Extra mobile padding consistency (smaller devices) */
+@media (max-width: 640px) {
+  .pf-workflow-vars-card {
+    padding: var(--pf-space-4) var(--pf-space-3);
+    margin-left: var(--pf-space-3);
+    margin-right: var(--pf-space-3);
+  }
+}
   
   .pf-workflow-vars-subtitle {
     font-size: var(--pf-fs-xs); /* 0.75rem */
