@@ -1,0 +1,406 @@
+/**
+ * Workflow Component: Variables Section (Modern Checklist-Style)
+ * Consistent with Prerequisites design
+ * Visual status indicators with color coding
+ * 
+ * Design Principles:
+ * - Checklist-style like Prerequisites
+ * - Color-coded borders (Red=Required Empty, Green=Required Filled, Blue=Optional Filled, Gray=Optional Empty)
+ * - Checkmarks for completion feedback
+ * - Clean, modern SaaS aesthetic
+ */
+
+/* ========================================
+   VARIABLES SECTION
+   ======================================== */
+
+.pf-section--variables {
+  margin: clamp(var(--pf-space-4), 3vw, var(--pf-space-5)) 0 0 !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+.pf-workflow-vars-card {
+  background: var(--pf-card);
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 12%, var(--pf-border));
+  border-radius: var(--pf-r-4);
+  padding: clamp(var(--pf-space-5), 4vw, var(--pf-space-6)) clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 4px 12px color-mix(in srgb, var(--pf-accent) 8%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle top accent line */
+.pf-workflow-vars-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--pf-accent) 50%,
+    transparent
+  );
+  opacity: 0.3;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.pf-workflow-vars-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pf-space-3);
+  margin-bottom: clamp(var(--pf-space-4), 3vw, var(--pf-space-5));
+}
+
+.pf-workflow-vars-icon {
+  flex-shrink: 0;
+  width: clamp(24px, 4vw, 28px);
+  height: clamp(24px, 4vw, 28px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(18px, 3vw, 20px);
+  background: color-mix(in srgb, var(--pf-accent) 12%, transparent);
+  border-radius: 50%;
+  padding: 6px;
+}
+
+.pf-workflow-vars-title {
+  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  font-weight: 700;
+  color: var(--pf-text);
+  margin: 0 0 var(--pf-space-1) 0;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.pf-workflow-vars-subtitle {
+  font-size: clamp(0.875rem, 1.8vw, 0.9375rem);
+  color: var(--pf-text-dim);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Progress Counter */
+.pf-variables-counter {
+  margin-left: auto;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--pf-text);
+}
+
+.pf-counter-number {
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  color: var(--pf-accent);
+}
+
+.pf-counter-total {
+  font-size: clamp(0.9375rem, 2vw, 1rem);
+  color: var(--pf-text-muted);
+}
+
+/* ========================================
+   VARIABLES LIST (CHECKLIST STYLE)
+   ======================================== */
+
+.pf-workflow-vars-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-space-3);
+}
+
+/* Variable Item (like Prerequisites items) */
+.pf-var {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pf-space-3);
+  padding: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+  background: var(--pf-bg-soft);
+  border: 1px solid var(--pf-border);
+  border-left: 2px solid var(--pf-border); /* Default: Optional & Empty */
+  border-radius: var(--pf-r-3);
+  transition: all var(--pf-transition-fast);
+  position: relative;
+}
+
+.pf-var:hover {
+  background: var(--pf-card);
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Status-based coloring */
+.pf-var[data-status="required-empty"] {
+  border-left: 4px solid #ef4444; /* Red-500 */
+  background: color-mix(in srgb, #ef4444 5%, var(--pf-bg-soft));
+}
+
+.pf-var[data-status="required-filled"] {
+  border-left: 4px solid #10b981; /* Green-500 */
+  background: color-mix(in srgb, #10b981 5%, var(--pf-bg-soft));
+}
+
+.pf-var[data-status="optional-filled"] {
+  border-left: 3px solid #3b82f6; /* Blue-500 */
+  background: color-mix(in srgb, #3b82f6 3%, var(--pf-bg-soft));
+}
+
+.pf-var[data-status="optional-empty"] {
+  border-left: 2px solid #9ca3af; /* Gray-400 */
+  background: var(--pf-bg-soft);
+}
+
+/* Checkmark Icon */
+.pf-var-status-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: #9ca3af;
+  margin-top: 2px;
+  transition: all var(--pf-transition-fast);
+}
+
+.pf-var[data-status="required-filled"] .pf-var-status-icon,
+.pf-var[data-status="optional-filled"] .pf-var-status-icon {
+  color: #10b981; /* Green when filled */
+}
+
+.pf-var[data-status="required-empty"] .pf-var-status-icon {
+  color: #ef4444; /* Red when required but empty */
+}
+
+/* Variable Content */
+.pf-var-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-space-2);
+}
+
+/* Label Row */
+.pf-var-label-row {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-2);
+  flex-wrap: wrap;
+}
+
+.pf-var-label {
+  font-size: clamp(0.9375rem, 2vw, 1rem);
+  font-weight: 600;
+  color: var(--pf-text);
+  margin: 0;
+}
+
+/* Required Badge */
+.pf-var-required-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--pf-r-1);
+  background: #ef4444;
+  color: white;
+}
+
+/* Optional Badge */
+.pf-var-optional-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--pf-r-1);
+  background: var(--pf-text-muted);
+  color: white;
+  opacity: 0.7;
+}
+
+/* Input Wrapper */
+.pf-var-input-wrapper {
+  position: relative;
+}
+
+/* Input Field */
+.pf-var-input,
+.pf-var-textarea,
+.pf-var-select {
+  width: 100%;
+  padding: var(--pf-space-2) var(--pf-space-3);
+  font-size: clamp(0.9375rem, 2vw, 1rem);
+  color: var(--pf-text);
+  background: var(--pf-card);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-r-2);
+  transition: all var(--pf-transition-fast);
+  box-sizing: border-box;
+}
+
+.pf-var-input:focus,
+.pf-var-textarea:focus,
+.pf-var-select:focus {
+  outline: none;
+  border-color: var(--pf-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pf-accent) 15%, transparent);
+}
+
+.pf-var-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Placeholder styling */
+.pf-var-input::placeholder,
+.pf-var-textarea::placeholder {
+  color: var(--pf-text-muted);
+  opacity: 0.6;
+}
+
+/* Hint Text */
+.pf-var-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
+  color: var(--pf-text-dim);
+  line-height: 1.5;
+}
+
+.pf-var-hint-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ========================================
+   PROFILE DEFAULTS CARD
+   ======================================== */
+
+.pf-workflow-vars-card--profile {
+  background: color-mix(in srgb, var(--pf-info) 5%, var(--pf-card));
+  border-color: color-mix(in srgb, var(--pf-info) 20%, var(--pf-border));
+}
+
+.pf-workflow-vars-card--profile::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--pf-info) 50%,
+    transparent
+  );
+}
+
+.pf-workflow-vars-list--readonly .pf-var {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.pf-var--readonly {
+  background: color-mix(in srgb, var(--pf-info) 8%, var(--pf-bg-soft));
+  border-left: 3px solid var(--pf-info);
+}
+
+.pf-var-value {
+  padding: var(--pf-space-2) var(--pf-space-3);
+  background: var(--pf-card);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-r-2);
+  font-size: clamp(0.9375rem, 2vw, 1rem);
+  color: var(--pf-text);
+}
+
+/* ========================================
+   MOBILE OPTIMIZATIONS
+   ======================================== */
+
+@media (max-width: 640px) {
+  .pf-workflow-vars-card {
+    padding: var(--pf-space-4) var(--pf-space-3);
+  }
+
+  .pf-workflow-vars-card-header {
+    flex-wrap: wrap;
+  }
+
+  .pf-variables-counter {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+
+  .pf-var {
+    padding: var(--pf-space-3);
+  }
+
+  .pf-var:hover {
+    transform: none; /* Disable transform on mobile */
+  }
+
+  .pf-var-label-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .pf-workflow-vars-card {
+    box-shadow: 
+      0 1px 3px rgba(0, 0, 0, 0.3),
+      0 4px 12px color-mix(in srgb, var(--pf-accent) 15%, transparent);
+  }
+
+  .pf-var {
+    background: color-mix(in srgb, var(--pf-bg-soft) 80%, transparent);
+  }
+
+  .pf-var:hover {
+    background: var(--pf-card);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .pf-var-input,
+  .pf-var-textarea,
+  .pf-var-select {
+    background: color-mix(in srgb, var(--pf-card) 90%, transparent);
+  }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+  .pf-workflow-vars-card {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .pf-var:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+

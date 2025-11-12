@@ -257,7 +257,7 @@ function escapeHtml(str) {
 function renderInput({ id, type, placeholder, value, options }) {
   switch ((type || 'text').toLowerCase()) {
     case 'textarea':
-      return `<textarea id="${id}" placeholder="${escapeHtml(placeholder || '')}">${escapeHtml(value || '')}</textarea>`;
+      return `<textarea class="pf-var-textarea" id="${id}" placeholder="${escapeHtml(placeholder || '')}">${escapeHtml(value || '')}</textarea>`;
     
     case 'select':
       const opts = (options || []).map(opt => {
@@ -266,49 +266,71 @@ function renderInput({ id, type, placeholder, value, options }) {
         const selected = String(value) === String(opt.value ?? opt) ? ' selected' : '';
         return `<option value="${val}"${selected}>${label}</option>`;
       }).join('');
-      return `<select id="${id}"><option value="">— select —</option>${opts}</select>`;
+      return `<select class="pf-var-select" id="${id}"><option value="">— select —</option>${opts}</select>`;
     
     case 'number':
-      return `<input type="number" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
+      return `<input class="pf-var-input" type="number" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
     
     case 'email':
-      return `<input type="email" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
+      return `<input class="pf-var-input" type="email" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
     
     case 'url':
-      return `<input type="url" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
+      return `<input class="pf-var-input" type="url" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
     
     case 'boolean':
       const checked = (value === '1' || value === 'true' || value === true) ? ' checked' : '';
       return `<input type="checkbox" id="${id}"${checked} />`;
     
     default:
-      return `<input type="text" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
+      return `<input class="pf-var-input" type="text" id="${id}" placeholder="${escapeHtml(placeholder || '')}" value="${escapeHtml(String(value || ''))}" />`;
   }
 }
 
 /**
- * Unified variable row renderer (v1.7)
+ * Unified variable row renderer (v2.0 - Checklist Style)
  * Returns HTML string for a single variable input row
  */
 function renderVar({ id, label, required, type, placeholder, hint, defVal, value, options }) {
-  const badge = required ? 'Required' : 'Optional';
+  const isFilled = value && String(value).trim() !== '';
+  const status = required 
+    ? (isFilled ? 'required-filled' : 'required-empty')
+    : (isFilled ? 'optional-filled' : 'optional-empty');
+  
+  const badgeClass = required ? 'pf-var-required-badge' : 'pf-var-optional-badge';
+  const badgeText = required ? 'REQUIRED' : 'optional';
   const hintHtml = hint ? escapeHtml(hint) : '';
-  const defaultHtml = (defVal !== undefined && defVal !== '') ? `Default: ${escapeHtml(String(defVal))}` : '';
+  
+  // Checkmark icon (filled or empty circle)
+  const iconSvg = `
+    <svg class="pf-var-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      ${isFilled 
+        ? '<polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>'
+        : '<circle cx="12" cy="12" r="10"></circle>'}
+    </svg>
+  `;
   
   return `
-    <div class="pf-var ${required ? 'is-required' : 'is-optional'}" data-var="${id}">
-      <div class="pf-var__top">
-        <label class="pf-var__label" for="${id}">${escapeHtml(label)}</label>
-        <span class="pf-var__badge">${badge}</span>
+    <div class="pf-var ${required ? 'is-required' : 'is-optional'}" 
+         data-var="${id}" 
+         data-status="${status}"
+         data-required="${required}">
+      ${iconSvg}
+      <div class="pf-var-content">
+        <div class="pf-var-label-row">
+          <label class="pf-var-label" for="${id}">${escapeHtml(label)}</label>
+          <span class="${badgeClass}">${badgeText}</span>
+        </div>
+        <div class="pf-var-input-wrapper">
+          ${renderInput({ id, type, placeholder, value, options })}
+        </div>
+        ${hintHtml ? `
+          <div class="pf-var-hint">
+            <span class="pf-var-hint-icon">💡</span>
+            <span>${hintHtml}</span>
+          </div>
+        ` : ''}
+        <div class="pf-var__error" id="${id}-error" role="alert"></div>
       </div>
-      <div class="pf-var__input">
-        ${renderInput({ id, type, placeholder, value, options })}
-      </div>
-      <div class="pf-var__meta">
-        <div class="pf-var__hint">${hintHtml}</div>
-        <div class="pf-var__default">${defaultHtml}</div>
-      </div>
-      <div class="pf-var__error" id="${id}-error"></div>
     </div>
   `;
 }
@@ -321,6 +343,64 @@ function afterInsertVar(id, required) {
   if (!el) return;
   el.setAttribute('aria-describedby', `${id}-error`);
   if (required) el.setAttribute('aria-required', 'true');
+  
+  // Add event listener to update visual status on input
+  el.addEventListener('input', () => updateVarStatus(id, required));
+  el.addEventListener('change', () => updateVarStatus(id, required));
+}
+
+/**
+ * Update visual status of a variable (checkmark + color border)
+ */
+function updateVarStatus(id, required) {
+  const el = document.getElementById(id);
+  const varWrap = document.querySelector(`.pf-var[data-var="${id}"]`);
+  if (!el || !varWrap) return;
+  
+  const isFilled = el.value && String(el.value).trim() !== '';
+  const status = required 
+    ? (isFilled ? 'required-filled' : 'required-empty')
+    : (isFilled ? 'optional-filled' : 'optional-empty');
+  
+  // Update data-status attribute
+  varWrap.setAttribute('data-status', status);
+  
+  // Update checkmark icon
+  const icon = varWrap.querySelector('.pf-var-status-icon');
+  if (icon) {
+    icon.innerHTML = isFilled
+      ? '<polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>'
+      : '<circle cx="12" cy="12" r="10"></circle>';
+  }
+  
+  // Update counter
+  updateVariablesCounter();
+}
+
+/**
+ * Update the variables counter (X of Y completed)
+ */
+function updateVariablesCounter() {
+  const counter = document.querySelector('.pf-variables-counter');
+  if (!counter) return;
+  
+  const total = parseInt(counter.getAttribute('data-variables-total')) || 0;
+  const allVars = document.querySelectorAll('.pf-var[data-var]');
+  let filled = 0;
+  
+  allVars.forEach(varEl => {
+    const id = varEl.getAttribute('data-var');
+    const input = document.getElementById(id);
+    if (input && input.value && String(input.value).trim() !== '') {
+      filled++;
+    }
+  });
+  
+  const numberEl = counter.querySelector('.pf-counter-number');
+  if (numberEl) numberEl.textContent = filled;
+  
+  // Update data attribute
+  counter.setAttribute('data-variables-filled', filled);
 }
 
 /**
