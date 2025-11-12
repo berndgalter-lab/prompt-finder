@@ -1,7 +1,157 @@
 /**
  * Workflow Component: Steps
  * Unified base styles + .pf-ui-modern enhancements
+ * 
+ * Phase 2: Checkmark Consistency (2025-11-12)
+ * - Großes Checkmark Icon links (konsistent mit Variables Section)
+ * - Border-Color Status (neutral/green/blue)
+ * - Checkbox rechts entfernt
  */
+
+/* ========================================
+   PHASE 2: CHECKMARK ICON (konsistent mit Variables)
+   ======================================== */
+
+.pf-step-status-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: var(--pf-neutral-400, #9ca3af);
+  transition: color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+/* Status States (consistent with Variables Section) */
+.pf-step[data-status="completed"] .pf-step-status-icon,
+.pf-step.is-completed .pf-step-status-icon,
+.pf-step.pf-step--completed .pf-step-status-icon {
+  color: var(--pf-success, #10b981);
+}
+
+.pf-step[data-status="active"] .pf-step-status-icon,
+.pf-step.is-active .pf-step-status-icon,
+.pf-step.pf-step--active .pf-step-status-icon {
+  color: var(--pf-accent, #3b82f6);
+}
+
+/* Hover effect */
+.pf-step-status-icon:hover {
+  transform: scale(1.1);
+}
+
+/* ========================================
+   PHASE 2: BORDER STATUS (konsistent mit Variables)
+   ======================================== */
+
+.pf-step {
+  border-width: 2px !important; /* Neutral */
+  border-color: var(--pf-neutral-200, #e5e7eb) !important;
+}
+
+.pf-step[data-status="active"],
+.pf-step.is-active,
+.pf-step.pf-step--active {
+  border-width: 3px !important; /* Active = Blue */
+  border-color: var(--pf-accent, #3b82f6) !important;
+}
+
+.pf-step[data-status="completed"],
+.pf-step.is-completed,
+.pf-step.pf-step--completed {
+  border-width: 4px !important; /* Completed = Green */
+  border-color: var(--pf-success, #10b981) !important;
+}
+
+/* ========================================
+   PHASE 3: CONTENT HIERARCHY
+   ======================================== */
+
+/* Section Container with subtle divider */
+.pf-step-section {
+  padding: var(--pf-space-5, 1.25rem) var(--pf-space-5, 1.25rem);
+  border-top: 1px solid color-mix(in srgb, var(--pf-border, #e5e7eb) 60%, transparent);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.pf-step-section:first-of-type {
+  border-top: none;
+  padding-top: var(--pf-space-4, 1rem);
+}
+
+/* Section Label (with icon) */
+.pf-step-section-label {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-2, .5rem);
+  margin: 0 0 var(--pf-space-3, .75rem);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pf-text, #1f2937);
+  letter-spacing: -0.01em;
+}
+
+.pf-step-section-label svg {
+  flex-shrink: 0;
+  color: var(--pf-accent, #3b82f6);
+}
+
+.pf-step-section-desc {
+  margin: 0 0 var(--pf-space-4, 1rem);
+  font-size: 0.875rem;
+  color: color-mix(in srgb, var(--pf-slate-600) 85%, transparent);
+  line-height: 1.5;
+}
+
+/* Collapsible (Paste Guidance, Example Output) */
+.pf-step-collapsible {
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: var(--pf-r-4, 8px);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--pf-slate-50) 50%, transparent);
+}
+
+.pf-step-collapsible-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-2, .5rem);
+  padding: var(--pf-space-3, .75rem) var(--pf-space-4, 1rem);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--pf-text, #1f2937);
+  list-style: none; /* Remove default marker */
+  transition: background 0.2s ease;
+}
+
+.pf-step-collapsible-summary::-webkit-details-marker {
+  display: none;
+}
+
+.pf-step-collapsible-summary:hover {
+  background: color-mix(in srgb, var(--pf-slate-100) 70%, transparent);
+}
+
+.pf-step-collapsible-summary svg {
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--pf-accent, #3b82f6) 80%, transparent);
+  transition: transform 0.2s ease;
+}
+
+.pf-step-collapsible[open] .pf-step-collapsible-summary svg {
+  transform: rotate(90deg);
+}
+
+.pf-step-collapsible-content {
+  padding: 0 var(--pf-space-4, 1rem) var(--pf-space-4, 1rem);
+  border-top: 1px solid var(--pf-border, #e5e7eb);
+  background: var(--pf-card, #ffffff);
+}
+
+.pf-step-collapsible-content p {
+  margin: var(--pf-space-3, .75rem) 0 0;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--pf-slate-700) 85%, transparent);
+}
 
 /* ========================================
    SECTION / LIST BASICS
@@ -101,7 +251,8 @@
 
 .pf-step-header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Phase 2: horizontal for Icon + Number + Main + Actions */
+  align-items: flex-start;
   gap: var(--pf-space-3, .75rem);
   padding: var(--pf-space-5, 1.25rem);
   cursor: pointer;
@@ -1808,4 +1959,109 @@
 
 .pf-access-cta-btn {
     margin: 0 auto;
+}
+
+/* ========================================
+   PHASE 4: ANIMATIONS & POLISH
+   ======================================== */
+
+/* Smooth fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Checkmark celebration animation */
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pf-step-status-icon {
+  will-change: transform;
+}
+
+.pf-step[data-status="completed"] .pf-step-status-icon {
+  animation: checkmarkPop 0.4s ease-out;
+}
+
+/* Smooth border transition */
+.pf-step {
+  transition: border-color 0.3s ease, border-width 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover micro-interaction */
+.pf-step:hover {
+  transform: translateY(-1px);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .pf-step:hover {
+    transform: none;
+  }
+}
+
+/* ========================================
+   PHASE 4: MOBILE OPTIMIZATION
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Reduce padding on mobile */
+  .pf-step-section {
+    padding: var(--pf-space-4, 1rem) var(--pf-space-3, .75rem);
+  }
+  
+  /* Stack time badge on mobile */
+  .pf-step-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  /* Larger touch targets */
+  .pf-step-status-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .pf-step-collapsible-summary {
+    padding: var(--pf-space-4, 1rem);
+    font-size: 1rem;
+  }
+  
+  /* Better readability */
+  .pf-step-section-label {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra compact on small phones */
+  .pf-step-section {
+    padding: var(--pf-space-3, .75rem) var(--pf-space-2, .5rem);
+  }
+  
+  .pf-step-header {
+    padding: var(--pf-space-4, 1rem);
+    gap: var(--pf-space-2, .5rem);
+  }
 }

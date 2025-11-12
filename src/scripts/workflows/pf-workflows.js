@@ -1586,6 +1586,29 @@ function updateProgressBarFallback(){
 }
 
 
+/**
+ * Phase 2: Update Step Checkmark Icon (consistent with Variables Section)
+ * Switches between empty circle and filled checkmark
+ */
+function updateStepCheckmarkIcon(stepElement, isCompleted) {
+  if (!stepElement) return;
+  
+  const icon = stepElement.querySelector('.pf-step-status-icon');
+  if (!icon) return;
+  
+  // Update icon SVG content
+  if (isCompleted) {
+    // Filled checkmark (same as Variables Section)
+    icon.innerHTML = '<polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>';
+  } else {
+    // Empty circle (same as Variables Section)
+    icon.innerHTML = '<circle cx="12" cy="12" r="10"></circle>';
+  }
+  
+  // Update data-status for CSS styling
+  stepElement.setAttribute('data-status', isCompleted ? 'completed' : '');
+}
+
 function bindProgressPersistence(){
   const workflowId = getWorkflowId();
   if (!workflowId) return;
@@ -1606,7 +1629,12 @@ function bindProgressPersistence(){
       const key = getStepStorageKey(step);
       if (!key) return;
       progress[key] = cb.checked;
-      if (step) step.classList.toggle('pf-step--completed', cb.checked);
+      if (step) {
+        step.classList.toggle('pf-step--completed', cb.checked);
+        step.classList.toggle('is-completed', cb.checked);
+        // Phase 2: Update Checkmark Icon (consistent with Variables Section)
+        updateStepCheckmarkIcon(step, cb.checked);
+      }
     });
     try {
       localStorage.setItem(storageKey, JSON.stringify(progress));
@@ -1635,7 +1663,12 @@ function bindProgressPersistence(){
       const hasStored = key && Object.prototype.hasOwnProperty.call(stored, key);
       const shouldCheck = hasStored ? !!stored[key] : cb.checked;
       cb.checked = shouldCheck;
-      if (step) step.classList.toggle('pf-step--completed', cb.checked);
+      if (step) {
+        step.classList.toggle('pf-step--completed', cb.checked);
+        step.classList.toggle('is-completed', cb.checked);
+        // Phase 2: Initialize Checkmark Icon state
+        updateStepCheckmarkIcon(step, cb.checked);
+      }
     });
 
     if (window.WorkflowProgress && typeof window.WorkflowProgress.update === 'function') {
@@ -1652,6 +1685,22 @@ function bindProgressPersistence(){
     if (cb.dataset.progressBound === '1') return;
     cb.dataset.progressBound = '1';
     cb.addEventListener('change', saveProgressState);
+  });
+
+  // Phase 2: Make Checkmark Icon clickable (like Variables Section)
+  document.querySelectorAll('.pf-step-status-icon').forEach(icon => {
+    if (icon.dataset.clickBound === '1') return;
+    icon.dataset.clickBound = '1';
+    icon.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent step toggle
+      const step = icon.closest('.pf-step');
+      if (!step) return;
+      const checkbox = step.querySelector('.pf-step-checkbox');
+      if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
   });
 
   restoreProgressState();

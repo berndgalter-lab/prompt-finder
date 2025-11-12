@@ -2,6 +2,81 @@
 
 ## [Aktuell] - 2025-11-12
 
+### 🎨 UX Overhaul: Workflow Steps Modernization ⭐
+
+#### ✅ **Phase 1: Quick Wins** (Information Overload reduziert)
+- ❌ **Progress Counter entfernt** – Redundant mit Master Progress Bar
+- ❌ **Type Badge entfernt** ("Prompt"/"Guide"/"Review") – User sieht es im Content
+- ❌ **"Uses Vars" Icon entfernt** – Technische Detail, nicht User-relevant
+- ❌ **"Consumes Output" Icon entfernt** – Technische Detail, nicht User-relevant
+- ✅ **Time Badge behalten** – Einzige wirklich relevante Meta-Info für User
+- 🎯 **Ergebnis**: Von 6+ Badges auf 1 reduziert
+- 💡 **Begründung**: User braucht nur: Nummer, Titel, Zeit, Status
+- 🎨 **Design-Prinzip**: "Weniger ist mehr" – Konsistent mit Variables Section
+
+#### ✅ **Phase 2: Checkmark Consistency** (Visuell konsistent mit Variables)
+- ✅ **Großes Checkmark Icon links** – 28px SVG, prominent wie Variables Section
+  - ○ Empty Circle = Not completed
+  - ✓ Filled Checkmark = Completed
+  - Clickable für direktes Toggling
+- ✅ **Border-Color Status** – Konsistent mit Variables Section
+  - 2px Gray = Neutral/Not started
+  - 3px Blue = Active (current step)
+  - 4px Green = Completed
+- ❌ **Kleines Checkbox rechts entfernt** – Ersetzt durch großes Icon links
+- 🎯 **Ergebnis**: Steps sehen aus wie Variables (konsistentes Pattern)
+- 💡 **Begründung**: User erkennt Pattern wieder, muss nicht neu lernen
+- 🎨 **Design-Prinzip**: Consistency across components
+- 🛠️ **JavaScript**: `updateStepCheckmarkIcon()` mit Click-Handler
+- 📦 **CSS**: ~60 Zeilen für Icon + Border States
+
+#### ✅ **Phase 3: Content Hierarchy** (Klare Struktur)
+- ✅ **Section Labels** – "Your Prompt", "Step Inputs" mit Icons
+  - 📝 Edit Icon für Step Inputs
+  - 💬 Chat Icon für Your Prompt
+  - 📚 Book Icon für Example Output
+- ✅ **Visual Dividers** – Subtile Border-Top zwischen Sections
+  - Klare Trennung ohne visuellen Overload
+  - Erste Section ohne Border (seamless Start)
+- ✅ **Collapsible Content** – Paste Guidance + Example Output collapsed by default
+  - `<details>` Elements für native Accessibility
+  - Hover-Effekte für besseres Feedback
+  - SVG Icons mit Rotate-Animation
+- 🎯 **Ergebnis**: User versteht sofort "Was ist Primary?" vs. "Was ist Optional?"
+- 💡 **Begründung**: Progressive Disclosure = weniger Overwhelm
+- 🎨 **Design-Prinzip**: Hierarchie durch Spacing + Labels + Collapse-State
+- 📦 **CSS**: ~80 Zeilen für Sections, Labels, Collapsibles
+
+#### ✅ **Phase 4: Polish** (Final touches)
+- ✅ **Animations** – Smooth, delightful interactions
+  - fadeIn Animation für Sections (0.4s)
+  - checkmarkPop bei Completion (Micro-Celebration!)
+  - Smooth border transitions (0.3s)
+  - Hover micro-interaction (translateY)
+- ✅ **Mobile Optimization** – Touch-friendly, responsive
+  - Reduced padding auf schmalen Screens
+  - Larger touch targets (32px auf Mobile)
+  - Stack Time Badge vertikal
+  - Extra compact auf <480px
+- ✅ **Accessibility** – WCAG 2.1 AA konform
+  - ARIA labels auf Checkmark Icon (role="img")
+  - ARIA labels auf Collapsibles (aria-label)
+  - Region roles für expandable Content
+  - Keyboard-navigable (tabindex)
+  - `prefers-reduced-motion` Support
+- 🎯 **Ergebnis**: Smooth, accessible, mobile-ready
+- 💡 **Begründung**: Polish = Professioneller Eindruck
+- 🎨 **Design-Prinzip**: Delight without distraction
+- 📦 **CSS**: ~100 Zeilen für Animations + Media Queries
+
+### 📊 **Zusammenfassung: Steps Modernization**
+- **Reduziert**: Von 10+ visuellen Elementen auf 4 essentials
+- **Konsistent**: Variables = Steps (gleiches Pattern)
+- **Hierarchie**: Primary vs. Secondary Content klar
+- **Modern**: 2025 SaaS Best Practices
+- **Total**: ~300 Zeilen CSS, ~50 Zeilen JS, ~100 Zeilen PHP
+- **Inspiration**: Linear, Notion, Airtable, Stripe
+
 ### 🧹 UX Cleanup: Source Badges entfernt
 - ✅ **"✓ From Workflow" Badges entfernt** – Redundante Information für User
 - ✅ **"⧗ Unresolved" Badges entfernt** – Status ist durch Border-Color sichtbar
