@@ -25,6 +25,7 @@
 - ✅ **Integration**: Automatische Updates bei jedem Input Change
 - ✅ **Section Counter**: `data-variables-scope="workflow"` für Klarheit
 - ✅ **Code Cleanup**: Debug Console Logs entfernt (Production Ready)
+- 🐛 **Bugfix**: Section Counter zählte fälschlicherweise alle Variablen (WF + Steps), jetzt nur noch Variablen innerhalb des eigenen Containers (scoped mit `.closest()`)
 - 🎮 **Gamification**: Overall Progress motiviert zum Weitermachen
 - 💎 **Modern SaaS Pattern**: Wie Linear, Notion, Airtable
 - ℹ️ **Total**: ~700 Zeilen Code (PHP + CSS + JS)

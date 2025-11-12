@@ -427,39 +427,50 @@ function updateVarStatus(id, required) {
 
 /**
  * Update the variables counter (X of Y completed)
+ * Now scoped: only counts variables within each counter's container
  */
 function updateVariablesCounter() {
-  const counter = document.querySelector('.pf-variables-counter');
-  if (!counter) return;
+  // Find ALL counters (workflow + steps)
+  const counters = document.querySelectorAll('.pf-variables-counter');
+  if (!counters.length) return;
   
-  const total = parseInt(counter.getAttribute('data-variables-total')) || 0;
-  const allVars = document.querySelectorAll('.pf-var[data-field-name]');
-  let filled = 0;
-  
-  allVars.forEach(varEl => {
-    const fieldName = varEl.getAttribute('data-field-name');
-    // Try both formats: "workflow-fieldname" and just "fieldname"
-    let input = document.querySelector(`[data-var-name="${fieldName}"]`);
-    if (!input) {
-      input = document.getElementById(fieldName);
-    }
-    if (!input) {
-      input = document.getElementById(`workflow-${fieldName}`);
-    }
+  counters.forEach(counter => {
+    const total = parseInt(counter.getAttribute('data-variables-total')) || 0;
+    const scope = counter.getAttribute('data-variables-scope') || 'workflow';
     
-    if (input) {
-      const value = input.type === 'checkbox' ? (input.checked ? '1' : '') : input.value;
-      if (value && String(value).trim() !== '') {
-        filled++;
+    // Find the container that holds this counter
+    const container = counter.closest('.pf-workflow-vars-card, .pf-step-vars-card, .pf-section');
+    if (!container) return;
+    
+    // Only select variables WITHIN this container
+    const allVars = container.querySelectorAll('.pf-var[data-field-name]');
+    let filled = 0;
+    
+    allVars.forEach(varEl => {
+      const fieldName = varEl.getAttribute('data-field-name');
+      // Try both formats: "workflow-fieldname" and just "fieldname"
+      let input = document.querySelector(`[data-var-name="${fieldName}"]`);
+      if (!input) {
+        input = document.getElementById(fieldName);
       }
-    }
+      if (!input) {
+        input = document.getElementById(`workflow-${fieldName}`);
+      }
+      
+      if (input) {
+        const value = input.type === 'checkbox' ? (input.checked ? '1' : '') : input.value;
+        if (value && String(value).trim() !== '') {
+          filled++;
+        }
+      }
+    });
+    
+    const numberEl = counter.querySelector('.pf-counter-number');
+    if (numberEl) numberEl.textContent = filled;
+    
+    // Update data attribute
+    counter.setAttribute('data-variables-filled', filled);
   });
-  
-  const numberEl = counter.querySelector('.pf-counter-number');
-  if (numberEl) numberEl.textContent = filled;
-  
-  // Update data attribute
-  counter.setAttribute('data-variables-filled', filled);
   
   // ALSO update master progress (if it exists)
   updateMasterProgress();
