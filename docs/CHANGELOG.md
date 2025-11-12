@@ -2,6 +2,21 @@
 
 ## [Aktuell] - 2025-11-12
 
+### 🧹 UX Cleanup: Source Badges entfernt
+- ✅ **"✓ From Workflow" Badges entfernt** – Redundante Information für User
+- ✅ **"⧗ Unresolved" Badges entfernt** – Status ist durch Border-Color sichtbar
+- ✅ **Cleaner UI** – Weniger visueller Noise, besserer Focus
+- ✅ **Best Practice** – Konsistent mit modernen SaaS Apps (Notion, Linear, Airtable)
+- 🎯 **Warum**: User interessiert sich für den Wert, nicht die Quelle
+  - Input-Wert ist sichtbar → Badge redundant
+  - Status durch visuelle Feedback (Border-Color, Checkmark)
+  - Keine technischen Details im UI nötig
+- 🗑️ **Code entfernt**:
+  - `updateVariableSourceIndicator()` Funktion
+  - `ensureStaticBadge()` Funktion
+  - `.pf-var-source-badge` CSS (~30 Zeilen)
+- ℹ️ **Exceptions**: Source-Badges nur noch für Admin/Debug-Views sinnvoll
+
 ### 🎯 Feature: Master Progress Bar (Option C - Hybrid) ⭐⭐⭐
 - ✅ **Master Progress Bar** erstellt (Sticky, Overall Completion)
   - Zeigt Gesamtfortschritt: "3 of 4 completed (75%)"

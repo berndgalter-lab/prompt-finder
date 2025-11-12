@@ -753,32 +753,6 @@ body.pf-body {
     font-weight: bold;
 }
 
-.pf-var-source-badge {
-    font-size: 0.75rem;
-    padding: 0.125rem 0.5rem;
-    border-radius: var(--pf-r-4);
-    margin-left: 0.5rem;
-    opacity: 0.8;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.pf-var-source-badge--profile {
-    background: #E3F2FD;
-    color: #1976D2;
-}
-
-.pf-var-source-badge--workflow {
-    background: #F3E5F5;
-    color: #7B1FA2;
-}
-
-.pf-var-source-badge--step {
-    background: #E8F5E9;
-    color: #2E7D32;
-}
-
 .pf-var {
     display: flex;
     flex-direction: column;

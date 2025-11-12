@@ -186,11 +186,6 @@
       } else {
         area.textContent = out;
       }
-      if (meta.lastTier) {
-        const label = meta.lastTier === 'profile' ? '✓ From Profile' : meta.lastTier === 'workflow' ? '✓ From Workflow' : '✓ From Step';
-        area.setAttribute('data-source-tier', meta.lastTier);
-        area.setAttribute('title', label);
-      }
     });
   }
 
@@ -677,53 +672,6 @@ function coerceBool(v){
   return s === '1' || s === 'true' || s === 'yes' || s === 'on' || s === 'y';
 }
 
-
-  function ensureStaticBadge(container, id, text, modifier){
-    if (!container) return;
-    let badge = container.querySelector(`.pf-var-source-badge[data-badge="${id}"]`);
-    if (!badge) {
-      badge = document.createElement('span');
-      badge.className = 'pf-var-source-badge';
-      badge.dataset.badge = id;
-      container.appendChild(badge);
-    }
-    badge.classList.remove('pf-var-source-badge--profile', 'pf-var-source-badge--workflow');
-    if (modifier) badge.classList.add(modifier);
-    badge.textContent = text;
-  }
-
-  function updateVariableSourceIndicator(wrap, key, ctx){
-    if (!wrap) return;
-    const resolved = resolveKey(key, ctx);
-    const tier = resolved.resolved ? resolved.tier : 'unset';
-    let badge = wrap.querySelector('.pf-var-source-badge[data-role="value-source"]');
-    if (!badge) {
-      const labelTarget = wrap.querySelector('.pf-field-label, .pf-var-label');
-      badge = document.createElement('span');
-      badge.className = 'pf-var-source-badge';
-      badge.dataset.role = 'value-source';
-      (labelTarget || wrap).appendChild(badge);
-    }
-    badge.classList.remove('pf-var-source-badge--profile', 'pf-var-source-badge--workflow', 'pf-var-source-badge--step');
-    let label = '✓ From Step';
-    if (tier === 'profile') {
-      badge.classList.add('pf-var-source-badge--profile');
-      label = '✓ From Profile';
-    } else if (tier === 'workflow') {
-      badge.classList.add('pf-var-source-badge--workflow');
-      label = '✓ From Workflow';
-    } else if (tier === 'step') {
-      badge.classList.add('pf-var-source-badge--step');
-      label = '✓ From Step';
-    } else {
-      badge.textContent = '⧗ Unresolved';
-      wrap.dataset.valueSource = 'unset';
-      return;
-    }
-    badge.textContent = label;
-    wrap.dataset.valueSource = tier;
-  }
-
   /**
    * Render a single control for a variable.
    * - container: element to append into
@@ -1098,7 +1046,6 @@ function coerceBool(v){
 
     const emitChange = ()=>{
       markDirty();
-      updateVariableSourceIndicator(wrap, key, ctx);
       updateStatusBar(ctx.workflowMap || {});
       if (typeof onChange === 'function') onChange();
     };
