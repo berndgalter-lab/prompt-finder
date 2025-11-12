@@ -551,51 +551,65 @@ function coerceBool(v){
     wrap.dataset.variableTier = tierTag;
     wrap.dataset.fieldName = key;
     wrap.dataset.state = 'pristine';
+    wrap.dataset.var = key; // For updateVarStatus compatibility
     const workflowDef = ctx.workflowMap ? ctx.workflowMap[key] : undefined;
     const profileAlias = def.profileKey || workflowDef?.profileKey || '';
 
     wrap.dataset.required = def.required ? 'true' : 'false';
 
     const id = `${level}-${key}`;
+    
+    // Get initial value to determine status
+    const initResolved = resolveKey(key, ctx);
+    const initialValue = initResolved.resolved ? initResolved.value : (def.defaultValue ?? '');
+    const isFilled = initialValue && String(initialValue).trim() !== '';
+    const status = def.required 
+      ? (isFilled ? 'required-filled' : 'required-empty')
+      : (isFilled ? 'optional-filled' : 'optional-empty');
+    wrap.dataset.status = status;
+    
+    // Add checkmark icon (left column) - Best Practice
+    const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    iconSvg.setAttribute('class', 'pf-var-status-icon');
+    iconSvg.setAttribute('viewBox', '0 0 24 24');
+    iconSvg.setAttribute('fill', 'none');
+    iconSvg.setAttribute('stroke', 'currentColor');
+    iconSvg.setAttribute('stroke-width', '2.5');
+    iconSvg.setAttribute('stroke-linecap', 'round');
+    iconSvg.setAttribute('stroke-linejoin', 'round');
+    iconSvg.setAttribute('aria-hidden', 'true');
+    iconSvg.innerHTML = isFilled
+      ? '<polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>'
+      : '<circle cx="12" cy="12" r="10"></circle>';
+    wrap.appendChild(iconSvg);
+    
+    // Create content wrapper
+    const contentWrap = document.createElement('div');
+    contentWrap.className = 'pf-var-content';
+    
+    // Label Row (Label + Badge) - Best Practice
+    const labelRow = document.createElement('div');
+    labelRow.className = 'pf-var-label-row';
+    
     const label = document.createElement('label');
     label.className = 'pf-var-label';
     label.htmlFor = id;
     const labelText = def.label || key;
-    label.textContent = labelText;
+    label.textContent = labelText; // Clean label without asterisk
 
-    // Add required indicator using .pf-req class
-    if (def.required) {
-      const reqIndicator = document.createElement('span');
-      reqIndicator.className = 'pf-req';
-      reqIndicator.setAttribute('aria-label', 'Required');
-      reqIndicator.textContent = '*';
-      label.appendChild(reqIndicator);
-    }
-    
-    // Optional: Add badge for visual clarity
+    // Badge (REQUIRED = prominent, optional = subtle) - Best Practice
     const requirementBadge = document.createElement('span');
-    requirementBadge.className = `pf-var-badge ${def.required ? 'required' : 'optional'}`;
-    requirementBadge.textContent = def.required ? 'Required' : 'Optional';
-    label.appendChild(document.createTextNode(' '));
-    label.appendChild(requirementBadge);
+    requirementBadge.className = def.required ? 'pf-var-required-badge' : 'pf-var-optional-badge';
+    requirementBadge.textContent = def.required ? 'REQUIRED' : 'optional';
+    
+    labelRow.appendChild(label);
+    labelRow.appendChild(requirementBadge);
+    contentWrap.appendChild(labelRow);
 
-    if (level === 'workflow' && profileAlias) {
-      ensureStaticBadge(label, 'profile-alias', 'Inherits Profile', 'pf-var-source-badge--profile');
-    }
-    if (level === 'step') {
-      if (workflowDef) {
-        ensureStaticBadge(label, 'overrides-workflow', 'Overrides Workflow', 'pf-var-source-badge--workflow');
-      }
-      if (profileAlias) {
-        ensureStaticBadge(label, 'overrides-profile', 'Overrides Profile', 'pf-var-source-badge--profile');
-      }
-    }
-
+    // Input Wrapper - Best Practice
     const inputWrap = document.createElement('div');
-    inputWrap.className = 'pf-field-input-wrapper';
+    inputWrap.className = 'pf-var-input-wrapper';
 
-    const initResolved = resolveKey(key, ctx);
-    const initialValue = initResolved.resolved ? initResolved.value : (def.defaultValue ?? '');
     const placeholder = def.placeholder || '';
 
     let ctrl;
@@ -674,52 +688,94 @@ function coerceBool(v){
       ctrl.removeAttribute('aria-required');
     }
 
-    ctrl.classList.add('pf-field-input', 'pf-var-input');
-    if (def.required) {
-      ctrl.classList.add('required');
-    } else {
-      ctrl.classList.remove('required');
-    }
-
+    // Add CSS classes for styling
     if (ctrl.tagName === 'TEXTAREA') {
-      ctrl.classList.add('pf-field-input--textarea');
+      ctrl.classList.add('pf-var-textarea');
+    } else if (ctrl.tagName === 'SELECT') {
+      ctrl.classList.add('pf-var-select');
+    } else if (ctrl.type === 'checkbox') {
+      ctrl.classList.add('pf-var-checkbox');
+      inputWrap.classList.add('pf-var-input-wrapper--checkbox');
+    } else {
+      ctrl.classList.add('pf-var-input');
     }
-    if (ctrl.type === 'checkbox') {
-      ctrl.classList.add('pf-field-input--checkbox');
-    }
-
-    const validation = document.createElement('span');
-    validation.className = 'pf-field-validation';
-    validation.dataset.state = 'idle';
-    validation.setAttribute('aria-hidden', 'true');
-    validation.textContent = '✓';
 
     inputWrap.appendChild(ctrl);
-    inputWrap.appendChild(validation);
+    contentWrap.appendChild(inputWrap);
 
-    wrap.appendChild(label);
-    wrap.appendChild(inputWrap);
-
+    // Hint (under input with icon) - Best Practice
     const hintText = (def.description && def.description.trim()) || (def.hint && def.hint.trim()) || '';
     if (hintText) {
       const hintId = `${id}-hint`;
       const hint = document.createElement('div');
       hint.id = hintId;
-      hint.className = 'pf-var-hint pf-var-help pf-field-hint';
-      hint.textContent = hintText;
-      wrap.appendChild(hint);
+      hint.className = 'pf-var-hint';
+      
+      // Lightbulb icon
+      const hintIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      hintIcon.setAttribute('class', 'pf-var-hint-icon');
+      hintIcon.setAttribute('width', '14');
+      hintIcon.setAttribute('height', '14');
+      hintIcon.setAttribute('viewBox', '0 0 24 24');
+      hintIcon.setAttribute('fill', 'none');
+      hintIcon.setAttribute('stroke', 'currentColor');
+      hintIcon.setAttribute('stroke-width', '2');
+      hintIcon.setAttribute('stroke-linecap', 'round');
+      hintIcon.setAttribute('stroke-linejoin', 'round');
+      hintIcon.setAttribute('aria-hidden', 'true');
+      hintIcon.innerHTML = '<path d="M12 2v1m0 18v1M4.22 4.22l.71.71m14.14 14.14.71.71M2 12h1m18 0h1M4.22 19.78l.71-.71m14.14-14.14.71-.71"/><circle cx="12" cy="12" r="5"/><path d="M12 12v.01"/>';
+      
+      const hintSpan = document.createElement('span');
+      hintSpan.textContent = hintText;
+      
+      hint.appendChild(hintIcon);
+      hint.appendChild(hintSpan);
+      contentWrap.appendChild(hint);
       
       // Link input to hint for accessibility
       ctrl.setAttribute('aria-describedby', hintId);
     }
 
+    // Meta Info (Default Value) - Best Practice
+    if (def.defaultValue && !isFilled) {
+      const metaInfo = document.createElement('div');
+      metaInfo.className = 'pf-var-meta';
+      
+      const defaultSpan = document.createElement('span');
+      defaultSpan.className = 'pf-var-default';
+      defaultSpan.title = 'Default value';
+      
+      const refreshIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      refreshIcon.setAttribute('width', '12');
+      refreshIcon.setAttribute('height', '12');
+      refreshIcon.setAttribute('viewBox', '0 0 24 24');
+      refreshIcon.setAttribute('fill', 'none');
+      refreshIcon.setAttribute('stroke', 'currentColor');
+      refreshIcon.setAttribute('stroke-width', '2');
+      refreshIcon.setAttribute('stroke-linecap', 'round');
+      refreshIcon.setAttribute('stroke-linejoin', 'round');
+      refreshIcon.setAttribute('aria-hidden', 'true');
+      refreshIcon.innerHTML = '<path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>';
+      
+      defaultSpan.appendChild(refreshIcon);
+      defaultSpan.appendChild(document.createTextNode(' Default: ' + def.defaultValue));
+      metaInfo.appendChild(defaultSpan);
+      contentWrap.appendChild(metaInfo);
+    }
+
+    // Error Message - Best Practice
     const errorEl = document.createElement('div');
-    errorEl.className = 'pf-var-error';
+    errorEl.className = 'pf-var__error';
+    errorEl.id = `${id}-error`;
     errorEl.style.display = 'none';
     errorEl.setAttribute('role', 'alert');
-    wrap.appendChild(errorEl);
+    errorEl.setAttribute('aria-live', 'polite');
+    contentWrap.appendChild(errorEl);
 
-    updateVariableSourceIndicator(wrap, key, ctx);
+    // Append content wrapper to main wrap
+    wrap.appendChild(contentWrap);
+    
+    // Add to container
     container.appendChild(wrap);
 
     const isBoolean = type === 'boolean';
@@ -866,6 +922,8 @@ function coerceBool(v){
       storeValue();
       runValidation(trigger);
       emitChange();
+      // Update visual status (checkmark + border color) - Best Practice
+      updateVarStatus(key, required);
     };
 
     if (isBoolean || ctrl.tagName === 'SELECT') {
