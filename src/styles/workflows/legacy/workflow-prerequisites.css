@@ -16,8 +16,8 @@
    ======================================== */
 
 .pf-section--prereqs {
-  margin: clamp(var(--pf-space-4), 3vw, var(--pf-space-5)) auto 0;
-  max-width: 1400px;
+  margin: clamp(var(--pf-space-4), 3vw, var(--pf-space-5)) 0 0;
+  max-width: 100%;
   padding: 0;
 }
 
