@@ -25,6 +25,12 @@
   - Erzwungenes Column-Layout (`!important`) für vertikale Liste (1-8 Variablen)
   - Redundanter Progress-Text versteckt (nur numeric Counter: "2 / 5")
   - Grid-Konflikt mit alter `workflow-variables.css` behoben
+- 🐛 **Critical Bugfixes (v2.2)**:
+  - ✅ **Counter Fix**: `updateVariablesCounter()` findet jetzt Inputs korrekt via `data-var-name`
+  - ✅ **Status Update Fix**: `updateVarStatus()` findet Variablen via `data-field-name`
+  - ✅ **Doppelrahmen Fix**: `.pf-workflow-vars-list` überschreibt alte Utility-Klassen (`pf-card`, `pf-grid-2`)
+  - ✅ **Kompakteres Design**: Reduziertes Padding (var(--pf-space-3) statt clamp), kleinere Gaps
+  - ✅ **Optionale Variablen**: Werden jetzt korrekt angezeigt
 - 🎯 **UX/UI Best Practice Update (v2.1)**:
   - **Badge-Hierarchie optimiert**:
     - "REQUIRED" = Prominent, red, uppercase, bold, shadow

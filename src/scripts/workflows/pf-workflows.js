@@ -387,11 +387,16 @@ function afterInsertVar(id, required) {
  * Update visual status of a variable (checkmark + color border)
  */
 function updateVarStatus(id, required) {
-  const el = document.getElementById(id);
-  const varWrap = document.querySelector(`.pf-var[data-var="${id}"]`);
-  if (!el || !varWrap) return;
+  // Find input by data-var-name attribute
+  const el = document.querySelector(`[data-var-name="${id}"]`);
+  if (!el) return;
   
-  const isFilled = el.value && String(el.value).trim() !== '';
+  // Find wrapper by data-field-name
+  const varWrap = document.querySelector(`.pf-var[data-field-name="${id}"]`);
+  if (!varWrap) return;
+  
+  const value = el.type === 'checkbox' ? (el.checked ? '1' : '') : el.value;
+  const isFilled = value && String(value).trim() !== '';
   const status = required 
     ? (isFilled ? 'required-filled' : 'required-empty')
     : (isFilled ? 'optional-filled' : 'optional-empty');
@@ -425,14 +430,25 @@ function updateVariablesCounter() {
   if (!counter) return;
   
   const total = parseInt(counter.getAttribute('data-variables-total')) || 0;
-  const allVars = document.querySelectorAll('.pf-var[data-var]');
+  const allVars = document.querySelectorAll('.pf-var[data-field-name]');
   let filled = 0;
   
   allVars.forEach(varEl => {
-    const id = varEl.getAttribute('data-var');
-    const input = document.getElementById(id);
-    if (input && input.value && String(input.value).trim() !== '') {
-      filled++;
+    const fieldName = varEl.getAttribute('data-field-name');
+    // Try both formats: "workflow-fieldname" and just "fieldname"
+    let input = document.querySelector(`[data-var-name="${fieldName}"]`);
+    if (!input) {
+      input = document.getElementById(fieldName);
+    }
+    if (!input) {
+      input = document.getElementById(`workflow-${fieldName}`);
+    }
+    
+    if (input) {
+      const value = input.type === 'checkbox' ? (input.checked ? '1' : '') : input.value;
+      if (value && String(value).trim() !== '') {
+        filled++;
+      }
     }
   });
   
