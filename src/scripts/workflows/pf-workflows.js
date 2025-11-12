@@ -834,7 +834,7 @@ function coerceBool(v){
 
     function applyState(state, message){
       wrap.dataset.state = state;
-      validation.dataset.state = state;
+      // Note: No validation icon in modern design (checkmark is in pf-var-status-icon)
       
       // Toggle .is-empty class for required fields
       const isEmpty = !getValidationValue();
@@ -846,17 +846,6 @@ function coerceBool(v){
         if (!required) {
           wrap.classList.remove('is-required');
         }
-      }
-      
-      if (state === 'valid') {
-        validation.style.opacity = '1';
-        validation.textContent = '✓';
-      } else if (state === 'invalid') {
-        validation.style.opacity = '1';
-        validation.textContent = '!';
-      } else {
-        validation.style.opacity = '0';
-        validation.textContent = '✓';
       }
 
       if (required) {

@@ -25,6 +25,12 @@
   - Erzwungenes Column-Layout (`!important`) für vertikale Liste (1-8 Variablen)
   - Redundanter Progress-Text versteckt (nur numeric Counter: "2 / 5")
   - Grid-Konflikt mit alter `workflow-variables.css` behoben
+- 🐛 **Critical Bugfixes (v2.5 - BREAKING BUG FIX)**:
+  - ✅ **CRITICAL**: `validation is not defined` Error behoben
+  - ✅ **ROOT CAUSE**: Beim Refactoring `validation` Element entfernt, aber `applyState()` nutzte es noch
+  - ✅ **IMPACT**: Variables wurden gar nicht gerendert (JavaScript Crash)
+  - ✅ **FIX**: Alle `validation.*` Referenzen aus `applyState()` entfernt
+  - ℹ️ **Why it failed**: JS Error stoppt komplettes Rendering → keine Variables, kein Status-Update
 - 🐛 **Critical Bugfixes (v2.4 - Final)**:
   - ✅ **Status Colors Fix**: `updateVarStatus()` wird jetzt **initial** aufgerufen (setTimeout nach Render)
   - ✅ **CSS Specificity Fix**: `!important` auf alle `data-status` Border/Background Colors
