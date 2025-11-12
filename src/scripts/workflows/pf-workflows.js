@@ -1609,6 +1609,33 @@ function updateStepCheckmarkIcon(stepElement, isCompleted) {
   stepElement.setAttribute('data-status', isCompleted ? 'completed' : '');
 }
 
+/**
+ * Update Steps Header Counter (psychologically optimized)
+ * Shows progress with achievement celebration
+ */
+function updateStepsHeaderCounter() {
+  const counter = document.querySelector('[data-steps-progress-counter]');
+  if (!counter) return;
+  
+  const totalSteps = document.querySelectorAll('.pf-step').length;
+  const completedSteps = document.querySelectorAll('.pf-step-checkbox:checked').length;
+  
+  const numberEl = counter.querySelector('[data-steps-completed]');
+  if (numberEl) {
+    numberEl.textContent = completedSteps;
+  }
+  
+  // Psychological: Achievement state when all completed
+  if (completedSteps === totalSteps && totalSteps > 0) {
+    counter.setAttribute('data-steps-completed', 'total');
+    // Update ARIA for screen readers
+    counter.setAttribute('aria-label', `All ${totalSteps} steps completed! Well done!`);
+  } else {
+    counter.removeAttribute('data-steps-completed');
+    counter.setAttribute('aria-label', `${completedSteps} of ${totalSteps} steps completed`);
+  }
+}
+
 function bindProgressPersistence(){
   const workflowId = getWorkflowId();
   if (!workflowId) return;
@@ -1647,6 +1674,8 @@ function bindProgressPersistence(){
     if (window.WorkflowSteps && typeof window.WorkflowSteps.updateProgressCounter === 'function') {
       window.WorkflowSteps.updateProgressCounter();
     }
+    // Update Steps Header Counter (psychological motivation)
+    updateStepsHeaderCounter();
   }
 
   function restoreProgressState(){
@@ -1679,6 +1708,8 @@ function bindProgressPersistence(){
     if (window.WorkflowSteps && typeof window.WorkflowSteps.updateProgressCounter === 'function') {
       window.WorkflowSteps.updateProgressCounter();
     }
+    // Initialize Steps Header Counter
+    updateStepsHeaderCounter();
   }
 
   document.querySelectorAll('.pf-step-checkbox').forEach(cb => {

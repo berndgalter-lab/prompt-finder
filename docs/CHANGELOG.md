@@ -69,13 +69,35 @@
 - 🎨 **Design-Prinzip**: Delight without distraction
 - 📦 **CSS**: ~100 Zeilen für Animations + Media Queries
 
+#### ✅ **Header Card Integration** (Option A - Konsistent mit Variables)
+- ✅ **Steps Header Card** – Einheitliches Card-Design wie Variables Section
+  - 📋 Document Icon im runden Badge
+  - Titel: "Workflow Steps"
+  - Subtitle: "Follow these steps in order..."
+  - Progress Counter rechts (X / Y)
+- ✅ **Gradient Background** – Linear gradient accent (konsistent)
+- ✅ **Accent Line** – Subtile Top-Border (2px gradient)
+- ✅ **Progress Counter** – Live-Update mit Achievement State
+  - Normal: Blue Number für completed count
+  - Achievement: Green + Pulse Animation bei 100%
+  - ARIA labels für Screen Reader
+- 🎯 **Psychologie**: 
+  - **Visual Anchoring** → Icon macht Section sofort erkennbar
+  - **Progress Visibility** → Counter gibt Motivation (Dopamin boost!)
+  - **Achievement Celebration** → Success-State bei Completion
+  - **Consistency** → Gleiches Pattern = Vertrautheit = weniger Cognitive Load
+- 🎨 **Design-Prinzip**: Clarity through consistency
+- 📦 **Code**: ~150 Zeilen CSS, ~30 Zeilen JS, ~30 Zeilen PHP
+- 💡 **UX**: Header Card trennt "Was ist die Section?" von "Was sind die Steps?"
+
 ### 📊 **Zusammenfassung: Steps Modernization**
 - **Reduziert**: Von 10+ visuellen Elementen auf 4 essentials
-- **Konsistent**: Variables = Steps (gleiches Pattern)
-- **Hierarchie**: Primary vs. Secondary Content klar
-- **Modern**: 2025 SaaS Best Practices
-- **Total**: ~300 Zeilen CSS, ~50 Zeilen JS, ~100 Zeilen PHP
-- **Inspiration**: Linear, Notion, Airtable, Stripe
+- **Konsistent**: Variables = Steps (gleiches Pattern überall)
+- **Hierarchie**: Primary vs. Secondary Content klar durch Cards
+- **Modern**: 2025 SaaS Best Practices (Linear, Notion, Airtable)
+- **Psychologie**: Progress Visibility, Achievement, Visual Anchoring
+- **Total**: ~450 Zeilen CSS, ~80 Zeilen JS, ~130 Zeilen PHP
+- **Ergebnis**: Clean, motivating, accessible, consistent
 
 ### 🧹 UX Cleanup: Source Badges entfernt
 - ✅ **"✓ From Workflow" Badges entfernt** – Redundante Information für User
