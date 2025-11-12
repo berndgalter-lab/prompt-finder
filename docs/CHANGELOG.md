@@ -25,6 +25,12 @@
   - Erzwungenes Column-Layout (`!important`) für vertikale Liste (1-8 Variablen)
   - Redundanter Progress-Text versteckt (nur numeric Counter: "2 / 5")
   - Grid-Konflikt mit alter `workflow-variables.css` behoben
+- 🐛 **Critical Bugfixes (v2.4 - Final)**:
+  - ✅ **Status Colors Fix**: `updateVarStatus()` wird jetzt **initial** aufgerufen (setTimeout nach Render)
+  - ✅ **CSS Specificity Fix**: `!important` auf alle `data-status` Border/Background Colors
+  - ✅ **Browser Consistency**: Farben ändern sich jetzt korrekt (rot → grün) in allen Browsern
+  - ✅ **Initial State**: Checkmark + Border-Color sind ab dem ersten Render korrekt
+  - ℹ️ **Problem**: `data-status` wurde gesetzt, aber CSS hatte nicht genug Spezifität
 - 🐛 **Critical Bugfixes (v2.3)**:
   - ✅ **ROOT CAUSE GEFUNDEN**: `renderWorkflowForm()` fügte alte Utility-Klassen hinzu!
   - ✅ **Doppelrahmen Fix**: `classList.remove('pf-card', 'pf-stack', 'pf-grid-2')` in `renderWorkflowForm()` und `renderStepForm()`

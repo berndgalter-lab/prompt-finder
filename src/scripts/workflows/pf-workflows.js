@@ -926,6 +926,12 @@ function coerceBool(v){
     }
 
     runValidation('init');
+    
+    // CRITICAL: Update visual status on initial render
+    // This ensures checkmark + border color are correct from the start
+    setTimeout(() => {
+      updateVarStatus(key, required);
+    }, 0);
 
     const emitChange = ()=>{
       markDirty();

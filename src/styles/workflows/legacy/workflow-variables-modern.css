@@ -156,25 +156,25 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-/* Status-based coloring */
+/* Status-based coloring - !important to override any conflicting styles */
 .pf-var[data-status="required-empty"] {
-  border-left: 4px solid #ef4444; /* Red-500 */
-  background: color-mix(in srgb, #ef4444 5%, var(--pf-bg-soft));
+  border-left: 4px solid #ef4444 !important; /* Red-500 */
+  background: color-mix(in srgb, #ef4444 5%, var(--pf-bg-soft)) !important;
 }
 
 .pf-var[data-status="required-filled"] {
-  border-left: 4px solid #10b981; /* Green-500 */
-  background: color-mix(in srgb, #10b981 5%, var(--pf-bg-soft));
+  border-left: 4px solid #10b981 !important; /* Green-500 */
+  background: color-mix(in srgb, #10b981 5%, var(--pf-bg-soft)) !important;
 }
 
 .pf-var[data-status="optional-filled"] {
-  border-left: 3px solid #3b82f6; /* Blue-500 */
-  background: color-mix(in srgb, #3b82f6 3%, var(--pf-bg-soft));
+  border-left: 3px solid #3b82f6 !important; /* Blue-500 */
+  background: color-mix(in srgb, #3b82f6 3%, var(--pf-bg-soft)) !important;
 }
 
 .pf-var[data-status="optional-empty"] {
-  border-left: 2px solid #9ca3af; /* Gray-400 */
-  background: var(--pf-bg-soft);
+  border-left: 2px solid #9ca3af !important; /* Gray-400 */
+  background: var(--pf-bg-soft) !important;
 }
 
 /* Checkmark Icon */
