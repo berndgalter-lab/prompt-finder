@@ -48,6 +48,8 @@ if (is_user_logged_in()) {
     
     <?php get_template_part('src/php/template-parts/workflow/progress-compact'); ?>
     
+    <?php get_template_part('src/php/template-parts/workflow/master-progress'); ?>
+    
     <?php get_template_part('src/php/template-parts/workflow/section-fast-track-toggle'); ?>
     
     <div class="pf-workflow-layout">

@@ -1143,6 +1143,7 @@ add_action('wp_enqueue_scripts', function () {
     'workflow-header'           => '/src/styles/workflows/legacy/workflow-header.css',
     'workflow-hero'             => '/src/styles/workflows/legacy/workflow-hero.css',
     'workflow-progress'         => '/src/styles/workflows/legacy/workflow-progress-compact.css',
+    'workflow-master-progress'  => '/src/styles/workflows/legacy/workflow-master-progress.css',
     'workflow-prerequisites'    => '/src/styles/workflows/legacy/workflow-prerequisites.css',
     'workflow-sidebar'          => '/src/styles/workflows/legacy/workflow-sidebar.css',
     'workflow-sections'         => '/src/styles/workflows/legacy/workflow-sections.css',
@@ -1160,19 +1161,9 @@ add_action('wp_enqueue_scripts', function () {
     );
   }
 
-  $modern_components = [
-    'workflow-info-modern'      => '/src/styles/workflows/modern/workflow-info-modern.css',
-    'fast-track-content'        => '/src/styles/workflows/modern/fast-track-content.css',
-  ];
-
-  foreach ($modern_components as $handle => $path) {
-    wp_enqueue_style(
-      "pf-$handle",
-      $uri . $path,
-      ['pf-workflows-main'],
-      pf_ver($path)
-    );
-  }
+  // REMOVED: Modern components that were consolidated into legacy files
+  // - workflow-info-modern.css → Functionality removed (redundant with Hero section)
+  // - fast-track-content.css → Consolidated into fast-track-toggle.css
 
   // --- Scripts ---
   $nav_rel = '/assets/js/pf-navigation.js';

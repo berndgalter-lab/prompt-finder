@@ -31,6 +31,11 @@
   - ✅ **IMPACT**: Variables wurden gar nicht gerendert (JavaScript Crash)
   - ✅ **FIX**: Alle `validation.*` Referenzen aus `applyState()` entfernt
   - ℹ️ **Why it failed**: JS Error stoppt komplettes Rendering → keine Variables, kein Status-Update
+- 🧹 **Cleanup: 404 Errors behoben**:
+  - ✅ **Removed**: `workflow-info-modern.css` aus `functions.php` (File existiert nicht mehr)
+  - ✅ **Removed**: `fast-track-content.css` aus `functions.php` (File existiert nicht mehr)
+  - ✅ **Reason**: Diese Files wurden während Refactoring gelöscht/konsolidiert
+  - ✅ **Impact**: Keine 404 Errors mehr, schnelleres Page Load
 - 🐛 **Critical Bugfixes (v2.4 - Final)**:
   - ✅ **Status Colors Fix**: `updateVarStatus()` wird jetzt **initial** aufgerufen (setTimeout nach Render)
   - ✅ **CSS Specificity Fix**: `!important` auf alle `data-status` Border/Background Colors
