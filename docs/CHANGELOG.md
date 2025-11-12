@@ -21,6 +21,10 @@
   - Visual feedback ohne Page Reload
 - ✅ **Modern SaaS Design** – Wie Notion, Airtable, Linear
 - ✅ **Responsive & Accessible** – Mobile-optimiert, ARIA labels
+- 🐛 **Bugfixes**:
+  - Erzwungenes Column-Layout (`!important`) für vertikale Liste (1-8 Variablen)
+  - Redundanter Progress-Text versteckt (nur numeric Counter: "2 / 5")
+  - Grid-Konflikt mit alter `workflow-variables.css` behoben
 - ℹ️ **Inspiration**: GitHub Issues, Notion Databases
 
 ### 🗑️ Cleanup: Sidebar Navigation entfernt

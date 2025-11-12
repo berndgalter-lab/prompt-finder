@@ -92,7 +92,12 @@
   line-height: 1.5;
 }
 
-/* Progress Counter */
+/* Hide redundant progress text (keep only numeric counter) */
+.pf-variables-progress {
+  display: none !important;
+}
+
+/* Progress Counter (numeric only: "2 / 5") */
 .pf-variables-counter {
   margin-left: auto;
   display: flex;
@@ -117,9 +122,11 @@
    ======================================== */
 
 .pf-workflow-vars-list {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
   gap: var(--pf-space-3);
+  /* Force column layout - override old grid-based CSS */
+  grid-template-columns: unset !important;
 }
 
 /* Variable Item (like Prerequisites items) */
