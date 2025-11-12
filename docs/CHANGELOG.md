@@ -81,7 +81,7 @@
   - Normal: Blue Number für completed count
   - Achievement: Green + Pulse Animation bei 100%
   - ARIA labels für Screen Reader
-- 🎯 **Psychologie**: 
+- 🎯 **Psychologie**:
   - **Visual Anchoring** → Icon macht Section sofort erkennbar
   - **Progress Visibility** → Counter gibt Motivation (Dopamin boost!)
   - **Achievement Celebration** → Success-State bei Completion
@@ -89,6 +89,21 @@
 - 🎨 **Design-Prinzip**: Clarity through consistency
 - 📦 **Code**: ~150 Zeilen CSS, ~30 Zeilen JS, ~30 Zeilen PHP
 - 💡 **UX**: Header Card trennt "Was ist die Section?" von "Was sind die Steps?"
+
+#### 🔧 **Konsistenz-Fix: Steps Header identisch mit Variables Card**
+- ✅ **HTML-Struktur vereinheitlicht** – Steps Card nutzt jetzt exakt die gleichen Klassen wie Variables Card
+  - `.pf-workflow-vars-card` statt `.pf-steps-header-card`
+  - `.pf-workflow-vars-card-header` statt `.pf-steps-header-card-header`
+  - `.pf-workflow-vars-icon` statt `.pf-steps-icon`
+  - `.pf-workflow-vars-title` statt `.pf-steps-title`
+  - `.pf-workflow-vars-subtitle` statt `.pf-steps-subtitle`
+- ✅ **Icon vereinheitlicht** – Emoji 📋 statt SVG (konsistent mit Variables ⚙️)
+- ✅ **CSS vereinfacht** – ~140 Zeilen redundanter CSS entfernt
+  - Reused existing styles from `workflow-variables-modern.css`
+  - Nur Steps-spezifischer Progress Counter CSS beibehalten (~70 Zeilen)
+- ✅ **Spacing konsistent** – Margins/Paddings jetzt identisch zwischen beiden Sections
+- 🎯 **Ergebnis**: Beide Cards sehen jetzt EXAKT gleich aus
+- 💡 **Warum**: Single source of truth = weniger Wartung, bessere Konsistenz
 
 ### 📊 **Zusammenfassung: Steps Modernization**
 - **Reduziert**: Von 10+ visuellen Elementen auf 4 essentials

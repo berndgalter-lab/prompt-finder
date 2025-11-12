@@ -55,20 +55,12 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
              data-visible-steps="<?php echo esc_attr($visible_steps); ?>">
     
     <!-- Steps Header Card (consistent with Variables Section) -->
-    <div class="pf-steps-header-card">
-        <div class="pf-steps-header-card-header">
-            <span class="pf-steps-icon" role="img" aria-label="Workflow steps">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <polyline points="10 9 9 9 8 9"/>
-                </svg>
-            </span>
-            <div class="pf-steps-header-content">
-                <h2 class="pf-steps-title">Workflow Steps</h2>
-                <p class="pf-steps-subtitle">Follow these steps in order. Complete each step before moving to the next.</p>
+    <div class="pf-workflow-vars-card">
+        <div class="pf-workflow-vars-card-header">
+            <span class="pf-workflow-vars-icon">📋</span>
+            <div>
+                <h3 class="pf-workflow-vars-title">Workflow Steps</h3>
+                <p class="pf-workflow-vars-subtitle">Follow these steps in order. Complete each step before moving to the next.</p>
             </div>
             <div class="pf-steps-progress-counter" data-steps-progress-counter aria-live="polite" aria-atomic="true">
                 <span class="pf-counter-number" data-steps-completed>0</span>
