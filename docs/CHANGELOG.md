@@ -25,7 +25,26 @@
   - Erzwungenes Column-Layout (`!important`) für vertikale Liste (1-8 Variablen)
   - Redundanter Progress-Text versteckt (nur numeric Counter: "2 / 5")
   - Grid-Konflikt mit alter `workflow-variables.css` behoben
-- ℹ️ **Inspiration**: GitHub Issues, Notion Databases
+- 🎯 **UX/UI Best Practice Update (v2.1)**:
+  - **Badge-Hierarchie optimiert**:
+    - "REQUIRED" = Prominent, red, uppercase, bold, shadow
+    - "optional" = Subtle, gray, lowercase, transparent, 60% opacity
+  - **Saubere Struktur** (Best Practice Reihenfolge):
+    1. Label Row: Label (links) + Badge (rechts aligned)
+    2. Input Field: Placeholder IM Input (nicht daneben!)
+    3. Hint: Unter Input mit Icon (💡 Lightbulb SVG)
+    4. Meta Info: Default Value mit Icon (↻ nur wenn leer)
+    5. Error: ARIA live region (hidden by default)
+  - **Redundanzen entfernt**:
+    - ❌ Asterisk `*` bei Label (Badge reicht)
+    - ❌ "From Workflow" Status (verwirrt User)
+    - ❌ Checkmark rechts vom Input (gehört zu Icon-Spalte)
+  - **Smart Features**:
+    - Meta-Section versteckt sich automatisch wenn User eingibt
+    - Default Value nur sichtbar wenn Input leer
+    - Hint mit professionellem Lightbulb-Icon (nicht Emoji)
+  - **Inspiration**: Linear, Stripe, Notion, GitHub, Airtable
+- ℹ️ **Total Lines Changed**: ~150 (JS + CSS)
 
 ### 🗑️ Cleanup: Sidebar Navigation entfernt
 - ✅ **Sidebar gelöscht** – Keine redundante Navigation mehr

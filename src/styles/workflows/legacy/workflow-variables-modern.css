@@ -213,33 +213,35 @@
   margin: 0;
 }
 
-/* Required Badge */
+/* Required Badge - Prominent & Urgent (Best Practice) */
 .pf-var-required-badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
+  padding: 3px 8px;
   font-size: 0.6875rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-radius: var(--pf-r-1);
   background: #ef4444;
   color: white;
+  box-shadow: 0 1px 2px rgba(239, 68, 68, 0.2);
 }
 
-/* Optional Badge */
+/* Optional Badge - Subtle & Secondary (Best Practice) */
 .pf-var-optional-badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: lowercase;
+  letter-spacing: 0;
   border-radius: var(--pf-r-1);
-  background: var(--pf-text-muted);
-  color: white;
-  opacity: 0.7;
+  background: transparent;
+  color: var(--pf-text-muted);
+  opacity: 0.6;
+  border: none;
 }
 
 /* Input Wrapper */
@@ -282,11 +284,13 @@
   opacity: 0.6;
 }
 
-/* Hint Text */
+/* Hint Text - Under input with icon (Best Practice) */
 .pf-var-hint {
   display: flex;
   align-items: flex-start;
   gap: 6px;
+  margin-top: var(--pf-space-2);
+  padding: var(--pf-space-2) 0;
   font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
   color: var(--pf-text-dim);
   line-height: 1.5;
@@ -294,7 +298,47 @@
 
 .pf-var-hint-icon {
   flex-shrink: 0;
+  width: 14px;
+  height: 14px;
   margin-top: 2px;
+  color: var(--pf-text-muted);
+  opacity: 0.7;
+}
+
+/* Meta Info - Shows default value, profile source, etc. */
+.pf-var-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-2);
+  margin-top: var(--pf-space-1);
+  padding-top: var(--pf-space-1);
+  font-size: 0.75rem;
+  color: var(--pf-text-muted);
+}
+
+.pf-var-default {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.pf-var-default svg {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.pf-var-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  background: color-mix(in srgb, var(--pf-info) 10%, transparent);
+  border-radius: var(--pf-r-1);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--pf-info);
 }
 
 /* ========================================

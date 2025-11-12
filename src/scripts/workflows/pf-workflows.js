@@ -287,7 +287,8 @@ function renderInput({ id, type, placeholder, value, options }) {
 }
 
 /**
- * Unified variable row renderer (v2.0 - Checklist Style)
+ * Unified variable row renderer (v2.1 - Best Practice UX/UI)
+ * Clean structure, proper hierarchy, modern SaaS design
  * Returns HTML string for a single variable input row
  */
 function renderVar({ id, label, required, type, placeholder, hint, defVal, value, options }) {
@@ -298,9 +299,8 @@ function renderVar({ id, label, required, type, placeholder, hint, defVal, value
   
   const badgeClass = required ? 'pf-var-required-badge' : 'pf-var-optional-badge';
   const badgeText = required ? 'REQUIRED' : 'optional';
-  const hintHtml = hint ? escapeHtml(hint) : '';
   
-  // Checkmark icon (filled or empty circle)
+  // Checkmark icon (filled checkmark or empty circle)
   const iconSvg = `
     <svg class="pf-var-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       ${isFilled 
@@ -309,27 +309,61 @@ function renderVar({ id, label, required, type, placeholder, hint, defVal, value
     </svg>
   `;
   
+  // Hint icon (lightbulb SVG)
+  const hintIconSvg = `
+    <svg class="pf-var-hint-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 2v1m0 18v1M4.22 4.22l.71.71m14.14 14.14.71.71M2 12h1m18 0h1M4.22 19.78l.71-.71m14.14-14.14.71-.71"/>
+      <circle cx="12" cy="12" r="5"/>
+      <path d="M12 12v.01"/>
+    </svg>
+  `;
+  
   return `
     <div class="pf-var ${required ? 'is-required' : 'is-optional'}" 
          data-var="${id}" 
          data-status="${status}"
          data-required="${required}">
+      
+      <!-- Checkmark Icon (left column) -->
       ${iconSvg}
+      
+      <!-- Content Area -->
       <div class="pf-var-content">
+        
+        <!-- 1. Label Row: Label (left) + Badge (right) -->
         <div class="pf-var-label-row">
           <label class="pf-var-label" for="${id}">${escapeHtml(label)}</label>
           <span class="${badgeClass}">${badgeText}</span>
         </div>
+        
+        <!-- 2. Input Field: Placeholder is INSIDE input -->
         <div class="pf-var-input-wrapper">
           ${renderInput({ id, type, placeholder, value, options })}
         </div>
-        ${hintHtml ? `
+        
+        <!-- 3. Hint (optional, under input) -->
+        ${hint ? `
           <div class="pf-var-hint">
-            <span class="pf-var-hint-icon">💡</span>
-            <span>${hintHtml}</span>
+            ${hintIconSvg}
+            <span>${escapeHtml(hint)}</span>
           </div>
         ` : ''}
-        <div class="pf-var__error" id="${id}-error" role="alert"></div>
+        
+        <!-- 4. Meta Info (optional, shows default value if present) -->
+        ${defVal && !isFilled ? `
+          <div class="pf-var-meta">
+            <span class="pf-var-default" title="Default value">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+              </svg>
+              Default: ${escapeHtml(String(defVal))}
+            </span>
+          </div>
+        ` : ''}
+        
+        <!-- 5. Error Message (hidden by default) -->
+        <div class="pf-var__error" id="${id}-error" role="alert" aria-live="polite"></div>
+        
       </div>
     </div>
   `;
@@ -371,6 +405,12 @@ function updateVarStatus(id, required) {
     icon.innerHTML = isFilled
       ? '<polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>'
       : '<circle cx="12" cy="12" r="10"></circle>';
+  }
+  
+  // Hide/show meta info (default value) when user fills input
+  const metaInfo = varWrap.querySelector('.pf-var-meta');
+  if (metaInfo) {
+    metaInfo.style.display = isFilled ? 'none' : 'flex';
   }
   
   // Update counter
