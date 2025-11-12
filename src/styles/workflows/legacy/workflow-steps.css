@@ -157,14 +157,8 @@
    STEPS HEADER CARD (consistent with Variables Section)
    ======================================== */
 
-/* Reuse Variables Card styling for consistency */
-.pf-section--steps .pf-workflow-vars-card {
-  /* Ensure same margins as Variables and Prerequisites sections */
-  /* !important needed because pf-workflows.css has duplicate definitions that override these */
-  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7)) !important;
-  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7)) !important;
-  margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6)) !important;
-}
+/* Card margins are inherited from workflow-variables-modern.css */
+/* No override needed - all .pf-workflow-vars-card elements should have same margins */
 
 /* Steps-specific progress counter */
 .pf-steps-progress-counter {
@@ -229,14 +223,8 @@
   }
 }
 
-/* Mobile padding consistency */
-@media (max-width: 640px) {
-  .pf-section--steps .pf-workflow-vars-card {
-    padding: var(--pf-space-4) var(--pf-space-3);
-    margin-left: var(--pf-space-3) !important;
-    margin-right: var(--pf-space-3) !important;
-  }
-}
+/* Mobile padding inherited from workflow-variables-modern.css */
+/* No override needed */
 
 /* ========================================
    SECTION / LIST BASICS

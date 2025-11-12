@@ -2789,17 +2789,18 @@ body.pf-body {
 .pf-step textarea.pf-prompt { width:100%; min-height:120px; }
 
 /* ========== UNIFIED WORKFLOW VARIABLES CARD ========== */
+/* DEPRECATED: Moved to workflow-variables-modern.css to avoid conflicts */
 /* Base card structure - used for both profile and workflow variables */
-.pf-workflow-vars-card {
+/* .pf-workflow-vars-card {
   background: var(--pf-card);
   border: 1px solid var(--pf-border);
-  border-radius: var(--pf-r-6); /* 16px */
+  border-radius: var(--pf-r-6);
   margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
   margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
   margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
   overflow: hidden;
   box-shadow: var(--pf-elev-1);
-}
+} */
 
 .pf-workflow-vars-card-header {
   display: flex;
@@ -2903,13 +2904,14 @@ body.pf-body {
 }
 
 /* Extra mobile padding consistency (smaller devices) */
-@media (max-width: 640px) {
+/* DEPRECATED: Moved to workflow-variables-modern.css */
+/* @media (max-width: 640px) {
   .pf-workflow-vars-card {
     padding: var(--pf-space-4) var(--pf-space-3);
     margin-left: var(--pf-space-3);
     margin-right: var(--pf-space-3);
   }
-}
+} */
   
   .pf-workflow-vars-subtitle {
     font-size: var(--pf-fs-xs); /* 0.75rem */

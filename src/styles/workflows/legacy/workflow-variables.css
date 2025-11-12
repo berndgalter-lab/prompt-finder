@@ -172,15 +172,16 @@
 }
 
 /* ========== Legacy Compatibility ========== */
+/* DEPRECATED: Moved to workflow-variables-modern.css to avoid conflicts */
 /* Keep old class names working for existing code */
-.pf-workflow-vars-card {
+/* .pf-workflow-vars-card {
   background: var(--pf-card, #ffffff);
   border: 1px solid var(--pf-border, #e5e7eb);
   border-radius: var(--pf-radius, 12px);
   box-shadow: var(--pf-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
   padding: var(--pf-space-6, 1.5rem);
   margin-bottom: var(--pf-space-6, 1.5rem);
-}
+} */
 
 .pf-workflow-vars-list {
   display: grid;
