@@ -1083,6 +1083,8 @@ if (!function_exists('pf_ver')) {
  * Enqueue PF Assets (Single Bundle System)
  * All assets versioned with filemtime() for deterministic cache-busting
  * Deregisters all handles first to prevent duplicates
+ * 
+ * Priority 30: Runs after old enqueue function (priority 20) to ensure clean slate
  */
 add_action('wp_enqueue_scripts', function () {
   $dir = get_stylesheet_directory();
@@ -1093,7 +1095,8 @@ add_action('wp_enqueue_scripts', function () {
     'pf-child', 'pf-core', 'pf-workflows-main',
     'pf-workflow-header', 'pf-workflow-sidebar',
     'pf-workflow-sections', 'pf-workflow-variables', 'pf-workflow-steps',
-    'pf-workflows' // old CSS
+    'pf-workflows', // old CSS from line 385
+    'pf-workflows-base' // old base CSS from line 376
   ];
   foreach ($all_styles as $h) { 
     wp_dequeue_style($h); 
@@ -1251,7 +1254,7 @@ add_action('wp_enqueue_scripts', function () {
       'nonce' => wp_create_nonce('workflow_actions')
     ]);
   }
-}, 20);
+}, 30); // Priority 30: Runs AFTER old enqueue function (priority 20) to override it
 
 /* =====================================================
    PF DEBUG PANEL - Enqueue Debugger
