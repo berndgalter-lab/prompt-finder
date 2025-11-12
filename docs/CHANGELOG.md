@@ -20,6 +20,10 @@
   - Top-Margin reduziert: 16-20px (vorher 24-32px)
   - Kompakterer Flow zwischen Hero und Prerequisites
   - Margins konsistent mit Hero Value (aligned)
+- ✅ **Breiten-Fix**:
+  - `.pf-workflow-main` Padding entfernt (war 2rem)
+  - Prerequisites jetzt gleich breit wie Hero Value
+  - Konsistente Content-Breite über alle Sections
 - ✅ **Conditional Rendering**:
   - Section wird komplett ausgeblendet wenn `inputs_prerequisites` leer ist
   - Kein unnötiger Empty State mehr

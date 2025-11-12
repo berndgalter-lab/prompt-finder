@@ -58,7 +58,7 @@
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem var(--pf-space-lg, 2rem);
+    padding: 0;
     box-sizing: border-box;
     min-width: 0;
 }
@@ -66,7 +66,7 @@
 @media (max-width: 1023px) {
     .pf-workflow-main {
         max-width: 100%;
-        padding: 1.5rem 1rem;
+        padding: 0;
     }
 }
 
