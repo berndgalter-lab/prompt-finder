@@ -157,8 +157,21 @@
    STEPS HEADER CARD (consistent with Variables Section)
    ======================================== */
 
-/* Card margins are inherited from workflow-variables-modern.css */
-/* No override needed - all .pf-workflow-vars-card elements should have same margins */
+/* Align Steps header card width with Variables/Prerequisites */
+/* Neutralize any parent wrapper side paddings/margins */
+.pf-wf-root {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Ensure the section itself doesn't introduce horizontal padding */
+.pf-section--steps {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  max-width: 100% !important;
+}
 
 /* Steps-specific progress counter */
 .pf-steps-progress-counter {
