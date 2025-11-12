@@ -110,6 +110,7 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
                     </div>
                 <?php endif; ?>
                 <div class="pf-variables-counter"
+                     data-variables-scope="workflow"
                      data-variables-total="<?php echo esc_attr($total_variables); ?>"
                      data-variables-filled="0">
                     <span class="pf-counter-number">0</span>
