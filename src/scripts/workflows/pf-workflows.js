@@ -1175,21 +1175,30 @@ function bindVariableStatusListeners(workflowMap){
 function renderWorkflowForm(containerEl, workflowMap, ctx, rerenderAllSteps){
   if (!containerEl) return;
   
-  // Apply PF-UI Contract classes to root
-  if (!containerEl.classList.contains('pf-card')) {
-    containerEl.classList.add('pf-card', 'pf-stack', 'pf-grid-2', 'pf-vars--workflow');
+  // REMOVE old utility classes - they conflict with modern design
+  containerEl.classList.remove('pf-card', 'pf-stack', 'pf-grid-2');
+  // Add workflow-specific class for targeting
+  if (!containerEl.classList.contains('pf-vars--workflow')) {
+    containerEl.classList.add('pf-vars--workflow');
   }
   
   containerEl.innerHTML = '';
   const handleChange = ()=>{
     if (typeof rerenderAllSteps === 'function') rerenderAllSteps();
     renderWorkflowCounter(workflowMap);
+    updateVariablesCounter(); // Update counter after changes
   };
+  
+  // Render ALL variables (including optional ones)
   Object.keys(workflowMap).forEach(k=>{
-    renderVarControl(containerEl, 'workflow', k, workflowMap[k], ctx, handleChange);
+    const def = workflowMap[k];
+    // Render regardless of required status
+    renderVarControl(containerEl, 'workflow', k, def, ctx, handleChange);
   });
+  
   initAutoSaveIntegration();
   renderWorkflowCounter(workflowMap);
+  updateVariablesCounter(); // Initial counter update
 }
 
 
@@ -1201,9 +1210,11 @@ function renderStepForm(sectionEl, stepMap, ctx){
   const target = sectionEl.querySelector('[data-step-vars-ui]');
   if (!target) return;
   
-  // Apply PF-UI Contract classes to root
-  if (!target.classList.contains('pf-card')) {
-    target.classList.add('pf-card', 'pf-stack', 'pf-grid-2', 'pf-vars--steps');
+  // REMOVE old utility classes - they conflict with modern design
+  target.classList.remove('pf-card', 'pf-stack', 'pf-grid-2');
+  // Add step-specific class for targeting
+  if (!target.classList.contains('pf-vars--steps')) {
+    target.classList.add('pf-vars--steps');
   }
   
   target.innerHTML = '';
@@ -1211,9 +1222,13 @@ function renderStepForm(sectionEl, stepMap, ctx){
     renderStep(sectionEl, ctx);
     updateStatusBar(ctx.workflowMap || {});
   };
+  
+  // Render ALL step variables (including optional ones)
   Object.keys(stepMap).forEach(k=>{
-    renderVarControl(target, 'step', k, stepMap[k], ctx, handleChange);
+    const def = stepMap[k];
+    renderVarControl(target, 'step', k, def, ctx, handleChange);
   });
+  
   initAutoSaveIntegration();
   updateStatusBar(ctx.workflowMap || {});
 }
