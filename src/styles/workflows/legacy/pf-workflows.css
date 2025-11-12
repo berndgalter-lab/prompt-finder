@@ -2367,8 +2367,8 @@ body.pf-body {
     margin-bottom: 3rem;
 }
 
-/* Card Container */
-.pf-workflow-vars-card {
+/* Card Container - DEPRECATED: Use UNIFIED definition below (line ~2793) */
+/* .pf-workflow-vars-card {
     background: var(--pf-surface);
     border: 1px solid var(--pf-border);
     border-radius: 16px;
@@ -2378,7 +2378,7 @@ body.pf-body {
     margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
+} */
 
 /* Card Header */
 .pf-workflow-vars-card-header {

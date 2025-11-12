@@ -1139,7 +1139,9 @@ add_action('wp_enqueue_scripts', function () {
     );
   }
 
-  $legacy_components = [
+  // Enqueue legacy components with explicit dependencies
+  // First group: Independent components
+  $base_components = [
     'workflow-header'           => '/src/styles/workflows/legacy/workflow-header.css',
     'workflow-hero'             => '/src/styles/workflows/legacy/workflow-hero.css',
     'workflow-progress'         => '/src/styles/workflows/legacy/workflow-progress-compact.css',
@@ -1148,11 +1150,9 @@ add_action('wp_enqueue_scripts', function () {
     'workflow-sidebar'          => '/src/styles/workflows/legacy/workflow-sidebar.css',
     'workflow-sections'         => '/src/styles/workflows/legacy/workflow-sections.css',
     'workflow-variables'        => '/src/styles/workflows/legacy/workflow-variables.css',
-    'workflow-variables-modern' => '/src/styles/workflows/legacy/workflow-variables-modern.css',
-    'workflow-steps'            => '/src/styles/workflows/legacy/workflow-steps.css',
   ];
 
-  foreach ($legacy_components as $handle => $path) {
+  foreach ($base_components as $handle => $path) {
     wp_enqueue_style(
       "pf-$handle",
       $uri . $path,
@@ -1160,6 +1160,22 @@ add_action('wp_enqueue_scripts', function () {
       pf_ver($path)
     );
   }
+
+  // Variables modern (depends on workflow-variables)
+  wp_enqueue_style(
+    'pf-workflow-variables-modern',
+    $uri . '/src/styles/workflows/legacy/workflow-variables-modern.css',
+    ['pf-workflow-variables'],
+    pf_ver('/src/styles/workflows/legacy/workflow-variables-modern.css')
+  );
+
+  // Steps (depends on workflow-variables-modern to ensure it loads LAST and can override)
+  wp_enqueue_style(
+    'pf-workflow-steps',
+    $uri . '/src/styles/workflows/legacy/workflow-steps.css',
+    ['pf-workflow-variables-modern'],
+    pf_ver('/src/styles/workflows/legacy/workflow-steps.css')
+  );
 
   // REMOVED: Modern components that were consolidated into legacy files
   // - workflow-info-modern.css → Functionality removed (redundant with Hero section)

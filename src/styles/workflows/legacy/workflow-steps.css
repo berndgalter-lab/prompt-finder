@@ -160,9 +160,10 @@
 /* Reuse Variables Card styling for consistency */
 .pf-section--steps .pf-workflow-vars-card {
   /* Ensure same margins as Variables and Prerequisites sections */
-  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
-  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
-  margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
+  /* !important needed because pf-workflows.css has duplicate definitions that override these */
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7)) !important;
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7)) !important;
+  margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6)) !important;
 }
 
 /* Steps-specific progress counter */
@@ -232,8 +233,8 @@
 @media (max-width: 640px) {
   .pf-section--steps .pf-workflow-vars-card {
     padding: var(--pf-space-4) var(--pf-space-3);
-    margin-left: var(--pf-space-3);
-    margin-right: var(--pf-space-3);
+    margin-left: var(--pf-space-3) !important;
+    margin-right: var(--pf-space-3) !important;
   }
 }
 
