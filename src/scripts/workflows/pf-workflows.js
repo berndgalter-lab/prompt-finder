@@ -387,13 +387,23 @@ function afterInsertVar(id, required) {
  * Update visual status of a variable (checkmark + color border)
  */
 function updateVarStatus(id, required) {
+  console.log('🔍 updateVarStatus called:', { id, required });
+  
   // Find input by data-var-name attribute
   const el = document.querySelector(`[data-var-name="${id}"]`);
-  if (!el) return;
+  console.log('  → Input found:', el ? 'YES' : 'NO', el);
+  if (!el) {
+    console.warn('  ❌ Input not found for:', id);
+    return;
+  }
   
   // Find wrapper by data-field-name
   const varWrap = document.querySelector(`.pf-var[data-field-name="${id}"]`);
-  if (!varWrap) return;
+  console.log('  → Wrapper found:', varWrap ? 'YES' : 'NO', varWrap);
+  if (!varWrap) {
+    console.warn('  ❌ Wrapper not found for:', id);
+    return;
+  }
   
   const value = el.type === 'checkbox' ? (el.checked ? '1' : '') : el.value;
   const isFilled = value && String(value).trim() !== '';
@@ -401,8 +411,11 @@ function updateVarStatus(id, required) {
     ? (isFilled ? 'required-filled' : 'required-empty')
     : (isFilled ? 'optional-filled' : 'optional-empty');
   
+  console.log('  → Value:', value, '| Filled:', isFilled, '| Status:', status);
+  
   // Update data-status attribute
   varWrap.setAttribute('data-status', status);
+  console.log('  ✅ Status set to:', varWrap.getAttribute('data-status'));
   
   // Update checkmark icon
   const icon = varWrap.querySelector('.pf-var-status-icon');
@@ -410,6 +423,9 @@ function updateVarStatus(id, required) {
     icon.innerHTML = isFilled
       ? '<polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>'
       : '<circle cx="12" cy="12" r="10"></circle>';
+    console.log('  ✅ Checkmark icon updated');
+  } else {
+    console.warn('  ❌ Checkmark icon not found');
   }
   
   // Hide/show meta info (default value) when user fills input
