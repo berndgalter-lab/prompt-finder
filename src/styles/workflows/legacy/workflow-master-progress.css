@@ -11,11 +11,15 @@
 
 .pf-master-progress {
   background: var(--pf-card, #ffffff);
-  border: 1px solid var(--pf-border, #e5e7eb);
-  border-radius: var(--pf-radius, 12px);
-  padding: var(--pf-space-6, 1.5rem);
-  margin: var(--pf-space-6, 1.5rem) 0;
-  box-shadow: var(--pf-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
+  border-radius: clamp(var(--pf-r-4), 2vw, var(--pf-r-6));
+  padding: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
+  margin: 0 auto;
+  max-width: 1400px;
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--pf-slate-900) 8%, transparent);
 }
 
 .pf-master-progress-container {
