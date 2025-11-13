@@ -55,7 +55,8 @@ if ($time_saved_min) {
     }
 }
 
-// Dynamic CTA configuration
+// Dynamic CTA configuration based on access_mode
+// Strategy: "Try First" → alle Modi zeigen Step 1 zuerst (SEO/Engagement)
 $cta_config = [
     'free' => [
         'text' => 'Start Free Workflow',
@@ -66,24 +67,39 @@ $cta_config = [
         'scroll' => true
     ],
     'signin' => [
-        'text' => 'Sign In to Start',
-        'url' => wp_login_url(get_permalink()),
-        'icon' => '🔓',
-        'class' => 'pf-btn-hero--signin',
-        'note' => 'Free account required',
-        'scroll' => false
+        'text' => 'Try Free Step 1',
+        'url' => '#variables',
+        'icon' => '→',
+        'class' => 'pf-btn-hero--try-first',
+        'note' => 'Sign in free to unlock remaining steps',
+        'scroll' => true
     ],
     'pro' => [
-        'text' => 'Upgrade to Pro',
-        'url' => home_url('/pricing'),
-        'icon' => '⭐',
-        'class' => 'pf-btn-hero--pro',
-        'note' => 'Unlock all workflow steps',
-        'scroll' => false
+        'text' => 'Try Free Step 1',
+        'url' => '#variables',
+        'icon' => '→',
+        'class' => 'pf-btn-hero--try-first',
+        'note' => 'Upgrade to Pro to unlock all steps',
+        'scroll' => true
     ]
 ];
 
 $cta = $cta_config[$access_mode] ?? $cta_config['free'];
+
+// Smart CTA: Wenn User bereits Zugang hat, ändere Text
+$user_has_access = false;
+if ($access_mode === 'signin' && is_user_logged_in()) {
+    $user_has_access = true;
+    $cta['text'] = 'Start Workflow';
+    $cta['note'] = 'All steps unlocked';
+    $cta['class'] = 'pf-btn-hero--free';
+}
+if ($access_mode === 'pro' && function_exists('user_has_pro_subscription') && user_has_pro_subscription()) {
+    $user_has_access = true;
+    $cta['text'] = 'Start Workflow';
+    $cta['note'] = 'All steps unlocked';
+    $cta['class'] = 'pf-btn-hero--free';
+}
 
 // Real Stats
 $step_count = count($steps);
@@ -111,6 +127,11 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
                     <line x1="12" y1="22.08" x2="12" y2="12"></line>
                 </svg>
                 Ready-to-Use AI Workflow
+                <?php if ($access_mode === 'signin' && !$user_has_access): ?>
+                    <span class="pf-inline-access-badge pf-inline-access-badge--signin">🔓 Free</span>
+                <?php elseif ($access_mode === 'pro' && !$user_has_access): ?>
+                    <span class="pf-inline-access-badge pf-inline-access-badge--pro">💎 Pro</span>
+                <?php endif; ?>
             </div>
             
             <!-- Value Proposition (Tagline) -->

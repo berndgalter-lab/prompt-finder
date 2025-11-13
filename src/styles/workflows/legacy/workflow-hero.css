@@ -433,6 +433,31 @@
   flex-shrink: 0;
 }
 
+/* Inline Access Badge (Signin/Pro indicator within Context Badge) */
+.pf-inline-access-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 10px;
+}
+
+.pf-inline-access-badge--signin {
+  background: color-mix(in srgb, #10b981 15%, transparent);
+  border: 1px solid color-mix(in srgb, #10b981 30%, var(--pf-border));
+  color: #10b981;
+}
+
+.pf-inline-access-badge--pro {
+  background: linear-gradient(135deg, color-mix(in srgb, #8b5cf6 20%, transparent), color-mix(in srgb, #6366f1 20%, transparent));
+  border: 1px solid color-mix(in srgb, #8b5cf6 35%, var(--pf-border));
+  color: #8b5cf6;
+}
+
 .pf-hero-headline {
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
@@ -496,7 +521,22 @@
   outline: none;
 }
 
-/* Sign-in Workflow Button (Subtle Accent) */
+/* Try First Button (Signin/Pro Workflows - Value First!) */
+.pf-btn-hero--try-first {
+  background: linear-gradient(180deg, #58e0ff, #5db9ff 35%, var(--pf-accent));
+  color: #081119;
+  border: none;
+  box-shadow: 0 8px 22px rgba(93, 185, 255, 0.25), 0 2px 0 rgba(8, 17, 25, 0.35) inset;
+}
+
+.pf-btn-hero--try-first:hover,
+.pf-btn-hero--try-first:focus {
+  transform: translateY(-1px) scale(1.01);
+  color: #081119;
+  outline: none;
+}
+
+/* DEPRECATED: Old Signin Button (kept for backwards compatibility) */
 .pf-btn-hero--signin {
   background: color-mix(in srgb, var(--pf-accent) 10%, transparent);
   border: 1px solid color-mix(in srgb, var(--pf-accent) 30%, var(--pf-border));
@@ -513,7 +553,7 @@
   outline: none;
 }
 
-/* Pro Workflow Button (Primary with Badge) */
+/* DEPRECATED: Old Pro Button (kept for backwards compatibility) */
 .pf-btn-hero--pro {
   background: linear-gradient(180deg, #58e0ff, #5db9ff 35%, var(--pf-accent));
   color: #081119;
@@ -725,6 +765,12 @@
   .pf-hero-context-badge svg {
     width: 14px;
     height: 14px;
+  }
+
+  .pf-inline-access-badge {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    margin-left: 6px;
   }
 
   /* Headline & Subline */
