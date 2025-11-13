@@ -218,7 +218,7 @@
 }
 
 /* ========================================
-   SUMMARY (EXPANDABLE - OPTIONAL DETAILS)
+   4. DETAILS (Expandable - After 20 seconds)
    ======================================== */
 
 .pf-hero-details {
@@ -227,6 +227,7 @@
   background: var(--pf-bg-soft);
   overflow: hidden;
   transition: all var(--pf-transition-normal);
+  margin-top: clamp(var(--pf-space-4), 3vw, var(--pf-space-5));
 }
 
 .pf-hero-details[open] {
@@ -296,6 +297,30 @@
   font-size: clamp(0.875rem, 1.8vw, 0.95rem);
   line-height: 1.6;
   color: var(--pf-text-dim);
+}
+
+/* Details Subsections */
+.pf-details-section {
+  margin-bottom: clamp(var(--pf-space-4), 3vw, var(--pf-space-5));
+}
+
+.pf-details-section:last-child {
+  margin-bottom: 0;
+}
+
+.pf-details-heading {
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  font-weight: 600;
+  color: var(--pf-text);
+  margin: 0 0 var(--pf-space-3) 0;
+  text-transform: none;
+}
+
+.pf-details-text {
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  line-height: 1.6;
+  color: var(--pf-text-dim);
+  margin: 0;
 }
 
 /* ========================================
@@ -368,15 +393,56 @@
 }
 
 /* ========================================
-   DYNAMIC CTA BUTTON (Deploy 3)
+   RESTRUCTURED HERO - PSYCHOLOGY-DRIVEN
+   Deploy 3 - Million-Dollar Startup Edition
    ======================================== */
 
+/* Hide old classes (backwards compatibility) */
+.pf-hero-value--restructured .pf-hero-outcome,
+.pf-hero-value--restructured .pf-hero-icon,
+.pf-hero-value--restructured .pf-hero-kicker,
+.pf-hero-value--restructured .pf-hero-outcome-text,
+.pf-hero-value--restructured .pf-hero-outcome-content {
+  display: none;
+}
+
+/* 1. VALUE PROPOSITION (First 3 seconds) */
+.pf-hero-primary {
+  text-align: center;
+  margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
+}
+
+.pf-hero-headline {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--pf-text);
+  margin: 0 0 var(--pf-space-3) 0;
+  letter-spacing: -0.02em;
+}
+
+.pf-hero-subline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pf-space-2);
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  color: var(--pf-text-dim);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.pf-hero-subline-icon {
+  flex-shrink: 0;
+  color: var(--pf-accent);
+}
+
+/* 2. CALL-TO-ACTION (Next 5 seconds) */
 .pf-hero-cta {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--pf-space-2);
-  margin: clamp(var(--pf-space-5), 3vw, var(--pf-space-6)) 0;
+  margin: 0 0 clamp(var(--pf-space-6), 4vw, var(--pf-space-7)) 0;
 }
 
 .pf-btn-hero {
@@ -452,54 +518,74 @@
 }
 
 /* ========================================
-   REAL WORKFLOW STATS (Deploy 3)
+   3. TRUST SIGNALS ROW (Next 5 seconds)
    ======================================== */
 
-.pf-hero-real-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+.pf-hero-trust-row {
+  display: flex;
+  flex-direction: column;
   gap: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
-  margin: clamp(var(--pf-space-5), 3vw, var(--pf-space-6)) 0;
+  align-items: center;
   padding: clamp(var(--pf-space-4), 3vw, var(--pf-space-5)) 0;
   border-top: 1px solid var(--pf-border);
+  border-bottom: 1px solid var(--pf-border);
+  margin-bottom: clamp(var(--pf-space-5), 3vw, var(--pf-space-6));
 }
 
-.pf-real-stat {
+/* Quick Stats (Inline, compact) */
+.pf-hero-quick-stats {
   display: flex;
+  gap: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
-  gap: var(--pf-space-3);
-  padding: clamp(var(--pf-space-3), 2vw, var(--pf-space-4));
-  background: var(--pf-bg-soft);
-  border: 1px solid var(--pf-border);
-  border-radius: var(--pf-r-3);
+}
+
+.pf-quick-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: color-mix(in srgb, var(--pf-accent) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
+  border-radius: var(--pf-r-2);
+  font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
+  font-weight: 500;
+  color: var(--pf-text);
   transition: all var(--pf-transition-fast);
 }
 
-.pf-real-stat:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-color: color-mix(in srgb, var(--pf-accent) 30%, var(--pf-border));
-}
-
-.pf-real-stat svg {
+.pf-quick-stat svg {
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
   color: var(--pf-accent);
 }
 
-/* ========================================
-   TRUST BADGES (Deploy 3)
-   ======================================== */
+.pf-quick-stat--free {
+  border-color: color-mix(in srgb, #10b981 20%, var(--pf-border));
+}
 
+.pf-quick-stat--free svg {
+  color: #10b981;
+}
+
+.pf-quick-stat--signin {
+  border-color: color-mix(in srgb, var(--pf-accent) 25%, var(--pf-border));
+}
+
+.pf-quick-stat--pro {
+  border-color: color-mix(in srgb, #8b5cf6 20%, var(--pf-border));
+}
+
+.pf-quick-stat--pro svg {
+  color: #8b5cf6;
+}
+
+/* Trust Badges (within trust-row) */
 .pf-hero-trust {
   display: flex;
   align-items: center;
   gap: var(--pf-space-3);
   justify-content: center;
-  margin: clamp(var(--pf-space-4), 3vw, var(--pf-space-5)) 0;
-  padding-bottom: clamp(var(--pf-space-4), 3vw, var(--pf-space-5));
-  border-bottom: 1px solid var(--pf-border);
 }
 
 .pf-trust-label {
@@ -541,17 +627,34 @@
   transform: translateY(-1px);
 }
 
-/* ========================================
-   MOBILE OPTIMIZATIONS (Deploy 3)
-   ======================================== */
-
+/* Restructured Mobile Optimizations */
 @media (max-width: 640px) {
-  .pf-hero-real-stats {
-    grid-template-columns: 1fr;
-    gap: var(--pf-space-3);
+  .pf-hero-headline {
+    font-size: 1.5rem;
+  }
+
+  .pf-hero-subline {
+    font-size: 0.95rem;
+    flex-direction: column;
+    text-align: center;
   }
 
   .pf-btn-hero {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pf-hero-trust-row {
+    gap: var(--pf-space-3);
+  }
+
+  .pf-hero-quick-stats {
+    flex-direction: column;
+    gap: var(--pf-space-2);
+    width: 100%;
+  }
+
+  .pf-quick-stat {
     width: 100%;
     justify-content: center;
   }
