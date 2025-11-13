@@ -1748,16 +1748,19 @@ function pf_workflow_schema_markup() {
 }
 
 // Hook schema output into <head>
-add_action('wp_head', 'pf_workflow_schema_markup', 5);
+// DISABLED: Rank Math Pro already generates Article & BreadcrumbList Schema
+// add_action('wp_head', 'pf_workflow_schema_markup', 5);
 
 /**
  * Add canonical tag and robots meta for workflows
  * 
- * Canonical: Prevents duplicate content issues
- * Robots: Tells search engines to index and follow
+ * DISABLED: Rank Math Pro already generates these automatically
+ * - Canonical tag (prevents duplicate content)
+ * - Robots meta (controls indexing)
  * 
  * @since 2.0.0
  */
+/*
 add_action('wp_head', function() {
     if (!is_singular('workflows')) {
         return;
@@ -1767,6 +1770,7 @@ add_action('wp_head', function() {
     echo '<link rel="canonical" href="' . esc_url($canonical) . '">' . PHP_EOL;
     echo '<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">' . PHP_EOL;
 }, 1); // Early priority (before other meta tags)
+*/
 
 // Prompt Finder autoload + variables localize bootstrap
 require_once __DIR__ . '/src/php/app/bootstrap/pf-autoload.php';
