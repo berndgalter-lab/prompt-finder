@@ -175,6 +175,37 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
             <span class="pf-hero-cta-note"><?php echo esc_html($cta['note']); ?></span>
         </div>
 
+        <script>
+        // Fallback: Bind smooth scroll if main JS hasn't attached yet
+        (function(){
+          if (window.__PF_HERO_SCROLL_FALLBACK__) return; // guard
+          window.__PF_HERO_SCROLL_FALLBACK__ = true;
+          function bind(){
+            var triggers = document.querySelectorAll('[data-scroll-to]');
+            triggers.forEach(function(btn){
+              if (btn.__pfScrollBound) return;
+              btn.__pfScrollBound = true;
+              btn.addEventListener('click', function(e){
+                var target = btn.getAttribute('data-scroll-to');
+                var el = document.getElementById(target);
+                if (!el) return;
+                e.preventDefault();
+                e.stopPropagation();
+                var top = el.getBoundingClientRect().top + window.pageYOffset - 80;
+                window.scrollTo({ top: top, behavior: 'smooth' });
+                setTimeout(function(){
+                  var first = el.querySelector('input:not([disabled]), select:not([disabled]), textarea:not([disabled])');
+                  if (first) first.focus();
+                }, 600);
+              });
+            });
+          }
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bind);
+          } else { bind(); }
+        })();
+        </script>
+
         <!-- ========================================
              3. HOW IT WORKS (First-User Onboarding)
              "How do I use this?"
