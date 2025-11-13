@@ -35,6 +35,11 @@
   overflow: hidden;
 }
 
+/* Avoid stacking bottom margin with the next section's top margin */
+.pf-section--variables .pf-workflow-vars-card:last-of-type {
+  margin-bottom: 0;
+}
+
 /* Subtle top accent line */
 .pf-workflow-vars-card::before {
   content: '';

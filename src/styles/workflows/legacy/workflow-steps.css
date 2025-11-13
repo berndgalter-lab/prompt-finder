@@ -171,6 +171,8 @@
   padding-left: 0 !important;
   padding-right: 0 !important;
   max-width: 100% !important;
+  /* Match vertical spacing used by other sections (Variables, Master Progress) */
+  margin-top: clamp(var(--pf-space-4), 3vw, var(--pf-space-5)) !important;
 }
 
 /* Steps-specific progress counter */
