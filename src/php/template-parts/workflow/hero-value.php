@@ -99,26 +99,36 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
     <div class="pf-hero-value-inner">
         
         <!-- ========================================
-             1. VALUE PROPOSITION (First 3 seconds)
-             "What is this?"
+             1. CONTEXT + VALUE PROPOSITION (First 3 seconds)
+             "What is this? Why should I care?"
              ======================================== -->
-        <?php if ($tagline || $expected_outcome): ?>
-            <div class="pf-hero-primary">
-                <?php if ($tagline): ?>
-                    <h2 class="pf-hero-headline"><?php echo esc_html($tagline); ?></h2>
-                <?php endif; ?>
-                
-                <?php if ($expected_outcome): ?>
-                    <p class="pf-hero-subline">
-                        <svg class="pf-hero-subline-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <?php echo esc_html($expected_outcome); ?>
-                    </p>
-                <?php endif; ?>
+        <div class="pf-hero-primary">
+            <!-- Context Badge (for First-Time Users) -->
+            <div class="pf-hero-context-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                Ready-to-Use AI Workflow
             </div>
-        <?php endif; ?>
+            
+            <!-- Value Proposition (Tagline) -->
+            <?php if ($tagline): ?>
+                <h2 class="pf-hero-headline"><?php echo esc_html($tagline); ?></h2>
+            <?php endif; ?>
+            
+            <!-- Expected Outcome (What you'll create) -->
+            <?php if ($expected_outcome): ?>
+                <p class="pf-hero-subline">
+                    <svg class="pf-hero-subline-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <?php echo esc_html($expected_outcome); ?>
+                </p>
+            <?php endif; ?>
+        </div>
 
         <!-- ========================================
              2. CALL-TO-ACTION (Next 5 seconds)
@@ -137,7 +147,35 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
         </div>
 
         <!-- ========================================
-             3. TRUST SIGNALS (Next 5 seconds)
+             3. HOW IT WORKS (First-User Onboarding)
+             "How do I use this?"
+             ======================================== -->
+        <div class="pf-hero-how-it-works">
+            <h3 class="pf-how-heading">How it works:</h3>
+            <div class="pf-how-steps">
+                <div class="pf-how-step">
+                    <span class="pf-how-number">1</span>
+                    <p class="pf-how-text">Fill in the variables below</p>
+                </div>
+                <svg class="pf-how-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+                <div class="pf-how-step">
+                    <span class="pf-how-number">2</span>
+                    <p class="pf-how-text">Copy the generated prompt</p>
+                </div>
+                <svg class="pf-how-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+                <div class="pf-how-step">
+                    <span class="pf-how-number">3</span>
+                    <p class="pf-how-text">Paste into ChatGPT or Claude</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             4. TRUST SIGNALS (Next 10 seconds)
              "Can I trust this?"
              ======================================== -->
         <div class="pf-hero-trust-row">
@@ -200,7 +238,7 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
         </div>
 
         <!-- ========================================
-             4. DETAILS (Expandable - After 20 seconds)
+             5. DETAILS (Expandable - After 20 seconds)
              "Tell me more"
              ======================================== -->
         <?php if ($pain_points || $time_saved_min || $difficulty_without_ai || $summary): ?>
@@ -219,11 +257,11 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
                 
                 <div class="pf-hero-details-content">
                     <!-- Pain Points -->
-                    <?php if ($pain_points): ?>
-                        <?php 
-                        $pain_points_lines = array_filter(array_map('trim', explode("\n", $pain_points)));
+                        <?php if ($pain_points): ?>
+                            <?php 
+                            $pain_points_lines = array_filter(array_map('trim', explode("\n", $pain_points)));
                         $pain_points_display = array_slice($pain_points_lines, 0, 4);
-                        if (!empty($pain_points_display)): ?>
+                            if (!empty($pain_points_display)): ?>
                             <div class="pf-details-section">
                                 <h3 class="pf-details-heading">Problems it solves:</h3>
                                 <div class="pf-pain-chips">
@@ -238,43 +276,43 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
                                 </div>
                             </div>
                         <?php endif; ?>
-                    <?php endif; ?>
+            <?php endif; ?>
 
                     <!-- Benefits (Time Saved, Difficulty) -->
-                    <?php if ($time_saved_min || $difficulty_without_ai): ?>
+        <?php if ($time_saved_min || $difficulty_without_ai): ?>
                         <div class="pf-details-section">
                             <h3 class="pf-details-heading">Additional benefits:</h3>
-                            <div class="pf-hero-benefits">
-                                <?php if ($time_saved_min): ?>
-                                    <div class="pf-benefit pf-benefit--time">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                            <polyline points="17 6 23 6 23 12"></polyline>
-                                        </svg>
-                                        <div class="pf-benefit-content">
-                                            <span class="pf-benefit-label">Time saved</span>
-                                            <strong class="pf-benefit-value"><?php echo esc_html($time_display); ?></strong>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if ($difficulty_without_ai && $difficulty_label): ?>
-                                    <div class="pf-benefit pf-benefit--difficulty">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-                                        </svg>
-                                        <div class="pf-benefit-content">
-                                            <span class="pf-benefit-label">Without AI</span>
-                                            <strong class="pf-benefit-value"><?php echo esc_html($difficulty_label); ?></strong>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
+            <div class="pf-hero-benefits">
+                <?php if ($time_saved_min): ?>
+                    <div class="pf-benefit pf-benefit--time">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        <div class="pf-benefit-content">
+                            <span class="pf-benefit-label">Time saved</span>
+                            <strong class="pf-benefit-value"><?php echo esc_html($time_display); ?></strong>
                         </div>
-                    <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($difficulty_without_ai && $difficulty_label): ?>
+                    <div class="pf-benefit pf-benefit--difficulty">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                        </svg>
+                        <div class="pf-benefit-content">
+                            <span class="pf-benefit-label">Without AI</span>
+                            <strong class="pf-benefit-value"><?php echo esc_html($difficulty_label); ?></strong>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                            </div>
+            </div>
+        <?php endif; ?>
 
                     <!-- Summary -->
-                    <?php if ($summary): ?>
+        <?php if ($summary): ?>
                         <div class="pf-details-section">
                             <h3 class="pf-details-heading">About this workflow:</h3>
                             <p class="pf-details-text"><?php echo nl2br(esc_html($summary)); ?></p>

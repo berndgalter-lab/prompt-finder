@@ -218,7 +218,7 @@
 }
 
 /* ========================================
-   4. DETAILS (Expandable - After 20 seconds)
+   5. DETAILS (Expandable - After 20 seconds)
    ======================================== */
 
 .pf-hero-details {
@@ -406,10 +406,31 @@
   display: none;
 }
 
-/* 1. VALUE PROPOSITION (First 3 seconds) */
+/* 1. CONTEXT + VALUE PROPOSITION (First 3 seconds) */
 .pf-hero-primary {
   text-align: center;
   margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
+}
+
+/* Context Badge (for First-Time Users) */
+.pf-hero-context-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: color-mix(in srgb, var(--pf-accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 25%, var(--pf-border));
+  border-radius: var(--pf-radius-full);
+  font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
+  font-weight: 600;
+  color: var(--pf-accent);
+  margin-bottom: var(--pf-space-4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pf-hero-context-badge svg {
+  flex-shrink: 0;
 }
 
 .pf-hero-headline {
@@ -424,6 +445,7 @@
 .pf-hero-subline {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--pf-space-2);
   font-size: clamp(1rem, 2.2vw, 1.25rem);
   color: var(--pf-text-dim);
@@ -518,7 +540,71 @@
 }
 
 /* ========================================
-   3. TRUST SIGNALS ROW (Next 5 seconds)
+   3. HOW IT WORKS (First-User Onboarding)
+   ======================================== */
+
+.pf-hero-how-it-works {
+  background: color-mix(in srgb, var(--pf-accent) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
+  border-radius: var(--pf-r-3);
+  padding: clamp(var(--pf-space-4), 3vw, var(--pf-space-5));
+  margin-bottom: clamp(var(--pf-space-6), 4vw, var(--pf-space-7));
+}
+
+.pf-how-heading {
+  text-align: center;
+  font-size: clamp(0.95rem, 2vw, 1.125rem);
+  font-weight: 600;
+  color: var(--pf-text);
+  margin: 0 0 var(--pf-space-4) 0;
+}
+
+.pf-how-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(var(--pf-space-3), 3vw, var(--pf-space-5));
+}
+
+.pf-how-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pf-space-2);
+  flex: 1;
+  max-width: 200px;
+}
+
+.pf-how-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--pf-accent);
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pf-how-text {
+  text-align: center;
+  font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
+  color: var(--pf-text);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.pf-how-arrow {
+  flex-shrink: 0;
+  color: var(--pf-accent);
+  opacity: 0.5;
+}
+
+/* ========================================
+   4. TRUST SIGNALS ROW (Next 10 seconds)
    ======================================== */
 
 .pf-hero-trust-row {
@@ -629,6 +715,19 @@
 
 /* Restructured Mobile Optimizations */
 @media (max-width: 640px) {
+  /* Context Badge */
+  .pf-hero-context-badge {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    gap: 6px;
+  }
+
+  .pf-hero-context-badge svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Headline & Subline */
   .pf-hero-headline {
     font-size: 1.5rem;
   }
@@ -639,11 +738,28 @@
     text-align: center;
   }
 
+  /* CTA Button */
   .pf-btn-hero {
     width: 100%;
     justify-content: center;
   }
 
+  /* How It Works - Stack vertically on mobile */
+  .pf-how-steps {
+    flex-direction: column;
+    gap: var(--pf-space-4);
+  }
+
+  .pf-how-step {
+    max-width: 100%;
+  }
+
+  .pf-how-arrow {
+    transform: rotate(90deg);
+    margin: var(--pf-space-2) 0;
+  }
+
+  /* Trust Signals */
   .pf-hero-trust-row {
     gap: var(--pf-space-3);
   }
