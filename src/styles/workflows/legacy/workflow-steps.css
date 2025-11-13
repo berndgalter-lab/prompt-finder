@@ -10,99 +10,149 @@
  */
 
 /* ========================================
-   MODERN CARD SYSTEM (Priority Override)
+   CLEAN CARD SYSTEM (ONE BORDER, NO NESTING)
+   Inspired by Linear, Vercel, Stripe
    ======================================== */
 
 .pf-step {
-  /* Konsistente Margins wie Variables/Hero */
+  /* EINZIGER Border - Clean & Minimal */
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  
+  /* Konsistente Margins */
+  max-width: 1400px;
   margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7)) !important;
   margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7)) !important;
   margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6)) !important;
   
-  /* Modern border/shadow */
-  background: var(--pf-card, #ffffff) !important;
-  border: 2px solid color-mix(in srgb, var(--pf-accent) 12%, var(--pf-border)) !important;
-  border-radius: var(--pf-r-4, 14px) !important;
-  box-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 4px 12px color-mix(in srgb, var(--pf-accent) 8%, transparent) !important;
-  
-  /* Layout */
-  max-width: 1400px;
-  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
-  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
-  
-  /* Animation */
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Smooth transitions */
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
-/* Subtile accent line oben (wie Variables) */
-.pf-step::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--pf-accent) 50%,
-    transparent
-  );
-  opacity: 0.3;
-  z-index: 1;
-}
+/* KEIN ::before Accent Line mehr - zu bunt */
 
-/* Hover State */
+/* Hover: Subtil */
 .pf-step:hover {
-  box-shadow: 
-    0 2px 6px rgba(0, 0, 0, 0.08),
-    0 8px 20px color-mix(in srgb, var(--pf-accent) 12%, transparent) !important;
-  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Active State (expanded) */
+/* Active State: Nur minimal hervorheben */
 .pf-step[data-status="active"]:not(.is-collapsed),
 .pf-step.is-active:not(.is-collapsed) {
-  border-color: color-mix(in srgb, var(--pf-accent) 35%, var(--pf-border)) !important;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.08),
-    0 12px 28px color-mix(in srgb, var(--pf-accent) 18%, transparent),
-    0 0 0 4px color-mix(in srgb, var(--pf-accent) 8%, transparent) !important;
+  border-color: #d1d5db !important; /* Leicht dunkler */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
 }
 
-.pf-step[data-status="active"]::before,
-.pf-step.is-active::before {
-  opacity: 0.6;
-  height: 3px;
-}
-
-/* Completed State */
+/* Completed State: Minimaler grüner Touch */
 .pf-step[data-status="completed"],
 .pf-step.is-completed {
-  border-color: color-mix(in srgb, var(--pf-success) 25%, var(--pf-border)) !important;
-  background: color-mix(in srgb, var(--pf-success) 2%, var(--pf-card)) !important;
-}
-
-.pf-step[data-status="completed"]::before,
-.pf-step.is-completed::before {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--pf-success) 50%,
-    transparent
-  );
-  opacity: 0.5;
+  border-color: #d1fae5 !important; /* Sehr subtiles Grün */
+  background: #ffffff !important; /* Kein Background-Tint */
 }
 
 /* Collapsed State */
 .pf-step.is-collapsed {
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 2px 8px color-mix(in srgb, var(--pf-accent) 4%, transparent) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ========================================
+   HEADER (Clean, kein Border)
+   ======================================== */
+
+.pf-step-header {
+  /* KEIN Border, KEIN Background */
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #f3f4f6 !important; /* Nur subtiler Divider */
+  padding: 1.25rem clamp(var(--pf-space-4), 4vw, var(--pf-space-6)) !important;
+  box-shadow: none !important;
+}
+
+/* ========================================
+   SECTIONS (Nur Divider, keine Borders)
+   ======================================== */
+
+.pf-step-section {
+  /* KEIN Border, KEIN Background */
+  background: transparent !important;
+  border: none !important;
+  border-top: 1px solid #f3f4f6 !important; /* Nur Divider */
+  padding: 1.5rem clamp(var(--pf-space-4), 4vw, var(--pf-space-6)) !important;
+  box-shadow: none !important;
+}
+
+.pf-step-section:first-of-type {
+  border-top: none !important; /* Erster Section kein Divider */
+}
+
+/* Priority Section - Minimale Hervorhebung */
+.pf-step-section--priority {
+  background: #fafafa !important; /* Sehr subtil */
+}
+
+/* ========================================
+   VARIABLES CONTAINER (Transparent)
+   ======================================== */
+
+.pf-step-variables-section,
+.pf-step-vars-ui,
+[data-step-vars-ui] {
+  /* KEIN Border, KEIN Background */
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ========================================
+   EINZELNE VARIABLE (Clean)
+   ======================================== */
+
+.pf-var,
+.pf-var-step,
+.pf-var-item,
+.pf-field {
+  /* KEIN Border im Default-State */
+  background: transparent !important;
+  border: none !important;
+  padding: 0.75rem 0 !important;
+  box-shadow: none !important;
+}
+
+/* Variable Input - Clean & Minimal */
+.pf-var input,
+.pf-var textarea,
+.pf-var select {
+  background: #fafafa !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.9375rem !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Focus State - Accent nur bei Interaktion */
+.pf-var input:focus,
+.pf-var textarea:focus,
+.pf-var select:focus {
+  background: #ffffff !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  outline: none !important;
+}
+
+/* Valid State - Subtil */
+.pf-var[data-state="valid"] input,
+.pf-var[data-validation="valid"] input {
+  border-color: #d1fae5 !important;
+  background: #ffffff !important;
 }
 
 /* ========================================
@@ -110,7 +160,7 @@
    ======================================== */
 
 .pf-step-content {
-  padding: 0 clamp(var(--pf-space-4), 4vw, var(--pf-space-7)) clamp(var(--pf-space-5), 4vw, var(--pf-space-6)) !important;
+  padding: 0 !important;
 }
 
 .pf-step.is-collapsed .pf-step-content {
@@ -121,8 +171,12 @@
 
 /* Responsive Content Padding */
 @media (max-width: 640px) {
-  .pf-step-content {
-    padding: 0 var(--pf-space-4) var(--pf-space-4) !important;
+  .pf-step-header {
+    padding: 1rem var(--pf-space-4) !important;
+  }
+  
+  .pf-step-section {
+    padding: 1.25rem var(--pf-space-4) !important;
   }
 }
 
@@ -169,15 +223,14 @@
    ======================================== */
 
 /* Section Container with subtle divider */
+/* DEPRECATED: Section styles now defined at top (lines 79-95) */
 .pf-step-section {
-  padding: var(--pf-space-5, 1.25rem) var(--pf-space-5, 1.25rem);
-  border-top: 1px solid color-mix(in srgb, var(--pf-border, #e5e7eb) 60%, transparent);
+  /* Clean design - see lines 79-95 */
   animation: fadeIn 0.4s ease-out;
 }
 
 .pf-step-section:first-of-type {
-  border-top: none;
-  padding-top: var(--pf-space-4, 1rem);
+  /* Defined at top */
 }
 
 /* Section Label (with icon) */
@@ -886,27 +939,27 @@
    STEP HEADER
    ======================================== */
 
+/* DEPRECATED: Header styles now defined at top (lines 66-73) */
 .pf-step-header {
+  /* Modern clean design - see lines 66-73 */
   display: flex;
-  flex-direction: row; /* Phase 2: horizontal for Icon + Number + Main + Actions */
+  flex-direction: row;
   align-items: flex-start;
   gap: var(--pf-space-3, .75rem);
-  padding: var(--pf-space-5, 1.25rem);
   cursor: pointer;
-  background: color-mix(in srgb, var(--pf-slate-50) 82%, transparent);
-  border-bottom: 1px solid var(--pf-border, #e5e7eb);
-  transition: background var(--pf-transition-fast, 0.15s ease);
+  transition: background 0.2s ease;
 }
 
+/* DEPRECATED: No background on hover - keep clean */
 .pf-step-header:hover,
 .pf-step-header:focus-visible {
-  background: color-mix(in srgb, var(--pf-slate-100) 85%, transparent);
+  /* Clean design - keine Background */
 }
 
 .pf-step.pf-step--active .pf-step-header,
+/* DEPRECATED: Active header style (no background needed) */
 .pf-step.is-active .pf-step-header {
-  background: color-mix(in srgb, var(--pf-accent-light, #dbeafe) 60%, transparent);
-  border-bottom-color: color-mix(in srgb, var(--pf-accent, #3b82f6) 25%, var(--pf-border, #e5e7eb));
+  /* Clean design - keine farbige Background */
 }
 
 .pf-step-header-main {

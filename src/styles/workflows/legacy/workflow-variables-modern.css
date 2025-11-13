@@ -21,18 +21,18 @@
 }
 
 .pf-workflow-vars-card {
-  background: var(--pf-card);
-  border: 1px solid color-mix(in srgb, var(--pf-accent) 12%, var(--pf-border));
-  border-radius: var(--pf-r-4);
+  /* Clean Card Design - Wie Steps */
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   padding: clamp(var(--pf-space-5), 4vw, var(--pf-space-6)) clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
   margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
   margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
   margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6));
-  box-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 4px 12px color-mix(in srgb, var(--pf-accent) 8%, transparent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
+  max-width: 1400px;
 }
 
 /* Avoid stacking bottom margin with the next section's top margin */
@@ -40,21 +40,55 @@
   margin-bottom: 0;
 }
 
-/* Subtle top accent line */
-.pf-workflow-vars-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--pf-accent) 50%,
-    transparent
-  );
-  opacity: 0.3;
+/* KEIN accent line mehr - zu bunt */
+
+/* ========================================
+   VARIABLE ITEMS (Clean, kein Nested Border)
+   ======================================== */
+
+.pf-var-item,
+.pf-field-wrapper,
+.pf-var-row {
+  /* KEIN Border, KEIN Background */
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0.75rem 0 !important;
+}
+
+/* Inputs - Clean & Minimal */
+.pf-var-item input,
+.pf-var-item textarea,
+.pf-var-item select,
+.pf-field input,
+.pf-field textarea,
+.pf-field select {
+  background: #fafafa !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.9375rem !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Focus State */
+.pf-var-item input:focus,
+.pf-var-item textarea:focus,
+.pf-var-item select:focus,
+.pf-field input:focus,
+.pf-field textarea:focus,
+.pf-field select:focus {
+  background: #ffffff !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  outline: none !important;
+}
+
+/* Valid State */
+.pf-var-item[data-state="valid"] input,
+.pf-var-item[data-validation="valid"] input {
+  border-color: #d1fae5 !important;
+  background: #ffffff !important;
 }
 
 /* ========================================
