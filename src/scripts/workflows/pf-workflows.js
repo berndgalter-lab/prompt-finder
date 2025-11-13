@@ -3606,35 +3606,47 @@ boot = function() {
   }
   
   // ============================================================
-  // HERO CTA SMOOTH SCROLL (Deploy 3)
+  // HERO CTA SMOOTH SCROLL (Value-First Strategy)
   // ============================================================
   
-  // Smooth scroll for Free Workflow CTA (scrolls to #variables)
+  // Smooth scroll for all CTA buttons that scroll to sections
+  // Works for: Free, Signin (Try First), Pro (Try First)
   document.querySelectorAll('[data-scroll-to]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const target = e.currentTarget.dataset.scrollTo;
       const element = document.getElementById(target);
       
       if (element) {
-        e.preventDefault(); // Prevent normal link navigation
-        element.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start',
-          inline: 'nearest'
+        e.preventDefault(); // Prevent default anchor behavior
+        
+        // Calculate position with offset (80px from top for breathing room)
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - 80;
+        
+        // Smooth scroll to position
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
         });
         
-        // Optional: Focus first input in variables section
+        // Focus first input after scroll animation (better UX)
         setTimeout(() => {
-          const firstInput = element.querySelector('input, select, textarea');
+          const firstInput = element.querySelector('input:not([disabled]), select:not([disabled]), textarea:not([disabled])');
           if (firstInput) {
             firstInput.focus();
+            // Optional: Highlight first input briefly
+            firstInput.style.transition = 'box-shadow 0.3s ease';
+            firstInput.style.boxShadow = '0 0 0 3px rgba(93, 185, 255, 0.3)';
+            setTimeout(() => {
+              firstInput.style.boxShadow = '';
+            }, 1500);
           }
-        }, 500); // Wait for scroll animation
+        }, 600); // Wait for scroll animation to complete
       }
     });
   });
   
-  console.log('✓ Deploy 3: Hero CTA Smooth Scroll initialized');
+  console.log('✓ Hero CTA Smooth Scroll initialized (with 80px offset)');
   console.log('✓✓✓ All Phases (1, 2, 3) initialized successfully! ✓✓✓');
 };
 
