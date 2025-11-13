@@ -580,67 +580,183 @@
 }
 
 /* ========================================
-   3. HOW IT WORKS (First-User Onboarding)
+   MICRO-STEPPER (Inline + Tooltip)
+   Modern SaaS Best Practice - Kombination A+B
    ======================================== */
 
-.pf-hero-how-it-works {
-  background: color-mix(in srgb, var(--pf-accent) 5%, transparent);
-  border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
-  border-radius: var(--pf-r-3);
-  padding: clamp(var(--pf-space-4), 3vw, var(--pf-space-5));
-  margin-bottom: clamp(var(--pf-space-6), 4vw, var(--pf-space-7));
-}
-
-.pf-how-heading {
-  text-align: center;
-  font-size: clamp(0.95rem, 2vw, 1.125rem);
-  font-weight: 600;
-  color: var(--pf-text);
-  margin: 0 0 var(--pf-space-4) 0;
-}
-
-.pf-how-steps {
+.pf-micro-stepper {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(var(--pf-space-3), 3vw, var(--pf-space-5));
+  gap: 12px;
+  padding: clamp(var(--pf-space-3), 2vw, var(--pf-space-4)) 0;
+  margin-bottom: clamp(var(--pf-space-4), 3vw, var(--pf-space-5));
+  font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
+  color: var(--pf-text-dim);
 }
 
-.pf-how-step {
-  display: flex;
-  flex-direction: column;
+.pf-micro-step {
+  display: inline-flex;
   align-items: center;
-  gap: var(--pf-space-2);
-  flex: 1;
-  max-width: 200px;
+  gap: 6px;
+  opacity: 0.7;
+  transition: opacity var(--pf-transition-fast);
 }
 
-.pf-how-number {
-  display: flex;
+.pf-micro-step:hover {
+  opacity: 1;
+}
+
+.pf-micro-num {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
   background: var(--pf-accent);
   color: white;
-  font-size: 1.25rem;
+  font-size: 0.75rem;
   font-weight: 700;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.pf-how-text {
-  text-align: center;
-  font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
-  color: var(--pf-text);
-  line-height: 1.4;
-  margin: 0;
-}
-
-.pf-how-arrow {
+.pf-micro-arrow {
   flex-shrink: 0;
   color: var(--pf-accent);
-  opacity: 0.5;
+  opacity: 0.3;
+}
+
+/* ========================================
+   HELP TRIGGER + TOOLTIP (Progressive Disclosure)
+   ======================================== */
+
+.pf-help-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  padding: 4px 10px;
+  font-size: clamp(0.75rem, 1.5vw, 0.8125rem);
+  font-weight: 500;
+  color: var(--pf-accent);
+  cursor: help;
+  border-radius: var(--pf-r-2);
+  transition: all var(--pf-transition-fast);
+}
+
+.pf-help-trigger:hover {
+  background: color-mix(in srgb, var(--pf-accent) 8%, transparent);
+}
+
+.pf-help-trigger svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* Tooltip (Hidden by default) */
+.pf-help-tooltip {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  width: 320px;
+  max-width: 90vw;
+  background: var(--pf-card);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-r-3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: var(--pf-space-4);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all 0.2s ease;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.pf-help-trigger:hover .pf-help-tooltip,
+.pf-help-trigger:focus-within .pf-help-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Tooltip Arrow */
+.pf-help-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 16px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid var(--pf-border);
+}
+
+.pf-help-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 17px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid var(--pf-card);
+}
+
+/* Tooltip Items */
+.pf-tooltip-item {
+  display: flex;
+  gap: var(--pf-space-3);
+  padding: var(--pf-space-3) 0;
+  border-bottom: 1px solid var(--pf-border);
+}
+
+.pf-tooltip-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.pf-tooltip-item:first-child {
+  padding-top: 0;
+}
+
+.pf-tooltip-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--pf-accent);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pf-tooltip-item div {
+  flex: 1;
+}
+
+.pf-tooltip-item strong {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--pf-text);
+  margin-bottom: 4px;
+}
+
+.pf-tooltip-item p {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--pf-text-dim);
+  margin: 0;
 }
 
 /* ========================================
@@ -790,19 +906,43 @@
     justify-content: center;
   }
 
-  /* How It Works - Stack vertically on mobile */
-  .pf-how-steps {
-    flex-direction: column;
-    gap: var(--pf-space-4);
+  /* Micro-Stepper - Stack on mobile */
+  .pf-micro-stepper {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
   }
 
-  .pf-how-step {
-    max-width: 100%;
+  .pf-micro-arrow {
+    display: none; /* Hide arrows on mobile */
   }
 
-  .pf-how-arrow {
-    transform: rotate(90deg);
-    margin: var(--pf-space-2) 0;
+  .pf-help-trigger {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+    margin-top: var(--pf-space-2);
+  }
+
+  /* Tooltip adjustments for mobile */
+  .pf-help-tooltip {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    width: calc(100vw - 32px);
+    max-width: 320px;
+  }
+
+  .pf-help-trigger:hover .pf-help-tooltip,
+  .pf-help-trigger:focus-within .pf-help-tooltip {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .pf-help-tooltip::before,
+  .pf-help-tooltip::after {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
   }
 
   /* Trust Signals */

@@ -166,29 +166,61 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
         </div>
 
         <!-- ========================================
-             3. HOW IT WORKS (First-User Onboarding)
-             "How do I use this?"
+             MICRO-STEPPER (Inline + Tooltip)
+             Modern SaaS Best Practice
              ======================================== -->
-        <div class="pf-hero-how-it-works">
-            <h3 class="pf-how-heading">How it works:</h3>
-            <div class="pf-how-steps">
-                <div class="pf-how-step">
-                    <span class="pf-how-number">1</span>
-                    <p class="pf-how-text">Fill in the variables below</p>
-                </div>
-                <svg class="pf-how-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polyline points="9 18 15 12 9 6"></polyline>
+        <div class="pf-micro-stepper">
+            <span class="pf-micro-step">
+                <span class="pf-micro-num">1</span>
+                Fill
+            </span>
+            <svg class="pf-micro-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <span class="pf-micro-step">
+                <span class="pf-micro-num">2</span>
+                Copy
+            </span>
+            <svg class="pf-micro-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <span class="pf-micro-step">
+                <span class="pf-micro-num">3</span>
+                Use
+            </span>
+            
+            <!-- Progressive Disclosure: Help Tooltip -->
+            <div class="pf-help-trigger">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
-                <div class="pf-how-step">
-                    <span class="pf-how-number">2</span>
-                    <p class="pf-how-text">Copy the generated prompt</p>
-                </div>
-                <svg class="pf-how-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-                <div class="pf-how-step">
-                    <span class="pf-how-number">3</span>
-                    <p class="pf-how-text">Paste into ChatGPT or Claude</p>
+                <span>How it works</span>
+                
+                <!-- Tooltip (shows on hover) -->
+                <div class="pf-help-tooltip">
+                    <div class="pf-tooltip-item">
+                        <span class="pf-tooltip-num">1</span>
+                        <div>
+                            <strong>Fill in the variables</strong>
+                            <p>Enter your specific details in the form below</p>
+                        </div>
+                    </div>
+                    <div class="pf-tooltip-item">
+                        <span class="pf-tooltip-num">2</span>
+                        <div>
+                            <strong>Copy the prompt</strong>
+                            <p>Click the copy button to get your personalized prompt</p>
+                        </div>
+                    </div>
+                    <div class="pf-tooltip-item">
+                        <span class="pf-tooltip-num">3</span>
+                        <div>
+                            <strong>Paste into ChatGPT</strong>
+                            <p>Use the prompt in ChatGPT or Claude for instant results</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
