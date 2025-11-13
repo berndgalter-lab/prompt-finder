@@ -208,6 +208,51 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
             $step_heading_id = $step_dom_id . '-title';
             $step_content_id = $step_dom_id . '-content';
             $is_initial_active = !$initial_active_assigned;
+            
+            // Smart Content Picker for Locked Preview (Universal Hierarchy)
+            $preview_content = '';
+            $preview_label = '';
+            $preview_icon = '';
+            
+            if ($step_is_locked) {
+                // Determine preview content based on step type
+                if ($step_type === 'prompt' && !empty($prompt)) {
+                    $preview_content = $prompt;
+                    $preview_label = 'Prompt Preview';
+                    $preview_icon = '📝';
+                } elseif ($step_type === 'guide' && !empty($step_body)) {
+                    $preview_content = $step_body;
+                    $preview_label = 'Instructions Preview';
+                    $preview_icon = '📖';
+                } elseif ($step_type === 'review' && !empty($step_checklist)) {
+                    // Format checklist as preview text
+                    $checklist_items = array_slice($step_checklist, 0, 3);
+                    $preview_lines = array_map(function($c) {
+                        return '□ ' . (isset($c['check_item']) ? trim($c['check_item']) : '');
+                    }, $checklist_items);
+                    $preview_content = implode("\n", array_filter($preview_lines));
+                    $preview_label = 'Checklist Preview (' . count($step_checklist) . ' items)';
+                    $preview_icon = '✅';
+                } elseif (!empty($objective)) {
+                    // Fallback: Use objective
+                    $preview_content = $objective;
+                    $preview_label = 'Step Overview';
+                    $preview_icon = '🎯';
+                } else {
+                    // Ultimate fallback
+                    $preview_content = 'Unlock this step to see the full instructions.';
+                    $preview_label = 'Premium Content';
+                    $preview_icon = '✨';
+                }
+                
+                // Truncate preview (first 150-180 characters or 2-3 lines)
+                $preview_lines = explode("\n", $preview_content);
+                $preview_lines = array_slice($preview_lines, 0, 3);
+                $preview_text = implode("\n", $preview_lines);
+                if (mb_strlen($preview_text) > 180) {
+                    $preview_text = mb_substr($preview_text, 0, 180) . '...';
+                }
+            }
             ?>
             
             <li class="pf-step <?php echo 'pf-step--' . esc_attr($step_type); ?> <?php echo $step_is_locked ? 'pf-step--locked' : ''; ?><?php echo $is_initial_active ? ' pf-step--active' : ''; ?>" 
@@ -284,16 +329,59 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                 <!-- Step Content (collapsible) -->
                 <div class="pf-step-content" id="<?php echo esc_attr($step_content_id); ?>" role="group" aria-labelledby="<?php echo esc_attr($step_heading_id); ?>">
                     <?php if ($step_is_locked): ?>
-                        <!-- Locked: Visual overlay only, no inline CTA -->
+                        <!-- Locked: Universal Content Hierarchy Preview -->
                         <div class="pf-step-content-locked" aria-hidden="true">
-                            <div class="pf-step-blur-overlay"></div>
-                            <p class="pf-step-locked-hint">
+                            
+                            <!-- Objective (always visible if present) -->
+                            <?php if (!empty($objective)): ?>
+                                <div class="pf-preview-objective">
+                                    <span class="pf-preview-objective-icon">🎯</span>
+                                    <p class="pf-preview-objective-text"><?php echo esc_html($objective); ?></p>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <!-- Variables Count Badge (if present) -->
+                            <?php if (!empty($variables_step)): ?>
+                                <div class="pf-preview-variables">
+                                    <span class="pf-preview-variables-icon">✏️</span>
+                                    <span class="pf-preview-variables-text">
+                                        Inputs (<?php echo count($variables_step); ?>):
+                                        <?php 
+                                        $var_names = array_slice(array_map(function($v) {
+                                            return isset($v['step_var_name']) ? $v['step_var_name'] : '';
+                                        }, $variables_step), 0, 3);
+                                        echo esc_html(implode(', ', array_filter($var_names)));
+                                        if (count($variables_step) > 3) {
+                                            echo '...';
+                                        }
+                                        ?>
+                                    </span>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <!-- Content Preview (with gradient blur) -->
+                            <div class="pf-preview-content-wrapper">
+                                <div class="pf-preview-content-label">
+                                    <span class="pf-preview-content-icon"><?php echo $preview_icon; ?></span>
+                                    <span><?php echo esc_html($preview_label); ?></span>
+                                </div>
+                                <div class="pf-preview-content-text">
+                                    <?php echo nl2br(esc_html($preview_text)); ?>
+                                </div>
+                                <div class="pf-step-blur-overlay"></div>
+                            </div>
+                            
+                            <!-- Unlock CTA (minimal, benefit-focused) -->
+                            <div class="pf-preview-unlock">
                                 <svg class="pf-lock-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                                 </svg>
-                                Locked
-                            </p>
+                                <span class="pf-preview-unlock-text">
+                                    Unlock<?php if (!empty($estimated_time_min)): ?> • Complete in <?php echo esc_html($estimated_time_min); ?> min<?php endif; ?>
+                                </span>
+                            </div>
+                            
                         </div>
                     <?php else: ?>
                         <!-- Full Step Content (only rendered if visible) -->
