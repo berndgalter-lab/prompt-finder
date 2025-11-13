@@ -63,9 +63,9 @@ $initial_progress_percent = 0;
     <div class="pf-header-content">
         <div class="pf-header-main">
             <h1 class="pf-header-title"><?php echo esc_html($post_title); ?></h1>
-            <?php if (!empty($tagline_field)): ?>
-                <p class="pf-header-tagline"><?php echo esc_html($tagline_field); ?></p>
-            <?php endif; ?>
+            
+            <!-- Tagline moved to hero-value.php for better UX hierarchy -->
+            <!-- Header = Context (Where am I?) | Hero = Value (Why should I care?) -->
 
             <div class="pf-header-meta-compact">
                 <?php if (!empty($access_mode)): ?>

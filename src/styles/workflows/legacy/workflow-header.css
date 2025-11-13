@@ -133,7 +133,7 @@
   color: var(--pf-text);
   position: relative;
   --pf-header-title-color: var(--pf-text);
-  --pf-header-tagline-color: var(--pf-text-dim);
+  /* --pf-header-tagline-color: DEPRECATED - Tagline moved to hero-value.php */
   --pf-header-chip-bg: color-mix(in srgb, var(--pf-card) 90%, transparent);
   --pf-header-chip-color: var(--pf-slate-600);
   --pf-header-chip-border: color-mix(in srgb, var(--pf-accent) 20%, var(--pf-border));
@@ -173,6 +173,9 @@
   letter-spacing: -0.015em;
 }
 
+/* DEPRECATED: Tagline moved to hero-value.php for better UX hierarchy
+   Header = Context (Where am I?) | Hero = Value (Why should I care?) */
+/*
 .pf-header-tagline {
   margin: 0;
   font-size: clamp(1rem, 2vw, 1.05rem);
@@ -180,6 +183,7 @@
   color: var(--pf-header-tagline-color);
   max-width: 56ch;
 }
+*/
 
 .pf-header-meta-compact {
   display: flex;
