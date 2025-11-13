@@ -20,6 +20,9 @@ $pain_points = get_field('pain_points');
 $time_saved_min = get_field('time_saved_min');
 $difficulty_without_ai = get_field('difficulty_without_ai');
 $summary = get_field('summary');
+$access_mode = get_field('access_mode') ?: 'free'; // Default to 'free'
+$steps = get_field('steps') ?: [];
+$estimated_time_min = get_field('estimated_time_min');
 
 // Only show if we have at least one key field
 if (!$expected_outcome && !$summary) {
@@ -47,6 +50,46 @@ if ($time_saved_min) {
         $time_display = $time_saved_min . ' min';
     }
 }
+
+// Dynamic CTA configuration based on access_mode
+$cta_config = [
+    'free' => [
+        'text' => 'Start Free Workflow',
+        'url' => '#variables',
+        'icon' => '→',
+        'class' => 'pf-btn-hero--free',
+        'note' => 'No sign-up required',
+        'scroll' => true
+    ],
+    'signin' => [
+        'text' => 'Sign In to Start',
+        'url' => wp_login_url(get_permalink()),
+        'icon' => '🔓',
+        'class' => 'pf-btn-hero--signin',
+        'note' => 'Free account required',
+        'scroll' => false
+    ],
+    'pro' => [
+        'text' => 'Upgrade to Pro',
+        'url' => home_url('/pricing'),
+        'icon' => '⭐',
+        'class' => 'pf-btn-hero--pro',
+        'note' => 'Unlock all workflow steps',
+        'scroll' => false
+    ]
+];
+
+// Get CTA config for current access_mode (fallback to 'free')
+$cta = $cta_config[$access_mode] ?? $cta_config['free'];
+
+// Real Stats (Steps, Time, Access Mode label)
+$step_count = count($steps);
+$access_labels = [
+    'free' => 'Free forever',
+    'signin' => 'Sign-in required',
+    'pro' => 'Pro only'
+];
+$access_label = $access_labels[$access_mode] ?? 'Free';
 ?>
 
 <section class="pf-hero-value" role="region" aria-label="Workflow Value Proposition">
@@ -88,6 +131,90 @@ if ($time_saved_min) {
                     </div>
                 </div>
             <?php endif; ?>
+        </div>
+
+        <!-- Dynamic CTA Button (Deploy 3) -->
+        <div class="pf-hero-cta">
+            <a href="<?php echo esc_url($cta['url']); ?>" 
+               class="pf-btn-hero <?php echo esc_attr($cta['class']); ?>"
+               <?php if ($cta['scroll']): ?>
+               data-scroll-to="variables"
+               <?php endif; ?>>
+                <?php echo esc_html($cta['text']); ?>
+                <span class="pf-btn-icon"><?php echo $cta['icon']; ?></span>
+            </a>
+            <span class="pf-hero-cta-note"><?php echo esc_html($cta['note']); ?></span>
+        </div>
+
+        <!-- Real Workflow Stats (Deploy 3) -->
+        <div class="pf-hero-real-stats">
+            <?php if ($step_count > 0): ?>
+                <div class="pf-real-stat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <div class="pf-benefit-content">
+                        <span class="pf-benefit-label"><?php echo $step_count === 1 ? 'Step' : 'Steps'; ?></span>
+                        <strong class="pf-benefit-value"><?php echo esc_html($step_count); ?></strong>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($estimated_time_min): ?>
+                <div class="pf-real-stat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <div class="pf-benefit-content">
+                        <span class="pf-benefit-label">To complete</span>
+                        <strong class="pf-benefit-value"><?php echo esc_html($estimated_time_min); ?> min</strong>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <div class="pf-real-stat">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <?php if ($access_mode === 'free'): ?>
+                        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    <?php elseif ($access_mode === 'signin'): ?>
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    <?php else: ?>
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    <?php endif; ?>
+                </svg>
+                <div class="pf-benefit-content">
+                    <span class="pf-benefit-label">Access</span>
+                    <strong class="pf-benefit-value"><?php echo esc_html($access_label); ?></strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trust Badges (Deploy 3) -->
+        <div class="pf-hero-trust">
+            <span class="pf-trust-label">Works with:</span>
+            <div class="pf-trust-badges">
+                <span class="pf-trust-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    ChatGPT
+                </span>
+                <span class="pf-trust-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    Claude
+                </span>
+            </div>
         </div>
 
         <!-- Benefits Grid -->

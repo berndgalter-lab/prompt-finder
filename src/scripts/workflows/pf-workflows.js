@@ -3605,6 +3605,36 @@ boot = function() {
     window.PF.timeTracker = new TimeTracker();
   }
   
+  // ============================================================
+  // HERO CTA SMOOTH SCROLL (Deploy 3)
+  // ============================================================
+  
+  // Smooth scroll for Free Workflow CTA (scrolls to #variables)
+  document.querySelectorAll('[data-scroll-to]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget.dataset.scrollTo;
+      const element = document.getElementById(target);
+      
+      if (element) {
+        e.preventDefault(); // Prevent normal link navigation
+        element.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+        
+        // Optional: Focus first input in variables section
+        setTimeout(() => {
+          const firstInput = element.querySelector('input, select, textarea');
+          if (firstInput) {
+            firstInput.focus();
+          }
+        }, 500); // Wait for scroll animation
+      }
+    });
+  });
+  
+  console.log('✓ Deploy 3: Hero CTA Smooth Scroll initialized');
   console.log('✓✓✓ All Phases (1, 2, 3) initialized successfully! ✓✓✓');
 };
 
