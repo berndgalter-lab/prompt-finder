@@ -127,9 +127,7 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
                     <line x1="12" y1="22.08" x2="12" y2="12"></line>
                 </svg>
                 Ready-to-Use AI Workflow
-                <?php if ($access_mode === 'signin' && !$user_has_access): ?>
-                    <span class="pf-inline-access-badge pf-inline-access-badge--signin">🔓 Free</span>
-                <?php elseif ($access_mode === 'pro' && !$user_has_access): ?>
+                <?php if ($access_mode === 'pro' && !$user_has_access): ?>
                     <span class="pf-inline-access-badge pf-inline-access-badge--pro">💎 Pro</span>
                 <?php endif; ?>
             </div>
