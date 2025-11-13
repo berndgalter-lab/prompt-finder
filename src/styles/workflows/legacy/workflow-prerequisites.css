@@ -1,0 +1,209 @@
+/* =========================================================
+   File Name: workflow-prerequisites.css
+   Purpose: Prerequisites Section Styles
+   Used in: Workflow single pages (section-prerequisites.php)
+   Last Modified: 2025-11-13
+   ========================================================= */
+
+/* ========================================
+   PREREQUISITES SECTION
+   ======================================== */
+
+.pf-section--prereqs {
+  background: var(--pf-card, #ffffff);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: var(--pf-radius, 12px);
+  margin: var(--pf-space-6, 1.5rem) 0;
+  box-shadow: var(--pf-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  scroll-margin-top: 100px;
+}
+
+.pf-prereqs-container {
+  padding: clamp(var(--pf-space-5, 1.25rem), 4vw, var(--pf-space-6, 1.5rem));
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-space-4, 1rem);
+}
+
+/* Header */
+.pf-prereqs-header {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-3, 0.75rem);
+  padding-bottom: var(--pf-space-3, 0.75rem);
+  border-bottom: 1px solid var(--pf-border, #e5e7eb);
+}
+
+.pf-prereqs-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--pf-accent, #2563eb);
+  flex-shrink: 0;
+}
+
+.pf-prereqs-title {
+  font-size: var(--pf-size-lg, 1.125rem);
+  font-weight: 700;
+  color: var(--pf-text, #1e1e20);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Prerequisites List */
+.pf-prereqs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-space-3, 0.75rem);
+}
+
+.pf-prereq-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pf-space-3, 0.75rem);
+  padding: var(--pf-space-3, 0.75rem);
+  background: var(--pf-surface-2, #f7f8f9);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: var(--pf-radius-sm, 8px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pf-prereq-item:hover {
+  background: var(--pf-surface, #ffffff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.pf-prereq-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--pf-success, #16a34a);
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.pf-prereq-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-space-2, 0.5rem);
+}
+
+.pf-prereq-text {
+  font-size: var(--pf-size, 1rem);
+  line-height: 1.6;
+  color: var(--pf-text, #1e1e20);
+}
+
+.pf-prereq-text strong {
+  font-weight: 600;
+  color: var(--pf-text, #1e1e20);
+}
+
+.pf-prereq-text code {
+  padding: 0.125rem 0.375rem;
+  background: var(--pf-surface, #ffffff);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: 4px;
+  font-size: 0.875em;
+  font-family: 'Monaco', 'Courier New', monospace;
+}
+
+/* Privacy Warning (if needed) */
+.pf-prereq-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pf-space-3, 0.75rem);
+  padding: var(--pf-space-4, 1rem);
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: var(--pf-radius-sm, 8px);
+  margin-top: var(--pf-space-2, 0.5rem);
+}
+
+.pf-prereq-warning svg {
+  width: 20px;
+  height: 20px;
+  color: #f59e0b;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.pf-prereq-warning-text {
+  font-size: var(--pf-size-sm, 0.875rem);
+  line-height: 1.6;
+  color: #92400e;
+}
+
+/* Time Reminder */
+.pf-prereq-time {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pf-space-2, 0.5rem);
+  padding: var(--pf-space-2, 0.5rem) var(--pf-space-3, 0.75rem);
+  background: var(--pf-surface-2, #f7f8f9);
+  border: 1px solid var(--pf-border, #e5e7eb);
+  border-radius: var(--pf-radius-sm, 8px);
+  font-size: var(--pf-size-sm, 0.875rem);
+  color: var(--pf-muted, #6b7280);
+  margin-top: var(--pf-space-2, 0.5rem);
+}
+
+.pf-prereq-time svg {
+  width: 16px;
+  height: 16px;
+  color: var(--pf-accent, #2563eb);
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .pf-prereqs-container {
+    padding: var(--pf-space-4, 1rem);
+  }
+
+  .pf-prereq-item {
+    padding: var(--pf-space-2, 0.5rem) var(--pf-space-3, 0.75rem);
+  }
+
+  .pf-prereqs-title {
+    font-size: var(--pf-size, 1rem);
+  }
+
+  .pf-prereq-text {
+    font-size: var(--pf-size-sm, 0.875rem);
+  }
+}
+
+/* Dark Mode Support (optional) */
+@media (prefers-color-scheme: dark) {
+  .pf-section--prereqs {
+    background: #1e1e20;
+    border-color: #2d2d30;
+  }
+
+  .pf-prereqs-header {
+    border-color: #2d2d30;
+  }
+
+  .pf-prereq-item {
+    background: #2d2d30;
+    border-color: #3a3a3d;
+  }
+
+  .pf-prereq-item:hover {
+    background: #252528;
+  }
+
+  .pf-prereq-text {
+    color: #e8ecf1;
+  }
+
+  .pf-prereq-text code {
+    background: #1e1e20;
+    border-color: #3a3a3d;
+  }
+}
+
