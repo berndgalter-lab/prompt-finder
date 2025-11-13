@@ -3612,55 +3612,45 @@ boot = function() {
   // Enable global smooth scrolling via CSS
   document.documentElement.style.scrollBehavior = 'smooth';
   
-  // Smooth scroll for all CTA buttons that scroll to sections
-  // Works for: Free, Signin (Try First), Pro (Try First)
-  const scrollButtons = document.querySelectorAll('[data-scroll-to]');
-  
-  console.log(`Found ${scrollButtons.length} scroll buttons with [data-scroll-to]`);
-  
-  scrollButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault(); // WICHTIG: Prevent default FIRST!
-      e.stopPropagation(); // Stop event bubbling
-      
-      const target = e.currentTarget.dataset.scrollTo;
-      const element = document.getElementById(target);
-      
-      console.log(`Clicked scroll button, target: ${target}`, element);
-      
-      if (element) {
-        // Calculate position with offset (80px from top for breathing room)
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - 80;
-        
-        console.log(`Scrolling to ${target} (offset: ${offsetPosition}px)`);
-        
-        // Smooth scroll to position
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-        
-        // Focus first input after scroll animation (better UX)
-        setTimeout(() => {
-          const firstInput = element.querySelector('input:not([disabled]), select:not([disabled]), textarea:not([disabled])');
-          if (firstInput) {
-            firstInput.focus();
-            // Optional: Highlight first input briefly
-            firstInput.style.transition = 'box-shadow 0.3s ease';
-            firstInput.style.boxShadow = '0 0 0 3px rgba(93, 185, 255, 0.3)';
-            setTimeout(() => {
-              firstInput.style.boxShadow = '';
-            }, 1500);
-          }
-        }, 600); // Wait for scroll animation to complete
-      } else {
-        console.error(`Element with id "${target}" not found!`);
+  // Event delegation for ANY element with [data-scroll-to]
+  // Works even if elements are added after boot (SSR, Ajax, etc.)
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-scroll-to]');
+    if (!trigger) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const target = trigger.dataset.scrollTo;
+    const element = document.getElementById(target);
+
+    console.log(`Clicked scroll trigger → ${target}`, element);
+
+    if (!element) {
+      console.error(`Element with id "${target}" not found!`);
+      return;
+    }
+
+    // Calculate position with offset (80px from top for breathing room)
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - 80;
+
+    // Smooth scroll to position
+    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+
+    // Focus first input after scroll animation (better UX)
+    setTimeout(() => {
+      const firstInput = element.querySelector('input:not([disabled]), select:not([disabled]), textarea:not([disabled])');
+      if (firstInput) {
+        firstInput.focus();
+        firstInput.style.transition = 'box-shadow 0.3s ease';
+        firstInput.style.boxShadow = '0 0 0 3px rgba(93, 185, 255, 0.3)';
+        setTimeout(() => { firstInput.style.boxShadow = ''; }, 1500);
       }
-    });
+    }, 600);
   });
-  
-  console.log('✓ Hero CTA Smooth Scroll initialized (with 80px offset)');
+
+  console.log('✓ Hero CTA Smooth Scroll initialized (delegated, 80px offset)');
   console.log('✓✓✓ All Phases (1, 2, 3) initialized successfully! ✓✓✓');
 };
 
