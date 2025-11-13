@@ -1,0 +1,787 @@
+---
+alwaysApply: true
+---
+[16 tools called]
+
+/// Project Rules – Prompt Finder
+
+## PROJECT OVERVIEW
+
+**Purpose:** Prompt Finder is a WordPress-based workflow library that turns complex business tasks into guided, step-by-step ChatGPT prompts. Each workflow is a 3–5 step micro-process designed to be executed in under 5 minutes.
+
+**Target Users:** Business professionals (non-technical) who want safe, structured AI prompts for tasks like email drafts, content summaries, customer responses, etc.
+
+**Core Value:** Privacy-first, execution-focused workflows that eliminate prompt engineering complexity and prevent sensitive data leaks.
+
+## TECH STACK & FRAMEWORKS
+
+### WordPress Foundation
+- **Parent Theme:** GeneratePress
+- **Custom Post Type:** `workflows`
+- **Field System:** Advanced Custom Fields (ACF) Pro
+- **REST API:** WordPress native REST + custom `/pf/v1/` endpoints
+- **Payment:** Lemon Squeezy (external checkout)
+- **SEO:** Rank Math Pro (preferred)
+
+### Frontend
+- **JavaScript:** Vanilla JS (ES5 compatible, no build system)
+  - IIFE pattern with global `PF` namespace
+  - No JSX, no TypeScript, no bundlers
+  - jQuery only where GeneratePress requires it
+- **CSS:** Token-based design system
+  - CSS Variables defined in `style.css`
+  - No preprocessors (SASS/LESS)
+  - Component-level organization
+- **No Framework:** No React, Vue, Alpine, or other frameworks
+
+### Backend
+- **PHP:** WordPress standards (8.0+ compatible)
+  - Namespaced classes (`PF_*`)
+  - Repository pattern for user data
+  - ACF field groups versioned in `/acf-json/`
+
+### External Services
+- Lemon Squeezy (payment processing)
+- Google Fonts (preconnected)
+
+## DOMAIN & BUSINESS RULES
+
+### Core Concepts
+
+#### Workflows
+- **Post Type:** `workflows`
+- **Structure:** 3–5 steps, ≤5 minutes total execution time
+- **Components:**
+  - Workflow Meta (title, tagline, summary, pain points, etc.)
+  - Workflow Variables (2–5 global inputs)
+  - Steps (prompt/guide/review)
+  - Prerequisites (what user needs ready)
+
+#### Steps
+Three step types exist:
+1. **`prompt`** – ChatGPT prompts (context_stage, main, optimizer)
+2. **`guide`** – Human instructions (paste this, check that)
+3. **`review`** – Final checklist (privacy, tone, clarity)
+
+**Rule:** Last step MUST be `review` type with privacy checks.
+
+#### Variables
+- **Workflow Variables** (`variables_workflow`): Global inputs for entire workflow
+- **Step Variables** (`variables_step`): Local inputs for a single step
+- **Global Variables** (Profile): User-level defaults (optional)
+- **Resolution Priority:** Step > Workflow > Global (Profile) > Default (ACF) > Fallback (in prompt)
+
+**Naming Rules:**
+- snake_case, ASCII only, ≤32 chars
+- Reserved prefixes: `sys_` (system), `run_` (session)
+- Reserved keys: `sys_today`, `sys_now`, `sys_user_timezone`, `run_previous_output`
+
+**Injection Modes:**
+- `conditional` (default): Only inject if value exists
+- `direct`: Always inject (use fallback if empty)
+
+#### Access Control & Gating
+
+**Access Modes:**
+- `free`: All steps visible to everyone
+- `signin`: All steps visible to logged-in users
+- `pro`: All steps visible to logged-in Pro users only
+
+**Free Step Limit:** Number of preview steps visible to non-qualifying users (0 = hard lock)
+
+**Capability System:**
+- `pf_pro`: WordPress capability for Pro access
+- Fallback: User meta `pf_has_pro` (boolean)
+
+**Business Rules:**
+- NO per-workflow pricing (only membership-level access)
+- NO granular step-level purchases
+- Access checks on server-side ONLY (no client-side trust)
+- Locked content NEVER rendered to HTML
+
+#### Fast Track Mode
+
+**Trigger Conditions:**
+- User visits THIS workflow ≥ X times (default: 2)
+- OR user visits ANY workflow ≥ Y times (default: 5)
+
+**Behavior:**
+- Hides Overview/Prerequisites sections
+- Expands all Steps by default
+- Stored in User Meta (logged-in) or LocalStorage (anonymous)
+- Toggle preference persisted via REST API
+
+**Constants:**
+- `PF_FT_TRIGGER_THIS_WORKFLOW` (default: 2)
+- `PF_FT_TRIGGER_ANY_WORKFLOW` (default: 5)
+
+### Privacy & Sensitive Data
+
+**Core Principle:** Privacy-first by design. GDPR-level standards globally.
+
+**Rules:**
+- NEVER store or request personal data (names, emails, salaries, contracts, medical info)
+- `source_content` variable (if used) is NEVER pasted into Prompt Finder
+  - User pastes it directly into ChatGPT after Step 1
+- All instructions involving real-world content MUST include anonymization reminder
+- Final review step MUST include privacy checklist item
+- NO legal/medical/compliance claims ("for guidance only")
+
+**Example Hint Text:**
+> "Remove names, email addresses, salaries, or confidential contract terms before you paste."
+
+### Workflow Creation Blueprint
+
+**Constraints:**
+- Max 5 steps
+- Each step ≤1 minute
+- Total workflow ≤5 minutes
+- Last step MUST be `review` type
+- If `requires_source_content = true`: Must include `guide` step for paste instruction
+- All public text in clear, non-technical English
+- NO developer jargon in public-facing fields
+
+**Two-Phase Model:**
+1. **PLAN:** High-level summary, step sequence, variables (no ACF output yet)
+2. **BUILD:** Full ACF-ready JSON/text for WordPress import
+
+## ARCHITECTURE & IMPORTANT FILES
+
+### File Structure (Current State)
+
+```
+/
+├── functions.php               # Central theme logic (enqueues, hooks, helpers)
+├── style.css                   # Theme header + design tokens (CSS variables)
+├── header.php / footer.php     # Theme templates
+├── index.php                   # WordPress fallback template
+├── single-workflows.php        # Workflow single template
+├── page-pricing.php            # Pricing page template
+│
+├── src/
+│   ├── php/
+│   │   ├── inc/                # PHP helpers
+│   │   │   ├── pf-access.php   # Access control functions
+│   │   │   └── class-pf-user-tracking.php  # Fast Track tracking
+│   │   ├── app/                # Application layer
+│   │   │   ├── bootstrap/      # Autoload, variables localize
+│   │   │   ├── contracts/      # Interfaces (UserVarsStore, UserPresetsStore)
+│   │   │   ├── infra/          # Infrastructure (WP implementations)
+│   │   │   └── http/           # REST endpoints
+│   │   └── template-parts/workflow/  # Workflow UI partials
+│   │       ├── header.php
+│   │       ├── section-variables.php
+│   │       ├── section-steps.php
+│   │       └── ... (hero, progress, prerequisites, footer, etc.)
+│   │
+│   ├── styles/
+│   │   ├── core/
+│   │   │   └── pf-core.css     # Token layer + utilities
+│   │   ├── workflows/
+│   │   │   ├── base.css        # Workflow wrapper/layout
+│   │   │   └── legacy/         # Component styles (header, sidebar, steps, variables, etc.)
+│   │   └── pages/
+│   │       ├── pf-landing.css
+│   │       ├── pf-pricing.css
+│   │       └── pf-blog.css
+│   │
+│   └── scripts/
+│       ├── workflows/
+│       │   ├── pf-workflows.js       # Main orchestrator (PF namespace)
+│       │   ├── sticky-progress.js    # Sticky progress bar
+│       │   ├── modules/
+│       │   │   ├── tracking.js       # PF.Tracking (visit counter)
+│       │   │   └── fast-track.js     # Fast Track UI logic
+│       │   └── entry/
+│       │       └── pf-tracking-init.js  # Auto-track on page load
+│       └── pages/
+│           └── pricing.js            # Pricing toggle + Lemon Squeezy loader
+│
+├── assets/
+│   ├── js/
+│   │   └── pf-navigation.js    # Global navigation (legacy path, TODO: migrate)
+│   └── pf-config.json          # Feature flags + workflow defaults
+│
+├── acf-json/                   # ACF field group exports (version control)
+├── docs/                       # Documentation (architecture, blueprints, etc.)
+└── archive/                    # Deprecated assets (styles, scripts, docs)
+```
+
+### Key ACF Field Groups
+
+**Workflow Meta Fields:**
+- `workflow_title`, `tagline`, `summary`, `pain_points`, `expected_outcome`
+- `estimated_time_min`, `time_saved_min`, `difficulty_without_ai`
+- `access_mode` (free/signin/pro), `free_step_limit`
+- `use_case`, `status`, `version`, `last_update`
+- `use_profile_defaults` (boolean toggle)
+
+**Workflow Variables Repeater:** `variables_workflow`
+- `workflow_var_key`, `workflow_var_label`, `workflow_var_placeholder`
+- `workflow_var_required`, `workflow_var_default_value`
+- `workflow_var_type` (text, textarea, number, email, url, select, boolean)
+- `workflow_var_options_json` (for select types)
+- `workflow_var_profile_key` (alias to global variable)
+- `workflow_var_prefer_system` (prioritize system values)
+- `workflow_var_hint`, `workflow_var_injection_mode`
+
+**Steps Repeater:** `steps`
+- `step_id`, `step_title`, `step_objective`
+- `step_type` (prompt/guide/review)
+- `prompt_mode` (context_stage/main/optimizer – only for prompt type)
+- `step_prompt`, `step_body`
+- `uses_global_vars`, `consumes_previous_output`
+- `estimated_time_min`, `paste_guidance`, `sample_output`
+- `step_checklist` (for review type), `review_hint`
+- `variables_step` (step-level variables repeater)
+
+**Step Variables Repeater:** `variables_step`
+- `step_var_name`, `step_var_label`, `step_var_placeholder`
+- `step_var_description`, `step_var_default`, `step_var_example_value`
+- `step_var_required`, `step_var_type`, `step_var_options_json`
+- `step_var_hint`, `step_var_profile_key`, `step_var_prefer_system`
+
+### Important PHP Functions
+
+**Access Control (`pf-access.php`):**
+- `pf_workflow_mode($post_id)` → 'free'|'signin'|'pro'
+- `pf_free_step_limit($post_id)` → int
+- `pf_can_view_all($post_id)` → bool
+- `pf_visible_steps_count($post_id, $total)` → int
+- `pf_user_has_pro($user_id)` → bool
+
+**Tracking (`class-pf-user-tracking.php`):**
+- `PF_User_Tracking::track_visit($workflow_id)`
+- `PF_User_Tracking::check_threshold($user_id, $workflow_id)` → bool
+- `PF_User_Tracking::is_ft_enabled($user_id)` → bool
+- REST endpoints: `/pf/v1/track-visit`, `/pf/v1/tracking-data`, `/pf/v1/fast-track-preference`
+
+**Helpers (`functions.php`):**
+- `pf_load_config()` → array (from pf-config.json)
+- `pf_get_user_plan()` → 'guest'|'free'|'pro'
+- `pf_enqueue_asset($handle, $src, $deps, $type, $in_footer)`
+- `pf_ver($rel_path)` → filemtime for cache-busting
+
+### Data Flow
+
+1. **Page Load:** WordPress loads `single-workflows.php`
+2. **PHP Localization:** `pf-variables-localize.php` injects workflow data + settings into JS
+3. **JS Orchestration:** `pf-workflows.js` builds forms, registers resolvers, updates progress
+4. **Tracking:** `pf-tracking-init.js` auto-tracks visit → triggers Fast Track if threshold met
+5. **Fast Track:** `fast-track.js` toggles DOM (collapse overview, expand steps)
+6. **User Interaction:** Form changes update status bar, copy buttons inject resolved prompts
+7. **REST Calls:** Save tracking data (logged-in users) or LocalStorage (anonymous)
+
+## CODE STYLE & CONVENTIONS
+
+### Naming Conventions
+
+**Files:**
+- CSS: `kebab-case.css` (e.g., `workflow-steps.css`)
+- JS: `camelCase.js` (e.g., `pf-workflows.js`)
+- PHP: `kebab-case.php` (e.g., `pf-access.php`)
+- Folders: `kebab-case`
+
+**Code:**
+- **CSS Classes:** `kebab-case`, prefix `pf-` (e.g., `.pf-step`, `.pf-btn--primary`)
+- **JavaScript:**
+  - Functions: `camelCase` (e.g., `resolveVariables()`)
+  - Constructors/Classes: `PascalCase` (e.g., `PF.Tracking`)
+  - Namespace: `PF` (global)
+  - Private helpers: prefix `_` (e.g., `_parseStepJson()`)
+- **PHP:**
+  - Functions: `snake_case` with `pf_` prefix (e.g., `pf_can_view_all()`)
+  - Classes: `PascalCase` with `PF_` prefix (e.g., `PF_User_Tracking`)
+  - Constants: `SCREAMING_SNAKE_CASE` with `PF_` prefix (e.g., `PF_FT_TRIGGER_THIS_WORKFLOW`)
+  - ACF Fields: `snake_case` (e.g., `workflow_var_key`, `step_title`)
+
+**Variables:**
+- ACF field keys: `snake_case`, ASCII only, ≤32 chars
+- Reserved prefixes: `sys_`, `run_`
+- Never rename existing published keys
+
+### CSS Architecture
+
+**Token System:**
+- All design tokens defined in `style.css` as CSS custom properties
+- Example tokens:
+  ```css
+  --pf-wrap: 1200px;
+  --pf-space: 3rem;
+  --pf-accent-1: #5db9ff;
+  --pf-accent-2: #3e88ff;
+  --pf-text: #e8ecf1;
+  --pf-text-dim: #a0a8b5;
+  --pf-border: #1e2530;
+  ```
+
+**Component Structure:**
+- Token layer: `pf-core.css` (utilities, primitives)
+- Workflow base: `base.css` (layout wrappers)
+- Components: Individual files in `legacy/` (header, sidebar, steps, etc.)
+- Pages: Separate files in `pages/` (landing, pricing, blog)
+
+**Rules:**
+- NO hardcoded colors/spacing in components (use tokens)
+- NO inline styles in PHP templates
+- NO `!important` unless absolutely necessary (document why)
+- Mobile-first responsive design
+
+### JavaScript Architecture
+
+**Module Pattern:**
+- Global namespace: `window.PF = window.PF || {};`
+- IIFE-wrapped modules:
+  ```javascript
+  (function(PF) {
+    'use strict';
+    PF.ModuleName = { /* ... */ };
+  })(window.PF);
+  ```
+
+**Dependency Order:**
+1. `pf-workflows.js` (creates PF namespace)
+2. `tracking.js` (adds PF.Tracking)
+3. `pf-tracking-init.js` (consumes PF.Tracking)
+4. `fast-track.js` (consumes PF.Tracking)
+
+**Rules:**
+- NO ES6 imports/exports (no build system)
+- NO arrow functions (ES5 compatibility)
+- NO jQuery except where GeneratePress requires it
+- Use feature detection, NOT browser detection
+- ALWAYS check DOM element existence before manipulating
+- Event delegation for dynamic content
+- Custom events for cross-module communication (e.g., `pf:threshold-met`)
+
+**Common Patterns:**
+```javascript
+// DOM Ready
+document.addEventListener('DOMContentLoaded', function() { /* ... */ });
+
+// Feature Detection
+if ('querySelector' in document) { /* ... */ }
+
+// Custom Events
+document.dispatchEvent(new CustomEvent('pf:threshold-met', { detail: { workflowId: 123 } }));
+
+// LocalStorage with Fallback
+try {
+  localStorage.setItem('key', 'value');
+} catch (e) {
+  // Fallback for browsers with disabled storage
+}
+```
+
+### PHP Architecture
+
+**Classes:**
+- Use namespaces where appropriate (repository pattern)
+- Static methods for utility classes (e.g., `PF_User_Tracking::init()`)
+- Early exit for security:
+  ```php
+  if (!defined('ABSPATH')) {
+      exit;
+  }
+  ```
+
+**Template Parts:**
+- Use `get_template_part()` for includes
+- Pass data via global scope or `set_query_var()` / `get_query_var()`
+- Escape all output: `esc_html()`, `esc_attr()`, `esc_url()`
+
+**ACF Usage:**
+- ALWAYS check if ACF is active before calling `get_field()`
+- Use default fallbacks:
+  ```php
+  $mode = get_field('access_mode', $post_id) ?: 'pro';
+  ```
+- NO direct `get_user_meta()` for custom variable storage – use repository interface
+
+**REST API:**
+- Namespace: `/pf/v1/`
+- Always validate permissions (`permission_callback`)
+- Validate and sanitize inputs
+- Return structured JSON responses
+- Use appropriate HTTP status codes
+
+### Cache-Busting Strategy
+
+**Enqueue Pattern:**
+```php
+wp_enqueue_style(
+    'handle',
+    $uri . '/path/to/file.css',
+    ['dependency'],
+    pf_ver('/path/to/file.css') // filemtime() for cache-busting
+);
+```
+
+**Version Helper:**
+```php
+function pf_ver($rel_path) {
+    $abs = get_stylesheet_directory() . $rel_path;
+    return file_exists($abs) ? filemtime($abs) : time();
+}
+```
+
+**Rule:** Production uses theme version, development uses filemtime().
+
+## IMPLEMENTATION GUIDELINES
+
+### Adding New Features
+
+**New Workflow Component:**
+1. Define ACF fields (if needed) and export to `/acf-json/`
+2. Add template part to `/src/php/template-parts/workflow/`
+3. Create CSS file in `/src/styles/workflows/legacy/` or `modern/`
+4. Enqueue in `functions.php` with correct dependencies
+5. Add JS logic to existing modules or create new module
+6. Update documentation in `docs/ARCHITECTURE.md`
+
+**New JavaScript Module:**
+1. Create file in `/src/scripts/workflows/modules/` or `/src/scripts/pages/`
+2. Wrap in IIFE, add to `PF` namespace
+3. Enqueue in `functions.php` with correct dependencies
+4. Document public API in file header
+5. Emit custom events for cross-module communication
+
+**New Access Mode:**
+1. Add mode to `pf_workflow_mode()` validation
+2. Update `pf_can_view_all()` logic
+3. Add badge text/CSS to `pf_mode_badge_text()` and `pf_mode_badge_css()`
+4. Update ACF field choices
+5. Test server-side gating thoroughly
+
+**New Variable Type:**
+1. Add type to ACF select field (`workflow_var_type`, `step_var_type`)
+2. Update form rendering in `section-variables.php` / `section-steps.php`
+3. Add validation logic in `pf-workflows.js`
+4. Update variable resolution logic if needed
+5. Document in `docs/variables-v1.md`
+
+### Extending Gating System
+
+**DO:**
+- Always check access server-side FIRST
+- Never send locked content to browser
+- Use `pf_can_view_all()` for access checks
+- Show clear CTAs for locked content (`pf_get_access_cta()`)
+- Test with all user states (guest, logged-in, Pro)
+
+**DO NOT:**
+- Implement per-workflow pricing (use membership tiers only)
+- Trust client-side access checks
+- Send locked step content in HTML (even hidden)
+- Create complex conditional access logic (keep simple)
+
+### Handling Variables
+
+**DO:**
+- Use resolution priority: Step > Workflow > Global > Default > Fallback
+- Support `injection_mode: conditional` for optional variables
+- Include fallback logic in prompts for optional variables:
+  ```
+  Tone:
+  - If {{tone}} is provided, match it.
+  - If not, use a neutral, professional tone.
+  ```
+- Never rename existing variable keys once published
+- Validate variable naming (snake_case, ASCII, ≤32 chars)
+
+**DO NOT:**
+- Use `get_user_meta()` directly for variables – use repository interface
+- Hide unresolved placeholders (they remain `{key}` unless value exists)
+- Create variables for system-generated values (use `sys_*` reserved keys)
+- Store sensitive data in workflow variables
+
+### Fast Track Mode
+
+**DO:**
+- Track visits only for logged-in users in User Meta
+- Use LocalStorage for anonymous users
+- Emit `pf:threshold-met` event when threshold reached
+- Toggle CSS class `.pf-fast-track-active` on container
+- Allow user to disable Fast Track (save preference)
+
+**DO NOT:**
+- Auto-enable Fast Track without showing toggle first
+- Track personally identifiable information
+- Bypass privacy guidelines for tracking
+- Make Fast Track required (always optional)
+
+### File Organization
+
+**DO:**
+- Keep active files in `/src/`
+- Move deprecated files to `/archive/`
+- Document file purpose in header comments
+- Group related files (workflows/, pages/, modules/)
+- Export ACF changes to `/acf-json/` for version control
+
+**DO NOT:**
+- Mix legacy and modern code in same file without comments
+- Create new files in root (use `/src/` subdirectories)
+- Leave unused imports or global leaks
+- Skip file header comments
+
+### File Header Format
+
+**PHP:**
+```php
+<?php
+/**
+ * File Name: pf-access.php
+ * Purpose: Access control helper functions for workflow gating
+ * Used in: single-workflows.php, section-steps.php
+ * Last Modified: 2025-11-08
+ * 
+ * @package GeneratePress_Child
+ * @since 1.0.0
+ */
+```
+
+**JavaScript:**
+```javascript
+/**
+ * File Name: tracking.js
+ * Purpose: Visit tracking for Fast Track Mode
+ * Used in: pf-tracking-init.js, fast-track.js
+ * Last Modified: 2025-11-08
+ * 
+ * Dependencies: None (creates PF.Tracking)
+ */
+```
+
+**CSS:**
+```css
+/* =========================================================
+   File Name: workflow-steps.css
+   Purpose: Step card layout and interactions
+   Used in: Workflow single pages
+   Last Modified: 2025-11-08
+   ========================================================= */
+```
+
+### Before Every Commit
+
+**Checklist:**
+- Remove `console.log()` and debug statements
+- Check for unused imports/variables
+- Run linter/formatter if available
+- Update `docs/CHANGELOG.md` with changes
+- Test in browser (desktop + mobile)
+- Verify ACF exports are in `/acf-json/`
+- Check file headers are up to date
+
+### Documentation Standards
+
+**Required Docs:**
+- `docs/ARCHITECTURE.md` – System overview
+- `docs/HOW-IT-WORKS.md` – User/code flows
+- `docs/CHANGELOG.md` – Version history
+- `docs/variables-v1.md` – Variable system spec
+- `docs/blueprints/` – Workflow creation guidelines
+
+**Update When:**
+- Adding new features
+- Changing architecture
+- Modifying ACF schema
+- Deprecating functionality
+- Fixing critical bugs
+
+### Testing Guidelines
+
+**Manual Tests:**
+- [ ] Workflow loads correctly
+- [ ] Variables populate forms
+- [ ] Steps expand/collapse
+- [ ] Copy button copies resolved prompts
+- [ ] Progress bar updates
+- [ ] Fast Track toggle works
+- [ ] Gating respects access mode
+- [ ] Locked content not in HTML source
+- [ ] Mobile responsive
+- [ ] No console errors
+
+**Browser Support:**
+- Modern evergreen browsers (Chrome, Firefox, Safari, Edge)
+- ES5 compatible (no transpilation)
+- Graceful degradation for older browsers
+
+### Performance Best Practices
+
+**DO:**
+- Use CSS transforms for animations (GPU-accelerated)
+- Debounce input handlers
+- Cache DOM queries
+- Use event delegation
+- Lazy-load non-critical assets
+- Minify assets in production
+
+**DO NOT:**
+- Query DOM in loops
+- Attach multiple event listeners to same elements
+- Use synchronous AJAX in critical path
+- Load large libraries for small features
+
+## DO / DO NOT Summary
+
+### DO
+
+**General:**
+- Follow WordPress coding standards
+- Use semantic HTML
+- Write accessible markup (ARIA labels, keyboard navigation)
+- Support mobile-first responsive design
+- Document complex logic with comments
+- Keep functions small and focused (≤20 lines)
+- Use consistent naming conventions
+- Validate and sanitize all inputs
+- Escape all outputs
+- Handle errors gracefully
+
+**Architecture:**
+- Use template parts for reusable UI
+- Separate concerns (data/logic/presentation)
+- Implement repository pattern for data access
+- Use constants for magic numbers
+- Create helper functions for repeated logic
+- Emit custom events for decoupled modules
+- Check feature/capability before using
+
+**Security:**
+- Verify nonces for AJAX requests
+- Check user capabilities before actions
+- Rate-limit API endpoints
+- Validate file existence before requiring
+- Escape SQL queries (use WordPress API)
+- Sanitize file uploads (if implemented)
+
+**Variables:**
+- Use resolution priority consistently
+- Support fallback logic in prompts
+- Validate variable naming rules
+- Document variable purpose in hints
+- Include privacy reminders in hints
+
+**UX:**
+- Show clear loading states
+- Provide actionable error messages
+- Use optimistic UI updates
+- Indicate required fields clearly
+- Confirm destructive actions
+- Maintain visual hierarchy
+
+### DO NOT
+
+**Code Quality:**
+- Use inline styles in templates
+- Hardcode colors, spacing, or URLs
+- Leave dead code in codebase
+- Create god functions (>50 lines)
+- Mix concerns in single function
+- Use global variables (except PF namespace)
+- Skip error handling
+
+**Architecture:**
+- Bypass repository interfaces
+- Access user meta directly for variables
+- Trust client-side validation alone
+- Implement complex pricing logic
+- Create per-workflow payment flows
+- Duplicate existing functionality
+- Build new plugins (use theme)
+
+**Security:**
+- Send locked content to browser
+- Trust user input without validation
+- Expose API keys in client code
+- Skip permission checks
+- Use eval() or innerHTML with user data
+- Store sensitive data in variables
+
+**Variables:**
+- Rename published variable keys
+- Use non-ASCII characters in keys
+- Create variables for system data
+- Hide unresolved placeholders
+- Skip fallback logic for optional vars
+
+**Features:**
+- Implement legal/medical advice claims
+- Auto-enable Fast Track without consent
+- Track personal data beyond visits
+- Create 50+ micro-workflows for tiny variations
+- Skip privacy checks in review steps
+- Use AI-generated disclaimers in prompts
+
+**Performance:**
+- Load unnecessary libraries
+- Perform expensive operations in loops
+- Block render with synchronous scripts
+- Skip cache-busting for static assets
+- Use inefficient CSS selectors
+
+**Documentation:**
+- Skip file headers
+- Use developer jargon in public text
+- Forget to update CHANGELOG
+- Leave TODO comments in production
+- Document implementation details in user-facing text
+
+## CONSTRAINTS & LIMITS
+
+### Workflow Constraints
+- Max 5 steps per workflow
+- Each step ≤1 minute execution time
+- Total workflow ≤5 minutes
+- Last step MUST be `review` type
+- 2–5 workflow variables recommended
+- Step-level variables ≤3 recommended
+
+### Technical Limits
+- No build pipeline (vanilla JS/CSS only)
+- ES5 compatible JavaScript (no transpilation)
+- No external JS frameworks
+- WordPress 5.8+ required
+- PHP 8.0+ required
+- ACF Pro required
+
+### Business Rules
+- NO per-workflow pricing (membership tiers only)
+- NO granular content purchases
+- NO affiliate/referral system in workflows
+- NO third-party integrations beyond Lemon Squeezy
+
+## FUTURE-PROOFING
+
+### Reserved Prefixes
+- `sys_*` – System-generated variables
+- `run_*` – Runtime/session variables
+- `org_*` – Organization variables (future)
+- `proj_*` – Project variables (future)
+- `client_*` – Client variables (future)
+- `secret_*` – Encrypted variables (future)
+- `asset_*` – Media/file variables (future)
+
+### Planned Migrations
+- Move `/assets/js/pf-navigation.js` to `/src/scripts/`
+- Consolidate legacy/modern CSS
+- Implement ES6 modules (if build system added)
+- Add TypeScript types (if TS adopted)
+- Extract ACF field generation to code (if ACF Local JSON insufficient)
+
+### Extension Points
+- Custom variable types (dropdown, date, file upload)
+- Additional step types (video, diagram, template)
+- Workflow templates system
+- User presets save/restore
+- Workflow duplication/forking
+- Analytics dashboard
+
+---
+
+**Version:** 1.0.0  
+**Last Updated:** 2025-11-13  
+**Maintained By:** Project Team
