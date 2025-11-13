@@ -2402,6 +2402,781 @@ window.PF.escapeHtml = escapeHtml;
 console.log('✓ PF ready — Unified renderers available: PF.renderWorkflowVar(), PF.renderStepVar(), PF.validate()');
 console.log('✓ PF v1.7 — Unified Variable API: renderVar(), setVarValidity(), mountWorkflowVars()');
 
+// ====================================================================
+// PHASE 3 — ADVANCED ENHANCEMENTS (Power-User Features)
+// ====================================================================
+
+/**
+ * Phase 3.1: Smart Variable Prefill (Autocomplete)
+ * Remembers common values across sessions
+ */
+class SmartVariablePrefill {
+  constructor() {
+    this.storageKey = 'pf_variable_history';
+    this.history = this.loadHistory();
+    this.activeAutocomplete = null;
+    this.activeInput = null;
+    this.selectedIndex = -1;
+    this.init();
+  }
+  
+  loadHistory() {
+    try {
+      const data = localStorage.getItem(this.storageKey);
+      return data ? JSON.parse(data) : {};
+    } catch(e) {
+      return {};
+    }
+  }
+  
+  saveHistory() {
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.history));
+    } catch(e) {}
+  }
+  
+  recordValue(fieldName, value) {
+    if (!fieldName || !value || value.length < 2) return;
+    
+    if (!this.history[fieldName]) {
+      this.history[fieldName] = [];
+    }
+    
+    // Remove if exists, then add to front (most recent first)
+    const existing = this.history[fieldName].indexOf(value);
+    if (existing > -1) {
+      this.history[fieldName].splice(existing, 1);
+    }
+    
+    this.history[fieldName].unshift(value);
+    
+    // Keep max 10 suggestions per field
+    if (this.history[fieldName].length > 10) {
+      this.history[fieldName] = this.history[fieldName].slice(0, 10);
+    }
+    
+    this.saveHistory();
+  }
+  
+  getSuggestions(fieldName, currentValue = '') {
+    if (!this.history[fieldName]) return [];
+    
+    const query = currentValue.toLowerCase().trim();
+    if (!query) return this.history[fieldName].slice(0, 5);
+    
+    return this.history[fieldName]
+      .filter(item => item.toLowerCase().includes(query))
+      .slice(0, 5);
+  }
+  
+  showAutocomplete(input, suggestions) {
+    this.hideAutocomplete();
+    
+    if (!suggestions || suggestions.length === 0) return;
+    
+    const wrapper = input.closest('.pf-var-input-wrapper');
+    if (!wrapper) return;
+    
+    const dropdown = document.createElement('div');
+    dropdown.className = 'pf-autocomplete';
+    dropdown.setAttribute('role', 'listbox');
+    
+    suggestions.forEach((suggestion, index) => {
+      const item = document.createElement('div');
+      item.className = 'pf-autocomplete-item';
+      item.setAttribute('role', 'option');
+      item.dataset.value = suggestion;
+      item.dataset.index = index;
+      
+      item.innerHTML = `
+        <svg class="pf-autocomplete-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span class="pf-autocomplete-item__text">${this.escapeHtml(suggestion)}</span>
+      `;
+      
+      item.addEventListener('click', () => {
+        input.value = suggestion;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        this.hideAutocomplete();
+      });
+      
+      dropdown.appendChild(item);
+    });
+    
+    wrapper.appendChild(dropdown);
+    
+    // Show with animation
+    requestAnimationFrame(() => {
+      dropdown.classList.add('is-visible');
+    });
+    
+    this.activeAutocomplete = dropdown;
+    this.activeInput = input;
+    this.selectedIndex = -1;
+  }
+  
+  hideAutocomplete() {
+    if (this.activeAutocomplete) {
+      this.activeAutocomplete.remove();
+      this.activeAutocomplete = null;
+      this.activeInput = null;
+      this.selectedIndex = -1;
+    }
+  }
+  
+  navigateAutocomplete(direction) {
+    if (!this.activeAutocomplete) return;
+    
+    const items = this.activeAutocomplete.querySelectorAll('.pf-autocomplete-item');
+    if (items.length === 0) return;
+    
+    // Remove active from current
+    if (this.selectedIndex >= 0 && items[this.selectedIndex]) {
+      items[this.selectedIndex].classList.remove('is-active');
+    }
+    
+    // Update index
+    if (direction === 'down') {
+      this.selectedIndex = (this.selectedIndex + 1) % items.length;
+    } else if (direction === 'up') {
+      this.selectedIndex = this.selectedIndex <= 0 ? items.length - 1 : this.selectedIndex - 1;
+    }
+    
+    // Add active to new
+    items[this.selectedIndex].classList.add('is-active');
+    items[this.selectedIndex].scrollIntoView({ block: 'nearest' });
+  }
+  
+  selectCurrentSuggestion() {
+    if (!this.activeAutocomplete || this.selectedIndex < 0) return false;
+    
+    const items = this.activeAutocomplete.querySelectorAll('.pf-autocomplete-item');
+    if (items[this.selectedIndex]) {
+      items[this.selectedIndex].click();
+      return true;
+    }
+    
+    return false;
+  }
+  
+  escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+  
+  init() {
+    // Bind to all variable inputs
+    document.addEventListener('focus', (e) => {
+      const input = e.target;
+      if (!input.matches('.pf-var-input, .pf-var-textarea')) return;
+      
+      const fieldName = input.dataset.varName || input.id;
+      if (!fieldName) return;
+      
+      const suggestions = this.getSuggestions(fieldName, input.value);
+      if (suggestions.length > 0) {
+        this.showAutocomplete(input, suggestions);
+      }
+    }, true);
+    
+    // Update suggestions on input
+    document.addEventListener('input', (e) => {
+      const input = e.target;
+      if (!input.matches('.pf-var-input, .pf-var-textarea')) return;
+      
+      const fieldName = input.dataset.varName || input.id;
+      if (!fieldName) return;
+      
+      const suggestions = this.getSuggestions(fieldName, input.value);
+      this.showAutocomplete(input, suggestions);
+    }, true);
+    
+    // Record value on blur
+    document.addEventListener('blur', (e) => {
+      const input = e.target;
+      if (!input.matches('.pf-var-input, .pf-var-textarea')) return;
+      
+      const fieldName = input.dataset.varName || input.id;
+      const value = input.value.trim();
+      
+      if (fieldName && value) {
+        this.recordValue(fieldName, value);
+      }
+      
+      // Delay hiding to allow clicks on dropdown
+      setTimeout(() => this.hideAutocomplete(), 200);
+    }, true);
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      const input = e.target;
+      if (!input.matches('.pf-var-input, .pf-var-textarea')) return;
+      if (!this.activeAutocomplete) return;
+      
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        this.navigateAutocomplete('down');
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        this.navigateAutocomplete('up');
+      } else if (e.key === 'Enter' && this.selectedIndex >= 0) {
+        e.preventDefault();
+        this.selectCurrentSuggestion();
+      } else if (e.key === 'Escape') {
+        this.hideAutocomplete();
+      }
+    }, true);
+    
+    console.log('✓ Phase 3: Smart Variable Prefill initialized');
+  }
+}
+
+/**
+ * Phase 3.2: Keyboard Shortcuts Panel
+ */
+class KeyboardShortcutsPanel {
+  constructor() {
+    this.panel = document.querySelector('[data-shortcuts-panel]');
+    this.backdrop = document.querySelector('[data-shortcuts-backdrop]');
+    this.isOpen = false;
+    this.init();
+  }
+  
+  open() {
+    if (!this.panel || !this.backdrop) return;
+    
+    this.isOpen = true;
+    this.panel.classList.add('is-visible');
+    this.backdrop.classList.add('is-visible');
+    
+    // Focus first close button
+    const closeBtn = this.panel.querySelector('[data-action="close-shortcuts"]');
+    if (closeBtn) closeBtn.focus();
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+  }
+  
+  close() {
+    if (!this.panel || !this.backdrop) return;
+    
+    this.isOpen = false;
+    this.panel.classList.remove('is-visible');
+    this.backdrop.classList.remove('is-visible');
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
+  }
+  
+  toggle() {
+    if (this.isOpen) {
+      this.close();
+    } else {
+      this.open();
+    }
+  }
+  
+  init() {
+    if (!this.panel) return;
+    
+    // Close button
+    const closeBtn = this.panel.querySelector('[data-action="close-shortcuts"]');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.close());
+    }
+    
+    // Backdrop click
+    if (this.backdrop) {
+      this.backdrop.addEventListener('click', () => this.close());
+    }
+    
+    // Global keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ignore if typing in input/textarea
+      if (e.target.matches('input, textarea, select') || e.target.isContentEditable) {
+        return;
+      }
+      
+      // ? key opens panel
+      if (e.key === '?' && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        this.toggle();
+      }
+      
+      // Escape closes panel
+      if (e.key === 'Escape' && this.isOpen) {
+        e.preventDefault();
+        this.close();
+      }
+      
+      // Space toggles current step (if not in panel)
+      if (e.key === ' ' && !this.isOpen) {
+        const activeStep = document.querySelector('.pf-step--active');
+        if (activeStep) {
+          const toggleBtn = activeStep.querySelector('.pf-step-toggle');
+          if (toggleBtn) {
+            e.preventDefault();
+            toggleBtn.click();
+          }
+        }
+      }
+      
+      // Cmd/Ctrl + Enter marks step as done
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        const activeStep = document.querySelector('.pf-step--active');
+        if (activeStep) {
+          const checkbox = activeStep.querySelector('.pf-step-checkbox');
+          if (checkbox) {
+            e.preventDefault();
+            checkbox.checked = !checkbox.checked;
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+      }
+      
+      // T key starts/pauses timer
+      if (e.key === 't' && !e.shiftKey) {
+        const activeStep = document.querySelector('.pf-step--active');
+        if (activeStep) {
+          const timeTracker = activeStep.querySelector('[data-time-tracker]');
+          if (timeTracker) {
+            const startBtn = timeTracker.querySelector('[data-action="start-time"]');
+            const pauseBtn = timeTracker.querySelector('[data-action="pause-time"]');
+            
+            if (startBtn && !startBtn.hidden) {
+              e.preventDefault();
+              startBtn.click();
+            } else if (pauseBtn && !pauseBtn.hidden) {
+              e.preventDefault();
+              pauseBtn.click();
+            }
+          }
+        }
+      }
+      
+      // Shift + T resets timer
+      if (e.key === 'T' && e.shiftKey) {
+        const activeStep = document.querySelector('.pf-step--active');
+        if (activeStep) {
+          const timeTracker = activeStep.querySelector('[data-time-tracker]');
+          if (timeTracker) {
+            const resetBtn = timeTracker.querySelector('[data-action="reset-time"]');
+            if (resetBtn) {
+              e.preventDefault();
+              resetBtn.click();
+            }
+          }
+        }
+      }
+    });
+    
+    console.log('✓ Phase 3: Keyboard Shortcuts Panel initialized');
+  }
+}
+
+/**
+ * Phase 3.3: Step Notes (Personal Comments)
+ */
+class StepNotes {
+  constructor() {
+    this.storageKey = 'pf_step_notes';
+    this.notes = this.loadNotes();
+    this.saveTimer = null;
+    this.init();
+  }
+  
+  loadNotes() {
+    try {
+      const workflowId = getWorkflowId();
+      if (!workflowId) return {};
+      
+      const key = `${this.storageKey}_${workflowId}`;
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : {};
+    } catch(e) {
+      return {};
+    }
+  }
+  
+  saveNotes() {
+    try {
+      const workflowId = getWorkflowId();
+      if (!workflowId) return;
+      
+      const key = `${this.storageKey}_${workflowId}`;
+      localStorage.setItem(key, JSON.stringify(this.notes));
+    } catch(e) {}
+  }
+  
+  getNote(stepId) {
+    return this.notes[stepId] || '';
+  }
+  
+  setNote(stepId, content) {
+    if (content.trim() === '') {
+      delete this.notes[stepId];
+    } else {
+      this.notes[stepId] = content;
+    }
+    
+    // Debounced save
+    if (this.saveTimer) clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => {
+      this.saveNotes();
+      this.showSavedIndicator(stepId);
+    }, 1000);
+  }
+  
+  showSavedIndicator(stepId) {
+    const notesContainer = document.querySelector(`[data-step-notes][data-step-id="${stepId}"]`);
+    if (!notesContainer) return;
+    
+    const indicator = notesContainer.querySelector('[data-saved-indicator]');
+    if (!indicator) return;
+    
+    indicator.classList.add('is-visible');
+    
+    setTimeout(() => {
+      indicator.classList.remove('is-visible');
+    }, 2000);
+  }
+  
+  updateCharCount(textarea) {
+    const notesContainer = textarea.closest('[data-step-notes]');
+    if (!notesContainer) return;
+    
+    const charCount = notesContainer.querySelector('[data-char-count]');
+    if (!charCount) return;
+    
+    const length = textarea.value.length;
+    charCount.textContent = `${length} character${length !== 1 ? 's' : ''}`;
+  }
+  
+  init() {
+    // Load saved notes
+    document.querySelectorAll('[data-step-notes]').forEach(container => {
+      const stepId = container.dataset.stepId;
+      const textarea = container.querySelector('[data-notes-input]');
+      
+      if (!textarea || !stepId) return;
+      
+      const savedNote = this.getNote(stepId);
+      if (savedNote) {
+        textarea.value = savedNote;
+        this.updateCharCount(textarea);
+      }
+      
+      // Bind input event
+      textarea.addEventListener('input', () => {
+        this.setNote(stepId, textarea.value);
+        this.updateCharCount(textarea);
+      });
+    });
+    
+    console.log('✓ Phase 3: Step Notes initialized');
+  }
+}
+
+/**
+ * Phase 3.4: Bulk Actions
+ */
+class BulkActions {
+  init() {
+    // Mark All Done
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-action="bulk-mark-complete"]')) return;
+      
+      const checkboxes = document.querySelectorAll('.pf-step-checkbox');
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      
+      checkboxes.forEach(cb => {
+        if (cb.checked !== !allChecked) {
+          cb.checked = !allChecked;
+          cb.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+      
+      console.log(`✓ Bulk action: ${allChecked ? 'Unmark' : 'Mark'} all complete`);
+    });
+    
+    // Copy All Prompts
+    document.addEventListener('click', async (e) => {
+      if (!e.target.closest('[data-action="bulk-copy-all"]')) return;
+      
+      const prompts = [];
+      document.querySelectorAll('.pf-prompt').forEach((promptEl, index) => {
+        const text = promptEl.value || promptEl.textContent;
+        if (text && text.trim()) {
+          prompts.push(`=== Step ${index + 1} ===\n${text.trim()}`);
+        }
+      });
+      
+      if (prompts.length === 0) {
+        alert('No prompts to copy.');
+        return;
+      }
+      
+      const allText = prompts.join('\n\n');
+      
+      try {
+        await copyToClipboard(allText);
+        
+        const btn = e.target.closest('[data-action="bulk-copy-all"]');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<svg class="pf-bulk-action-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }, 2000);
+        
+        console.log('✓ Bulk action: Copied all prompts');
+      } catch(err) {
+        alert('Failed to copy prompts.');
+      }
+    });
+    
+    // Reset All
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-action="bulk-reset"]')) return;
+      
+      if (!confirm('Reset all steps and progress? This cannot be undone.')) return;
+      
+      // Uncheck all steps
+      document.querySelectorAll('.pf-step-checkbox').forEach(cb => {
+        if (cb.checked) {
+          cb.checked = false;
+          cb.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+      
+      // Clear all variable inputs
+      document.querySelectorAll('.pf-var-input, .pf-var-textarea, .pf-var-select').forEach(input => {
+        if (input.type === 'checkbox') {
+          input.checked = false;
+        } else {
+          input.value = '';
+        }
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      
+      // Clear all notes
+      document.querySelectorAll('[data-notes-input]').forEach(textarea => {
+        textarea.value = '';
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      
+      // Reset all timers
+      document.querySelectorAll('[data-action="reset-time"]').forEach(btn => {
+        btn.click();
+      });
+      
+      console.log('✓ Bulk action: Reset all');
+    });
+    
+    console.log('✓ Phase 3: Bulk Actions initialized');
+  }
+}
+
+/**
+ * Phase 3.5: Time Tracking
+ */
+class TimeTracker {
+  constructor() {
+    this.timers = {};
+    this.storageKey = 'pf_time_tracking';
+    this.loadTimers();
+    this.init();
+  }
+  
+  loadTimers() {
+    try {
+      const workflowId = getWorkflowId();
+      if (!workflowId) return;
+      
+      const key = `${this.storageKey}_${workflowId}`;
+      const data = localStorage.getItem(key);
+      this.timers = data ? JSON.parse(data) : {};
+    } catch(e) {}
+  }
+  
+  saveTimers() {
+    try {
+      const workflowId = getWorkflowId();
+      if (!workflowId) return;
+      
+      const key = `${this.storageKey}_${workflowId}`;
+      localStorage.setItem(key, JSON.stringify(this.timers));
+    } catch(e) {}
+  }
+  
+  getTimer(stepId) {
+    if (!this.timers[stepId]) {
+      this.timers[stepId] = {
+        elapsed: 0,
+        isRunning: false,
+        startTime: null
+      };
+    }
+    return this.timers[stepId];
+  }
+  
+  startTimer(stepId) {
+    const timer = this.getTimer(stepId);
+    if (timer.isRunning) return;
+    
+    timer.isRunning = true;
+    timer.startTime = Date.now();
+    this.updateDisplay(stepId);
+    
+    // Start interval
+    timer.interval = setInterval(() => {
+      this.updateDisplay(stepId);
+    }, 1000);
+    
+    this.saveTimers();
+  }
+  
+  pauseTimer(stepId) {
+    const timer = this.getTimer(stepId);
+    if (!timer.isRunning) return;
+    
+    timer.isRunning = false;
+    timer.elapsed += Date.now() - timer.startTime;
+    timer.startTime = null;
+    
+    if (timer.interval) {
+      clearInterval(timer.interval);
+      timer.interval = null;
+    }
+    
+    this.updateDisplay(stepId);
+    this.saveTimers();
+  }
+  
+  resetTimer(stepId) {
+    const timer = this.getTimer(stepId);
+    
+    if (timer.interval) {
+      clearInterval(timer.interval);
+      timer.interval = null;
+    }
+    
+    timer.elapsed = 0;
+    timer.isRunning = false;
+    timer.startTime = null;
+    
+    this.updateDisplay(stepId);
+    this.saveTimers();
+  }
+  
+  getElapsedSeconds(stepId) {
+    const timer = this.getTimer(stepId);
+    let total = timer.elapsed;
+    
+    if (timer.isRunning && timer.startTime) {
+      total += Date.now() - timer.startTime;
+    }
+    
+    return Math.floor(total / 1000);
+  }
+  
+  formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+  
+  updateDisplay(stepId) {
+    const tracker = document.querySelector(`[data-time-tracker][data-step-id="${stepId}"]`);
+    if (!tracker) return;
+    
+    const timer = this.getTimer(stepId);
+    const display = tracker.querySelector('[data-time-display]');
+    const startBtn = tracker.querySelector('[data-action="start-time"]');
+    const pauseBtn = tracker.querySelector('[data-action="pause-time"]');
+    
+    if (display) {
+      const seconds = this.getElapsedSeconds(stepId);
+      display.textContent = this.formatTime(seconds);
+    }
+    
+    if (timer.isRunning) {
+      if (startBtn) startBtn.hidden = true;
+      if (pauseBtn) pauseBtn.hidden = false;
+    } else {
+      if (startBtn) startBtn.hidden = false;
+      if (pauseBtn) pauseBtn.hidden = true;
+    }
+  }
+  
+  init() {
+    // Bind buttons
+    document.addEventListener('click', (e) => {
+      const tracker = e.target.closest('[data-time-tracker]');
+      if (!tracker) return;
+      
+      const stepId = tracker.dataset.stepId;
+      if (!stepId) return;
+      
+      if (e.target.closest('[data-action="start-time"]')) {
+        this.startTimer(stepId);
+      } else if (e.target.closest('[data-action="pause-time"]')) {
+        this.pauseTimer(stepId);
+      } else if (e.target.closest('[data-action="reset-time"]')) {
+        if (confirm('Reset timer for this step?')) {
+          this.resetTimer(stepId);
+        }
+      }
+    });
+    
+    // Restore timer states
+    document.querySelectorAll('[data-time-tracker]').forEach(tracker => {
+      const stepId = tracker.dataset.stepId;
+      if (stepId) {
+        this.updateDisplay(stepId);
+      }
+    });
+    
+    console.log('✓ Phase 3: Time Tracking initialized');
+  }
+}
+
+// Initialize Phase 3 features on boot
+const _boot_phase3 = boot;
+boot = function() {
+  _boot_phase3();
+  
+  // Initialize Phase 3 features
+  if (typeof SmartVariablePrefill !== 'undefined') {
+    window.PF.smartPrefill = new SmartVariablePrefill();
+  }
+  
+  if (typeof KeyboardShortcutsPanel !== 'undefined') {
+    window.PF.shortcuts = new KeyboardShortcutsPanel();
+  }
+  
+  if (typeof StepNotes !== 'undefined') {
+    window.PF.stepNotes = new StepNotes();
+  }
+  
+  if (typeof BulkActions !== 'undefined') {
+    window.PF.bulkActions = new BulkActions();
+    window.PF.bulkActions.init();
+  }
+  
+  if (typeof TimeTracker !== 'undefined') {
+    window.PF.timeTracker = new TimeTracker();
+  }
+  
+  console.log('✓ Phase 3: All Advanced Enhancements initialized');
+};
+
+console.log('✓ Phase 3: Advanced Enhancements loaded');
+
 })();
 
 

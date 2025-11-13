@@ -106,6 +106,35 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
         </div>
     <?php else: ?>
         <!-- SCENARIO 2 & 3: Some/All free → Render steps -->
+        
+        <!-- Phase 3: Bulk Actions Bar -->
+        <div class="pf-bulk-actions">
+            <span class="pf-bulk-actions__label">Quick Actions</span>
+            <button type="button" class="pf-bulk-action-btn" data-action="bulk-mark-complete">
+                <svg class="pf-bulk-action-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 11 12 14 22 4"></polyline>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                Mark All Done
+            </button>
+            <button type="button" class="pf-bulk-action-btn" data-action="bulk-copy-all">
+                <svg class="pf-bulk-action-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy All Prompts
+            </button>
+            <button type="button" class="pf-bulk-action-btn pf-bulk-action-btn--danger" data-action="bulk-reset">
+                <svg class="pf-bulk-action-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                    <path d="M21 3v5h-5"></path>
+                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                    <path d="M3 21v-5h5"></path>
+                </svg>
+                Reset All
+            </button>
+        </div>
+        
         <ol class="pf-steps-list" aria-live="polite">
         <?php $initial_active_assigned = false; ?>
         <?php foreach ($steps as $index => $step): ?>
@@ -459,6 +488,34 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                         </div>
                     <?php else: ?>
                         <!-- Full Step Content (only rendered if visible) -->
+                    
+                    <?php
+                    // Phase 3: Time Tracker (only for visible steps with estimated time)
+                    if (!empty($estimated_time_min)):
+                    ?>
+                        <div class="pf-step-time-tracker" 
+                             data-time-tracker 
+                             data-step-id="<?php echo esc_attr($step_dom_id); ?>"
+                             data-estimated-time="<?php echo esc_attr($estimated_time_min); ?>">
+                            <svg class="pf-step-time-tracker__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <div class="pf-step-time-tracker__content">
+                                <div class="pf-step-time-tracker__label">Time Tracking</div>
+                                <div class="pf-step-time-tracker__time" data-time-display>0:00</div>
+                                <div class="pf-step-time-tracker__meta">
+                                    Estimated: <?php echo esc_html($estimated_time_min); ?> min
+                                </div>
+                            </div>
+                            <div class="pf-step-time-tracker__actions">
+                                <button class="pf-time-action-btn" data-action="start-time" type="button">Start</button>
+                                <button class="pf-time-action-btn" data-action="pause-time" type="button" hidden>Pause</button>
+                                <button class="pf-time-action-btn" data-action="reset-time" type="button">Reset</button>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    
                     <!-- Prompt Type -->
                     <?php if ($step_type === 'prompt' && !empty($prompt)): ?>
                         
@@ -670,6 +727,35 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                         </div>
                     <?php endif; ?>
                     
+                    <?php
+                    // Phase 3: Step Notes (Personal Comments)
+                    if (!$step_is_locked):
+                    ?>
+                        <div class="pf-step-notes" data-step-notes data-step-id="<?php echo esc_attr($step_dom_id); ?>">
+                            <div class="pf-step-notes__header">
+                                <svg class="pf-step-notes__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                <span class="pf-step-notes__title">Personal Notes</span>
+                            </div>
+                            <textarea 
+                                class="pf-step-notes__textarea" 
+                                placeholder="Add your notes, insights, or reminders for this step..."
+                                data-notes-input
+                                aria-label="Personal notes for <?php echo esc_attr($title); ?>"></textarea>
+                            <div class="pf-step-notes__meta">
+                                <span class="pf-step-notes__saved-indicator" data-saved-indicator>
+                                    <svg class="pf-step-notes__saved-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Saved
+                                </span>
+                                <span class="pf-step-notes__char-count" data-char-count>0 characters</span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    
                     <?php endif; // End locked check ?>
                     
                 </div>
@@ -681,4 +767,113 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
     <?php endif; ?> <!-- End if/else for all_locked -->
     
 </section>
+
+<!-- Phase 3: Keyboard Shortcuts Panel (Global, triggered by ? key) -->
+<div class="pf-shortcuts-backdrop" data-shortcuts-backdrop></div>
+<div class="pf-shortcuts-panel" data-shortcuts-panel aria-labelledby="shortcuts-title" role="dialog" aria-modal="true">
+    <div class="pf-shortcuts-panel__header">
+        <h2 class="pf-shortcuts-panel__title" id="shortcuts-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"></path>
+            </svg>
+            Keyboard Shortcuts
+        </h2>
+        <button class="pf-shortcuts-panel__close" 
+                data-action="close-shortcuts" 
+                type="button" 
+                aria-label="Close shortcuts panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+    <div class="pf-shortcuts-panel__body">
+        <div class="pf-shortcuts-group">
+            <h3 class="pf-shortcuts-group__title">Navigation</h3>
+            <div class="pf-shortcuts-list">
+                <div class="pf-shortcut-item">
+                    <span class="pf-shortcut-item__action">Next step</span>
+                    <div class="pf-shortcut-item__keys">
+                        <kbd class="pf-kbd">J</kbd>
+                    </div>
+                </div>
+                <div class="pf-shortcut-item">
+                    <span class="pf-shortcut-item__action">Previous step</span>
+                    <div class="pf-shortcut-item__keys">
+                        <kbd class="pf-kbd">K</kbd>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pf-shortcuts-group">
+            <h3 class="pf-shortcuts-group__title">Actions</h3>
+            <div class="pf-shortcuts-list">
+                <div class="pf-shortcut-item">
+                    <span class="pf-shortcut-item__action">Copy current prompt</span>
+                    <div class="pf-shortcut-item__keys">
+                        <kbd class="pf-kbd">Cmd</kbd>
+                        <span>+</span>
+                        <kbd class="pf-kbd">C</kbd>
+                    </div>
+                </div>
+                <div class="pf-shortcut-item">
+                    <span class="pf-shortcut-item__action">Mark step as done</span>
+                    <div class="pf-shortcut-item__keys">
+                        <kbd class="pf-kbd">Cmd</kbd>
+                        <span>+</span>
+                        <kbd class="pf-kbd">Enter</kbd>
+                    </div>
+                </div>
+                <div class="pf-shortcut-item">
+                    <span class="pf-shortcut-item__action">Toggle step collapse</span>
+                    <div class="pf-shortcut-item__keys">
+                        <kbd class="pf-kbd">Space</kbd>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pf-shortcuts-group">
+            <h3 class="pf-shortcuts-group__title">Time Tracking</h3>
+            <div class="pf-shortcuts-list">
+                <div class="pf-shortcut-item">
+                    <span class="pf-shortcut-item__action">Start/Pause timer</span>
+                    <div class="pf-shortcut-item__keys">
+                        <kbd class="pf-kbd">T</kbd>
+                    </div>
+                </div>
+                <div class="pf-shortcut-item">
+                    <span class="pf-shortcut-item__action">Reset timer</span>
+                    <div class="pf-shortcut-item__keys">
+                        <kbd class="pf-kbd">Shift</kbd>
+                        <span>+</span>
+                        <kbd class="pf-kbd">T</kbd>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pf-shortcuts-group">
+            <h3 class="pf-shortcuts-group__title">Help</h3>
+            <div class="pf-shortcuts-list">
+                <div class="pf-shortcut-item">
+                    <span class="pf-shortcut-item__action">Show/hide this panel</span>
+                    <div class="pf-shortcut-item__keys">
+                        <kbd class="pf-kbd">?</kbd>
+                    </div>
+                </div>
+                <div class="pf-shortcut-item">
+                    <span class="pf-shortcut-item__action">Close dialog</span>
+                    <div class="pf-shortcut-item__keys">
+                        <kbd class="pf-kbd">Esc</kbd>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </div>

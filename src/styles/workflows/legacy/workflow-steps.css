@@ -3256,3 +3256,585 @@
     gap: var(--pf-space-2, .5rem);
   }
 }
+
+/* ====================================================================
+   PHASE 3 — ADVANCED ENHANCEMENTS (Power-User Features)
+   ==================================================================== */
+
+/* === 1. SMART VARIABLE PREFILL (Autocomplete Suggestions) === */
+.pf-var-input-wrapper {
+  position: relative; /* For autocomplete dropdown positioning */
+}
+
+.pf-autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--pf-bg-elevated, #fff);
+  border: 1px solid var(--pf-border, #e0e0e0);
+  border-radius: var(--pf-radius-md, 8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  margin-top: 4px;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.pf-autocomplete.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.pf-autocomplete-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  border-bottom: 1px solid var(--pf-border-light, #f0f0f0);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pf-autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.pf-autocomplete-item:hover,
+.pf-autocomplete-item.is-active {
+  background: var(--pf-bg-hover, #f5f5f5);
+}
+
+.pf-autocomplete-item__icon {
+  width: 14px;
+  height: 14px;
+  color: var(--pf-text-muted, #999);
+  flex-shrink: 0;
+}
+
+.pf-autocomplete-item__text {
+  flex: 1;
+  font-size: 14px;
+  color: var(--pf-text, #333);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pf-autocomplete-item__meta {
+  font-size: 12px;
+  color: var(--pf-text-muted, #999);
+  flex-shrink: 0;
+}
+
+/* Prefill indicator badge */
+.pf-var-prefill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 8px;
+  animation: prefillPulse 2s infinite;
+}
+
+@keyframes prefillPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* === 2. KEYBOARD SHORTCUTS PANEL (? key) === */
+.pf-shortcuts-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  background: var(--pf-bg-elevated, #fff);
+  border-radius: var(--pf-radius-lg, 12px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.pf-shortcuts-panel.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: all;
+}
+
+.pf-shortcuts-panel__header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--pf-border, #e0e0e0);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pf-shortcuts-panel__title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--pf-text, #333);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pf-shortcuts-panel__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  color: var(--pf-text-muted, #999);
+}
+
+.pf-shortcuts-panel__close:hover {
+  background: var(--pf-bg-hover, #f5f5f5);
+}
+
+.pf-shortcuts-panel__body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.pf-shortcuts-group {
+  margin-bottom: 24px;
+}
+
+.pf-shortcuts-group:last-child {
+  margin-bottom: 0;
+}
+
+.pf-shortcuts-group__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--pf-text-muted, #999);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.pf-shortcuts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pf-shortcut-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--pf-bg-subtle, #f9f9f9);
+  border-radius: 6px;
+}
+
+.pf-shortcut-item__action {
+  font-size: 14px;
+  color: var(--pf-text, #333);
+}
+
+.pf-shortcut-item__keys {
+  display: flex;
+  gap: 4px;
+}
+
+.pf-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  background: #fff;
+  border: 1px solid var(--pf-border, #e0e0e0);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pf-text, #333);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Backdrop overlay */
+.pf-shortcuts-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.pf-shortcuts-backdrop.is-visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* === 3. STEP NOTES/COMMENTS (Personal Notes per Step) === */
+.pf-step-notes {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--pf-bg-subtle, #f9f9f9);
+  border-radius: var(--pf-radius-md, 8px);
+  border: 1px solid var(--pf-border, #e0e0e0);
+}
+
+.pf-step-notes__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pf-step-notes__icon {
+  width: 16px;
+  height: 16px;
+  color: var(--pf-text-muted, #999);
+}
+
+.pf-step-notes__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pf-text, #333);
+}
+
+.pf-step-notes__textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid var(--pf-border, #e0e0e0);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--pf-text, #333);
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.pf-step-notes__textarea:focus {
+  outline: none;
+  border-color: var(--pf-brand, #5469d4);
+  box-shadow: 0 0 0 3px rgba(84, 105, 212, 0.1);
+}
+
+.pf-step-notes__textarea::placeholder {
+  color: var(--pf-text-muted, #999);
+}
+
+.pf-step-notes__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--pf-text-muted, #999);
+}
+
+.pf-step-notes__saved-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.pf-step-notes__saved-indicator.is-visible {
+  opacity: 1;
+}
+
+.pf-step-notes__saved-icon {
+  width: 12px;
+  height: 12px;
+  color: var(--pf-success, #10b981);
+}
+
+/* === 4. BULK ACTIONS (Mark all, Copy all, Reset) === */
+.pf-bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--pf-bg-subtle, #f9f9f9);
+  border-radius: var(--pf-radius-md, 8px);
+  border: 1px solid var(--pf-border, #e0e0e0);
+  margin-bottom: 16px;
+}
+
+.pf-bulk-actions__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pf-text, #333);
+  margin-right: auto;
+}
+
+.pf-bulk-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid var(--pf-border, #e0e0e0);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pf-text, #333);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pf-bulk-action-btn:hover {
+  background: var(--pf-brand, #5469d4);
+  border-color: var(--pf-brand, #5469d4);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(84, 105, 212, 0.3);
+}
+
+.pf-bulk-action-btn__icon {
+  width: 14px;
+  height: 14px;
+}
+
+.pf-bulk-action-btn--danger {
+  color: var(--pf-danger, #ef4444);
+}
+
+.pf-bulk-action-btn--danger:hover {
+  background: var(--pf-danger, #ef4444);
+  border-color: var(--pf-danger, #ef4444);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* === 5. TIME TRACKING (Actual vs Estimated) === */
+.pf-step-time-tracker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: var(--pf-radius-md, 8px);
+  border: 1px solid #fbbf24;
+  margin-bottom: 16px;
+}
+
+.pf-step-time-tracker__icon {
+  width: 20px;
+  height: 20px;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.pf-step-time-tracker__content {
+  flex: 1;
+}
+
+.pf-step-time-tracker__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.pf-step-time-tracker__time {
+  font-size: 18px;
+  font-weight: 700;
+  color: #92400e;
+}
+
+.pf-step-time-tracker__meta {
+  font-size: 12px;
+  color: #92400e;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+.pf-step-time-tracker__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pf-time-action-btn {
+  padding: 6px 10px;
+  background: #fff;
+  border: 1px solid #fbbf24;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #92400e;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pf-time-action-btn:hover {
+  background: #fbbf24;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
+}
+
+/* Time tracking summary (at workflow end) */
+.pf-time-summary {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-radius: var(--pf-radius-lg, 12px);
+  border: 1px solid #60a5fa;
+  margin-top: 24px;
+}
+
+.pf-time-summary__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pf-time-summary__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.pf-time-stat {
+  text-align: center;
+}
+
+.pf-time-stat__value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 4px;
+}
+
+.pf-time-stat__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e40af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+.pf-time-stat--variance {
+  color: #10b981;
+}
+
+.pf-time-stat--variance.is-over-time {
+  color: #ef4444;
+}
+
+/* ====================================================================
+   PHASE 3 — MOBILE RESPONSIVENESS
+   ==================================================================== */
+
+@media (max-width: 768px) {
+  /* Autocomplete full-width on mobile */
+  .pf-autocomplete {
+    max-height: 150px;
+  }
+  
+  /* Shortcuts panel full-width */
+  .pf-shortcuts-panel {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .pf-shortcuts-panel__header {
+    padding: 16px 20px;
+  }
+  
+  .pf-shortcuts-panel__title {
+    font-size: 18px;
+  }
+  
+  .pf-shortcuts-panel__body {
+    padding: 16px 20px;
+  }
+  
+  /* Bulk actions stack on mobile */
+  .pf-bulk-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .pf-bulk-actions__label {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+  
+  .pf-bulk-action-btn {
+    flex: 1;
+    justify-content: center;
+    min-width: calc(50% - 4px);
+  }
+  
+  /* Time tracker stack on mobile */
+  .pf-step-time-tracker {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .pf-step-time-tracker__actions {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Time summary single column */
+  .pf-time-summary__stats {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Notes full-width */
+  .pf-step-notes {
+    padding: 12px;
+  }
+  
+  .pf-step-notes__textarea {
+    min-height: 100px;
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+}
+
+@media (max-width: 480px) {
+  /* Keyboard keys smaller on small screens */
+  .pf-kbd {
+    min-width: 20px;
+    height: 20px;
+    font-size: 11px;
+    padding: 0 6px;
+  }
+  
+  /* Compact bulk actions */
+  .pf-bulk-action-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
