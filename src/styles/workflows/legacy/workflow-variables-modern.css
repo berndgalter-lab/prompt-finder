@@ -56,7 +56,7 @@
   padding: 0.75rem 0 !important;
 }
 
-/* Inputs - Clean & Minimal */
+/* Inputs - ULTRA Clean & Monochrom */
 .pf-var-item input,
 .pf-var-item textarea,
 .pf-var-item select,
@@ -68,10 +68,10 @@
   border-radius: 8px !important;
   padding: 0.75rem 1rem !important;
   font-size: 0.9375rem !important;
-  transition: all 0.2s ease !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
 
-/* Focus State */
+/* Focus State - Minimal (nur leicht dunkler Border) */
 .pf-var-item input:focus,
 .pf-var-item textarea:focus,
 .pf-var-item select:focus,
@@ -79,15 +79,16 @@
 .pf-field textarea:focus,
 .pf-field select:focus {
   background: #ffffff !important;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  border-color: #9ca3af !important; /* Grau statt Blau */
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.03) !important; /* Grau statt Blau */
   outline: none !important;
 }
 
-/* Valid State */
+/* Valid State - KEINE Farbe */
 .pf-var-item[data-state="valid"] input,
-.pf-var-item[data-validation="valid"] input {
-  border-color: #d1fae5 !important;
+.pf-var-item[data-validation="valid"] input,
+.pf-var-item[data-status="required-filled"] input {
+  border-color: #d1d5db !important; /* Grau statt Grün */
   background: #ffffff !important;
 }
 

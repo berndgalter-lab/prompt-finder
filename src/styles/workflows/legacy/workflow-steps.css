@@ -91,7 +91,38 @@
 
 /* Priority Section - Minimale Hervorhebung */
 .pf-step-section--priority {
-  background: #fafafa !important; /* Sehr subtil */
+  background: transparent !important; /* Keine Background mehr */
+}
+
+/* Priority Badge - Neutral/Grau statt Gelb */
+.pf-step-section-priority-badge,
+.pf-priority-badge,
+[data-priority-badge] {
+  background: #f3f4f6 !important; /* Hellgrau statt Gelb */
+  color: #6b7280 !important; /* Dunkelgrau statt Orange */
+  border: 1px solid #e5e7eb !important;
+  font-weight: 600 !important;
+}
+
+/* Required Badge - Neutral/Grau statt Rot */
+.pf-badge--required,
+.pf-var-badge.required,
+.pf-badge.is-required,
+[data-required="true"] .pf-badge {
+  background: #f3f4f6 !important; /* Hellgrau statt Rot */
+  color: #6b7280 !important; /* Dunkelgrau */
+  border: 1px solid #e5e7eb !important;
+  font-weight: 600 !important;
+}
+
+/* Optional Badge - Neutral/Grau */
+.pf-badge--optional,
+.pf-var-badge.optional,
+.pf-badge.is-optional {
+  background: transparent !important;
+  color: #9ca3af !important; /* Sehr hell Grau */
+  border: 1px solid #e5e7eb !important;
+  font-weight: 500 !important;
 }
 
 /* ========================================
@@ -126,7 +157,7 @@
   box-shadow: none !important;
 }
 
-/* Variable Input - Clean & Minimal */
+/* Variable Input - ULTRA Clean & Monochrom */
 .pf-var input,
 .pf-var textarea,
 .pf-var select {
@@ -135,23 +166,25 @@
   border-radius: 8px !important;
   padding: 0.75rem 1rem !important;
   font-size: 0.9375rem !important;
-  transition: all 0.2s ease !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
 
-/* Focus State - Accent nur bei Interaktion */
+/* Focus State - Minimal (nur leicht dunkler Border) */
 .pf-var input:focus,
 .pf-var textarea:focus,
 .pf-var select:focus {
   background: #ffffff !important;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  border-color: #9ca3af !important; /* Grau statt Blau */
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.03) !important; /* Grau statt Blau */
   outline: none !important;
 }
 
-/* Valid State - Subtil */
+/* Valid State - KEINE Farbe (nur subtil heller) */
 .pf-var[data-state="valid"] input,
-.pf-var[data-validation="valid"] input {
-  border-color: #d1fae5 !important;
+.pf-var[data-validation="valid"] input,
+.pf-var[data-status="required-filled"] input,
+.pf-var[data-status="required-filled"] textarea {
+  border-color: #d1d5db !important; /* Grau statt Grün */
   background: #ffffff !important;
 }
 
@@ -181,34 +214,40 @@
 }
 
 /* ========================================
-   PHASE 2: CHECKMARK ICON (konsistent mit Variables)
+   CHECKMARK ICON (Monochrom/Grau)
    ======================================== */
 
-.pf-step-status-icon {
-  width: 28px;
-  height: 28px;
+.pf-step-status-icon,
+.pf-var-icon,
+.pf-checkmark-icon,
+svg.pf-icon {
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
-  color: var(--pf-neutral-400, #9ca3af);
-  transition: color 0.3s ease, transform 0.2s ease;
+  color: #d1d5db !important; /* Hellgrau für alle Icons */
+  transition: color 0.2s ease;
   cursor: pointer;
 }
 
-/* Status States (consistent with Variables Section) */
+/* Status States - Alle Icons bleiben grau */
 .pf-step[data-status="completed"] .pf-step-status-icon,
 .pf-step.is-completed .pf-step-status-icon,
-.pf-step.pf-step--completed .pf-step-status-icon {
-  color: var(--pf-success, #10b981);
+.pf-step.pf-step--completed .pf-step-status-icon,
+.pf-var[data-state="valid"] .pf-var-icon,
+.pf-var[data-validation="valid"] svg {
+  color: #9ca3af !important; /* Etwas dunkler Grau wenn completed */
 }
 
 .pf-step[data-status="active"] .pf-step-status-icon,
 .pf-step.is-active .pf-step-status-icon,
 .pf-step.pf-step--active .pf-step-status-icon {
-  color: var(--pf-accent, #3b82f6);
+  color: #6b7280 !important; /* Dunkler Grau wenn active */
 }
 
-/* Hover effect */
-.pf-step-status-icon:hover {
-  transform: scale(1.1);
+/* Hover effect - Minimal */
+.pf-step-status-icon:hover,
+.pf-var-icon:hover {
+  color: #6b7280 !important; /* Leicht dunkler bei Hover */
 }
 
 /* ========================================
@@ -247,7 +286,7 @@
 
 .pf-step-section-label svg {
   flex-shrink: 0;
-  color: var(--pf-accent, #3b82f6);
+  color: #9ca3af !important; /* Grau statt Blau */
 }
 
 .pf-step-section-desc {
