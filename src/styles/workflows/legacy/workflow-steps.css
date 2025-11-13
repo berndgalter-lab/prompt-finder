@@ -203,6 +203,10 @@
   display: none;
 }
 
+.pf-step-continue-section.is-visible {
+  animation: slideInUp 0.4s ease-out forwards;
+}
+
 @keyframes slideInUp {
   from {
     opacity: 0;
@@ -857,6 +861,20 @@
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
+}
+
+/* Success states for copy buttons (Phase 1 Fix) */
+.pf-btn-copy-top.is-success,
+.pf-quick-action.is-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border-color: #10b981 !important;
+  color: #fff !important;
+  transform: scale(1.05);
+}
+
+.pf-btn-copy-top.is-success svg,
+.pf-quick-action.is-success svg {
+  color: #fff !important;
 }
 
 /* Individual quick action button */

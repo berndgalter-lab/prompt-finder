@@ -2403,6 +2403,425 @@ console.log('✓ PF ready — Unified renderers available: PF.renderWorkflowVar(
 console.log('✓ PF v1.7 — Unified Variable API: renderVar(), setVarValidity(), mountWorkflowVars()');
 
 // ====================================================================
+// PHASE 1 & 2 — MISSING EVENT LISTENERS (Critical Fixes)
+// ====================================================================
+
+/**
+ * Initialize Phase 1 Event Listeners
+ * Binds all interactive elements from Phase 1
+ */
+function initPhase1EventListeners() {
+  console.log('🔧 Initializing Phase 1 Event Listeners...');
+  
+  // ===== 1. Top Copy Button =====
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.pf-btn-copy-top');
+    if (!btn) return;
+    
+    const step = btn.closest('.pf-step');
+    if (!step) return;
+    
+    const promptEl = step.querySelector('.pf-prompt');
+    if (!promptEl) return;
+    
+    const text = promptEl.value || promptEl.textContent;
+    
+    try {
+      await copyToClipboard(text);
+      
+      // Visual feedback
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        Copied!
+      `;
+      btn.classList.add('is-success');
+      
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.classList.remove('is-success');
+      }, 2000);
+      
+      console.log('✓ Top copy button: Copied prompt');
+    } catch(err) {
+      console.error('Failed to copy:', err);
+      alert('Failed to copy prompt. Please try again.');
+    }
+  });
+  
+  // ===== 2. Continue to Next Step Button =====
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-action="continue-next-step"]');
+    if (!btn) return;
+    
+    const nextStepNum = btn.dataset.nextStep;
+    if (!nextStepNum) return;
+    
+    const nextStepId = `step-${nextStepNum}`;
+    const nextStepEl = document.getElementById(nextStepId);
+    
+    if (nextStepEl) {
+      // Focus next step
+      focusStepElement(nextStepEl);
+      
+      // Expand if collapsed
+      if (nextStepEl.classList.contains('is-collapsed')) {
+        const toggleBtn = nextStepEl.querySelector('.pf-step-toggle');
+        if (toggleBtn) toggleBtn.click();
+      }
+      
+      console.log(`✓ Navigate to Step ${nextStepNum}`);
+    }
+  });
+  
+  // ===== 3. Quick Actions - Copy =====
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-action="quick-copy"]');
+    if (!btn) return;
+    
+    const stepId = btn.dataset.stepId;
+    if (!stepId) return;
+    
+    const step = document.getElementById(stepId);
+    if (!step) return;
+    
+    const promptEl = step.querySelector('.pf-prompt');
+    if (!promptEl) return;
+    
+    const text = promptEl.value || promptEl.textContent;
+    
+    try {
+      await copyToClipboard(text);
+      
+      // Visual feedback
+      const icon = btn.querySelector('svg');
+      const label = btn.querySelector('.pf-quick-action-label');
+      const originalIconHTML = icon.innerHTML;
+      const originalLabel = label ? label.textContent : '';
+      
+      icon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
+      if (label) label.textContent = 'Copied!';
+      btn.classList.add('is-success');
+      
+      setTimeout(() => {
+        icon.innerHTML = originalIconHTML;
+        if (label) label.textContent = originalLabel;
+        btn.classList.remove('is-success');
+      }, 1500);
+      
+      console.log('✓ Quick copy: Copied prompt');
+    } catch(err) {
+      console.error('Failed to copy:', err);
+    }
+  });
+  
+  // ===== 4. Quick Actions - Mark as Done =====
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-action="quick-complete"]');
+    if (!btn) return;
+    
+    const stepId = btn.dataset.stepId;
+    if (!stepId) return;
+    
+    const step = document.getElementById(stepId);
+    if (!step) return;
+    
+    const checkbox = step.querySelector('.pf-step-checkbox');
+    if (!checkbox) return;
+    
+    // Toggle completion
+    checkbox.checked = !checkbox.checked;
+    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+    
+    // Visual feedback on button
+    const checkPath = btn.querySelector('.check-path');
+    if (checkPath) {
+      if (checkbox.checked) {
+        checkPath.setAttribute('opacity', '1');
+      } else {
+        checkPath.setAttribute('opacity', '0');
+      }
+    }
+    
+    console.log(`✓ Quick complete: Step ${stepId} ${checkbox.checked ? 'completed' : 'uncompleted'}`);
+  });
+  
+  // ===== 5. Show Continue Button when Step Completed =====
+  document.addEventListener('change', (e) => {
+    if (!e.target.matches('.pf-step-checkbox')) return;
+    
+    const checkbox = e.target;
+    const step = checkbox.closest('.pf-step');
+    if (!step) return;
+    
+    const continueSection = step.querySelector('[data-continue-section]');
+    if (!continueSection) return;
+    
+    // Show/hide continue section based on completion
+    if (checkbox.checked) {
+      continueSection.removeAttribute('hidden');
+      continueSection.classList.add('is-visible');
+    } else {
+      continueSection.setAttribute('hidden', '');
+      continueSection.classList.remove('is-visible');
+    }
+  });
+  
+  // ===== 6. Update Variables "Fill these first" Counter =====
+  function updatePriorityVariableCounter() {
+    document.querySelectorAll('.pf-step-section--priority').forEach(section => {
+      const countBadge = section.querySelector('.pf-step-section-count');
+      if (!countBadge) return;
+      
+      const container = section.querySelector('[data-step-vars-ui]');
+      if (!container) return;
+      
+      const allVars = container.querySelectorAll('.pf-var[data-required="true"]');
+      const filledVars = Array.from(allVars).filter(varEl => {
+        const input = varEl.querySelector('[data-var-name]');
+        if (!input) return false;
+        
+        const value = input.type === 'checkbox' ? input.checked : input.value;
+        return value && String(value).trim() !== '';
+      });
+      
+      const total = allVars.length;
+      const filled = filledVars.length;
+      
+      countBadge.textContent = `(${filled}/${total} required)`;
+      
+      // Update section state
+      if (filled === total && total > 0) {
+        section.setAttribute('data-variables-filled', 'true');
+      } else {
+        section.removeAttribute('data-variables-filled');
+      }
+    });
+  }
+  
+  // Bind counter updates to variable changes
+  document.addEventListener('input', (e) => {
+    if (e.target.matches('.pf-var-input, .pf-var-textarea, .pf-var-select, .pf-var-checkbox')) {
+      updatePriorityVariableCounter();
+    }
+  });
+  
+  document.addEventListener('change', (e) => {
+    if (e.target.matches('.pf-var-input, .pf-var-textarea, .pf-var-select, .pf-var-checkbox')) {
+      updatePriorityVariableCounter();
+    }
+  });
+  
+  // Initial counter update
+  updatePriorityVariableCounter();
+  
+  console.log('✓ Phase 1 Event Listeners initialized');
+}
+
+/**
+ * Initialize Phase 2 Event Listeners
+ * Binds collapsible sections and sub-step progress
+ */
+function initPhase2EventListeners() {
+  console.log('🔧 Initializing Phase 2 Event Listeners...');
+  
+  // ===== 1. Collapsible Section Toggle =====
+  document.addEventListener('click', (e) => {
+    const toggleBtn = e.target.closest('[data-action="toggle-section"]');
+    if (!toggleBtn) return;
+    
+    const section = toggleBtn.closest('.pf-step-section--collapsible');
+    if (!section) return;
+    
+    const body = section.querySelector('[data-section-body]');
+    if (!body) return;
+    
+    const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+    const newState = !isExpanded;
+    
+    // Update aria
+    toggleBtn.setAttribute('aria-expanded', String(newState));
+    
+    // Toggle classes
+    section.classList.toggle('is-collapsed', !newState);
+    
+    // Animate
+    if (newState) {
+      body.style.maxHeight = body.scrollHeight + 'px';
+      section.classList.remove('is-collapsed');
+    } else {
+      body.style.maxHeight = '0';
+      section.classList.add('is-collapsed');
+    }
+    
+    console.log(`✓ Section toggle: ${newState ? 'Expanded' : 'Collapsed'}`);
+  });
+  
+  // ===== 2. Auto-collapse completed sections =====
+  document.addEventListener('change', (e) => {
+    if (!e.target.matches('.pf-var-input, .pf-var-textarea, .pf-var-select, .pf-var-checkbox')) return;
+    
+    const section = e.target.closest('.pf-step-section--collapsible');
+    if (!section) return;
+    
+    const container = section.querySelector('[data-step-vars-ui]');
+    if (!container) return;
+    
+    // Check if all required fields filled
+    const requiredVars = container.querySelectorAll('.pf-var[data-required="true"]');
+    const allFilled = Array.from(requiredVars).every(varEl => {
+      const input = varEl.querySelector('[data-var-name]');
+      if (!input) return false;
+      
+      const value = input.type === 'checkbox' ? input.checked : input.value;
+      return value && String(value).trim() !== '';
+    });
+    
+    if (allFilled && requiredVars.length > 0) {
+      section.setAttribute('data-section-complete', 'true');
+      
+      // Auto-collapse after 1 second
+      setTimeout(() => {
+        const toggleBtn = section.querySelector('[data-action="toggle-section"]');
+        if (toggleBtn && toggleBtn.getAttribute('aria-expanded') === 'true') {
+          toggleBtn.click();
+        }
+      }, 1000);
+    } else {
+      section.removeAttribute('data-section-complete');
+    }
+  });
+  
+  // ===== 3. Update Sub-Step Progress Badge =====
+  function updateSubStepProgress() {
+    document.querySelectorAll('[data-substeps-total]').forEach(badge => {
+      const step = badge.closest('.pf-step');
+      if (!step) return;
+      
+      const total = parseInt(badge.dataset.substepsTotal) || 0;
+      let completed = 0;
+      
+      // Count completed variables
+      const varsContainer = step.querySelector('[data-step-vars-ui]');
+      if (varsContainer) {
+        const allVars = varsContainer.querySelectorAll('.pf-var');
+        allVars.forEach(varEl => {
+          const input = varEl.querySelector('[data-var-name]');
+          if (!input) return;
+          
+          const value = input.type === 'checkbox' ? input.checked : input.value;
+          if (value && String(value).trim() !== '') {
+            completed++;
+          }
+        });
+      }
+      
+      // Count prompt (if textarea is filled)
+      const prompt = step.querySelector('.pf-prompt');
+      if (prompt) {
+        const value = prompt.value || prompt.textContent || '';
+        if (value.trim() !== '' && !value.includes('{')) {
+          completed++;
+        }
+      }
+      
+      // Update badge
+      const numberEl = badge.querySelector('[data-substeps-completed]');
+      if (numberEl) {
+        numberEl.textContent = completed;
+      }
+      
+      // Update state
+      if (completed === total && total > 0) {
+        badge.setAttribute('data-state', 'complete');
+      } else if (completed > 0) {
+        badge.setAttribute('data-state', 'in-progress');
+      } else {
+        badge.removeAttribute('data-state');
+      }
+    });
+  }
+  
+  // Bind progress updates
+  document.addEventListener('input', (e) => {
+    if (e.target.matches('.pf-var-input, .pf-var-textarea, .pf-var-select, .pf-prompt')) {
+      updateSubStepProgress();
+    }
+  });
+  
+  document.addEventListener('change', (e) => {
+    if (e.target.matches('.pf-var-input, .pf-var-textarea, .pf-var-select, .pf-var-checkbox, .pf-prompt')) {
+      updateSubStepProgress();
+    }
+  });
+  
+  // Initial progress update
+  updateSubStepProgress();
+  
+  // ===== 4. Inline Validation =====
+  function validateInput(input) {
+    const required = input.hasAttribute('required') || input.getAttribute('aria-required') === 'true';
+    const value = input.type === 'checkbox' ? input.checked : input.value.trim();
+    
+    if (required) {
+      if (!value || value === '') {
+        input.setAttribute('data-validation', 'invalid');
+        return false;
+      } else {
+        input.setAttribute('data-validation', 'valid');
+        return true;
+      }
+    } else {
+      // Optional fields
+      if (value && value !== '') {
+        input.setAttribute('data-validation', 'valid');
+      } else {
+        input.removeAttribute('data-validation');
+      }
+      return true;
+    }
+  }
+  
+  // Bind validation to inputs
+  document.addEventListener('blur', (e) => {
+    if (e.target.matches('.pf-var-input, .pf-var-textarea, .pf-var-select')) {
+      validateInput(e.target);
+    }
+  }, true);
+  
+  document.addEventListener('input', (e) => {
+    if (e.target.matches('.pf-var-input, .pf-var-textarea, .pf-var-select')) {
+      // Only validate if user has interacted
+      if (e.target.dataset.touched === 'true') {
+        validateInput(e.target);
+      }
+    }
+  });
+  
+  document.addEventListener('focus', (e) => {
+    if (e.target.matches('.pf-var-input, .pf-var-textarea, .pf-var-select')) {
+      e.target.dataset.touched = 'true';
+    }
+  }, true);
+  
+  console.log('✓ Phase 2 Event Listeners initialized');
+}
+
+/**
+ * Fix Keyboard Shortcuts Conflicts
+ * Disable old initKeyboardShortcuts, use Phase 3 version only
+ */
+function disableOldKeyboardShortcuts() {
+  // Mark old function as bound to prevent it from initializing
+  if (typeof keyboardShortcutsBound !== 'undefined') {
+    keyboardShortcutsBound = true;
+  }
+  console.log('✓ Old keyboard shortcuts disabled (using Phase 3 version)');
+}
+
+// ====================================================================
 // PHASE 3 — ADVANCED ENHANCEMENTS (Power-User Features)
 // ====================================================================
 
@@ -3145,12 +3564,26 @@ class TimeTracker {
   }
 }
 
-// Initialize Phase 3 features on boot
-const _boot_phase3 = boot;
+// Initialize ALL Phases on boot
+const _boot_all_phases = boot;
 boot = function() {
-  _boot_phase3();
+  _boot_all_phases();
   
-  // Initialize Phase 3 features
+  // Phase 1 & 2: Initialize missing event listeners
+  if (typeof initPhase1EventListeners === 'function') {
+    initPhase1EventListeners();
+  }
+  
+  if (typeof initPhase2EventListeners === 'function') {
+    initPhase2EventListeners();
+  }
+  
+  // Disable old keyboard shortcuts (prevent conflicts)
+  if (typeof disableOldKeyboardShortcuts === 'function') {
+    disableOldKeyboardShortcuts();
+  }
+  
+  // Phase 3: Initialize advanced features
   if (typeof SmartVariablePrefill !== 'undefined') {
     window.PF.smartPrefill = new SmartVariablePrefill();
   }
@@ -3172,7 +3605,7 @@ boot = function() {
     window.PF.timeTracker = new TimeTracker();
   }
   
-  console.log('✓ Phase 3: All Advanced Enhancements initialized');
+  console.log('✓✓✓ All Phases (1, 2, 3) initialized successfully! ✓✓✓');
 };
 
 console.log('✓ Phase 3: Advanced Enhancements loaded');
