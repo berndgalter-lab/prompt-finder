@@ -1528,6 +1528,71 @@ add_action('wp_head', function () {
     echo "\n" . '<meta property="og:site_name" content="' . esc_attr($site_name) . '">' . "\n";
 }, 99);
 
+/* =====================================================
+   WORKFLOW SEO - SMART META DESCRIPTION
+===================================================== */
+
+/**
+ * Smart Meta Description Generator (Hybrid Approach)
+ * 
+ * Priority Order:
+ * 1. Rank Math manual description (if user wrote one) → Use that
+ * 2. Auto-generate from tagline + ACF data → Honest, scalable
+ * 3. Fallback to title + generic text → Last resort
+ * 
+ * Benefits:
+ * - Scales to 200+ workflows (auto-generation)
+ * - Allows manual override for top 10 workflows (Rank Math Editor)
+ * - Uses REAL data (no fake "12K users" claims)
+ * - Consistent format across all workflows
+ * 
+ * @since 2.0.0
+ * @hook rank_math/frontend/description
+ */
+add_filter('rank_math/frontend/description', function($description) {
+    // Only for workflows
+    if (!is_singular('workflows')) {
+        return $description;
+    }
+    
+    // Priority 1: Keep Rank Math manual description
+    // If user wrote something in Rank Math Editor → respect it!
+    if (!empty($description)) {
+        return $description;
+    }
+    
+    // Priority 2: Auto-generate from tagline + real ACF data
+    $post_id = get_the_ID();
+    $tagline = get_field('tagline', $post_id);
+    
+    if ($tagline) {
+        // Start with tagline (max 12 words to save space)
+        $parts = [wp_trim_words($tagline, 12, '')];
+        
+        // Add step count (if available)
+        $steps = get_field('steps', $post_id) ?: [];
+        $step_count = count($steps);
+        if ($step_count > 0) {
+            $parts[] = $step_count . ($step_count === 1 ? ' step' : ' steps');
+        }
+        
+        // Add estimated time (if available)
+        $time = get_field('estimated_time_min', $post_id);
+        if ($time) {
+            $parts[] = $time . ' min';
+        }
+        
+        // Add format/tool (always)
+        $parts[] = 'Free ChatGPT workflow';
+        
+        // Join with bullets (looks clean in Google)
+        return implode(' • ', $parts);
+    }
+    
+    // Priority 3: Fallback (if no tagline exists)
+    return get_the_title($post_id) . ' • Step-by-step ChatGPT guide';
+}, 20);
+
 // Prompt Finder autoload + variables localize bootstrap
 require_once __DIR__ . '/src/php/app/bootstrap/pf-autoload.php';
 require_once __DIR__ . '/src/php/app/bootstrap/pf-variables-localize.php';
