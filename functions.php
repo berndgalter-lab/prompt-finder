@@ -1593,6 +1593,181 @@ add_filter('rank_math/frontend/description', function($description) {
     return get_the_title($post_id) . ' • Step-by-step ChatGPT guide';
 }, 20);
 
+/* =====================================================
+   WORKFLOW SEO - STRUCTURED DATA (Schema.org)
+===================================================== */
+
+/**
+ * Generate Schema.org markup for workflow pages
+ * 
+ * Implements Google-recommended schemas:
+ * - Article Schema (workflow content)
+ * - BreadcrumbList Schema (navigation)
+ * - WebPage Schema (page context)
+ * 
+ * Benefits:
+ * - Rich Results in Google (breadcrumbs, publish date, etc.)
+ * - Better content understanding by search engines
+ * - Improved click-through rates from search
+ * 
+ * @since 2.0.0
+ * @return void Outputs JSON-LD in <head>
+ */
+function pf_workflow_schema_markup() {
+    if (!is_singular('workflows')) {
+        return;
+    }
+    
+    $post_id = get_the_ID();
+    $title = get_field('workflow_title', $post_id) ?: get_the_title($post_id);
+    $summary = get_field('summary', $post_id) ?: '';
+    $tagline = get_field('tagline', $post_id) ?: '';
+    $steps = get_field('steps', $post_id) ?: [];
+    
+    // Calculate word count (for reading time estimation)
+    $word_count = str_word_count(strip_tags($summary));
+    foreach ($steps as $step) {
+        $word_count += str_word_count(strip_tags($step['prompt'] ?? ''));
+        $word_count += str_word_count(strip_tags($step['step_body'] ?? ''));
+    }
+    $reading_minutes = max(3, ceil($word_count / 200)); // ~200 words/min
+    
+    $schemas = [];
+    
+    // 1. Article Schema (main content)
+    $schemas[] = [
+        '@context' => 'https://schema.org',
+        '@type' => 'Article',
+        '@id' => get_permalink($post_id) . '#article',
+        'headline' => $title,
+        'description' => $summary ?: $tagline,
+        'image' => get_the_post_thumbnail_url($post_id, 'large') ?: get_site_icon_url(),
+        'datePublished' => get_the_date('c', $post_id),
+        'dateModified' => get_the_modified_date('c', $post_id),
+        'author' => [
+            '@type' => 'Organization',
+            'name' => get_bloginfo('name'),
+            'url' => home_url()
+        ],
+        'publisher' => [
+            '@type' => 'Organization',
+            'name' => get_bloginfo('name'),
+            'logo' => [
+                '@type' => 'ImageObject',
+                'url' => get_site_icon_url()
+            ]
+        ],
+        'mainEntityOfPage' => [
+            '@type' => 'WebPage',
+            '@id' => get_permalink($post_id)
+        ],
+        'articleSection' => 'Workflow Guides',
+        'wordCount' => $word_count,
+        'timeRequired' => 'PT' . $reading_minutes . 'M'
+    ];
+    
+    // 2. BreadcrumbList Schema (navigation)
+    $breadcrumbs = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            [
+                '@type' => 'ListItem',
+                'position' => 1,
+                'name' => 'Home',
+                'item' => home_url()
+            ],
+            [
+                '@type' => 'ListItem',
+                'position' => 2,
+                'name' => 'Workflows',
+                'item' => get_post_type_archive_link('workflows') ?: home_url('/workflows')
+            ]
+        ]
+    ];
+    
+    // Add category if exists
+    $categories = get_the_terms($post_id, 'workflow_category');
+    if (!$categories || is_wp_error($categories)) {
+        $categories = get_the_terms($post_id, 'category');
+    }
+    
+    if ($categories && !is_wp_error($categories)) {
+        $cat = reset($categories);
+        $breadcrumbs['itemListElement'][] = [
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => $cat->name,
+            'item' => get_term_link($cat)
+        ];
+        $breadcrumbs['itemListElement'][] = [
+            '@type' => 'ListItem',
+            'position' => 4,
+            'name' => $title,
+            'item' => get_permalink($post_id)
+        ];
+    } else {
+        $breadcrumbs['itemListElement'][] = [
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => $title,
+            'item' => get_permalink($post_id)
+        ];
+    }
+    
+    $schemas[] = $breadcrumbs;
+    
+    // 3. WebPage Schema (page context)
+    $schemas[] = [
+        '@context' => 'https://schema.org',
+        '@type' => 'WebPage',
+        '@id' => get_permalink($post_id),
+        'url' => get_permalink($post_id),
+        'name' => $title,
+        'description' => $tagline ?: $summary,
+        'isPartOf' => [
+            '@type' => 'WebSite',
+            '@id' => home_url() . '#website',
+            'url' => home_url(),
+            'name' => get_bloginfo('name')
+        ],
+        'primaryImageOfPage' => [
+            '@type' => 'ImageObject',
+            'url' => get_the_post_thumbnail_url($post_id, 'large') ?: get_site_icon_url()
+        ],
+        'datePublished' => get_the_date('c', $post_id),
+        'dateModified' => get_the_modified_date('c', $post_id)
+    ];
+    
+    // Output all schemas as JSON-LD
+    foreach ($schemas as $schema) {
+        echo '<script type="application/ld+json">' . PHP_EOL;
+        echo wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        echo PHP_EOL . '</script>' . PHP_EOL;
+    }
+}
+
+// Hook schema output into <head>
+add_action('wp_head', 'pf_workflow_schema_markup', 5);
+
+/**
+ * Add canonical tag and robots meta for workflows
+ * 
+ * Canonical: Prevents duplicate content issues
+ * Robots: Tells search engines to index and follow
+ * 
+ * @since 2.0.0
+ */
+add_action('wp_head', function() {
+    if (!is_singular('workflows')) {
+        return;
+    }
+    
+    $canonical = get_permalink();
+    echo '<link rel="canonical" href="' . esc_url($canonical) . '">' . PHP_EOL;
+    echo '<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">' . PHP_EOL;
+}, 1); // Early priority (before other meta tags)
+
 // Prompt Finder autoload + variables localize bootstrap
 require_once __DIR__ . '/src/php/app/bootstrap/pf-autoload.php';
 require_once __DIR__ . '/src/php/app/bootstrap/pf-variables-localize.php';
