@@ -3609,19 +3609,31 @@ boot = function() {
   // HERO CTA SMOOTH SCROLL (Value-First Strategy)
   // ============================================================
   
+  // Enable global smooth scrolling via CSS
+  document.documentElement.style.scrollBehavior = 'smooth';
+  
   // Smooth scroll for all CTA buttons that scroll to sections
   // Works for: Free, Signin (Try First), Pro (Try First)
-  document.querySelectorAll('[data-scroll-to]').forEach(btn => {
+  const scrollButtons = document.querySelectorAll('[data-scroll-to]');
+  
+  console.log(`Found ${scrollButtons.length} scroll buttons with [data-scroll-to]`);
+  
+  scrollButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.preventDefault(); // WICHTIG: Prevent default FIRST!
+      e.stopPropagation(); // Stop event bubbling
+      
       const target = e.currentTarget.dataset.scrollTo;
       const element = document.getElementById(target);
       
+      console.log(`Clicked scroll button, target: ${target}`, element);
+      
       if (element) {
-        e.preventDefault(); // Prevent default anchor behavior
-        
         // Calculate position with offset (80px from top for breathing room)
         const elementPosition = element.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - 80;
+        
+        console.log(`Scrolling to ${target} (offset: ${offsetPosition}px)`);
         
         // Smooth scroll to position
         window.scrollTo({
@@ -3642,6 +3654,8 @@ boot = function() {
             }, 1500);
           }
         }, 600); // Wait for scroll animation to complete
+      } else {
+        console.error(`Element with id "${target}" not found!`);
       }
     });
   });

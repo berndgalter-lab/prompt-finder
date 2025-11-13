@@ -156,14 +156,22 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
              "What should I do?"
              ======================================== -->
         <div class="pf-hero-cta">
-            <a href="<?php echo esc_url($cta['url']); ?>" 
-               class="pf-btn-hero <?php echo esc_attr($cta['class']); ?>"
-               <?php if ($cta['scroll']): ?>
-               data-scroll-to="variables"
-               <?php endif; ?>>
-                <?php echo esc_html($cta['text']); ?>
-                <span class="pf-btn-icon"><?php echo $cta['icon']; ?></span>
-            </a>
+            <?php if ($cta['scroll']): ?>
+                <!-- Scroll Button (mit data-scroll-to für smooth scroll) -->
+                <button type="button"
+                        class="pf-btn-hero <?php echo esc_attr($cta['class']); ?>"
+                        data-scroll-to="variables">
+                    <?php echo esc_html($cta['text']); ?>
+                    <span class="pf-btn-icon"><?php echo $cta['icon']; ?></span>
+                </button>
+            <?php else: ?>
+                <!-- Link Button (normale Navigation) -->
+                <a href="<?php echo esc_url($cta['url']); ?>" 
+                   class="pf-btn-hero <?php echo esc_attr($cta['class']); ?>">
+                    <?php echo esc_html($cta['text']); ?>
+                    <span class="pf-btn-icon"><?php echo $cta['icon']; ?></span>
+                </a>
+            <?php endif; ?>
             <span class="pf-hero-cta-note"><?php echo esc_html($cta['note']); ?></span>
         </div>
 
