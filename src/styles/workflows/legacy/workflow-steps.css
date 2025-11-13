@@ -1,12 +1,130 @@
 /**
  * Workflow Component: Steps
- * Unified base styles + .pf-ui-modern enhancements
+ * Modern Card System (2025-11-13)
  * 
- * Phase 2: Checkmark Consistency (2025-11-12)
- * - Großes Checkmark Icon links (konsistent mit Variables Section)
- * - Border-Color Status (neutral/green/blue)
- * - Checkbox rechts entfernt
+ * MODERNIZATION:
+ * - Konsistente Margins/Spacing wie Variables/Hero
+ * - Modernes Border/Shadow-System
+ * - Clean Card-Layout
+ * - Smooth Animations
  */
+
+/* ========================================
+   MODERN CARD SYSTEM (Priority Override)
+   ======================================== */
+
+.pf-step {
+  /* Konsistente Margins wie Variables/Hero */
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7)) !important;
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7)) !important;
+  margin-bottom: clamp(var(--pf-space-5), 4vw, var(--pf-space-6)) !important;
+  
+  /* Modern border/shadow */
+  background: var(--pf-card, #ffffff) !important;
+  border: 2px solid color-mix(in srgb, var(--pf-accent) 12%, var(--pf-border)) !important;
+  border-radius: var(--pf-r-4, 14px) !important;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 4px 12px color-mix(in srgb, var(--pf-accent) 8%, transparent) !important;
+  
+  /* Layout */
+  max-width: 1400px;
+  margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  margin-right: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
+  
+  /* Animation */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtile accent line oben (wie Variables) */
+.pf-step::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--pf-accent) 50%,
+    transparent
+  );
+  opacity: 0.3;
+  z-index: 1;
+}
+
+/* Hover State */
+.pf-step:hover {
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 8px 20px color-mix(in srgb, var(--pf-accent) 12%, transparent) !important;
+  transform: translateY(-2px);
+}
+
+/* Active State (expanded) */
+.pf-step[data-status="active"]:not(.is-collapsed),
+.pf-step.is-active:not(.is-collapsed) {
+  border-color: color-mix(in srgb, var(--pf-accent) 35%, var(--pf-border)) !important;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 12px 28px color-mix(in srgb, var(--pf-accent) 18%, transparent),
+    0 0 0 4px color-mix(in srgb, var(--pf-accent) 8%, transparent) !important;
+}
+
+.pf-step[data-status="active"]::before,
+.pf-step.is-active::before {
+  opacity: 0.6;
+  height: 3px;
+}
+
+/* Completed State */
+.pf-step[data-status="completed"],
+.pf-step.is-completed {
+  border-color: color-mix(in srgb, var(--pf-success) 25%, var(--pf-border)) !important;
+  background: color-mix(in srgb, var(--pf-success) 2%, var(--pf-card)) !important;
+}
+
+.pf-step[data-status="completed"]::before,
+.pf-step.is-completed::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--pf-success) 50%,
+    transparent
+  );
+  opacity: 0.5;
+}
+
+/* Collapsed State */
+.pf-step.is-collapsed {
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 2px 8px color-mix(in srgb, var(--pf-accent) 4%, transparent) !important;
+}
+
+/* ========================================
+   CONTENT AREA (Modern Spacing)
+   ======================================== */
+
+.pf-step-content {
+  padding: 0 clamp(var(--pf-space-4), 4vw, var(--pf-space-7)) clamp(var(--pf-space-5), 4vw, var(--pf-space-6)) !important;
+}
+
+.pf-step.is-collapsed .pf-step-content {
+  padding: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Responsive Content Padding */
+@media (max-width: 640px) {
+  .pf-step-content {
+    padding: 0 var(--pf-space-4) var(--pf-space-4) !important;
+  }
+}
 
 /* ========================================
    PHASE 2: CHECKMARK ICON (konsistent mit Variables)
@@ -40,27 +158,11 @@
 }
 
 /* ========================================
-   PHASE 2: BORDER STATUS (konsistent mit Variables)
+   PHASE 2: BORDER STATUS (DEPRECATED - See Modern Card System above)
    ======================================== */
 
-.pf-step {
-  border-width: 2px !important; /* Neutral */
-  border-color: var(--pf-neutral-200, #e5e7eb) !important;
-}
-
-.pf-step[data-status="active"],
-.pf-step.is-active,
-.pf-step.pf-step--active {
-  border-width: 3px !important; /* Active = Blue */
-  border-color: var(--pf-accent, #3b82f6) !important;
-}
-
-.pf-step[data-status="completed"],
-.pf-step.is-completed,
-.pf-step.pf-step--completed {
-  border-width: 4px !important; /* Completed = Green */
-  border-color: var(--pf-success, #10b981) !important;
-}
+/* DEPRECATED: Border styles now defined in Modern Card System (lines 12-106) */
+/* Old styles kept for reference but overridden by !important rules above */
 
 /* ========================================
    PHASE 3: CONTENT HIERARCHY
