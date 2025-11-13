@@ -315,6 +315,38 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                     </div>
                     
                     <div class="pf-step-header-actions">
+                        <!-- Phase 1: Quick Actions (appear on hover) -->
+                        <?php if (!$step_is_locked): ?>
+                            <div class="pf-quick-actions" data-quick-actions>
+                                <?php if ($step_type === 'prompt' && !empty($prompt)): ?>
+                                    <button class="pf-quick-action pf-quick-action--copy" 
+                                            data-copy-target="<?php echo esc_attr($step_dom_id); ?>"
+                                            aria-label="Quick copy prompt"
+                                            type="button"
+                                            title="Copy Prompt (Cmd+C)">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                        </svg>
+                                        <span class="pf-quick-action-label">Copy</span>
+                                    </button>
+                                <?php endif; ?>
+                                
+                                <button class="pf-quick-action pf-quick-action--complete" 
+                                        data-action="quick-complete"
+                                        data-step-id="<?php echo esc_attr($step_dom_id); ?>"
+                                        aria-label="Mark as complete"
+                                        type="button"
+                                        title="Mark as Done">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path class="check-path" d="M9 12l2 2 4-4" opacity="0"/>
+                                    </svg>
+                                    <span class="pf-quick-action-label">Done</span>
+                                </button>
+                            </div>
+                        <?php endif; ?>
+                        
                         <button class="pf-step-toggle" aria-label="Toggle step content" type="button">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="6 9 12 15 18 9"/>
@@ -389,16 +421,23 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                     <?php if ($step_type === 'prompt' && !empty($prompt)): ?>
                         
                         <?php if (!empty($variables_step)): ?>
-                            <div class="pf-step-section">
+                            <!-- Phase 1: Variables FIRST with priority styling -->
+                            <div class="pf-step-section pf-step-section--priority">
+                                <div class="pf-step-section-priority-badge">
+                                    <span class="pf-priority-badge-icon">⚡</span>
+                                    <span class="pf-priority-badge-text">Fill these first</span>
+                                </div>
+                                
                                 <h4 class="pf-step-section-label">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M12 20h9"/>
                                         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                                     </svg>
                                     Step Inputs
+                                    <span class="pf-step-section-count">(<?php echo count($variables_step); ?> required)</span>
                                 </h4>
-                                <p class="pf-step-section-desc">These values are specific to this step only.</p>
-                                <div class="pf-step-variables-section pf-variables--step" data-step-vars-ui></div>
+                                <p class="pf-step-section-desc">Complete these values before copying the prompt.</p>
+                                <div class="pf-step-variables-section pf-variables--step" data-step-vars-ui data-variables-required="<?php echo count($variables_step); ?>"></div>
                             </div>
                         <?php endif; ?>
                         
@@ -412,6 +451,16 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                         
                         <div class="pf-prompt-container">
                             <div class="pf-prompt-wrapper" data-prompt-wrapper>
+                                <!-- Phase 1: Copy Button TOP-RIGHT (GitHub/Claude pattern) -->
+                                <button class="pf-btn-copy-top" data-copy-target="<?php echo esc_attr($step_dom_id); ?>" type="button" aria-label="Copy prompt for step <?php echo esc_attr($step_number); ?>">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                    </svg>
+                                    <span class="pf-btn-copy-top-text">Copy</span>
+                                    <span class="pf-btn-copy-top-success">✓ Copied!</span>
+                                </button>
+                                
                                 <textarea class="pf-prompt-text pf-prompt"
                                           data-prompt-id="<?php echo esc_attr($step_dom_id); ?>"
                                           data-original-text="<?php echo esc_attr($prompt); ?>"
@@ -420,13 +469,6 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                                           aria-label="Prompt text for step <?php echo esc_attr($step_number); ?>"
                                           readonly></textarea>
                             </div>
-                            <button class="pf-btn-copy-hero" data-copy-target="<?php echo esc_attr($step_dom_id); ?>" type="button" aria-label="Copy prompt for step <?php echo esc_attr($step_number); ?>">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                                    </svg>
-                                <span>Copy to Clipboard</span>
-                                </button>
                         </div>
                         </div><!-- /.pf-step-section (Your Prompt) -->
                         
@@ -526,6 +568,31 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                                     <?php echo wp_kses_post($example_output); ?>
                                 </div>
                             </details>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php
+                    // Phase 1: Continue to Next Step Button (only if not locked and has next)
+                    if (!$step_is_locked && ($index + 1) < $total_steps):
+                        $next_step_num = $index + 2; // +2 because index is 0-based and we want next
+                    ?>
+                        <div class="pf-step-continue-section" data-continue-section hidden>
+                            <div class="pf-step-continue-card">
+                                <div class="pf-continue-icon">✓</div>
+                                <div class="pf-continue-content">
+                                    <h5 class="pf-continue-title">Step Completed!</h5>
+                                    <p class="pf-continue-subtitle">Ready for the next step?</p>
+                                </div>
+                                <button class="pf-btn-continue" 
+                                        data-next-step="<?php echo $next_step_num; ?>"
+                                        data-action="continue-next-step"
+                                        type="button">
+                                    Continue to Step <?php echo $next_step_num; ?>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="9 18 15 12 9 6"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     <?php endif; ?>
                     

@@ -1519,7 +1519,8 @@ function initKeyboardShortcuts(){
       const prev = steps[currentIndex - 1];
       focusStepElement(prev, active);
     } else if (key === 'c' && (event.metaKey || event.ctrlKey)) {
-      const copyBtn = active ? active.querySelector('.pf-btn-copy-hero') : null;
+      // Phase 1: Support new top copy button
+      const copyBtn = active ? (active.querySelector('.pf-btn-copy-top') || active.querySelector('.pf-btn-copy-hero')) : null;
       if (copyBtn) {
         event.preventDefault();
         copyBtn.click();
