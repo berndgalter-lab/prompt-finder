@@ -481,27 +481,13 @@
   }
 }
 
-/* Dark Mode Support (optional) */
-@media (prefers-color-scheme: dark) {
-  .pf-hero-value {
-    background: #1e1e20;
-    border-color: #2d2d30;
-  }
+/* ========================================
+   DARK MODE SUPPORT
+   Automatisch via CSS-Variablen (siehe pf-workflows.css)
+   Keine hardcodierten Farben nötig!
+   ======================================== */
 
-  .pf-hero-headline {
-    color: #e8ecf1;
-  }
-
-  .pf-hero-subline,
-  .pf-details-text {
-    color: #a0a8b5;
-  }
-
-  .pf-trust-badge,
-  .pf-pain-chip,
-  .pf-benefit {
-    background: #2d2d30;
-    border-color: #3a3a3d;
-  }
-}
+/* Die CSS-Variablen ändern sich automatisch im Dark Mode:
+   --pf-surface, --pf-bg, --pf-text, --pf-muted, --pf-border
+   Dadurch funktioniert Dark Mode ohne zusätzlichen Code. */
 

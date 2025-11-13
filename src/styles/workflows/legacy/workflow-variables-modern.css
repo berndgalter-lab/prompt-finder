@@ -22,8 +22,8 @@
 
 .pf-workflow-vars-card {
   /* Clean Card Design - Wie Steps */
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
   border-radius: 12px;
   padding: clamp(var(--pf-space-5), 4vw, var(--pf-space-6)) clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
   margin-left: clamp(var(--pf-space-4), 4vw, var(--pf-space-7));
@@ -54,6 +54,7 @@
   border: none !important;
   box-shadow: none !important;
   padding: 0.75rem 0 !important;
+  color: var(--pf-text);
 }
 
 /* Inputs - ULTRA Clean & Monochrom */
@@ -63,12 +64,13 @@
 .pf-field input,
 .pf-field textarea,
 .pf-field select {
-  background: #fafafa !important;
-  border: 1px solid #e5e7eb !important;
+  background: var(--pf-surface-2) !important;
+  border: 1px solid var(--pf-border) !important;
   border-radius: 8px !important;
   padding: 0.75rem 1rem !important;
   font-size: 0.9375rem !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  color: var(--pf-text) !important;
 }
 
 /* Focus State - Minimal (nur leicht dunkler Border) */
@@ -78,8 +80,8 @@
 .pf-field input:focus,
 .pf-field textarea:focus,
 .pf-field select:focus {
-  background: #ffffff !important;
-  border-color: #9ca3af !important; /* Grau statt Blau */
+  background: var(--pf-surface) !important;
+  border-color: var(--pf-muted) !important; /* Grau statt Blau */
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.03) !important; /* Grau statt Blau */
   outline: none !important;
 }
@@ -88,8 +90,8 @@
 .pf-var-item[data-state="valid"] input,
 .pf-var-item[data-validation="valid"] input,
 .pf-var-item[data-status="required-filled"] input {
-  border-color: #d1d5db !important; /* Grau statt Grün */
-  background: #ffffff !important;
+  border-color: color-mix(in srgb, var(--pf-border) 70%, var(--pf-muted)) !important;
+  background: var(--pf-surface) !important;
 }
 
 /* ========================================

@@ -16,8 +16,8 @@
 
 .pf-step {
   /* EINZIGER Border - Clean & Minimal */
-  background: #ffffff !important;
-  border: 1px solid #e5e7eb !important;
+  background: var(--pf-surface) !important;
+  border: 1px solid var(--pf-border) !important;
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
   
@@ -43,15 +43,15 @@
 /* Active State: Nur minimal hervorheben */
 .pf-step[data-status="active"]:not(.is-collapsed),
 .pf-step.is-active:not(.is-collapsed) {
-  border-color: #d1d5db !important; /* Leicht dunkler */
+  border-color: color-mix(in srgb, var(--pf-border) 70%, var(--pf-muted)) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
 }
 
 /* Completed State: Minimaler grüner Touch */
 .pf-step[data-status="completed"],
 .pf-step.is-completed {
-  border-color: #d1fae5 !important; /* Sehr subtiles Grün */
-  background: #ffffff !important; /* Kein Background-Tint */
+  border-color: color-mix(in srgb, var(--pf-success) 30%, var(--pf-border)) !important;
+  background: var(--pf-surface) !important;
 }
 
 /* Collapsed State */
@@ -67,7 +67,7 @@
   /* KEIN Border, KEIN Background */
   background: transparent !important;
   border: none !important;
-  border-bottom: 1px solid #f3f4f6 !important; /* Nur subtiler Divider */
+  border-bottom: 1px solid color-mix(in srgb, var(--pf-border) 50%, transparent) !important; /* Nur subtiler Divider */
   padding: 1.25rem clamp(var(--pf-space-4), 4vw, var(--pf-space-6)) !important;
   box-shadow: none !important;
 }
@@ -80,7 +80,7 @@
   /* KEIN Border, KEIN Background */
   background: transparent !important;
   border: none !important;
-  border-top: 1px solid #f3f4f6 !important; /* Nur Divider */
+  border-top: 1px solid color-mix(in srgb, var(--pf-border) 50%, transparent) !important; /* Nur Divider */
   padding: 1.5rem clamp(var(--pf-space-4), 4vw, var(--pf-space-6)) !important;
   box-shadow: none !important;
 }
@@ -98,9 +98,9 @@
 .pf-step-section-priority-badge,
 .pf-priority-badge,
 [data-priority-badge] {
-  background: #f3f4f6 !important; /* Hellgrau statt Gelb */
-  color: #6b7280 !important; /* Dunkelgrau statt Orange */
-  border: 1px solid #e5e7eb !important;
+  background: var(--pf-surface-2) !important;
+  color: var(--pf-muted) !important;
+  border: 1px solid var(--pf-border) !important;
   font-weight: 600 !important;
 }
 
@@ -109,9 +109,9 @@
 .pf-var-badge.required,
 .pf-badge.is-required,
 [data-required="true"] .pf-badge {
-  background: #f3f4f6 !important; /* Hellgrau statt Rot */
-  color: #6b7280 !important; /* Dunkelgrau */
-  border: 1px solid #e5e7eb !important;
+  background: var(--pf-surface-2) !important;
+  color: var(--pf-muted) !important;
+  border: 1px solid var(--pf-border) !important;
   font-weight: 600 !important;
 }
 
@@ -120,8 +120,8 @@
 .pf-var-badge.optional,
 .pf-badge.is-optional {
   background: transparent !important;
-  color: #9ca3af !important; /* Sehr hell Grau */
-  border: 1px solid #e5e7eb !important;
+  color: color-mix(in srgb, var(--pf-muted) 70%, transparent) !important;
+  border: 1px solid var(--pf-border) !important;
   font-weight: 500 !important;
 }
 
@@ -161,20 +161,21 @@
 .pf-var input,
 .pf-var textarea,
 .pf-var select {
-  background: #fafafa !important;
-  border: 1px solid #e5e7eb !important;
+  background: var(--pf-surface-2) !important;
+  border: 1px solid var(--pf-border) !important;
   border-radius: 8px !important;
   padding: 0.75rem 1rem !important;
   font-size: 0.9375rem !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  color: var(--pf-text) !important;
 }
 
 /* Focus State - Minimal (nur leicht dunkler Border) */
 .pf-var input:focus,
 .pf-var textarea:focus,
 .pf-var select:focus {
-  background: #ffffff !important;
-  border-color: #9ca3af !important; /* Grau statt Blau */
+  background: var(--pf-surface) !important;
+  border-color: var(--pf-muted) !important; /* Grau statt Blau */
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.03) !important; /* Grau statt Blau */
   outline: none !important;
 }
@@ -184,8 +185,8 @@
 .pf-var[data-validation="valid"] input,
 .pf-var[data-status="required-filled"] input,
 .pf-var[data-status="required-filled"] textarea {
-  border-color: #d1d5db !important; /* Grau statt Grün */
-  background: #ffffff !important;
+  border-color: color-mix(in srgb, var(--pf-border) 70%, var(--pf-muted)) !important;
+  background: var(--pf-surface) !important;
 }
 
 /* ========================================
@@ -224,7 +225,7 @@ svg.pf-icon {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  color: #d1d5db !important; /* Hellgrau für alle Icons */
+  color: color-mix(in srgb, var(--pf-border) 70%, var(--pf-muted)) !important;
   transition: color 0.2s ease;
   cursor: pointer;
 }
@@ -235,19 +236,19 @@ svg.pf-icon {
 .pf-step.pf-step--completed .pf-step-status-icon,
 .pf-var[data-state="valid"] .pf-var-icon,
 .pf-var[data-validation="valid"] svg {
-  color: #9ca3af !important; /* Etwas dunkler Grau wenn completed */
+  color: var(--pf-muted) !important;
 }
 
 .pf-step[data-status="active"] .pf-step-status-icon,
 .pf-step.is-active .pf-step-status-icon,
 .pf-step.pf-step--active .pf-step-status-icon {
-  color: #6b7280 !important; /* Dunkler Grau wenn active */
+  color: color-mix(in srgb, var(--pf-muted) 80%, var(--pf-text)) !important;
 }
 
 /* Hover effect - Minimal */
 .pf-step-status-icon:hover,
 .pf-var-icon:hover {
-  color: #6b7280 !important; /* Leicht dunkler bei Hover */
+  color: color-mix(in srgb, var(--pf-muted) 80%, var(--pf-text)) !important;
 }
 
 /* ========================================
@@ -286,7 +287,7 @@ svg.pf-icon {
 
 .pf-step-section-label svg {
   flex-shrink: 0;
-  color: #9ca3af !important; /* Grau statt Blau */
+  color: var(--pf-muted) !important;
 }
 
 .pf-step-section-desc {

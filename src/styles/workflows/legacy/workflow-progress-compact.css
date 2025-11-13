@@ -251,3 +251,13 @@
   }
 }
 
+/* ========================================
+   DARK MODE SUPPORT
+   Automatisch via CSS-Variablen (siehe pf-workflows.css)
+   Keine hardcodierten Farben nötig!
+   ======================================== */
+
+/* Die CSS-Variablen ändern sich automatisch im Dark Mode:
+   --pf-surface, --pf-bg, --pf-text, --pf-muted, --pf-border, --pf-accent, etc.
+   Dadurch funktioniert Dark Mode ohne zusätzlichen Code. */
+
