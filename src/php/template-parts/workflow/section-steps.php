@@ -302,6 +302,22 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                     </div>
                     
                         <div class="pf-step-meta" aria-label="Step meta information">
+                        <?php 
+                        // Phase 2: Dependency Badge (show if step depends on previous)
+                        if ($consumes_previous_output && $index > 0):
+                            $prev_step_num = $index; // Previous step number (0-based, so index is the previous)
+                        ?>
+                            <span class="pf-step-badge pf-step-badge--dependency" 
+                                  data-depends-on="<?php echo $prev_step_num; ?>"
+                                  aria-label="Requires output from Step <?php echo $prev_step_num; ?>">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="17 11 12 6 7 11"/>
+                                    <polyline points="17 18 12 13 7 18"/>
+                                </svg>
+                                Requires Step <?php echo $prev_step_num; ?>
+                            </span>
+                        <?php endif; ?>
+                        
                         <?php if ($estimated_time_min): ?>
                                 <span class="pf-step-badge pf-step-badge--time" aria-label="Estimated time <?php echo esc_attr($estimated_time_min); ?> minutes">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -311,6 +327,32 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                                 <?php echo esc_html($estimated_time_min); ?> min
                             </span>
                         <?php endif; ?>
+                        
+                        <?php if (!$step_is_locked): 
+                            // Phase 2: Sub-Step Progress Badge
+                            $has_variables = !empty($variables_step);
+                            $has_prompt = ($step_type === 'prompt' && !empty($prompt));
+                            $total_substeps = 0;
+                            if ($has_variables) $total_substeps++;
+                            if ($has_prompt) $total_substeps++;
+                            // Could add more substeps (output paste, checklist items, etc.)
+                            
+                            if ($total_substeps > 0):
+                        ?>
+                                <span class="pf-step-badge pf-step-badge--progress" 
+                                      data-substep-progress 
+                                      data-substep-total="<?php echo $total_substeps; ?>"
+                                      data-substep-completed="0"
+                                      aria-label="Step progress">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                        <polyline points="22 4 12 14.01 9 11.01"/>
+                                    </svg>
+                                    <span class="pf-progress-text">
+                                        <span class="pf-progress-current">0</span>/<span class="pf-progress-total"><?php echo $total_substeps; ?></span>
+                                    </span>
+                                </span>
+                        <?php endif; endif; ?>
                         </div>
                     </div>
                     
@@ -421,35 +463,66 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                     <?php if ($step_type === 'prompt' && !empty($prompt)): ?>
                         
                         <?php if (!empty($variables_step)): ?>
-                            <!-- Phase 1: Variables FIRST with priority styling -->
-                            <div class="pf-step-section pf-step-section--priority">
-                                <div class="pf-step-section-priority-badge">
-                                    <span class="pf-priority-badge-icon">⚡</span>
-                                    <span class="pf-priority-badge-text">Fill these first</span>
+                            <!-- Phase 2: Variables with Collapse Toggle -->
+                            <div class="pf-step-section pf-step-section--priority pf-step-section--collapsible" data-section="variables">
+                                <div class="pf-section-header">
+                                    <div class="pf-section-header-content">
+                                        <div class="pf-step-section-priority-badge">
+                                            <span class="pf-priority-badge-icon">⚡</span>
+                                            <span class="pf-priority-badge-text">Fill these first</span>
+                                        </div>
+                                        
+                                        <h4 class="pf-step-section-label">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M12 20h9"/>
+                                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                            </svg>
+                                            Step Inputs
+                                            <span class="pf-step-section-count">(<?php echo count($variables_step); ?> required)</span>
+                                        </h4>
+                                        <p class="pf-step-section-desc">Complete these values before copying the prompt.</p>
+                                    </div>
+                                    
+                                    <button class="pf-section-toggle" 
+                                            data-action="toggle-section" 
+                                            type="button"
+                                            aria-label="Toggle variables section"
+                                            aria-expanded="true">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="6 9 12 15 18 9"/>
+                                        </svg>
+                                    </button>
                                 </div>
                                 
-                                <h4 class="pf-step-section-label">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="M12 20h9"/>
-                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                                    </svg>
-                                    Step Inputs
-                                    <span class="pf-step-section-count">(<?php echo count($variables_step); ?> required)</span>
-                                </h4>
-                                <p class="pf-step-section-desc">Complete these values before copying the prompt.</p>
-                                <div class="pf-step-variables-section pf-variables--step" data-step-vars-ui data-variables-required="<?php echo count($variables_step); ?>"></div>
+                                <div class="pf-section-body" data-section-body>
+                                    <div class="pf-step-variables-section pf-variables--step" data-step-vars-ui data-variables-required="<?php echo count($variables_step); ?>"></div>
+                                </div>
                             </div>
                         <?php endif; ?>
                         
-                        <div class="pf-step-section">
-                            <h4 class="pf-step-section-label">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                                </svg>
-                                Your Prompt
-                            </h4>
+                        <!-- Phase 2: Prompt Section with Collapse -->
+                        <div class="pf-step-section pf-step-section--collapsible" data-section="prompt">
+                            <div class="pf-section-header">
+                                <h4 class="pf-step-section-label">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                    </svg>
+                                    Your Prompt
+                                </h4>
+                                
+                                <button class="pf-section-toggle" 
+                                        data-action="toggle-section" 
+                                        type="button"
+                                        aria-label="Toggle prompt section"
+                                        aria-expanded="true">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"/>
+                                    </svg>
+                                </button>
+                            </div>
                         
-                        <div class="pf-prompt-container">
+                            <div class="pf-section-body" data-section-body>
+                                <div class="pf-prompt-container">
                             <div class="pf-prompt-wrapper" data-prompt-wrapper>
                                 <!-- Phase 1: Copy Button TOP-RIGHT (GitHub/Claude pattern) -->
                                 <button class="pf-btn-copy-top" data-copy-target="<?php echo esc_attr($step_dom_id); ?>" type="button" aria-label="Copy prompt for step <?php echo esc_attr($step_number); ?>">
@@ -469,7 +542,8 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
                                           aria-label="Prompt text for step <?php echo esc_attr($step_number); ?>"
                                           readonly></textarea>
                             </div>
-                        </div>
+                                </div><!-- /.pf-prompt-container -->
+                            </div><!-- /.pf-section-body -->
                         </div><!-- /.pf-step-section (Your Prompt) -->
                         
                         <?php if (!empty($paste_guidance)): ?>

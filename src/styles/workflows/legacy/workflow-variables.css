@@ -43,6 +43,132 @@
   }
 }
 
+/* ========================================
+   PHASE 2: Inline Validation States
+   ======================================== */
+
+/* Valid state (filled correctly) */
+[data-wf-form] .pf-row[data-validation="valid"],
+[data-step-vars-ui] .pf-row[data-validation="valid"] {
+  position: relative;
+}
+
+[data-wf-form] .pf-row[data-validation="valid"]::after,
+[data-step-vars-ui] .pf-row[data-validation="valid"]::after {
+  content: '✓';
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.875rem;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+  animation: checkmark-appear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+@keyframes checkmark-appear {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+[data-wf-form] .pf-row[data-validation="valid"] input,
+[data-wf-form] .pf-row[data-validation="valid"] textarea,
+[data-wf-form] .pf-row[data-validation="valid"] select,
+[data-step-vars-ui] .pf-row[data-validation="valid"] input,
+[data-step-vars-ui] .pf-row[data-validation="valid"] textarea,
+[data-step-vars-ui] .pf-row[data-validation="valid"] select {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.02);
+}
+
+/* Invalid state (error) */
+[data-wf-form] .pf-row[data-validation="invalid"],
+[data-step-vars-ui] .pf-row[data-validation="invalid"] {
+  position: relative;
+}
+
+[data-wf-form] .pf-row[data-validation="invalid"] input,
+[data-wf-form] .pf-row[data-validation="invalid"] textarea,
+[data-wf-form] .pf-row[data-validation="invalid"] select,
+[data-step-vars-ui] .pf-row[data-validation="invalid"] input,
+[data-step-vars-ui] .pf-row[data-validation="invalid"] textarea,
+[data-step-vars-ui] .pf-row[data-validation="invalid"] select {
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.03);
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Required indicator for empty required fields */
+[data-wf-form] .pf-row[data-required="true"]:not([data-validation]) .pf-row__label::after,
+[data-step-vars-ui] .pf-row[data-required="true"]:not([data-validation]) .pf-row__label::after {
+  content: '*';
+  color: #ef4444;
+  margin-left: 4px;
+  font-weight: 700;
+}
+
+/* Focus state enhancement */
+[data-wf-form] .pf-row input:focus,
+[data-wf-form] .pf-row textarea:focus,
+[data-wf-form] .pf-row select:focus,
+[data-step-vars-ui] .pf-row input:focus,
+[data-step-vars-ui] .pf-row textarea:focus,
+[data-step-vars-ui] .pf-row select:focus {
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+/* Validation message */
+.pf-validation-message {
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pf-validation-message--error {
+  color: #dc2626;
+}
+
+.pf-validation-message--success {
+  color: #059669;
+}
+
 /* ========== PF-UI Contract: Row Anatomy ========== */
 [data-wf-form] .pf-row,
 [data-step-vars-ui] .pf-row {
