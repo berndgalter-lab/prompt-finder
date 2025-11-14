@@ -55,6 +55,9 @@ if ($time_saved_min) {
     }
 }
 
+// Real Stats (moved up for CTA note)
+$step_count = count($steps);
+
 // Dynamic CTA configuration based on access_mode
 // Strategy: "Try First" → alle Modi zeigen Step 1 zuerst (SEO/Engagement)
 $cta_config = [
@@ -71,7 +74,7 @@ $cta_config = [
         'url' => '#variables',
         'icon' => '→',
         'class' => 'pf-btn-hero--try-first',
-        'note' => 'Sign in free to unlock remaining steps',
+        'note' => 'Step 1 is free. Create a free account (no credit card) to unlock ' . ($step_count > 0 ? 'all ' . $step_count . ' steps' : 'remaining steps') . '.',
         'scroll' => true
     ],
     'pro' => [
@@ -101,8 +104,7 @@ if ($access_mode === 'pro' && function_exists('user_has_pro_subscription') && us
     $cta['class'] = 'pf-btn-hero--free';
 }
 
-// Real Stats
-$step_count = count($steps);
+// Access Labels
 $access_labels = [
     'free' => 'Free forever',
     'signin' => 'Sign-in required',
