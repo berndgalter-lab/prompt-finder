@@ -213,7 +213,6 @@
 .pf-hero-how-it-works {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--pf-space-2, 0.5rem);
   padding: var(--pf-space-4, 1rem) var(--pf-space-3, 0.75rem);
   margin-top: var(--pf-space-4, 1rem);
@@ -527,7 +526,7 @@
 
   .pf-hero-how-it-works {
     flex-direction: column;
-    text-align: center;
+    align-items: flex-start;
     gap: var(--pf-space-2, 0.5rem);
     padding: var(--pf-space-3, 0.75rem);
   }
