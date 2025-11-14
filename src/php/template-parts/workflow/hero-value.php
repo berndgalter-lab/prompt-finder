@@ -66,7 +66,7 @@ $cta_config = [
         'url' => '#variables',
         'icon' => '→',
         'class' => 'pf-btn-hero--free',
-        'note' => 'No sign-up required',
+        'note' => 'All steps are free – just start with Step 1.',
         'scroll' => true
     ],
     'signin' => [
@@ -82,7 +82,7 @@ $cta_config = [
         'url' => '#variables',
         'icon' => '→',
         'class' => 'pf-btn-hero--try-first',
-        'note' => 'Upgrade to Pro to unlock all steps',
+        'note' => 'Step 1 is free. Upgrade to Prompt Finder Pro to unlock all steps.',
         'scroll' => true
     ]
 ];
