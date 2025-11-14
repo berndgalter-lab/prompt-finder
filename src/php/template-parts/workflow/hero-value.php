@@ -155,7 +155,7 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
                 $pain_points_display = array_slice($pain_points_lines, 0, 3); // Max 3 für Hero
                 if (!empty($pain_points_display)): ?>
                     <div class="pf-hero-pain-section">
-                        <p class="pf-hero-pain-label">Solves:</p>
+                        <p class="pf-hero-pain-label">This workflow is for you if…</p>
                         <ul class="pf-hero-pain-list">
                             <?php foreach ($pain_points_display as $point): ?>
                                 <li><?php echo esc_html($point); ?></li>
