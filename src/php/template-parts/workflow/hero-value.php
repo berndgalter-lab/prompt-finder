@@ -161,6 +161,11 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
                                 <li><?php echo esc_html($point); ?></li>
                             <?php endforeach; ?>
                         </ul>
+                        <?php if ($time_saved_min): ?>
+                            <p class="pf-hero-pain-benefit">
+                                Saves ~<?php echo esc_html($time_display); ?> every time you run it
+                            </p>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
