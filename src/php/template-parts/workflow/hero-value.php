@@ -147,6 +147,23 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
                     <?php echo esc_html($expected_outcome); ?>
                 </p>
             <?php endif; ?>
+
+            <!-- Pain Points (Problems it solves) -->
+            <?php if ($pain_points): ?>
+                <?php 
+                $pain_points_lines = array_filter(array_map('trim', explode("\n", $pain_points)));
+                $pain_points_display = array_slice($pain_points_lines, 0, 3); // Max 3 für Hero
+                if (!empty($pain_points_display)): ?>
+                    <div class="pf-hero-pain-section">
+                        <p class="pf-hero-pain-label">Solves:</p>
+                        <ul class="pf-hero-pain-list">
+                            <?php foreach ($pain_points_display as $point): ?>
+                                <li><?php echo esc_html($point); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
         </div>
 
         <!-- ========================================
