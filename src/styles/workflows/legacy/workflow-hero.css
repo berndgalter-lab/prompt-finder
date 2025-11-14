@@ -90,16 +90,14 @@
   gap: var(--pf-space-2, 0.5rem);
   font-size: var(--pf-size-lg, 1.125rem);
   line-height: 1.6;
-  color: var(--pf-muted, #6b7280);
+  color: var(--pf-muted);
   margin: 0;
 }
 
-.pf-hero-subline-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--pf-success, #16a34a);
+.pf-hero-subline-label {
+  font-weight: 700;
+  color: var(--pf-text);
   flex-shrink: 0;
-  margin-top: 0.125rem;
 }
 
 /* Pain Points Section */
