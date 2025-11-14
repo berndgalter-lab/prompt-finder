@@ -182,44 +182,6 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
                     <span class="pf-trust-badge">Grok</span>
                 </div>
             </div>
-
-            <!-- Quick Stats (Inline) -->
-            <div class="pf-hero-quick-stats">
-                <?php if ($step_count > 0): ?>
-                    <span class="pf-quick-stat">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                        </svg>
-                        <?php echo esc_html($step_count); ?> <?php echo $step_count === 1 ? 'step' : 'steps'; ?>
-                    </span>
-                <?php endif; ?>
-
-                <?php if ($estimated_time_min): ?>
-                    <span class="pf-quick-stat">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        <?php echo esc_html($estimated_time_min); ?> min
-                    </span>
-                <?php endif; ?>
-
-                <span class="pf-quick-stat pf-quick-stat--<?php echo esc_attr($access_mode); ?>">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <?php if ($access_mode === 'free'): ?>
-                            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
-                            <path d="m9 12 2 2 4-4"/>
-                        <?php elseif ($access_mode === 'signin'): ?>
-                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        <?php else: ?>
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                        <?php endif; ?>
-                    </svg>
-                    <?php echo esc_html($access_label); ?>
-                </span>
-            </div>
         </div>
 
         <!-- ========================================
