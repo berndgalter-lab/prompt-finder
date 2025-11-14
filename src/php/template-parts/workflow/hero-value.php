@@ -187,7 +187,16 @@ $access_label = $access_labels[$access_mode] ?? 'Free';
             <span class="pf-hero-cta-note"><?php echo esc_html($cta['note']); ?></span>
         </div>
 
-        <!-- How it works removed - Self-explanatory CTA (like Stripe, Linear, Vercel) -->
+        <!-- ========================================
+             3. HOW IT WORKS (Quick Process Overview)
+             "How do I use this?"
+             ======================================== -->
+        <div class="pf-hero-how-it-works">
+            <span class="pf-how-it-works-label">How it works:</span>
+            <span class="pf-how-it-works-steps">
+                1️⃣ Fill fields → 2️⃣ Copy prompt → 3️⃣ Paste into ChatGPT
+            </span>
+        </div>
 
         <!-- ========================================
              4. TRUST SIGNALS (Next 10 seconds)
