@@ -129,19 +129,19 @@
   font-size: 0.9375rem;
   line-height: 1.6;
   color: var(--pf-text);
-  padding-left: 1.25rem;
-  position: relative;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
 }
 
 .pf-hero-pain-list li::before {
   content: "•";
-  position: absolute;
-  left: 0;
-  top: 0.125rem;
   color: var(--pf-muted);
   font-weight: 700;
   font-size: 1rem;
   line-height: 1.6;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
 }
 
 /* ========================================
