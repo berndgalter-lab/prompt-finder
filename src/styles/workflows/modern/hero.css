@@ -223,7 +223,7 @@
   line-height: 1.5;
   color: var(--pf-muted);
   opacity: 0.85; /* lighter/secondary */
-  margin: 0.25rem 0 0.375rem 0; /* very small gap above (from tagline), small gap below (to outcome) */
+  margin: -0.125rem 0 0.375rem 0; /* negative margin to pull very close to tagline */
 }
 
 .pf-hero__best-for strong {

@@ -1112,7 +1112,6 @@ add_action('wp_enqueue_scripts', function () {
   $base_components = [
     'workflow-header'           => '/src/styles/workflows/legacy/workflow-header.css',
     'workflow-hero'             => '/src/styles/workflows/modern/hero.css',
-    'workflow-progress'         => '/src/styles/workflows/legacy/workflow-progress-compact.css',
     'workflow-master-progress'  => '/src/styles/workflows/legacy/workflow-master-progress.css',
     'workflow-prerequisites'    => '/src/styles/workflows/legacy/workflow-prerequisites.css',
     'workflow-sidebar'          => '/src/styles/workflows/legacy/workflow-sidebar.css',
@@ -1172,15 +1171,6 @@ add_action('wp_enqueue_scripts', function () {
     $uri . '/src/scripts/workflows/pf-workflows.js',
     ['jquery'],
     pf_ver('/src/scripts/workflows/pf-workflows.js'),
-    true
-  );
-  
-  // Sticky progress bar (no dependencies)
-  wp_enqueue_script(
-    'pf-sticky-progress',
-    $uri . '/src/scripts/workflows/sticky-progress.js',
-    [],
-    pf_ver('/src/scripts/workflows/sticky-progress.js'),
     true
   );
   
