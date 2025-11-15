@@ -194,6 +194,24 @@
   transform: translateY(0);
 }
 
+/* Step States */
+.pf-progress-section--step[data-step-completed="true"] {
+  background: color-mix(in srgb, var(--pf-success) 10%, var(--pf-surface-2));
+  border: 1px solid color-mix(in srgb, var(--pf-success) 20%, transparent);
+}
+
+.pf-progress-section--step.pf-progress-section--current {
+  background: color-mix(in srgb, var(--pf-accent) 10%, var(--pf-surface-2));
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 30%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--pf-accent) 10%, transparent);
+}
+
+/* Variables State */
+.pf-progress-section--variables[data-all-required-filled="true"] {
+  background: color-mix(in srgb, var(--pf-success) 10%, var(--pf-surface-2));
+  border: 1px solid color-mix(in srgb, var(--pf-success) 20%, transparent);
+}
+
 .pf-progress-section-icon {
   width: 16px;
   height: 16px;
@@ -214,14 +232,35 @@
   width: 16px;
   height: 16px;
   flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+/* Status Icon States */
+.pf-status-icon--open {
+  color: var(--pf-muted, #6b7280);
 }
 
 .pf-status-icon--pending {
   color: var(--pf-muted, #6b7280);
 }
 
+.pf-status-icon--current {
+  color: var(--pf-accent, #2563eb);
+}
+
 .pf-status-icon--complete {
   color: var(--pf-success, #16a34a);
+}
+
+/* Check icon for completed state */
+.pf-progress-section--step[data-step-completed="true"] .pf-status-icon,
+.pf-progress-section--variables[data-all-required-filled="true"] .pf-status-icon {
+  color: var(--pf-success, #16a34a);
+}
+
+/* Highlight current step icon */
+.pf-progress-section--step.pf-progress-section--current .pf-status-icon {
+  color: var(--pf-accent, #2563eb);
 }
 
 .pf-status-icon--partial {

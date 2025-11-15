@@ -1174,6 +1174,15 @@ add_action('wp_enqueue_scripts', function () {
     true
   );
   
+  // Master Progress (step-based progress + smooth scrolling)
+  wp_enqueue_script(
+    'pf-master-progress',
+    $uri . '/src/scripts/workflows/master-progress.js',
+    [],
+    pf_ver('/src/scripts/workflows/master-progress.js'),
+    true
+  );
+  
   // Tracking module (Fast Track Mode) - no jQuery dependency
   wp_enqueue_script(
     'pf-tracking',
