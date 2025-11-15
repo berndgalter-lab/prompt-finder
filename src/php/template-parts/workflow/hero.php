@@ -165,12 +165,23 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
                 </p>
             <?php endif; ?>
 
-            <!-- Workflow Name/ID (internal) -->
-            <div class="pf-hero__name">
-                <?php echo esc_html($post_title); ?>
+            <!-- Meta Info Block (Workflow ID + Best for) -->
+            <div class="pf-hero__meta-info">
+                
+                <!-- Workflow ID (internal) -->
                 <?php if ($workflow_id_field): ?>
-                    <span class="pf-hero__name-id">· <?php echo esc_html($workflow_id_field); ?></span>
+                    <p class="pf-hero__workflow-id">
+                        Workflow ID: <?php echo esc_html($workflow_id_field); ?>
+                    </p>
                 <?php endif; ?>
+
+                <!-- Best for (optional) -->
+                <?php if ($best_for): ?>
+                    <p class="pf-hero__best-for">
+                        Best for: <?php echo esc_html($best_for); ?>
+                    </p>
+                <?php endif; ?>
+
             </div>
 
         </div>
@@ -180,13 +191,6 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
             
             <!-- Left Column -->
             <div class="pf-hero__left">
-
-                <!-- Best for (optional, below tagline) -->
-                <?php if ($best_for): ?>
-                    <p class="pf-hero__best-for">
-                        <strong>Best for:</strong> <?php echo esc_html($best_for); ?>
-                    </p>
-                <?php endif; ?>
 
                 <!-- Outcome -->
                 <?php if ($expected_outcome): ?>
