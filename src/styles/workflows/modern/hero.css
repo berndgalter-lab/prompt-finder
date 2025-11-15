@@ -62,7 +62,9 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 2rem; /* larger gap after context block */
+  padding-bottom: 1.25rem;
+  margin-bottom: 2.5rem; /* larger gap to hero content */
+  border-bottom: 1px solid color-mix(in srgb, var(--pf-border) 40%, transparent);
   flex-wrap: wrap;
 }
 
@@ -457,6 +459,11 @@
     padding: 2rem 1.25rem 1.5rem;
   }
 
+  .pf-hero__meta {
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+  }
+
   /* Stack columns on mobile: story first, action below */
   .pf-hero__columns {
     display: flex;
@@ -512,6 +519,11 @@
 @media (max-width: 480px) {
   .pf-hero {
     padding: 1.5rem 1rem;
+  }
+
+  .pf-hero__meta {
+    padding-bottom: 0.875rem;
+    margin-bottom: 1.75rem;
   }
 
   .pf-hero__quickstart-card {
