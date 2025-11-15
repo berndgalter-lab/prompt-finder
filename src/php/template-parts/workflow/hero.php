@@ -186,7 +186,7 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
             <!-- Left Column -->
             <div class="pf-hero__left">
 
-                <!-- GROUP 2: Benefits (Outcome + Pain Points + Time Saved) -->
+                <!-- GROUP 2: Benefits (Outcome + Pain Points) -->
                 <div class="pf-hero__benefits-group">
 
                     <!-- Outcome -->
@@ -208,17 +208,17 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
                         </div>
                     <?php endif; ?>
 
-                    <!-- Saved Time -->
+                </div>
+
+                <!-- GROUP 3: CTA Block (with Saved Time) -->
+                <div class="pf-hero__cta-group">
+
+                    <!-- Saved Time (above CTA) -->
                     <?php if ($time_saved_min): ?>
                         <p class="pf-hero__saved-time">
                             Saves ~<?php echo esc_html($time_display); ?> every time you run it
                         </p>
                     <?php endif; ?>
-
-                </div>
-
-                <!-- GROUP 3: CTA Block -->
-                <div class="pf-hero__cta-group">
 
                     <!-- CTA Button + Note -->
                     <div class="pf-hero__cta-block">
