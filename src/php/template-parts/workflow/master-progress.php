@@ -60,43 +60,54 @@ $initial_percentage = 0; // JavaScript will calculate this based on filled value
 <section class="pf-master-progress" role="region" aria-label="Overall Workflow Progress">
     <div class="pf-master-progress-container">
         
-        <!-- Header Row -->
+        <!-- Header Row with Start Button -->
         <div class="pf-master-progress-header">
-            <svg class="pf-master-progress-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M12 6v6l4 2"></path>
-            </svg>
-            <div class="pf-master-progress-text">
-                <h2 class="pf-master-progress-title">Workflow Progress</h2>
-                <p class="pf-master-progress-subtitle" data-master-progress-text>
-                    <span data-master-filled>0</span> of <span data-master-total><?php echo esc_html($total_vars); ?></span> completed
-                </p>
+            <div class="pf-master-progress-header-left">
+                <svg class="pf-master-progress-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 6v6l4 2"></path>
+                </svg>
+                <div class="pf-master-progress-text">
+                    <h2 class="pf-master-progress-title">Workflow Progress</h2>
+                    <p class="pf-master-progress-subtitle" data-master-progress-text>
+                        <span data-master-filled>0</span> of <span data-master-total><?php echo esc_html($total_vars); ?></span> completed
+                    </p>
+                </div>
+            </div>
+            <a href="#pf-variables" 
+               class="pf-master-progress-start-btn" 
+               data-scroll-to="variables">
+                Start workflow
+            </a>
+        </div>
+
+        <!-- Progress Bar with Percentage -->
+        <div class="pf-master-progress-bar-row">
+            <div class="pf-master-progress-bar-wrapper">
+                <div class="pf-master-progress-bar" role="progressbar" 
+                     aria-valuenow="0" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100"
+                     aria-label="Overall completion percentage">
+                    <div class="pf-master-progress-bar-fill" 
+                         style="width: 0%"
+                         data-master-progress-fill></div>
+                </div>
             </div>
             <div class="pf-master-progress-percentage" data-master-percentage>0%</div>
         </div>
 
-        <!-- Progress Bar -->
-        <div class="pf-master-progress-bar-wrapper">
-            <div class="pf-master-progress-bar" role="progressbar" 
-                 aria-valuenow="0" 
-                 aria-valuemin="0" 
-                 aria-valuemax="100"
-                 aria-label="Overall completion percentage">
-                <div class="pf-master-progress-bar-fill" 
-                     style="width: 0%"
-                     data-master-progress-fill></div>
-            </div>
-        </div>
-
-        <!-- Section Status Pills -->
+        <!-- Navigation Pills (Jump Links) -->
         <div class="pf-master-progress-sections">
             
             <!-- Workflow Variables Section -->
             <?php if ($wf_var_count > 0): ?>
-            <div class="pf-progress-section" 
-                 data-section="workflow"
-                 data-section-total="<?php echo esc_attr($wf_var_count); ?>"
-                 data-section-filled="0">
+            <a href="#pf-variables" 
+               class="pf-progress-section" 
+               data-section="workflow"
+               data-section-total="<?php echo esc_attr($wf_var_count); ?>"
+               data-section-filled="0"
+               data-scroll-to="variables">
                 <svg class="pf-progress-section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="3"></circle>
                     <path d="M12 1v6m0 6v6m5.2-13.2 4.2-4.2m-4.2 4.2-4.2-4.2m4.2 18.4 4.2 4.2m-4.2-4.2-4.2 4.2M1 12h6m6 0h6"></path>
@@ -107,16 +118,18 @@ $initial_percentage = 0; // JavaScript will calculate this based on filled value
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
                 </span>
-            </div>
+            </a>
             <?php endif; ?>
 
             <!-- Step Sections -->
             <?php foreach ($steps_data as $step): ?>
                 <?php if ($step['var_count'] > 0): ?>
-                <div class="pf-progress-section" 
-                     data-section="step-<?php echo esc_attr($step['index']); ?>"
-                     data-section-total="<?php echo esc_attr($step['var_count']); ?>"
-                     data-section-filled="0">
+                <a href="#pf-step-<?php echo esc_attr($step['index']); ?>" 
+                   class="pf-progress-section" 
+                   data-section="step-<?php echo esc_attr($step['index']); ?>"
+                   data-section-total="<?php echo esc_attr($step['var_count']); ?>"
+                   data-section-filled="0"
+                   data-scroll-to="step-<?php echo esc_attr($step['index']); ?>">
                     <svg class="pf-progress-section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                         <polyline points="14 2 14 8 20 8"></polyline>
@@ -129,7 +142,7 @@ $initial_percentage = 0; // JavaScript will calculate this based on filled value
                             <circle cx="12" cy="12" r="10"></circle>
                         </svg>
                     </span>
-                </div>
+                </a>
                 <?php endif; ?>
             <?php endforeach; ?>
 

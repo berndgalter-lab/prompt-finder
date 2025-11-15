@@ -62,7 +62,7 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
 
 ?>
 
-<section id="variables" class="pf-section pf-section--variables" data-post-id="<?php echo esc_attr($workflow_id); ?>">
+<section id="pf-variables" class="pf-section pf-section--variables" data-post-id="<?php echo esc_attr($workflow_id); ?>">
 
     <?php if ($profile_defaults_enabled && !empty($profile_values)): ?>
         <!-- Profile Defaults Card (Read-only) -->

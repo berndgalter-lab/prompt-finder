@@ -28,11 +28,20 @@
   gap: var(--pf-space-4, 1rem);
 }
 
-/* Header Row */
+/* Header Row with Start Button */
 .pf-master-progress-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--pf-space-4, 1rem);
+}
+
+.pf-master-progress-header-left {
+  display: flex;
+  align-items: center;
   gap: var(--pf-space-3, 0.75rem);
+  flex: 1;
+  min-width: 0;
 }
 
 .pf-master-progress-icon {
@@ -62,17 +71,50 @@
   line-height: 1.4;
 }
 
+/* Start Workflow Button */
+.pf-master-progress-start-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--pf-accent), var(--pf-info));
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--pf-accent) 20%, transparent);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.pf-master-progress-start-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--pf-accent) 30%, transparent);
+}
+
+/* Progress Bar Row with Percentage */
+.pf-master-progress-bar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-space-3, 0.75rem);
+}
+
+.pf-master-progress-bar-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
 .pf-master-progress-percentage {
-  font-size: var(--pf-size-lg, 1.125rem);
+  font-size: var(--pf-size, 1rem);
   font-weight: 700;
   color: var(--pf-accent, #2563eb);
   flex-shrink: 0;
-}
-
-/* Progress Bar with Animation */
-.pf-master-progress-bar-wrapper {
-  position: relative;
-  width: 100%;
+  min-width: 3ch;
+  text-align: right;
 }
 
 .pf-master-progress-bar {
@@ -121,7 +163,7 @@
   }
 }
 
-/* Section Pills */
+/* Navigation Pills (Jump Links) */
 .pf-master-progress-sections {
   display: flex;
   flex-wrap: wrap;
@@ -138,6 +180,18 @@
   border-radius: var(--pf-radius-sm, 8px);
   font-size: var(--pf-size-sm, 0.875rem);
   color: var(--pf-text, #1e1e20);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.pf-progress-section:hover {
+  background: color-mix(in srgb, var(--pf-surface-2) 80%, var(--pf-accent));
+  transform: translateY(-1px);
+}
+
+.pf-progress-section:active {
+  transform: translateY(0);
 }
 
 .pf-progress-section-icon {
@@ -175,18 +229,30 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .pf-master-progress {
     padding: var(--pf-space-4, 1rem);
     margin: var(--pf-space-4, 1rem) 0;
   }
 
   .pf-master-progress-header {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--pf-space-3, 0.75rem);
+  }
+
+  .pf-master-progress-start-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pf-master-progress-bar-row {
+    gap: var(--pf-space-2, 0.5rem);
   }
 
   .pf-master-progress-percentage {
-    font-size: var(--pf-size, 1rem);
+    font-size: var(--pf-size-sm, 0.875rem);
+    min-width: 2.5ch;
   }
 
   .pf-master-progress-sections {

@@ -233,7 +233,7 @@ if (is_user_logged_in() && class_exists('PF_UserUidMap')) {
             if ($step_type === 'prompt' && !empty($prompt_mode)) {
                 $type_badge_text = ucfirst(str_replace('_', ' ', $prompt_mode));
             }
-            $step_dom_id = 'step-' . $step_number;
+            $step_dom_id = 'pf-step-' . $step_number;
             $step_heading_id = $step_dom_id . '-title';
             $step_content_id = $step_dom_id . '-content';
             $is_initial_active = !$initial_active_assigned;
