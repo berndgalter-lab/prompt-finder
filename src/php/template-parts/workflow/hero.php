@@ -178,6 +178,13 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
                 </p>
             <?php endif; ?>
 
+            <!-- Outcome (optional, below Best for) -->
+            <?php if ($expected_outcome): ?>
+                <p class="pf-hero__outcome">
+                    <strong>Outcome:</strong> <?php echo esc_html($expected_outcome); ?>
+                </p>
+            <?php endif; ?>
+
         </div>
 
         <!-- Main Hero Content: 2-Column Layout -->
@@ -186,16 +193,8 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
             <!-- Left Column -->
             <div class="pf-hero__left">
 
-                <!-- GROUP 2: Benefits (Outcome + Pain Points) -->
+                <!-- GROUP 2: Benefits (Pain Points) -->
                 <div class="pf-hero__benefits-group">
-
-                    <!-- Outcome -->
-                    <?php if ($expected_outcome): ?>
-                        <div class="pf-hero__outcome">
-                            <p class="pf-hero__outcome-label">Outcome</p>
-                            <p class="pf-hero__outcome-text"><?php echo esc_html($expected_outcome); ?></p>
-                        </div>
-                    <?php endif; ?>
 
                     <!-- Pain Points -->
                     <?php if (!empty($pain_points_display)): ?>

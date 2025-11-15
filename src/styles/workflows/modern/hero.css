@@ -185,11 +185,27 @@
   font-size: 0.875rem;
   line-height: 1.5;
   color: var(--pf-muted);
-  margin: 0.25rem 0 1.25rem 0;
+  margin: 0.25rem 0 0 0; /* small gap above, no gap below (Outcome handles it) */
   opacity: 0.9;
 }
 
 .pf-hero__best-for strong {
+  font-weight: 600;
+  color: var(--pf-text);
+}
+
+/* ========================================
+   OUTCOME (below Best for, in overview block)
+   ======================================== */
+
+.pf-hero__outcome {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--pf-muted);
+  margin: 0.375rem 0 1.5rem 0; /* small gap above, larger gap below */
+}
+
+.pf-hero__outcome strong {
   font-weight: 600;
   color: var(--pf-text);
 }
@@ -203,7 +219,7 @@
 
 /* ========================================
    GROUP 2: BENEFITS
-   Outcome + Pain Points (with divider below)
+   Pain Points (with divider below)
    ======================================== */
 
 .pf-hero__benefits-group {
@@ -216,38 +232,11 @@
 }
 
 /* ========================================
-   OUTCOME
-   ======================================== */
-
-.pf-hero__outcome {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem; /* small gap between label and text */
-}
-
-.pf-hero__outcome-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--pf-muted);
-  margin: 0;
-}
-
-.pf-hero__outcome-text {
-  font-size: 1.125rem;
-  line-height: 1.6;
-  color: var(--pf-muted);
-  margin: 0;
-}
-
-/* ========================================
    PAIN POINTS
    ======================================== */
 
 .pf-hero__pain {
-  margin: 1.25rem 0 0 0; /* clear margin above for visual separation */
+  margin: 0; /* no extra margin needed */
 }
 
 .pf-hero__pain-title {
