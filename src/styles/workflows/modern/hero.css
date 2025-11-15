@@ -194,12 +194,11 @@
 }
 
 .pf-hero__pain-title {
-  font-size: 0.875rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--pf-muted);
+  color: var(--pf-text);
   margin: 0 0 0.75rem 0;
+  line-height: 1.4;
 }
 
 .pf-hero__pain-list {
