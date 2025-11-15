@@ -100,6 +100,10 @@ if (!empty($breadcrumb_terms) && !is_wp_error($breadcrumb_terms)) {
     $breadcrumb_category = $breadcrumb_terms[0];
 }
 
+// Breadcrumb Label: Use custom label if set, otherwise post title
+$breadcrumb_label = get_field('breadcrumb_label', $post_id);
+$breadcrumb_current = !empty($breadcrumb_label) ? $breadcrumb_label : $post_title;
+
 // Pain Points Processing
 $pain_points_lines = array_filter(array_map('trim', explode("\n", $pain_points)));
 $pain_points_display = array_slice($pain_points_lines, 0, 3);
@@ -117,7 +121,7 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
                 <a href="<?php echo esc_url(get_term_link($breadcrumb_category)); ?>"><?php echo esc_html($breadcrumb_category->name); ?></a>
             <?php endif; ?>
             <span class="pf-hero__breadcrumbs-separator">/</span>
-            <span class="pf-hero__breadcrumbs-current"><?php echo esc_html($post_title); ?></span>
+            <span class="pf-hero__breadcrumbs-current"><?php echo esc_html($breadcrumb_current); ?></span>
         </nav>
 
         <!-- Meta: Access · Steps · Duration -->
