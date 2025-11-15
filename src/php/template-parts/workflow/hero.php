@@ -192,58 +192,68 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
             <!-- Left Column -->
             <div class="pf-hero__left">
 
-                <!-- Outcome -->
-                <?php if ($expected_outcome): ?>
-                    <p class="pf-hero__outcome">
-                        <strong>Outcome:</strong> <?php echo esc_html($expected_outcome); ?>
-                    </p>
-                <?php endif; ?>
+                <!-- GROUP 2: Benefits (Outcome + Pain Points + Time Saved) -->
+                <div class="pf-hero__benefits-group">
 
-                <!-- Pain Points -->
-                <?php if (!empty($pain_points_display)): ?>
-                    <div class="pf-hero__pain">
-                        <h2 class="pf-hero__pain-title">This workflow is for you if…</h2>
-                        <ul class="pf-hero__pain-list">
-                            <?php foreach ($pain_points_display as $point): ?>
-                                <li><?php echo esc_html($point); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endif; ?>
+                    <!-- Outcome -->
+                    <?php if ($expected_outcome): ?>
+                        <p class="pf-hero__outcome">
+                            <strong>Outcome:</strong> <?php echo esc_html($expected_outcome); ?>
+                        </p>
+                    <?php endif; ?>
 
-                <!-- Saved Time -->
-                <?php if ($time_saved_min): ?>
-                    <p class="pf-hero__saved-time">
-                        Saves ~<?php echo esc_html($time_display); ?> every time you run it
-                    </p>
-                <?php endif; ?>
+                    <!-- Pain Points -->
+                    <?php if (!empty($pain_points_display)): ?>
+                        <div class="pf-hero__pain">
+                            <h2 class="pf-hero__pain-title">This workflow is for you if…</h2>
+                            <ul class="pf-hero__pain-list">
+                                <?php foreach ($pain_points_display as $point): ?>
+                                    <li><?php echo esc_html($point); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
 
-                <!-- CTA Block -->
-                <div class="pf-hero__cta-block">
-                    <a href="<?php echo esc_url($cta['url']); ?>" 
-                       class="pf-hero__cta-button"
-                       data-scroll-to="variables">
-                        <?php echo esc_html($cta['text']); ?>
-                        <span class="pf-hero__cta-icon"><?php echo $cta['icon']; ?></span>
-                    </a>
-                    <span class="pf-hero__cta-note"><?php echo esc_html($cta['note']); ?></span>
+                    <!-- Saved Time -->
+                    <?php if ($time_saved_min): ?>
+                        <p class="pf-hero__saved-time">
+                            Saves ~<?php echo esc_html($time_display); ?> every time you run it
+                        </p>
+                    <?php endif; ?>
+
                 </div>
 
-                <!-- How it works -->
-                <div class="pf-hero__how-works">
-                    <strong>How it works:</strong>
-                    1️⃣ Fill fields → 2️⃣ Copy prompt → 3️⃣ Paste into ChatGPT
-                </div>
+                <!-- GROUP 3: CTA Block -->
+                <div class="pf-hero__cta-group">
 
-                <!-- Works with -->
-                <div class="pf-hero__works-with">
-                    <span class="pf-hero__works-with-label">Works with:</span>
-                    <div class="pf-hero__works-with-badges">
-                        <span class="pf-hero__works-with-badge">ChatGPT</span>
-                        <span class="pf-hero__works-with-badge">Claude</span>
-                        <span class="pf-hero__works-with-badge">Gemini</span>
-                        <span class="pf-hero__works-with-badge">Grok</span>
+                    <!-- CTA Button + Note -->
+                    <div class="pf-hero__cta-block">
+                        <a href="<?php echo esc_url($cta['url']); ?>" 
+                           class="pf-hero__cta-button"
+                           data-scroll-to="variables">
+                            <?php echo esc_html($cta['text']); ?>
+                            <span class="pf-hero__cta-icon"><?php echo $cta['icon']; ?></span>
+                        </a>
+                        <span class="pf-hero__cta-note"><?php echo esc_html($cta['note']); ?></span>
                     </div>
+
+                    <!-- How it works -->
+                    <div class="pf-hero__how-works">
+                        <strong>How it works:</strong>
+                        1️⃣ Fill fields → 2️⃣ Copy prompt → 3️⃣ Paste into ChatGPT
+                    </div>
+
+                    <!-- Works with -->
+                    <div class="pf-hero__works-with">
+                        <span class="pf-hero__works-with-label">Works with:</span>
+                        <div class="pf-hero__works-with-badges">
+                            <span class="pf-hero__works-with-badge">ChatGPT</span>
+                            <span class="pf-hero__works-with-badge">Claude</span>
+                            <span class="pf-hero__works-with-badge">Gemini</span>
+                            <span class="pf-hero__works-with-badge">Grok</span>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
