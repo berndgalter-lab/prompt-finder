@@ -30,10 +30,9 @@ if (!empty($steps) && is_array($steps)) {
         $step_number = $step_index + 1;
         $step_title = isset($step['step_title']) ? $step['step_title'] : "Step " . $step_number;
         
-        // Check step prompt for variable placeholders
-        $step_prompt = isset($step['step_prompt']) ? $step['step_prompt'] : '';
+        // Check step body for variable placeholders (step_prompt doesn't exist in ACF)
         $step_body = isset($step['step_body']) ? $step['step_body'] : '';
-        $combined_content = $step_prompt . ' ' . $step_body;
+        $combined_content = $step_body;
         
         // Debug: Log step content
         error_log('[PF Variables] Step ' . $step_number . ' content length: ' . strlen($combined_content));
@@ -186,17 +185,28 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
                         <?php 
                         $step_number = $step_index + 1;
                         $step_title = isset($step['step_title']) ? $step['step_title'] : "Step " . $step_number;
-                        $step_prompt = isset($step['step_prompt']) ? $step['step_prompt'] : '';
                         $step_body = isset($step['step_body']) ? $step['step_body'] : '';
+                        
+                        // Find variables in this step
+                        $found_vars = [];
+                        if (preg_match_all('/\{([a-zA-Z0-9_]+)(?:\|[^}]*)?\}/', $step_body, $matches)) {
+                            $found_vars = $matches[1];
+                        }
                         ?>
                         <div style="margin: 0.5rem 0; padding: 0.5rem; background: white; border: 1px solid #ddd;">
                             <strong>Step <?php echo $step_number; ?>: <?php echo esc_html($step_title); ?></strong><br>
-                            <small>Prompt length: <?php echo strlen($step_prompt); ?> chars</small><br>
                             <small>Body length: <?php echo strlen($step_body); ?> chars</small><br>
+                            <?php if (!empty($found_vars)): ?>
+                                <small style="color: green;">✓ Found variables: <?php echo implode(', ', array_unique($found_vars)); ?></small><br>
+                            <?php else: ?>
+                                <small style="color: red;">✗ No variables found</small><br>
+                            <?php endif; ?>
+                            <?php if (strlen($step_body) > 0): ?>
                             <details>
-                                <summary>Show prompt content (first 500 chars)</summary>
-                                <pre style="white-space: pre-wrap; font-size: 11px;"><?php echo esc_html(substr($step_prompt, 0, 500)); ?></pre>
+                                <summary>Show body content (first 500 chars)</summary>
+                                <pre style="white-space: pre-wrap; font-size: 11px;"><?php echo esc_html(substr($step_body, 0, 500)); ?></pre>
                             </details>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
