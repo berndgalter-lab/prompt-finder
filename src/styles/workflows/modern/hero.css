@@ -123,12 +123,24 @@
 
 /* Right Column: Action / Quick Start */
 .pf-hero__action {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem; /* consistent vertical spacing in action column */
   min-width: 0;
   position: sticky;
   top: 2rem; /* sticky sidebar on scroll */
+}
+
+/* ========================================
+   QUICK START CARD (wraps all action elements)
+   ======================================== */
+
+.pf-hero__quickstart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* consistent vertical spacing inside card */
+  padding: 1.5rem;
+  background: var(--pf-surface-2);
+  border: 1px solid var(--pf-border);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--pf-shadow, #000) 5%, transparent);
 }
 
 .pf-hero__label-row {
@@ -304,7 +316,7 @@
 }
 
 /* ========================================
-   HOW IT WORKS (in action column)
+   HOW IT WORKS (inside quick start card)
    ======================================== */
 
 .pf-hero__how-works {
@@ -312,16 +324,17 @@
   flex-direction: column;
   gap: 0.5rem;
   margin: 0;
-  padding: 1rem;
-  background: var(--pf-surface-2);
-  border: 1px solid var(--pf-border);
-  border-radius: 8px;
+  padding: 0;
+  background: transparent;
+  border: none;
 }
 
 .pf-hero__how-works strong {
   font-weight: 600;
   color: var(--pf-text);
   font-size: 0.875rem;
+  display: block;
+  margin-bottom: 0.375rem;
 }
 
 .pf-hero__how-works-list {
@@ -340,27 +353,26 @@
 }
 
 /* ========================================
-   WORKS WITH (meta-style label with chips)
+   WORKS WITH (inside quick start card)
    ======================================== */
 
 .pf-hero__works-with {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* small gap between label and chips */
+  gap: 0.625rem;
   margin: 0;
 }
 
 .pf-hero__works-with-label {
-  font-size: 0.8125rem; /* slightly smaller than body text */
-  font-weight: 400; /* normal weight for text */
-  color: var(--pf-muted);
-  opacity: 0.85; /* secondary/muted */
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--pf-text);
   margin: 0;
   line-height: 1.5;
 }
 
 .pf-hero__works-with-label strong {
-  font-weight: 600; /* only label bold */
+  font-weight: 600;
 }
 
 .pf-hero__works-with-badges {
@@ -371,12 +383,18 @@
 
 .pf-hero__works-with-badge {
   padding: 0.375rem 0.75rem;
-  background: var(--pf-surface-2);
+  background: var(--pf-surface);
   border: 1px solid var(--pf-border);
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
   font-weight: 500;
   color: var(--pf-text);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.pf-hero__works-with-badge:hover {
+  background: var(--pf-surface-2);
+  border-color: color-mix(in srgb, var(--pf-border) 150%, transparent);
 }
 
 /* ========================================
@@ -397,6 +415,11 @@
 
   .pf-hero__action {
     position: static; /* no sticky on mobile */
+  }
+
+  .pf-hero__quickstart-card {
+    padding: 1.25rem;
+    gap: 1rem;
   }
 
   .pf-hero__headline {
@@ -421,6 +444,11 @@
     padding: 1.5rem 1rem;
   }
 
+  .pf-hero__quickstart-card {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
   .pf-hero__headline {
     font-size: 1.5rem;
   }
@@ -433,16 +461,17 @@
     font-size: 0.8125rem;
   }
 
-  .pf-hero__how-works {
-    padding: 0.875rem;
-  }
-
   .pf-hero__how-works strong {
     font-size: 0.8125rem;
   }
 
   .pf-hero__how-works-list li {
     font-size: 0.8125rem;
+  }
+
+  .pf-hero__works-with-badge {
+    font-size: 0.75rem;
+    padding: 0.3125rem 0.625rem;
   }
 }
 
