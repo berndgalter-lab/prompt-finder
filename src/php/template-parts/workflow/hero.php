@@ -239,7 +239,7 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
 
                     <!-- Works with -->
                     <div class="pf-hero__works-with">
-                        <span class="pf-hero__works-with-label">Works with:</span>
+                        <p class="pf-hero__works-with-label"><strong>Works with:</strong></p>
                         <div class="pf-hero__works-with-badges">
                             <span class="pf-hero__works-with-badge">ChatGPT</span>
                             <span class="pf-hero__works-with-badge">Claude</span>

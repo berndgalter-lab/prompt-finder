@@ -357,24 +357,27 @@
 }
 
 /* ========================================
-   WORKS WITH (consistent meta style)
+   WORKS WITH (meta-style label with chips)
    ======================================== */
 
 .pf-hero__works-with {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.5rem; /* small gap between label and chips */
   margin: 0;
 }
 
 .pf-hero__works-with-label {
-  font-size: 0.875rem; /* slightly smaller than body text */
-  font-weight: 500; /* light bold */
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 0.8125rem; /* slightly smaller than body text */
+  font-weight: 400; /* normal weight for text */
   color: var(--pf-muted);
   opacity: 0.85; /* secondary/muted */
+  margin: 0;
+  line-height: 1.5;
+}
+
+.pf-hero__works-with-label strong {
+  font-weight: 600; /* only label bold */
 }
 
 .pf-hero__works-with-badges {
