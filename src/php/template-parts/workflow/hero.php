@@ -152,12 +152,19 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
                 <span class="pf-hero__label">READY-TO-USE AI WORKFLOW</span>
             </div>
 
-            <!-- H1 Headline (Tagline) -->
+            <!-- H1 Headline (Post Title) -->
             <h1 class="pf-hero__headline">
-                <?php echo esc_html($tagline); ?>
+                <?php echo esc_html($post_title); ?>
             </h1>
 
-            <!-- Workflow Name (internal) -->
+            <!-- Tagline (optional, below H1) -->
+            <?php if ($tagline): ?>
+                <p class="pf-hero__tagline">
+                    <?php echo esc_html($tagline); ?>
+                </p>
+            <?php endif; ?>
+
+            <!-- Workflow Name/ID (internal) -->
             <div class="pf-hero__name">
                 <?php echo esc_html($post_title); ?>
                 <?php if ($workflow_id_field): ?>
