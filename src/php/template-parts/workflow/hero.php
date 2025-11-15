@@ -151,110 +151,99 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
 
         </div>
 
-        <!-- Hero Main Header Block (below) -->
-        <div class="pf-hero__main-header">
+        <!-- Two-Column Layout: Story (left) + Action (right) -->
+        <div class="pf-hero__columns">
 
-            <!-- Label Row -->
-            <div class="pf-hero__label-row">
-                <span class="pf-hero__label">READY-TO-USE AI WORKFLOW</span>
-            </div>
+            <!-- Left Column: Story / Explanation -->
+            <div class="pf-hero__story">
 
-            <!-- H1 Headline (Post Title) -->
-            <h1 class="pf-hero__headline">
-                <?php echo esc_html($post_title); ?>
-            </h1>
-
-            <!-- Tagline (optional, below H1) -->
-            <?php if ($tagline): ?>
-                <p class="pf-hero__tagline">
-                    <?php echo esc_html($tagline); ?>
-                </p>
-            <?php endif; ?>
-
-            <!-- Best for (optional, below tagline) -->
-            <?php if ($best_for): ?>
-                <p class="pf-hero__best-for">
-                    <strong>Best for:</strong> <?php echo esc_html($best_for); ?>
-                </p>
-            <?php endif; ?>
-
-            <!-- Outcome (optional, below Best for) -->
-            <?php if ($expected_outcome): ?>
-                <p class="pf-hero__outcome">
-                    <strong>Outcome:</strong> <?php echo esc_html($expected_outcome); ?>
-                </p>
-            <?php endif; ?>
-
-        </div>
-
-        <!-- Main Hero Content: 2-Column Layout -->
-        <div class="pf-hero__main">
-            
-            <!-- Left Column -->
-            <div class="pf-hero__left">
-
-                <!-- GROUP 2: Benefits (Pain Points) -->
-                <div class="pf-hero__benefits-group">
-
-                    <!-- Pain Points -->
-                    <?php if (!empty($pain_points_display)): ?>
-                        <div class="pf-hero__pain">
-                            <h2 class="pf-hero__pain-title">This workflow is for you if…</h2>
-                            <ul class="pf-hero__pain-list">
-                                <?php foreach ($pain_points_display as $point): ?>
-                                    <li><?php echo esc_html($point); ?></li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </div>
-                    <?php endif; ?>
-
+                <!-- Label Row -->
+                <div class="pf-hero__label-row">
+                    <span class="pf-hero__label">READY-TO-USE AI WORKFLOW</span>
                 </div>
 
-                <!-- GROUP 3: CTA Block (with Saved Time) -->
-                <div class="pf-hero__cta-group">
+                <!-- H1 Headline (Post Title) -->
+                <h1 class="pf-hero__headline">
+                    <?php echo esc_html($post_title); ?>
+                </h1>
 
-                    <!-- Saved Time (above CTA) -->
-                    <?php if ($time_saved_min): ?>
-                        <p class="pf-hero__saved-time">
-                            Saves ~<?php echo esc_html($time_display); ?> every time you run it
-                        </p>
-                    <?php endif; ?>
+                <!-- Tagline (optional) -->
+                <?php if ($tagline): ?>
+                    <p class="pf-hero__tagline">
+                        <?php echo esc_html($tagline); ?>
+                    </p>
+                <?php endif; ?>
 
-                    <!-- CTA Button + Note -->
-                    <div class="pf-hero__cta-block">
-                        <a href="<?php echo esc_url($cta['url']); ?>" 
-                           class="pf-hero__cta-button"
-                           data-scroll-to="variables">
-                            <?php echo esc_html($cta['text']); ?>
-                            <span class="pf-hero__cta-icon"><?php echo $cta['icon']; ?></span>
-                        </a>
-                        <span class="pf-hero__cta-note"><?php echo esc_html($cta['note']); ?></span>
+                <!-- Outcome (optional) -->
+                <?php if ($expected_outcome): ?>
+                    <p class="pf-hero__outcome">
+                        <strong>Outcome:</strong> <?php echo esc_html($expected_outcome); ?>
+                    </p>
+                <?php endif; ?>
+
+                <!-- Best for (optional) -->
+                <?php if ($best_for): ?>
+                    <p class="pf-hero__best-for">
+                        <strong>Best for:</strong> <?php echo esc_html($best_for); ?>
+                    </p>
+                <?php endif; ?>
+
+                <!-- Pain Points -->
+                <?php if (!empty($pain_points_display)): ?>
+                    <div class="pf-hero__pain">
+                        <h2 class="pf-hero__pain-title">This workflow is for you if…</h2>
+                        <ul class="pf-hero__pain-list">
+                            <?php foreach ($pain_points_display as $point): ?>
+                                <li><?php echo esc_html($point); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
+                <?php endif; ?>
 
-                    <!-- How it works -->
-                    <div class="pf-hero__how-works">
-                        <strong>How it works:</strong>
-                        1️⃣ Fill fields → 2️⃣ Copy prompt → 3️⃣ Paste into ChatGPT
-                    </div>
-
-                    <!-- Works with -->
-                    <div class="pf-hero__works-with">
-                        <p class="pf-hero__works-with-label"><strong>Works with:</strong></p>
-                        <div class="pf-hero__works-with-badges">
-                            <span class="pf-hero__works-with-badge">ChatGPT</span>
-                            <span class="pf-hero__works-with-badge">Claude</span>
-                            <span class="pf-hero__works-with-badge">Gemini</span>
-                            <span class="pf-hero__works-with-badge">Grok</span>
-                        </div>
-                    </div>
-
-                </div>
+                <!-- Saved Time -->
+                <?php if ($time_saved_min): ?>
+                    <p class="pf-hero__saved-time">
+                        Saves ~<?php echo esc_html($time_display); ?> every time you run it
+                    </p>
+                <?php endif; ?>
 
             </div>
 
-            <!-- Right Column (Placeholder for future screenshot/preview) -->
-            <div class="pf-hero__right">
-                <!-- Optional: Example Output / Screenshot / Preview -->
+            <!-- Right Column: Action / Quick Start -->
+            <div class="pf-hero__action">
+
+                <!-- CTA Button -->
+                <a href="<?php echo esc_url($cta['url']); ?>" 
+                   class="pf-hero__cta-button"
+                   data-scroll-to="variables">
+                    <?php echo esc_html($cta['text']); ?>
+                    <span class="pf-hero__cta-icon"><?php echo $cta['icon']; ?></span>
+                </a>
+
+                <!-- Access Note -->
+                <p class="pf-hero__cta-note"><?php echo esc_html($cta['note']); ?></p>
+
+                <!-- How it works -->
+                <div class="pf-hero__how-works">
+                    <strong>How it works:</strong>
+                    <ol class="pf-hero__how-works-list">
+                        <li>Fill fields</li>
+                        <li>Copy prompt</li>
+                        <li>Paste into ChatGPT</li>
+                    </ol>
+                </div>
+
+                <!-- Works with -->
+                <div class="pf-hero__works-with">
+                    <p class="pf-hero__works-with-label"><strong>Works with:</strong></p>
+                    <div class="pf-hero__works-with-badges">
+                        <span class="pf-hero__works-with-badge">ChatGPT</span>
+                        <span class="pf-hero__works-with-badge">Claude</span>
+                        <span class="pf-hero__works-with-badge">Gemini</span>
+                        <span class="pf-hero__works-with-badge">Grok</span>
+                    </div>
+                </div>
+
             </div>
 
         </div>
