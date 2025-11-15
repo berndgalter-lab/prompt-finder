@@ -128,7 +128,7 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
                 <span class="pf-hero__breadcrumbs-current"><?php echo esc_html($breadcrumb_current); ?></span>
             </nav>
 
-            <!-- Meta: Access · Steps · Duration -->
+            <!-- Meta: Access · Steps · Duration · Workflow ID -->
             <div class="pf-hero__meta">
                 <span class="pf-hero__meta-badge pf-hero__meta-badge--<?php echo esc_attr($access_mode); ?>">
                     <?php echo esc_html($access_label); ?>
@@ -141,6 +141,12 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
                 <span class="pf-hero__meta-item">
                     ~<?php echo esc_html($estimated_time_min ? $estimated_time_min : '5'); ?> min
                 </span>
+                <?php if ($workflow_id_field): ?>
+                    <span class="pf-hero__meta-separator">·</span>
+                    <span class="pf-hero__meta-item pf-hero__meta-item--id">
+                        <?php echo esc_html($workflow_id_field); ?>
+                    </span>
+                <?php endif; ?>
             </div>
 
         </div>
@@ -165,24 +171,12 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
                 </p>
             <?php endif; ?>
 
-            <!-- Meta Info Block (Workflow ID + Best for) -->
-            <div class="pf-hero__meta-info">
-                
-                <!-- Workflow ID (internal) -->
-                <?php if ($workflow_id_field): ?>
-                    <p class="pf-hero__workflow-id">
-                        Workflow ID: <?php echo esc_html($workflow_id_field); ?>
-                    </p>
-                <?php endif; ?>
-
-                <!-- Best for (optional) -->
-                <?php if ($best_for): ?>
-                    <p class="pf-hero__best-for">
-                        Best for: <?php echo esc_html($best_for); ?>
-                    </p>
-                <?php endif; ?>
-
-            </div>
+            <!-- Best for (optional, below tagline) -->
+            <?php if ($best_for): ?>
+                <p class="pf-hero__best-for">
+                    <strong>Best for:</strong> <?php echo esc_html($best_for); ?>
+                </p>
+            <?php endif; ?>
 
         </div>
 

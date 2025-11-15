@@ -132,7 +132,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem; /* tight spacing inside Group 1 */
-  margin-bottom: 2rem; /* clear gap before Group 2 */
+  margin-bottom: 1.5rem; /* clear gap before Group 2 */
 }
 
 .pf-hero__label-row {
@@ -177,25 +177,28 @@
 }
 
 /* ========================================
+   BEST FOR (below tagline)
+   Subtle helper text
+   ======================================== */
+
+.pf-hero__best-for {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--pf-muted);
+  margin: 0.625rem 0 0 0;
+}
+
+.pf-hero__best-for strong {
+  font-weight: 600;
+  color: var(--pf-text);
+}
+
+/* ========================================
    META INFO BLOCK (Workflow ID + Best for)
    Compact meta information
    ======================================== */
 
-.pf-hero__meta-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem; /* very tight spacing between meta lines */
-  margin-top: 0.75rem;
-}
-
-.pf-hero__workflow-id,
-.pf-hero__best-for {
-  font-size: 0.8125rem;
-  line-height: 1.4;
-  color: var(--pf-muted);
-  margin: 0;
-  opacity: 0.85;
-}
+/* Removed - workflow ID now in top meta row */
 
 /* ========================================
    GROUP 2: BENEFITS
