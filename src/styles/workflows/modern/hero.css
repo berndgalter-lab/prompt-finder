@@ -220,15 +220,26 @@
    ======================================== */
 
 .pf-hero__outcome {
-  font-size: 1.125rem;
-  line-height: 1.6;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* small gap between label and text */
+}
+
+.pf-hero__outcome-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--pf-muted);
   margin: 0;
 }
 
-.pf-hero__outcome strong {
-  color: var(--pf-text);
-  font-weight: 700;
+.pf-hero__outcome-text {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--pf-muted);
+  margin: 0;
 }
 
 /* ========================================
@@ -236,7 +247,7 @@
    ======================================== */
 
 .pf-hero__pain {
-  margin: 0;
+  margin: 1.25rem 0 0 0; /* clear margin above for visual separation */
 }
 
 .pf-hero__pain-title {

@@ -191,9 +191,10 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
 
                     <!-- Outcome -->
                     <?php if ($expected_outcome): ?>
-                        <p class="pf-hero__outcome">
-                            <strong>Outcome:</strong> <?php echo esc_html($expected_outcome); ?>
-                        </p>
+                        <div class="pf-hero__outcome">
+                            <p class="pf-hero__outcome-label">Outcome</p>
+                            <p class="pf-hero__outcome-text"><?php echo esc_html($expected_outcome); ?></p>
+                        </div>
                     <?php endif; ?>
 
                     <!-- Pain Points -->
