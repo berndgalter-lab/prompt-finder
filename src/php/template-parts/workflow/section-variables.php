@@ -21,6 +21,10 @@ $workflow_variables = get_field('variables_workflow', $workflow_id);
 $steps = get_field('steps', $workflow_id);
 $variable_usage = []; // Map of variable_key => array of step numbers
 
+// Debug: Log steps data
+error_log('[PF Variables] Workflow ID: ' . $workflow_id);
+error_log('[PF Variables] Steps count: ' . (is_array($steps) ? count($steps) : 'not array'));
+
 if (!empty($steps) && is_array($steps)) {
     foreach ($steps as $step_index => $step) {
         $step_number = $step_index + 1;
@@ -31,8 +35,12 @@ if (!empty($steps) && is_array($steps)) {
         $step_body = isset($step['step_body']) ? $step['step_body'] : '';
         $combined_content = $step_prompt . ' ' . $step_body;
         
+        // Debug: Log step content
+        error_log('[PF Variables] Step ' . $step_number . ' content length: ' . strlen($combined_content));
+        
         // Find all {variable_name} placeholders
         if (preg_match_all('/\{([a-zA-Z0-9_]+)(?:\|[^}]*)?\}/', $combined_content, $matches)) {
+            error_log('[PF Variables] Step ' . $step_number . ' found variables: ' . implode(', ', $matches[1]));
             foreach ($matches[1] as $var_key) {
                 if (!isset($variable_usage[$var_key])) {
                     $variable_usage[$var_key] = [];
@@ -42,9 +50,14 @@ if (!empty($steps) && is_array($steps)) {
                     'title' => $step_title
                 ];
             }
+        } else {
+            error_log('[PF Variables] Step ' . $step_number . ' no variables found');
         }
     }
 }
+
+// Debug: Log final variable usage
+error_log('[PF Variables] Final variable_usage: ' . json_encode($variable_usage));
 
 // Fallback: support old field 'pf_variables' by mapping to new structure
 if ((empty($workflow_variables) || !is_array($workflow_variables))) {
@@ -158,6 +171,15 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
             <script type="application/json" id="pf-variable-usage-data">
             <?php echo wp_json_encode($variable_usage); ?>
             </script>
+            
+            <!-- Debug: Show variable usage on page (remove after debugging) -->
+            <?php if (current_user_can('manage_options')): ?>
+            <div style="margin-top: 1rem; padding: 1rem; background: #f0f0f0; border: 1px solid #ccc; font-family: monospace; font-size: 12px;">
+                <strong>Debug: Variable Usage Data</strong>
+                <pre><?php echo esc_html(json_encode($variable_usage, JSON_PRETTY_PRINT)); ?></pre>
+                <strong>Steps Count:</strong> <?php echo is_array($steps) ? count($steps) : 'not array'; ?>
+            </div>
+            <?php endif; ?>
 
             <div class="pf-variables-note">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
