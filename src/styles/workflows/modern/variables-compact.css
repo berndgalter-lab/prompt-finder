@@ -1,12 +1,30 @@
 /**
- * Workflow Variables - Compact Row Layout
+ * Workflow Variables - Compact 2-Column Grid Layout
  * Modern, minimal design without heavy cards
  * 
- * Structure per variable:
- * - Row 1: Label + Badge + Status Icon
- * - Row 2: Input Field
- * - Row 3: Meta Row (Help Text + Error + Used In)
+ * Structure:
+ * - 2-column grid on desktop, 1-column on mobile
+ * - Each variable: Label + Badge + Icon → Input → Meta Row
  */
+
+/* ========================================
+   VARIABLES GRID (2-Column Layout)
+   ======================================== */
+
+.pf-workflow-vars-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 2rem; /* row-gap column-gap */
+  margin-top: 1rem;
+}
+
+/* Mobile: Single column */
+@media (max-width: 768px) {
+  .pf-workflow-vars-list {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
 
 /* ========================================
    VARIABLE ITEM - COMPACT ROW LAYOUT
@@ -14,13 +32,9 @@
 
 .pf-var {
   display: block;
-  padding: 1rem 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--pf-border) 40%, transparent);
+  padding: 0; /* No padding, grid gap handles spacing */
+  border: none; /* No borders between items */
   transition: opacity 0.2s ease;
-}
-
-.pf-var:last-child {
-  border-bottom: none;
 }
 
 .pf-var:hover {
@@ -34,6 +48,7 @@
   border-radius: 0 !important;
   box-shadow: none !important;
   transform: none !important;
+  margin: 0 !important;
 }
 
 /* ========================================
@@ -45,7 +60,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem; /* Tighter spacing to input */
 }
 
 .pf-var-label-row-left {
@@ -114,7 +129,7 @@
    ======================================== */
 
 .pf-var-input-wrapper {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem; /* Tighter spacing to meta row */
 }
 
 .pf-var-input,
@@ -261,10 +276,6 @@
    ======================================== */
 
 @media (max-width: 768px) {
-  .pf-var {
-    padding: 0.875rem 0;
-  }
-
   .pf-var-label-row {
     flex-wrap: wrap;
   }
@@ -280,6 +291,13 @@
 
   .pf-var-used-in {
     width: 100%;
+  }
+}
+
+/* Tablet: Consider single column on smaller tablets */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .pf-workflow-vars-list {
+    gap: 1.25rem 1.5rem; /* Slightly tighter on tablet */
   }
 }
 
