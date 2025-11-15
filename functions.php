@@ -1111,7 +1111,7 @@ add_action('wp_enqueue_scripts', function () {
   // First group: Independent components
   $base_components = [
     'workflow-header'           => '/src/styles/workflows/legacy/workflow-header.css',
-    'workflow-hero'             => '/src/styles/workflows/legacy/workflow-hero.css',
+    'workflow-hero'             => '/src/styles/workflows/modern/hero.css',
     'workflow-progress'         => '/src/styles/workflows/legacy/workflow-progress-compact.css',
     'workflow-master-progress'  => '/src/styles/workflows/legacy/workflow-master-progress.css',
     'workflow-prerequisites'    => '/src/styles/workflows/legacy/workflow-prerequisites.css',

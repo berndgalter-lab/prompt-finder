@@ -42,9 +42,7 @@ if (is_user_logged_in()) {
      data-ft-trigger-this="<?php echo esc_attr($ft_trigger_this); ?>"
      data-ft-trigger-any="<?php echo esc_attr($ft_trigger_any); ?>">
     
-    <?php get_template_part('src/php/template-parts/workflow/header'); ?>
-    
-    <?php get_template_part('src/php/template-parts/workflow/hero-value'); ?>
+    <?php get_template_part('src/php/template-parts/workflow/hero'); ?>
     
     <?php get_template_part('src/php/template-parts/workflow/progress-compact'); ?>
     
