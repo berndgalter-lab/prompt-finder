@@ -4,23 +4,17 @@
  */
 
 /* =============================
-   Breadcrumb
+   Breadcrumb (Dezent & Minimalistisch)
    ============================= */
 .pf-breadcrumb-wrapper {
   display: flex;
   align-items: center;
-  min-height: clamp(2rem, 5vw, 2.5rem);
-  padding: clamp(var(--pf-space-2), 1.5vw, var(--pf-space-3)) clamp(var(--pf-space-4), 5vw, var(--pf-space-6));
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--pf-accent) 8%, var(--pf-card)) 0%,
-    color-mix(in srgb, var(--pf-info) 5%, var(--pf-card)) 100%
-  );
-  border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
-  border-bottom: 1px solid color-mix(in srgb, var(--pf-accent) 8%, var(--pf-border)); /* Subtle separator */
-  border-radius: clamp(var(--pf-r-4), 2vw, var(--pf-r-6)) clamp(var(--pf-r-4), 2vw, var(--pf-r-6)) 0 0; /* Top corners rounded */
-  box-shadow: none; /* Shadow moved to bottom of card */
-  color: var(--pf-text);
+  min-height: 2rem;
+  padding: var(--pf-space-2, 0.5rem) clamp(var(--pf-space-4), 5vw, var(--pf-space-6));
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--pf-border) 50%, transparent);
+  color: var(--pf-muted);
   position: relative;
   z-index: 20;
   max-width: 1400px;
@@ -32,21 +26,20 @@
 .pf-breadcrumb {
   display: inline-flex;
   align-items: center;
-  gap: calc(var(--pf-space-2) * 0.75);
-  font-size: clamp(0.8125rem, 1.5vw, 0.9375rem);
-  font-weight: 500;
-  line-height: 1.4;
+  gap: var(--pf-space-2, 0.5rem);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
   min-width: 0;
   width: 100%;
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x proximity;
 }
 
 .pf-breadcrumb::-webkit-scrollbar {
-  height: 6px;
+  height: 4px;
 }
 
 .pf-breadcrumb::-webkit-scrollbar-track {
@@ -54,66 +47,37 @@
 }
 
 .pf-breadcrumb::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--pf-slate-300) 70%, transparent);
+  background: color-mix(in srgb, var(--pf-border) 70%, transparent);
   border-radius: 999px;
 }
 
-.pf-breadcrumb a,
-.pf-breadcrumb-current {
-  display: inline-flex;
-  align-items: center;
-  gap: calc(var(--pf-space-1) * 1.2);
-  padding: 0.4rem 0.7rem;
-  border-radius: calc(var(--pf-radius) * 0.75);
-  position: relative;
-  scroll-snap-align: center;
-  flex-shrink: 0;
-}
-
 .pf-breadcrumb a {
-  color: color-mix(in srgb, var(--pf-slate-700) 94%, transparent);
-  background: color-mix(in srgb, var(--pf-slate-100) 78%, transparent);
-  border: 1px solid color-mix(in srgb, var(--pf-slate-300) 45%, transparent);
+  color: var(--pf-muted);
   text-decoration: none;
-  transition: background var(--pf-transition-fast), color var(--pf-transition-fast),
-    border-color var(--pf-transition-fast), box-shadow var(--pf-transition-fast);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--pf-slate-900) 8%, transparent);
+  transition: color 0.2s ease;
 }
 
 .pf-breadcrumb a:hover,
 .pf-breadcrumb a:focus {
-  color: var(--pf-accent-dark);
-  background: color-mix(in srgb, var(--pf-accent) 20%, var(--pf-slate-50));
-  border-color: color-mix(in srgb, var(--pf-accent) 45%, transparent);
+  color: var(--pf-text);
+  text-decoration: underline;
 }
 
 .pf-breadcrumb a:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pf-accent) 28%, transparent);
+  outline: 2px solid var(--pf-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .pf-breadcrumb-separator {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 var(--pf-space-1);
-  color: color-mix(in srgb, var(--pf-slate-400) 85%, transparent);
-  font-size: 0.875em;
-  font-weight: 500;
-  opacity: 0.75;
-  flex-shrink: 0;
+  color: color-mix(in srgb, var(--pf-border) 80%, transparent);
+  font-weight: 300;
+  user-select: none;
 }
 
 .pf-breadcrumb-current {
-  color: var(--pf-slate-900);
-  font-weight: 600;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--pf-accent) 22%, var(--pf-slate-100)) 0%,
-    color-mix(in srgb, var(--pf-accent-purple) 18%, var(--pf-slate-50)) 100%
-  );
-  border: 1px solid color-mix(in srgb, var(--pf-accent) 32%, var(--pf-slate-200));
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--pf-accent) 14%, transparent);
+  color: var(--pf-text);
+  font-weight: 500;
 }
 
 /* =============================
@@ -125,9 +89,9 @@
   padding: clamp(var(--pf-space-4), 4vw, var(--pf-space-5))
     clamp(var(--pf-space-4), 5vw, var(--pf-space-6))
     clamp(var(--pf-space-3), 3vw, var(--pf-space-4)); /* Compact padding */
-  background: transparent; /* Inherits gradient from breadcrumb */
-  border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, var(--pf-border));
-  border-top: 1px solid color-mix(in srgb, var(--pf-accent) 8%, var(--pf-border)); /* Subtle top separator */
+  background: transparent;
+  border: 1px solid var(--pf-border);
+  border-top: none; /* Nahtlos an Breadcrumb anschließend */
   border-bottom: none; /* Seamless flow to hero value */
   border-radius: 0; /* No radius - middle section */
   color: var(--pf-text);
@@ -337,17 +301,12 @@
    ============================= */
 @media (max-width: 768px) {
   .pf-breadcrumb-wrapper {
-    padding: var(--pf-space-2) var(--pf-space-4);
-    min-height: 2.25rem;
+    padding: var(--pf-space-2, 0.5rem) var(--pf-space-4);
   }
 
   .pf-breadcrumb {
-    gap: calc(var(--pf-space-1) * 0.85);
-  }
-
-  .pf-breadcrumb a,
-  .pf-breadcrumb-current {
-    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+    gap: var(--pf-space-1, 0.25rem);
   }
 
   .pf-workflow-header {
@@ -375,12 +334,7 @@
 
 @media (max-width: 480px) {
   .pf-breadcrumb {
-    font-size: 0.75rem;
-  }
-
-  .pf-breadcrumb a,
-  .pf-breadcrumb-current {
-    padding: 0.3rem 0.5rem;
+    font-size: 0.6875rem;
   }
 }
 
