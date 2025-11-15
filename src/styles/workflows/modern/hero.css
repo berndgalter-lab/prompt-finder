@@ -131,7 +131,7 @@
 .pf-hero__main-header {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; /* tight spacing inside Group 1 */
+  gap: 0.5rem; /* tighter spacing for better visual grouping */
   margin-bottom: 0; /* "Best for" handles the gap */
 }
 
