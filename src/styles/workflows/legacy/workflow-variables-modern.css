@@ -183,7 +183,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--pf-space-3);
-  padding: var(--pf-space-3);
+  padding: var(--pf-space-2) var(--pf-space-3); /* Reduced vertical padding */
   background: var(--pf-bg-soft);
   border: 1px solid var(--pf-border);
   border-left: 2px solid var(--pf-border); /* Default: Optional & Empty */
@@ -244,7 +244,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--pf-space-1);
+  gap: 0.375rem; /* Reduced gap between elements (was var(--pf-space-1) = 0.5rem) */
 }
 
 /* Label Row */
@@ -338,8 +338,8 @@
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  margin-top: var(--pf-space-1);
-  padding: var(--pf-space-1) 0;
+  margin-top: 0; /* Removed margin-top for tighter spacing */
+  padding: 0; /* Removed padding */
   font-size: clamp(0.8125rem, 1.6vw, 0.875rem);
   color: var(--pf-text-dim);
   line-height: 1.4;
@@ -449,7 +449,7 @@
   }
 
   .pf-var {
-    padding: var(--pf-space-3);
+    padding: var(--pf-space-2) var(--pf-space-3); /* Consistent with desktop */
   }
 
   .pf-var:hover {
@@ -489,6 +489,25 @@
   }
 }
 
+/* Error Message - Only shown when invalid */
+.pf-var__error {
+  display: none; /* Hidden by default */
+  font-size: 0.8125rem;
+  color: #ef4444;
+  line-height: 1.4;
+  margin-top: 0.25rem;
+}
+
+.pf-var__error:not(:empty) {
+  display: block; /* Only show when it has content */
+}
+
+/* Show error when field is invalid */
+.pf-var[data-state="invalid"] .pf-var__error,
+.pf-var[data-validation="invalid"] .pf-var__error {
+  display: block;
+}
+
 /* ========================================
    VARIABLES EXPLAINER (How variables work)
    ======================================== */
@@ -521,16 +540,16 @@
    ======================================== */
 
 .pf-var-used-in {
-  margin-top: 0.625rem;
-  padding-top: 0.625rem;
+  margin-top: 0.375rem; /* Reduced from 0.625rem */
+  padding-top: 0.375rem; /* Reduced from 0.625rem */
   border-top: 1px solid color-mix(in srgb, var(--pf-border) 30%, transparent);
 }
 
 .pf-var-used-in-label {
-  font-size: 0.75rem;
+  font-size: 0.6875rem; /* Smaller font (was 0.75rem) */
   font-weight: 600;
   color: var(--pf-muted);
-  margin-bottom: 0.375rem;
+  margin-bottom: 0.25rem; /* Reduced from 0.375rem */
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
