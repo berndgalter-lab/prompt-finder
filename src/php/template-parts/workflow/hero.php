@@ -113,38 +113,58 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
 <section class="pf-hero">
     <div class="pf-hero__inner">
 
-        <!-- Breadcrumbs -->
-        <nav class="pf-hero__breadcrumbs" aria-label="Breadcrumb">
-            <a href="<?php echo esc_url($workflow_archive_link); ?>">Workflows</a>
-            <?php if ($breadcrumb_category): ?>
-                <span class="pf-hero__breadcrumbs-separator">/</span>
-                <a href="<?php echo esc_url(get_term_link($breadcrumb_category)); ?>"><?php echo esc_html($breadcrumb_category->name); ?></a>
-            <?php endif; ?>
-            <span class="pf-hero__breadcrumbs-separator">/</span>
-            <span class="pf-hero__breadcrumbs-current"><?php echo esc_html($breadcrumb_current); ?></span>
-        </nav>
+        <!-- Context Block (top) -->
+        <div class="pf-hero__context">
 
-        <!-- Meta: Access · Steps · Duration -->
-        <div class="pf-hero__meta">
-            <span class="pf-hero__meta-badge pf-hero__meta-badge--<?php echo esc_attr($access_mode); ?>">
-                <?php echo esc_html($access_label); ?>
-            </span>
-            <span class="pf-hero__meta-separator">·</span>
-            <span class="pf-hero__meta-item">
-                <?php echo esc_html($step_count > 0 ? $step_count : '0'); ?> <?php echo $step_count === 1 ? 'step' : 'steps'; ?>
-            </span>
-            <span class="pf-hero__meta-separator">·</span>
-            <span class="pf-hero__meta-item">
-                ~<?php echo esc_html($estimated_time_min ? $estimated_time_min : '5'); ?> min
-            </span>
+            <!-- Breadcrumbs -->
+            <nav class="pf-hero__breadcrumbs" aria-label="Breadcrumb">
+                <a href="<?php echo esc_url($workflow_archive_link); ?>">Workflows</a>
+                <?php if ($breadcrumb_category): ?>
+                    <span class="pf-hero__breadcrumbs-separator">/</span>
+                    <a href="<?php echo esc_url(get_term_link($breadcrumb_category)); ?>"><?php echo esc_html($breadcrumb_category->name); ?></a>
+                <?php endif; ?>
+                <span class="pf-hero__breadcrumbs-separator">/</span>
+                <span class="pf-hero__breadcrumbs-current"><?php echo esc_html($breadcrumb_current); ?></span>
+            </nav>
+
+            <!-- Meta: Access · Steps · Duration -->
+            <div class="pf-hero__meta">
+                <span class="pf-hero__meta-badge pf-hero__meta-badge--<?php echo esc_attr($access_mode); ?>">
+                    <?php echo esc_html($access_label); ?>
+                </span>
+                <span class="pf-hero__meta-separator">·</span>
+                <span class="pf-hero__meta-item">
+                    <?php echo esc_html($step_count > 0 ? $step_count : '0'); ?> <?php echo $step_count === 1 ? 'step' : 'steps'; ?>
+                </span>
+                <span class="pf-hero__meta-separator">·</span>
+                <span class="pf-hero__meta-item">
+                    ~<?php echo esc_html($estimated_time_min ? $estimated_time_min : '5'); ?> min
+                </span>
+            </div>
+
         </div>
 
-        <!-- Workflow Name (internal) -->
-        <div class="pf-hero__name">
-            <?php echo esc_html($post_title); ?>
-            <?php if ($workflow_id_field): ?>
-                <span class="pf-hero__name-id">· <?php echo esc_html($workflow_id_field); ?></span>
-            <?php endif; ?>
+        <!-- Hero Main Header Block (below) -->
+        <div class="pf-hero__main-header">
+
+            <!-- Label Row -->
+            <div class="pf-hero__label-row">
+                <span class="pf-hero__label">READY-TO-USE AI WORKFLOW</span>
+            </div>
+
+            <!-- H1 Headline (Tagline) -->
+            <h1 class="pf-hero__headline">
+                <?php echo esc_html($tagline); ?>
+            </h1>
+
+            <!-- Workflow Name (internal) -->
+            <div class="pf-hero__name">
+                <?php echo esc_html($post_title); ?>
+                <?php if ($workflow_id_field): ?>
+                    <span class="pf-hero__name-id">· <?php echo esc_html($workflow_id_field); ?></span>
+                <?php endif; ?>
+            </div>
+
         </div>
 
         <!-- Main Hero Content: 2-Column Layout -->
@@ -152,16 +172,6 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
             
             <!-- Left Column -->
             <div class="pf-hero__left">
-
-                <!-- Label Row -->
-                <div class="pf-hero__label-row">
-                    <span class="pf-hero__label">READY-TO-USE AI WORKFLOW</span>
-                </div>
-
-                <!-- H1 Headline (Tagline) -->
-                <h1 class="pf-hero__headline">
-                    <?php echo esc_html($tagline); ?>
-                </h1>
 
                 <!-- Outcome -->
                 <?php if ($expected_outcome): ?>
