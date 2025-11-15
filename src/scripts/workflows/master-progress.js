@@ -20,6 +20,7 @@
   function init() {
     initSmoothScrolling();
     initProgressTracking();
+    initStepCompletionTracking();
   }
 
   /**
@@ -199,23 +200,131 @@
    */
   function countFilledRequiredVariables() {
     var count = 0;
-    var inputs = document.querySelectorAll('[data-pf-workflow-var][data-var-required="true"]');
     
-    inputs.forEach(function(input) {
-      var value = input.value || input.textContent;
-      if (value && value.trim() !== '') {
-        count++;
-      }
+    // Try multiple selectors to find workflow variable inputs
+    var selectors = [
+      '.pf-var input[required]',
+      '.pf-var textarea[required]',
+      '.pf-var select[required]',
+      '.pf-var input[data-required="true"]',
+      '.pf-var textarea[data-required="true"]',
+      'input[data-var-required="true"]',
+      'textarea[data-var-required="true"]'
+    ];
+    
+    selectors.forEach(function(selector) {
+      var inputs = document.querySelectorAll(selector);
+      inputs.forEach(function(input) {
+        // Skip if already counted
+        if (input.hasAttribute('data-pf-counted')) return;
+        
+        var value = input.value || '';
+        if (value && value.trim() !== '') {
+          count++;
+          input.setAttribute('data-pf-counted', 'true');
+        }
+      });
+    });
+    
+    // Reset counted flags
+    document.querySelectorAll('[data-pf-counted]').forEach(function(el) {
+      el.removeAttribute('data-pf-counted');
     });
     
     return count;
   }
 
+  /**
+   * Track step completion when copy buttons are clicked
+   */
+  function initStepCompletionTracking() {
+    // Listen for copy button clicks in steps
+    document.addEventListener('click', function(e) {
+      var copyBtn = e.target.closest('[data-copy-prompt], .pf-copy-btn, .pf-step-copy-btn');
+      if (!copyBtn) return;
+      
+      // Find the step this button belongs to
+      var stepEl = copyBtn.closest('[data-pf-step]');
+      if (!stepEl) return;
+      
+      var stepIndex = parseInt(stepEl.getAttribute('data-step-number'));
+      if (!stepIndex) return;
+      
+      // Mark this step as completed
+      markStepCompleted(stepIndex);
+    });
+  }
+
+  /**
+   * Mark a step as completed and update UI
+   */
+  function markStepCompleted(stepIndex) {
+    try {
+      var workflowId = document.querySelector('[data-post-id]').getAttribute('data-post-id');
+      var key = 'pf_completed_steps_' + workflowId;
+      
+      // Get current completed steps
+      var completedSteps = getCompletedSteps();
+      
+      // Add this step if not already completed
+      if (completedSteps.indexOf(stepIndex) === -1) {
+        completedSteps.push(stepIndex);
+        completedSteps.sort(function(a, b) { return a - b; });
+        
+        // Save to localStorage
+        localStorage.setItem(key, JSON.stringify(completedSteps));
+        
+        // Update UI
+        var progressDataEl = document.getElementById('pf-master-progress-data');
+        if (progressDataEl) {
+          var progressData = JSON.parse(progressDataEl.textContent);
+          var totalSteps = progressData.totalSteps || 0;
+          var currentStepIndex = findCurrentStep(completedSteps, totalSteps);
+          
+          updateProgressBar(completedSteps.length, totalSteps);
+          updateStepPills(completedSteps, currentStepIndex);
+        }
+      }
+    } catch (e) {
+      console.error('Error marking step as completed:', e);
+    }
+  }
+
   // Listen for variable changes to update the pill
   document.addEventListener('input', function(e) {
-    if (e.target.hasAttribute('data-pf-workflow-var')) {
-      updateVariablesPill();
+    var target = e.target;
+    
+    // Check if this is a workflow variable input
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+      var isWorkflowVar = target.closest('.pf-var') || 
+                          target.closest('.pf-workflow-vars-card') ||
+                          target.hasAttribute('data-pf-workflow-var');
+      
+      if (isWorkflowVar) {
+        // Debounce the update
+        clearTimeout(window.pfVarUpdateTimeout);
+        window.pfVarUpdateTimeout = setTimeout(function() {
+          updateVariablesPill();
+        }, 300);
+      }
     }
-  });
+  }, true); // Use capture phase to catch all events
+  
+  // Also listen for change events (for checkboxes, selects, etc.)
+  document.addEventListener('change', function(e) {
+    var target = e.target;
+    
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+      var isWorkflowVar = target.closest('.pf-var') || 
+                          target.closest('.pf-workflow-vars-card');
+      
+      if (isWorkflowVar) {
+        updateVariablesPill();
+      }
+    }
+  }, true); // Use capture phase
+  
+  // Debug: Log when script loads
+  console.log('[PF Master Progress] Script loaded and initialized');
 
 })();
