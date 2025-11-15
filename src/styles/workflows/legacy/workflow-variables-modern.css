@@ -57,41 +57,91 @@
   color: var(--pf-text);
 }
 
-/* Inputs - ULTRA Clean & Monochrom */
+/* Inputs - Clean with subtle status colors */
 .pf-var-item input,
 .pf-var-item textarea,
 .pf-var-item select,
 .pf-field input,
 .pf-field textarea,
-.pf-field select {
+.pf-field select,
+.pf-var-input,
+.pf-var-textarea,
+.pf-var-select {
   background: var(--pf-surface-2) !important;
   border: 1px solid var(--pf-border) !important;
-  border-radius: 8px !important;
-  padding: 0.75rem 1rem !important;
+  border-radius: 6px !important;
+  padding: 0.625rem 0.875rem !important;
   font-size: 0.9375rem !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
   color: var(--pf-text) !important;
 }
 
-/* Focus State - Minimal (nur leicht dunkler Border) */
+/* Focus State */
 .pf-var-item input:focus,
 .pf-var-item textarea:focus,
 .pf-var-item select:focus,
 .pf-field input:focus,
 .pf-field textarea:focus,
-.pf-field select:focus {
+.pf-field select:focus,
+.pf-var-input:focus,
+.pf-var-textarea:focus,
+.pf-var-select:focus {
   background: var(--pf-surface) !important;
-  border-color: var(--pf-muted) !important; /* Grau statt Blau */
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.03) !important; /* Grau statt Blau */
+  border-color: var(--pf-accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pf-accent) 12%, transparent) !important;
   outline: none !important;
 }
 
-/* Valid State - KEINE Farbe */
-.pf-var-item[data-state="valid"] input,
-.pf-var-item[data-validation="valid"] input,
-.pf-var-item[data-status="required-filled"] input {
-  border-color: color-mix(in srgb, var(--pf-border) 70%, var(--pf-muted)) !important;
-  background: var(--pf-surface) !important;
+/* Required + Empty = Red border (subtle) */
+.pf-var[data-status="required-empty"] input,
+.pf-var[data-status="required-empty"] textarea,
+.pf-var[data-status="required-empty"] select,
+.pf-var[data-state="invalid"] input,
+.pf-var[data-state="invalid"] textarea,
+.pf-var[data-state="invalid"] select {
+  border-color: #ef4444 !important;
+}
+
+.pf-var[data-status="required-empty"] input:focus,
+.pf-var[data-status="required-empty"] textarea:focus,
+.pf-var[data-status="required-empty"] select:focus,
+.pf-var[data-state="invalid"] input:focus,
+.pf-var[data-state="invalid"] textarea:focus,
+.pf-var[data-state="invalid"] select:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, #ef4444 12%, transparent) !important;
+}
+
+/* Required + Filled = Green border (subtle) */
+.pf-var[data-status="required-filled"] input,
+.pf-var[data-status="required-filled"] textarea,
+.pf-var[data-status="required-filled"] select {
+  border-color: #10b981 !important;
+}
+
+.pf-var[data-status="required-filled"] input:focus,
+.pf-var[data-status="required-filled"] textarea:focus,
+.pf-var[data-status="required-filled"] select:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, #10b981 12%, transparent) !important;
+}
+
+/* Optional + Filled = Blue border (subtle) */
+.pf-var[data-status="optional-filled"] input,
+.pf-var[data-status="optional-filled"] textarea,
+.pf-var[data-status="optional-filled"] select {
+  border-color: #3b82f6 !important;
+}
+
+.pf-var[data-status="optional-filled"] input:focus,
+.pf-var[data-status="optional-filled"] textarea:focus,
+.pf-var[data-status="optional-filled"] select:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, #3b82f6 12%, transparent) !important;
+}
+
+/* Optional + Empty = Default gray border */
+.pf-var[data-status="optional-empty"] input,
+.pf-var[data-status="optional-empty"] textarea,
+.pf-var[data-status="optional-empty"] select {
+  border-color: var(--pf-border) !important;
 }
 
 /* ========================================
@@ -177,45 +227,35 @@
   margin: 0 !important;
 }
 
-/* Variable Item (like Prerequisites items) */
+/* Variable Item - Clean, no background or borders */
 .pf-var {
   display: flex;
   align-items: flex-start;
   gap: var(--pf-space-3);
-  padding: var(--pf-space-2) var(--pf-space-3); /* Reduced vertical padding */
-  background: var(--pf-bg-soft);
-  border: 1px solid var(--pf-border);
-  border-left: 2px solid var(--pf-border); /* Default: Optional & Empty */
-  border-radius: var(--pf-r-3);
-  transition: all var(--pf-transition-fast);
+  padding: 0 !important; /* No padding */
+  background: transparent !important; /* No background */
+  border: none !important; /* No border */
+  border-left: none !important; /* No left bar */
+  border-radius: 0 !important;
+  transition: none;
   position: relative;
+  box-shadow: none !important;
 }
 
 .pf-var:hover {
-  background: var(--pf-card);
-  transform: translateX(2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  background: transparent !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
-/* Status-based coloring - !important to override any conflicting styles */
-.pf-var[data-status="required-empty"] {
-  border-left: 4px solid #ef4444 !important; /* Red-500 */
-  background: color-mix(in srgb, #ef4444 5%, var(--pf-bg-soft)) !important;
-}
-
-.pf-var[data-status="required-filled"] {
-  border-left: 4px solid #10b981 !important; /* Green-500 */
-  background: color-mix(in srgb, #10b981 5%, var(--pf-bg-soft)) !important;
-}
-
-.pf-var[data-status="optional-filled"] {
-  border-left: 3px solid #3b82f6 !important; /* Blue-500 */
-  background: color-mix(in srgb, #3b82f6 3%, var(--pf-bg-soft)) !important;
-}
-
+/* Remove all status-based backgrounds and borders from container */
+.pf-var[data-status="required-empty"],
+.pf-var[data-status="required-filled"],
+.pf-var[data-status="optional-filled"],
 .pf-var[data-status="optional-empty"] {
-  border-left: 2px solid #9ca3af !important; /* Gray-400 */
-  background: var(--pf-bg-soft) !important;
+  border-left: none !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 /* Checkmark Icon */
