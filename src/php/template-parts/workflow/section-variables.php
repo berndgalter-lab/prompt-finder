@@ -202,10 +202,10 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
                                 <small style="color: red;">✗ No variables found</small><br>
                             <?php endif; ?>
                             <?php if (strlen($step_body) > 0): ?>
-                            <details>
-                                <summary>Show body content (first 500 chars)</summary>
-                                <pre style="white-space: pre-wrap; font-size: 11px;"><?php echo esc_html(substr($step_body, 0, 500)); ?></pre>
-                            </details>
+                            <div style="margin-top: 0.5rem; padding: 0.5rem; background: #fafafa; border-left: 3px solid #999;">
+                                <strong>Body content (first 500 chars):</strong>
+                                <pre style="white-space: pre-wrap; font-size: 11px; margin: 0.25rem 0 0 0;"><?php echo esc_html(substr($step_body, 0, 500)); ?></pre>
+                            </div>
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
