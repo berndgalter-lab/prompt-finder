@@ -123,16 +123,17 @@
 }
 
 /* ========================================
-   GROUP 1: OVERVIEW (in main-header)
-   Label + H1 + Tagline + Meta Info
+   GROUP 1: OVERVIEW BLOCK
+   Label + H1 + Tagline + Best for + Outcome
+   Clean hierarchy with tight grouping
    ======================================== */
 
-/* Main header contains Group 1 */
+/* Main header contains the overview group */
 .pf-hero__main-header {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* tighter spacing for better visual grouping */
-  margin-bottom: 0; /* "Best for" handles the gap */
+  gap: 0.625rem; /* small gaps for tight grouping */
+  margin-bottom: 0; /* Outcome line handles the gap to next section */
 }
 
 .pf-hero__label-row {
@@ -177,36 +178,37 @@
 }
 
 /* ========================================
-   BEST FOR (below tagline)
-   Subtle helper text
+   BEST FOR (meta information)
    ======================================== */
 
 .pf-hero__best-for {
-  font-size: 0.875rem;
+  font-size: 0.8125rem; /* smaller than normal body text */
+  font-weight: 400; /* normal weight for value */
   line-height: 1.5;
   color: var(--pf-muted);
-  margin: 0.25rem 0 0 0; /* small gap above, no gap below (Outcome handles it) */
-  opacity: 0.9;
+  opacity: 0.85; /* lighter/secondary */
+  margin: 0.375rem 0 0 0; /* small gap above, none below */
 }
 
 .pf-hero__best-for strong {
-  font-weight: 600;
+  font-weight: 600; /* only label is semi-bold */
   color: var(--pf-text);
 }
 
 /* ========================================
-   OUTCOME (below Best for, in overview block)
+   OUTCOME (simple sentence in overview)
    ======================================== */
 
 .pf-hero__outcome {
-  font-size: 1rem;
+  font-size: 1rem; /* normal body text size */
+  font-weight: 400; /* normal weight for value */
   line-height: 1.6;
   color: var(--pf-muted);
-  margin: 0.375rem 0 1.5rem 0; /* small gap above, larger gap below */
+  margin: 0.375rem 0 2rem 0; /* small gap above, larger gap below to next section */
 }
 
 .pf-hero__outcome strong {
-  font-weight: 600;
+  font-weight: 600; /* only "Outcome:" is emphasized */
   color: var(--pf-text);
 }
 
