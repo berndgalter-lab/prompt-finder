@@ -912,6 +912,12 @@ function coerceBool(v){
     errorEl.setAttribute('role', 'alert');
     errorEl.setAttribute('aria-live', 'polite');
     contentWrap.appendChild(errorEl);
+    
+    // Used In Chips Container - Will be populated by initVariableUsageChips()
+    const usedInContainer = document.createElement('div');
+    usedInContainer.className = 'pf-var-used-in';
+    usedInContainer.setAttribute('data-var-key', key);
+    contentWrap.appendChild(usedInContainer);
 
     // Append content wrapper to main wrap
     wrap.appendChild(contentWrap);
