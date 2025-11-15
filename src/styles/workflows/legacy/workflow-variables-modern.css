@@ -265,7 +265,6 @@
   color: #9ca3af;
   margin: 0; /* No margin */
   transition: all var(--pf-transition-fast);
-  order: -1; /* Put icon before label */
 }
 
 .pf-var[data-status="required-filled"] .pf-var-status-icon,

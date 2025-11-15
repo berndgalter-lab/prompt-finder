@@ -694,29 +694,37 @@ function coerceBool(v){
     iconSvg.innerHTML = isFilled
       ? '<polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>'
       : '<circle cx="12" cy="12" r="10"></circle>';
-    wrap.appendChild(iconSvg);
     
     // Create content wrapper
     const contentWrap = document.createElement('div');
     contentWrap.className = 'pf-var-content';
     
-    // Label Row (Label + Badge) - Best Practice
+    // Label Row (Label + Badge + Icon) - Icon inline with label
     const labelRow = document.createElement('div');
     labelRow.className = 'pf-var-label-row';
+    
+    // Left side: Icon + Label + Badge
+    const labelRowLeft = document.createElement('div');
+    labelRowLeft.className = 'pf-var-label-row-left';
+    
+    // Add icon FIRST (inline with label)
+    labelRowLeft.appendChild(iconSvg);
     
     const label = document.createElement('label');
     label.className = 'pf-var-label';
     label.htmlFor = id;
     const labelText = def.label || key;
     label.textContent = labelText; // Clean label without asterisk
+    
+    labelRowLeft.appendChild(label);
 
     // Badge (REQUIRED = prominent, optional = subtle) - Best Practice
     const requirementBadge = document.createElement('span');
     requirementBadge.className = def.required ? 'pf-var-required-badge' : 'pf-var-optional-badge';
     requirementBadge.textContent = def.required ? 'REQUIRED' : 'optional';
     
-    labelRow.appendChild(label);
-    labelRow.appendChild(requirementBadge);
+    labelRowLeft.appendChild(requirementBadge);
+    labelRow.appendChild(labelRowLeft);
     contentWrap.appendChild(labelRow);
 
     // Input Wrapper - Best Practice
