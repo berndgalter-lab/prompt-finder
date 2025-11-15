@@ -266,26 +266,26 @@
 }
 
 /* ========================================
-   SAVED TIME (subtle benefit label for CTA)
+   SAVED TIME (small helper label for CTA)
    ======================================== */
 
 .pf-hero__saved-time {
   font-size: 0.8125rem; /* smaller than body text */
   font-weight: 500;
-  color: #34d399; /* softer/lighter green, less competing */
-  margin: 0 0 0.5rem 0; /* tight connection to CTA button */
+  color: #34d399; /* softer/lighter green */
+  margin: 0 0 0.375rem 0; /* tight connection to button */
   line-height: 1.5;
 }
 
 /* ========================================
-   GROUP 3: CTA BLOCK
-   Saved Time + CTA Button + How it works + Works with
+   GROUP 3: ACTION BLOCK
+   Clean, focused CTA with supporting info
    ======================================== */
 
 .pf-hero__cta-group {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* consistent spacing between elements */
+  gap: 0.75rem; /* moderate spacing between elements */
 }
 
 /* ========================================
@@ -300,7 +300,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 1rem 1.75rem;
+  padding: 0.75rem 1.5rem; /* reduced vertical padding */
+  max-width: 320px; /* limit width for better proportions */
   font-size: 1rem;
   font-weight: 600;
   color: #ffffff;
@@ -324,27 +325,28 @@
 
 .pf-hero__cta-note {
   display: block;
-  margin-top: 0.5rem; /* small margin, directly attached to button */
+  margin-top: 0.5rem; /* small margin under button */
   font-size: 0.8125rem; /* smaller than body text */
   color: var(--pf-muted);
   opacity: 0.85; /* lighter appearance */
   line-height: 1.5;
+  max-width: 48ch;
 }
 
 /* ========================================
-   HOW IT WORKS (secondary info card)
+   HOW IT WORKS (simple inline text row)
    ======================================== */
 
 .pf-hero__how-works {
-  padding: 0.875rem 1rem; /* slightly reduced padding */
-  background: var(--pf-surface-2);
-  border: 1px solid color-mix(in srgb, var(--pf-border) 60%, transparent); /* softer border */
-  border-radius: 8px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.6;
   color: var(--pf-text);
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--pf-slate-900) 3%, transparent); /* subtle shadow */
+  box-shadow: none;
 }
 
 .pf-hero__how-works strong {
@@ -353,7 +355,7 @@
 }
 
 /* ========================================
-   WORKS WITH (secondary chips)
+   WORKS WITH (consistent meta style)
    ======================================== */
 
 .pf-hero__works-with {
@@ -365,12 +367,12 @@
 }
 
 .pf-hero__works-with-label {
-  font-size: 0.75rem; /* smaller font size */
+  font-size: 0.75rem; /* same as Best for label */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--pf-muted);
-  opacity: 0.8; /* secondary text color */
+  opacity: 0.85; /* consistent with meta info style */
 }
 
 .pf-hero__works-with-badges {
@@ -424,6 +426,7 @@
 
   .pf-hero__cta-button {
     width: 100%;
+    max-width: 100%; /* full width on mobile */
     justify-content: center;
   }
 }
