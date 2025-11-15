@@ -178,6 +178,30 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
                 <strong>Debug: Variable Usage Data</strong>
                 <pre><?php echo esc_html(json_encode($variable_usage, JSON_PRETTY_PRINT)); ?></pre>
                 <strong>Steps Count:</strong> <?php echo is_array($steps) ? count($steps) : 'not array'; ?>
+                
+                <hr style="margin: 1rem 0;">
+                <strong>Step Contents:</strong>
+                <?php if (!empty($steps) && is_array($steps)): ?>
+                    <?php foreach ($steps as $step_index => $step): ?>
+                        <?php 
+                        $step_number = $step_index + 1;
+                        $step_title = isset($step['step_title']) ? $step['step_title'] : "Step " . $step_number;
+                        $step_prompt = isset($step['step_prompt']) ? $step['step_prompt'] : '';
+                        $step_body = isset($step['step_body']) ? $step['step_body'] : '';
+                        ?>
+                        <div style="margin: 0.5rem 0; padding: 0.5rem; background: white; border: 1px solid #ddd;">
+                            <strong>Step <?php echo $step_number; ?>: <?php echo esc_html($step_title); ?></strong><br>
+                            <small>Prompt length: <?php echo strlen($step_prompt); ?> chars</small><br>
+                            <small>Body length: <?php echo strlen($step_body); ?> chars</small><br>
+                            <details>
+                                <summary>Show prompt content (first 500 chars)</summary>
+                                <pre style="white-space: pre-wrap; font-size: 11px;"><?php echo esc_html(substr($step_prompt, 0, 500)); ?></pre>
+                            </details>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No steps found</p>
+                <?php endif; ?>
             </div>
             <?php endif; ?>
 
