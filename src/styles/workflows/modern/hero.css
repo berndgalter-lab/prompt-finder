@@ -61,7 +61,7 @@
 .pf-hero__meta {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   margin-bottom: 0.75rem;
   flex-wrap: wrap;
 }
@@ -69,28 +69,32 @@
 .pf-hero__meta-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.625rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.6875rem;
   font-weight: 600;
+  background: transparent;
 }
 
 .pf-hero__meta-badge--free {
-  background: color-mix(in srgb, var(--pf-success) 15%, transparent);
   color: var(--pf-success);
-  border: 1px solid color-mix(in srgb, var(--pf-success) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pf-success) 40%, transparent);
 }
 
 .pf-hero__meta-badge--signin {
-  background: color-mix(in srgb, var(--pf-warning) 15%, transparent);
-  color: var(--pf-warning);
-  border: 1px solid color-mix(in srgb, var(--pf-warning) 30%, transparent);
+  color: #b45309;
+  border: 1px solid color-mix(in srgb, var(--pf-warning) 40%, transparent);
 }
 
 .pf-hero__meta-badge--pro {
-  background: color-mix(in srgb, var(--pf-accent) 15%, transparent);
   color: var(--pf-accent);
-  border: 1px solid color-mix(in srgb, var(--pf-accent) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 40%, transparent);
+}
+
+.pf-hero__meta-separator {
+  color: var(--pf-border);
+  font-weight: 300;
+  user-select: none;
 }
 
 .pf-hero__meta-item {

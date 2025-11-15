@@ -125,9 +125,11 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
             <span class="pf-hero__meta-badge pf-hero__meta-badge--<?php echo esc_attr($access_mode); ?>">
                 <?php echo esc_html($access_label); ?>
             </span>
+            <span class="pf-hero__meta-separator">·</span>
             <span class="pf-hero__meta-item">
                 <?php echo esc_html($step_count > 0 ? $step_count : '0'); ?> <?php echo $step_count === 1 ? 'step' : 'steps'; ?>
             </span>
+            <span class="pf-hero__meta-separator">·</span>
             <span class="pf-hero__meta-item">
                 ~<?php echo esc_html($estimated_time_min ? $estimated_time_min : '5'); ?> min
             </span>
