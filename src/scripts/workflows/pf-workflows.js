@@ -1388,6 +1388,11 @@ boot = function(){
   };
   const workflowCtx = { stepMap: {}, workflowMap, allowProfile: isProfileEnabled() };
   renderWorkflowForm(wfForm, workflowMap, workflowCtx, rerenderAll);
+  
+  // Initialize "Used in" chips after workflow variables are rendered
+  setTimeout(function() {
+    initVariableUsageChips();
+  }, 100);
 
   // Boot each step: render controls + initial render
   document.querySelectorAll('[data-pf-step]').forEach(section=>{
@@ -3655,9 +3660,6 @@ boot = function() {
 
   console.log('✓ Hero CTA Smooth Scroll initialized (delegated, 80px offset)');
   
-  // Initialize "Used in" chips for workflow variables
-  initVariableUsageChips();
-  
   console.log('✓✓✓ All Phases (1, 2, 3) initialized successfully! ✓✓✓');
 };
 
@@ -3685,13 +3687,17 @@ function initVariableUsageChips() {
   
   // Find all variable containers
   const varContainers = document.querySelectorAll('.pf-var-used-in[data-var-key]');
+  console.log('[PF] Found variable containers:', varContainers.length);
   
   varContainers.forEach(function(container) {
     const varKey = container.getAttribute('data-var-key');
     const usage = usageData[varKey];
     
+    console.log('[PF] Processing variable:', varKey, 'usage:', usage);
+    
     if (!usage || usage.length === 0) {
       // Variable not used in any step
+      console.log('[PF] Variable', varKey, 'not used in any step');
       return;
     }
     
