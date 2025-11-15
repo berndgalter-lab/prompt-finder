@@ -142,13 +142,6 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
                         </div>
                     </div>
                 <?php endif; ?>
-                <div class="pf-variables-counter"
-                     data-variables-scope="workflow"
-                     data-variables-total="<?php echo esc_attr($total_variables); ?>"
-                     data-variables-filled="0">
-                    <span class="pf-counter-number">0</span>
-                    <span class="pf-counter-total">/ <?php echo esc_html($total_variables); ?></span>
-                </div>
             </div>
 
             <!-- Variable list: JavaScript will inject the controls here -->
@@ -158,17 +151,6 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
             <script type="application/json" id="pf-variable-usage-data">
             <?php echo wp_json_encode($variable_usage); ?>
             </script>
-
-            <div class="pf-variables-note">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    <line x1="12" y1="12" x2="12" y2="16"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
-                <span>These values apply to all steps in this workflow and are saved locally.</span>
-            </div>
         </div>
     <?php else: ?>
         <div class="pf-workflow-vars-card">
