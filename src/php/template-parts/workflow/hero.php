@@ -215,36 +215,53 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
                 <!-- Quick Start Card -->
                 <div class="pf-hero__quickstart-card">
 
-                    <!-- CTA Button -->
-                    <a href="<?php echo esc_url($cta['url']); ?>" 
-                       class="pf-hero__cta-button"
-                       data-scroll-to="variables">
-                        <?php echo esc_html($cta['text']); ?>
-                        <span class="pf-hero__cta-icon"><?php echo $cta['icon']; ?></span>
-                    </a>
-
-                    <!-- Access Note -->
-                    <p class="pf-hero__cta-note"><?php echo esc_html($cta['note']); ?></p>
-
-                    <!-- How it works -->
-                    <div class="pf-hero__how-works">
-                        <strong>How it works:</strong>
-                        <ol class="pf-hero__how-works-list">
-                            <li>Fill fields</li>
-                            <li>Copy prompt</li>
-                            <li>Paste into ChatGPT</li>
-                        </ol>
+                    <!-- Psychological Heading -->
+                    <div class="pf-hero__quickstart-header">
+                        <h3 class="pf-hero__quickstart-title">Start in 60 seconds</h3>
+                        <p class="pf-hero__quickstart-subtitle">Run the free first step and see if this workflow works for you.</p>
                     </div>
 
-                    <!-- Works with -->
-                    <div class="pf-hero__works-with">
-                        <p class="pf-hero__works-with-label"><strong>Works with:</strong></p>
-                        <div class="pf-hero__works-with-badges">
-                            <span class="pf-hero__works-with-badge">ChatGPT</span>
-                            <span class="pf-hero__works-with-badge">Claude</span>
-                            <span class="pf-hero__works-with-badge">Gemini</span>
-                            <span class="pf-hero__works-with-badge">Grok</span>
+                    <!-- CTA Block -->
+                    <div class="pf-hero__cta-block">
+                        <!-- CTA Button -->
+                        <a href="<?php echo esc_url($cta['url']); ?>" 
+                           class="pf-hero__cta-button"
+                           data-scroll-to="variables">
+                            <?php echo esc_html($cta['text']); ?>
+                            <span class="pf-hero__cta-icon"><?php echo $cta['icon']; ?></span>
+                        </a>
+
+                        <!-- Access Note -->
+                        <p class="pf-hero__cta-note"><?php echo esc_html($cta['note']); ?></p>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="pf-hero__quickstart-divider"></div>
+
+                    <!-- Info Block -->
+                    <div class="pf-hero__quickstart-info">
+
+                        <!-- How it works -->
+                        <div class="pf-hero__how-works">
+                            <strong>How it works:</strong>
+                            <ol class="pf-hero__how-works-list">
+                                <li>Fill fields</li>
+                                <li>Copy prompt</li>
+                                <li>Paste into ChatGPT</li>
+                            </ol>
                         </div>
+
+                        <!-- Works with -->
+                        <div class="pf-hero__works-with">
+                            <p class="pf-hero__works-with-label"><strong>Works with:</strong></p>
+                            <div class="pf-hero__works-with-badges">
+                                <span class="pf-hero__works-with-badge">ChatGPT</span>
+                                <span class="pf-hero__works-with-badge">Claude</span>
+                                <span class="pf-hero__works-with-badge">Gemini</span>
+                                <span class="pf-hero__works-with-badge">Grok</span>
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
