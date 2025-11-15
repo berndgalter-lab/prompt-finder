@@ -183,6 +183,22 @@
 }
 
 /* ========================================
+   BEST FOR (subtle helper line)
+   ======================================== */
+
+.pf-hero__best-for {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--pf-muted);
+  margin: 0.75rem 0 1rem 0;
+}
+
+.pf-hero__best-for strong {
+  color: var(--pf-text);
+  font-weight: 600;
+}
+
+/* ========================================
    OUTCOME
    ======================================== */
 
@@ -365,6 +381,10 @@
     font-size: 1.0625rem;
   }
 
+  .pf-hero__best-for {
+    font-size: 0.875rem;
+  }
+
   .pf-hero__outcome {
     font-size: 1rem;
   }
@@ -386,6 +406,10 @@
 
   .pf-hero__tagline {
     font-size: 1rem;
+  }
+
+  .pf-hero__best-for {
+    font-size: 0.8125rem;
   }
 
   .pf-hero__how-works {

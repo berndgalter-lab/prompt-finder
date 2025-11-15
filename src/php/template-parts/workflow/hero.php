@@ -24,6 +24,7 @@ $post_title = get_the_title();
 // ACF Fields
 $workflow_id_field = get_field('workflow_id');
 $tagline = get_field('tagline');
+$best_for = get_field('best_for');
 $expected_outcome = get_field('expected_outcome');
 $pain_points = get_field('pain_points');
 $time_saved_min = get_field('time_saved_min');
@@ -179,6 +180,13 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
             
             <!-- Left Column -->
             <div class="pf-hero__left">
+
+                <!-- Best for (optional, below tagline) -->
+                <?php if ($best_for): ?>
+                    <p class="pf-hero__best-for">
+                        <strong>Best for:</strong> <?php echo esc_html($best_for); ?>
+                    </p>
+                <?php endif; ?>
 
                 <!-- Outcome -->
                 <?php if ($expected_outcome): ?>
