@@ -27,7 +27,7 @@
 .pf-hero__breadcrumbs {
   font-size: 0.8125rem;
   color: var(--pf-muted);
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -55,14 +55,14 @@
 }
 
 /* ========================================
-   META BADGES (Access · Steps · Duration)
+   META BADGES (Access · Steps · Duration · Workflow ID)
    ======================================== */
 
 .pf-hero__meta {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 2rem; /* larger gap after context block */
   flex-wrap: wrap;
 }
 
@@ -132,7 +132,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem; /* tight spacing inside Group 1 */
-  margin-bottom: 1.5rem; /* clear gap before Group 2 */
+  margin-bottom: 0; /* "Best for" handles the gap */
 }
 
 .pf-hero__label-row {
@@ -182,10 +182,11 @@
    ======================================== */
 
 .pf-hero__best-for {
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   color: var(--pf-muted);
-  margin: 0.625rem 0 0 0;
+  margin: 0.5rem 0 1.25rem 0;
+  opacity: 0.9;
 }
 
 .pf-hero__best-for strong {
