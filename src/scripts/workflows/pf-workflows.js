@@ -3677,7 +3677,6 @@ function initVariableUsageChips() {
   // Get variable usage data from PHP
   const usageDataEl = document.getElementById('pf-variable-usage-data');
   if (!usageDataEl) {
-    console.log('[PF] No variable usage data found');
     return;
   }
   
@@ -3689,21 +3688,15 @@ function initVariableUsageChips() {
     return;
   }
   
-  console.log('[PF] Variable usage data loaded:', usageData);
-  
   // Find all variable containers
   const varContainers = document.querySelectorAll('.pf-var-used-in[data-var-key]');
-  console.log('[PF] Found variable containers:', varContainers.length);
   
   varContainers.forEach(function(container) {
     const varKey = container.getAttribute('data-var-key');
     const usage = usageData[varKey];
     
-    console.log('[PF] Processing variable:', varKey, 'usage:', usage);
-    
     if (!usage || usage.length === 0) {
       // Variable not used in any step
-      console.log('[PF] Variable', varKey, 'not used in any step');
       return;
     }
     
@@ -3736,8 +3729,6 @@ function initVariableUsageChips() {
     
     container.innerHTML = chipsHTML;
   });
-  
-  console.log('[PF] Variable usage chips initialized');
 }
 
 console.log('✓ Phase 3: Advanced Enhancements loaded');
