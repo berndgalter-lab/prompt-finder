@@ -266,14 +266,14 @@
 }
 
 /* ========================================
-   SAVED TIME (subtle benefit highlight in CTA group)
+   SAVED TIME (subtle benefit label for CTA)
    ======================================== */
 
 .pf-hero__saved-time {
-  font-size: 0.875rem;
+  font-size: 0.8125rem; /* smaller than body text */
   font-weight: 500;
-  color: #10b981; /* softer/lighter green tone */
-  margin: 0 0 1rem 0;
+  color: #34d399; /* softer/lighter green, less competing */
+  margin: 0 0 0.5rem 0; /* tight connection to CTA button */
   line-height: 1.5;
 }
 
@@ -285,11 +285,11 @@
 .pf-hero__cta-group {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; /* small spacing inside Group 3 */
+  gap: 1rem; /* consistent spacing between elements */
 }
 
 /* ========================================
-   CTA BLOCK
+   CTA BUTTON & ACCESS NOTE
    ======================================== */
 
 .pf-hero__cta-block {
@@ -324,25 +324,27 @@
 
 .pf-hero__cta-note {
   display: block;
-  margin-top: 0.75rem;
-  font-size: 0.875rem;
+  margin-top: 0.5rem; /* small margin, directly attached to button */
+  font-size: 0.8125rem; /* smaller than body text */
   color: var(--pf-muted);
+  opacity: 0.85; /* lighter appearance */
   line-height: 1.5;
 }
 
 /* ========================================
-   HOW IT WORKS
+   HOW IT WORKS (secondary info card)
    ======================================== */
 
 .pf-hero__how-works {
-  padding: 1rem 1.25rem;
+  padding: 0.875rem 1rem; /* slightly reduced padding */
   background: var(--pf-surface-2);
-  border: 1px solid var(--pf-border);
+  border: 1px solid color-mix(in srgb, var(--pf-border) 60%, transparent); /* softer border */
   border-radius: 8px;
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.6;
   color: var(--pf-text);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--pf-slate-900) 3%, transparent); /* subtle shadow */
 }
 
 .pf-hero__how-works strong {
@@ -351,7 +353,7 @@
 }
 
 /* ========================================
-   WORKS WITH
+   WORKS WITH (secondary chips)
    ======================================== */
 
 .pf-hero__works-with {
@@ -363,11 +365,12 @@
 }
 
 .pf-hero__works-with-label {
-  font-size: 0.8125rem;
+  font-size: 0.75rem; /* smaller font size */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--pf-muted);
+  opacity: 0.8; /* secondary text color */
 }
 
 .pf-hero__works-with-badges {
