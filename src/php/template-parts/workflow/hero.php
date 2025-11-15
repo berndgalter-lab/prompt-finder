@@ -174,17 +174,17 @@ $pain_points_display = array_slice($pain_points_lines, 0, 3);
                     </p>
                 <?php endif; ?>
 
-                <!-- Outcome (optional) -->
-                <?php if ($expected_outcome): ?>
-                    <p class="pf-hero__outcome">
-                        <strong>Outcome:</strong> <?php echo esc_html($expected_outcome); ?>
-                    </p>
-                <?php endif; ?>
-
                 <!-- Best for (optional) -->
                 <?php if ($best_for): ?>
                     <p class="pf-hero__best-for">
                         <strong>Best for:</strong> <?php echo esc_html($best_for); ?>
+                    </p>
+                <?php endif; ?>
+
+                <!-- Outcome (optional) -->
+                <?php if ($expected_outcome): ?>
+                    <p class="pf-hero__outcome">
+                        <strong>Outcome:</strong> <?php echo esc_html($expected_outcome); ?>
                     </p>
                 <?php endif; ?>
 
