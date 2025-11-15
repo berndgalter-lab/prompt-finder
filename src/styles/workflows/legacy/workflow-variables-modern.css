@@ -216,7 +216,7 @@
 .pf-workflow-vars-list {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 1.5rem 2rem !important; /* row-gap column-gap */
+  gap: 1rem 2rem !important; /* Tighter row-gap, same column-gap */
   /* Remove old utility class styles */
   padding: 0 !important;
   background: transparent !important;
@@ -229,9 +229,7 @@
 
 /* Variable Item - Clean, no background or borders */
 .pf-var {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--pf-space-3);
+  display: block !important; /* Block instead of flex */
   padding: 0 !important; /* No padding */
   background: transparent !important; /* No background */
   border: none !important; /* No border */
@@ -240,6 +238,7 @@
   transition: none;
   position: relative;
   box-shadow: none !important;
+  margin-bottom: 0 !important; /* Grid gap handles spacing */
 }
 
 .pf-var:hover {
@@ -258,14 +257,15 @@
   border: none !important;
 }
 
-/* Checkmark Icon */
+/* Status Icon - Small, inline with label */
 .pf-var-status-icon {
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
+  width: 16px; /* Smaller */
+  height: 16px; /* Smaller */
   color: #9ca3af;
-  margin-top: 2px;
+  margin: 0; /* No margin */
   transition: all var(--pf-transition-fast);
+  order: -1; /* Put icon before label */
 }
 
 .pf-var[data-status="required-filled"] .pf-var-status-icon,
@@ -286,13 +286,20 @@
   gap: 0.375rem; /* Reduced gap between elements (was var(--pf-space-1) = 0.5rem) */
 }
 
-/* Label Row */
+/* Label Row - Icon inline with label */
 .pf-var-label-row {
   display: flex;
   align-items: center;
   gap: 0.375rem; /* Tighter gap */
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* Keep icon inline */
   margin-bottom: 0.25rem; /* Less space to input */
+}
+
+.pf-var-label-row-left {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex: 1;
 }
 
 .pf-var-label {
@@ -492,7 +499,7 @@
   /* Mobile: Single column grid */
   .pf-workflow-vars-list {
     grid-template-columns: 1fr !important;
-    gap: 1.25rem !important;
+    gap: 1rem !important; /* Tighter on mobile too */
   }
 
   .pf-var {
@@ -512,7 +519,7 @@
 /* Tablet: Slightly tighter gaps */
 @media (max-width: 1024px) and (min-width: 769px) {
   .pf-workflow-vars-list {
-    gap: 1.25rem 1.5rem !important;
+    gap: 1rem 1.5rem !important; /* Tighter row-gap */
   }
 }
 
