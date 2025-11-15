@@ -18,9 +18,16 @@
   }
 
   function init() {
+    console.log('[PF Master Progress] Initializing...');
     initSmoothScrolling();
     initProgressTracking();
     initStepCompletionTracking();
+    
+    // Initial update after a short delay to ensure DOM is ready
+    setTimeout(function() {
+      console.log('[PF Master Progress] Running initial update...');
+      updateVariablesPill();
+    }, 500);
   }
 
   /**
@@ -175,10 +182,18 @@
    */
   function updateVariablesPill() {
     var variablesPill = document.querySelector('.pf-progress-section--variables');
-    if (!variablesPill) return;
+    if (!variablesPill) {
+      console.log('[PF Master Progress] Variables pill not found');
+      return;
+    }
     
     var requiredVars = parseInt(variablesPill.getAttribute('data-required-vars')) || 0;
     var filledVars = countFilledRequiredVariables();
+    
+    console.log('[PF Master Progress] Variables check:', {
+      required: requiredVars,
+      filled: filledVars
+    });
     
     variablesPill.setAttribute('data-filled-vars', filledVars);
     
@@ -192,6 +207,17 @@
         statusIcon.classList.add('pf-status-icon--complete');
         statusIcon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
       }
+      
+      console.log('[PF Master Progress] Variables pill marked as complete');
+    } else {
+      // Reset if not all filled
+      variablesPill.setAttribute('data-all-required-filled', 'false');
+      var statusIcon = variablesPill.querySelector('[data-variables-status] .pf-status-icon');
+      if (statusIcon) {
+        statusIcon.classList.remove('pf-status-icon--complete');
+        statusIcon.classList.add('pf-status-icon--pending');
+        statusIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle>';
+      }
     }
   }
 
@@ -200,36 +226,45 @@
    */
   function countFilledRequiredVariables() {
     var count = 0;
+    var foundInputs = [];
     
-    // Try multiple selectors to find workflow variable inputs
-    var selectors = [
-      '.pf-var input[required]',
-      '.pf-var textarea[required]',
-      '.pf-var select[required]',
-      '.pf-var input[data-required="true"]',
-      '.pf-var textarea[data-required="true"]',
-      'input[data-var-required="true"]',
-      'textarea[data-var-required="true"]'
-    ];
+    // Find all inputs in the variables section
+    var variablesSection = document.getElementById('pf-variables');
+    if (!variablesSection) {
+      console.log('[PF Master Progress] Variables section not found');
+      return 0;
+    }
     
-    selectors.forEach(function(selector) {
-      var inputs = document.querySelectorAll(selector);
-      inputs.forEach(function(input) {
-        // Skip if already counted
-        if (input.hasAttribute('data-pf-counted')) return;
+    // Find all input elements in the variables section
+    var allInputs = variablesSection.querySelectorAll('input, textarea, select');
+    
+    console.log('[PF Master Progress] Found inputs in variables section:', allInputs.length);
+    
+    allInputs.forEach(function(input) {
+      // Skip hidden inputs, buttons, etc.
+      if (input.type === 'hidden' || input.type === 'button' || input.type === 'submit') {
+        return;
+      }
+      
+      // Check if this input is required
+      var isRequired = input.hasAttribute('required') || 
+                      input.getAttribute('data-required') === 'true' ||
+                      input.getAttribute('data-var-required') === 'true';
+      
+      if (isRequired) {
+        foundInputs.push({
+          name: input.name || input.id || 'unnamed',
+          value: input.value,
+          filled: !!(input.value && input.value.trim() !== '')
+        });
         
-        var value = input.value || '';
-        if (value && value.trim() !== '') {
+        if (input.value && input.value.trim() !== '') {
           count++;
-          input.setAttribute('data-pf-counted', 'true');
         }
-      });
+      }
     });
     
-    // Reset counted flags
-    document.querySelectorAll('[data-pf-counted]').forEach(function(el) {
-      el.removeAttribute('data-pf-counted');
-    });
+    console.log('[PF Master Progress] Required variables:', foundInputs);
     
     return count;
   }
@@ -238,21 +273,38 @@
    * Track step completion when copy buttons are clicked
    */
   function initStepCompletionTracking() {
+    console.log('[PF Master Progress] Initializing step completion tracking');
+    
     // Listen for copy button clicks in steps
     document.addEventListener('click', function(e) {
-      var copyBtn = e.target.closest('[data-copy-prompt], .pf-copy-btn, .pf-step-copy-btn');
+      // Try multiple selectors for copy buttons
+      var copyBtn = e.target.closest('[data-copy-prompt]') ||
+                    e.target.closest('.pf-copy-btn') ||
+                    e.target.closest('.pf-step-copy-btn') ||
+                    e.target.closest('button[class*="copy"]');
+      
       if (!copyBtn) return;
+      
+      console.log('[PF Master Progress] Copy button clicked:', copyBtn);
       
       // Find the step this button belongs to
       var stepEl = copyBtn.closest('[data-pf-step]');
-      if (!stepEl) return;
+      if (!stepEl) {
+        console.log('[PF Master Progress] No step element found for copy button');
+        return;
+      }
       
       var stepIndex = parseInt(stepEl.getAttribute('data-step-number'));
-      if (!stepIndex) return;
+      if (!stepIndex) {
+        console.log('[PF Master Progress] No step number found:', stepEl);
+        return;
+      }
+      
+      console.log('[PF Master Progress] Marking step as completed:', stepIndex);
       
       // Mark this step as completed
       markStepCompleted(stepIndex);
-    });
+    }, true); // Use capture phase
   }
 
   /**
@@ -294,16 +346,22 @@
   document.addEventListener('input', function(e) {
     var target = e.target;
     
+    console.log('[PF Master Progress] Input event detected:', target.tagName, target.className);
+    
     // Check if this is a workflow variable input
     if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
       var isWorkflowVar = target.closest('.pf-var') || 
                           target.closest('.pf-workflow-vars-card') ||
+                          target.closest('#pf-variables') ||
                           target.hasAttribute('data-pf-workflow-var');
+      
+      console.log('[PF Master Progress] Is workflow var?', isWorkflowVar);
       
       if (isWorkflowVar) {
         // Debounce the update
         clearTimeout(window.pfVarUpdateTimeout);
         window.pfVarUpdateTimeout = setTimeout(function() {
+          console.log('[PF Master Progress] Updating variables pill after input...');
           updateVariablesPill();
         }, 300);
       }
@@ -314,11 +372,17 @@
   document.addEventListener('change', function(e) {
     var target = e.target;
     
+    console.log('[PF Master Progress] Change event detected:', target.tagName, target.className);
+    
     if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
       var isWorkflowVar = target.closest('.pf-var') || 
-                          target.closest('.pf-workflow-vars-card');
+                          target.closest('.pf-workflow-vars-card') ||
+                          target.closest('#pf-variables');
+      
+      console.log('[PF Master Progress] Is workflow var (change)?', isWorkflowVar);
       
       if (isWorkflowVar) {
+        console.log('[PF Master Progress] Updating variables pill after change...');
         updateVariablesPill();
       }
     }
