@@ -490,6 +490,85 @@
 }
 
 /* ========================================
+   VARIABLES EXPLAINER (How variables work)
+   ======================================== */
+
+.pf-workflow-vars-explainer {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--pf-border) 50%, transparent);
+}
+
+.pf-workflow-vars-explainer-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pf-accent);
+  margin-bottom: 0.375rem;
+}
+
+.pf-workflow-vars-explainer-text {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--pf-muted);
+  margin: 0;
+}
+
+/* ========================================
+   USED IN CHIPS (Shows which steps use each variable)
+   ======================================== */
+
+.pf-var-used-in {
+  margin-top: 0.625rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid color-mix(in srgb, var(--pf-border) 30%, transparent);
+}
+
+.pf-var-used-in-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--pf-muted);
+  margin-bottom: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pf-var-used-in-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.pf-var-used-in-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--pf-text);
+  background: var(--pf-surface-2);
+  border: 1px solid var(--pf-border);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.pf-var-used-in-chip:hover {
+  background: color-mix(in srgb, var(--pf-accent) 10%, var(--pf-surface-2));
+  border-color: var(--pf-accent);
+  color: var(--pf-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--pf-shadow, #000) 10%, transparent);
+}
+
+.pf-var-used-in-chip:active {
+  transform: translateY(0);
+}
+
+/* ========================================
    PRINT STYLES
    ======================================== */
 
@@ -503,6 +582,11 @@
   .pf-var:hover {
     transform: none;
     box-shadow: none;
+  }
+  
+  .pf-var-used-in-chip {
+    border: 1px solid #ccc;
+    background: #f5f5f5;
   }
 }
 

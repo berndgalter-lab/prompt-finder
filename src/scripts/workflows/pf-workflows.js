@@ -359,6 +359,9 @@ function renderVar({ id, label, required, type, placeholder, hint, defVal, value
         <!-- 5. Error Message (hidden by default) -->
         <div class="pf-var__error" id="${id}-error" role="alert" aria-live="polite"></div>
         
+        <!-- 6. Used In Chips (will be injected by JavaScript) -->
+        <div class="pf-var-used-in" data-var-key="${id}"></div>
+        
       </div>
     </div>
   `;
@@ -3651,8 +3654,79 @@ boot = function() {
   });
 
   console.log('✓ Hero CTA Smooth Scroll initialized (delegated, 80px offset)');
+  
+  // Initialize "Used in" chips for workflow variables
+  initVariableUsageChips();
+  
   console.log('✓✓✓ All Phases (1, 2, 3) initialized successfully! ✓✓✓');
 };
+
+/**
+ * Initialize "Used in" chips for workflow variables
+ * Shows which steps use each variable
+ */
+function initVariableUsageChips() {
+  // Get variable usage data from PHP
+  const usageDataEl = document.getElementById('pf-variable-usage-data');
+  if (!usageDataEl) {
+    console.log('[PF] No variable usage data found');
+    return;
+  }
+  
+  let usageData = {};
+  try {
+    usageData = JSON.parse(usageDataEl.textContent);
+  } catch (e) {
+    console.error('[PF] Error parsing variable usage data:', e);
+    return;
+  }
+  
+  console.log('[PF] Variable usage data loaded:', usageData);
+  
+  // Find all variable containers
+  const varContainers = document.querySelectorAll('.pf-var-used-in[data-var-key]');
+  
+  varContainers.forEach(function(container) {
+    const varKey = container.getAttribute('data-var-key');
+    const usage = usageData[varKey];
+    
+    if (!usage || usage.length === 0) {
+      // Variable not used in any step
+      return;
+    }
+    
+    // Remove duplicates
+    const uniqueSteps = [];
+    const seenNumbers = new Set();
+    usage.forEach(function(step) {
+      if (!seenNumbers.has(step.number)) {
+        seenNumbers.add(step.number);
+        uniqueSteps.push(step);
+      }
+    });
+    
+    // Build chips HTML
+    let chipsHTML = '<div class="pf-var-used-in-label">Used in:</div>';
+    chipsHTML += '<div class="pf-var-used-in-chips">';
+    
+    uniqueSteps.forEach(function(step) {
+      chipsHTML += `
+        <a href="#pf-step-${step.number}" 
+           class="pf-var-used-in-chip" 
+           data-scroll-to="pf-step-${step.number}"
+           title="Jump to ${step.title}">
+          Step ${step.number}
+        </a>
+      `;
+    });
+    
+    chipsHTML += '</div>';
+    
+    container.innerHTML = chipsHTML;
+  });
+  
+  console.log('[PF] Variable usage chips initialized');
+}
 
 console.log('✓ Phase 3: Advanced Enhancements loaded');
 

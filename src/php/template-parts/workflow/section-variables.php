@@ -17,6 +17,35 @@ $workflow_id = get_the_ID();
 // Get workflow variables from ACF (explicit post ID)
 $workflow_variables = get_field('variables_workflow', $workflow_id);
 
+// Get steps to determine which variables are used where
+$steps = get_field('steps', $workflow_id);
+$variable_usage = []; // Map of variable_key => array of step numbers
+
+if (!empty($steps) && is_array($steps)) {
+    foreach ($steps as $step_index => $step) {
+        $step_number = $step_index + 1;
+        $step_title = isset($step['step_title']) ? $step['step_title'] : "Step " . $step_number;
+        
+        // Check step prompt for variable placeholders
+        $step_prompt = isset($step['step_prompt']) ? $step['step_prompt'] : '';
+        $step_body = isset($step['step_body']) ? $step['step_body'] : '';
+        $combined_content = $step_prompt . ' ' . $step_body;
+        
+        // Find all {variable_name} placeholders
+        if (preg_match_all('/\{([a-zA-Z0-9_]+)(?:\|[^}]*)?\}/', $combined_content, $matches)) {
+            foreach ($matches[1] as $var_key) {
+                if (!isset($variable_usage[$var_key])) {
+                    $variable_usage[$var_key] = [];
+                }
+                $variable_usage[$var_key][] = [
+                    'number' => $step_number,
+                    'title' => $step_title
+                ];
+            }
+        }
+    }
+}
+
 // Fallback: support old field 'pf_variables' by mapping to new structure
 if ((empty($workflow_variables) || !is_array($workflow_variables))) {
     $old_vars = get_field('pf_variables');
@@ -97,6 +126,10 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
                 <div>
                     <h3 class="pf-workflow-vars-title">Configure Your Variables</h3>
                     <p class="pf-workflow-vars-subtitle">These values apply to all steps in this workflow.</p>
+                    <div class="pf-workflow-vars-explainer">
+                        <span class="pf-workflow-vars-explainer-label">How variables work</span>
+                        <p class="pf-workflow-vars-explainer-text">Any change you make here instantly updates all prompts in the steps below.</p>
+                    </div>
                 </div>
                 <?php if ($total_variables > 0): ?>
                     <div class="pf-variables-progress" data-variables-progress>
@@ -120,6 +153,11 @@ if ($profile_defaults_enabled && is_user_logged_in() && class_exists('PF_UserUid
 
             <!-- Variable list: JavaScript will inject the controls here -->
             <div class="pf-workflow-vars-list" data-wf-form></div>
+            
+            <!-- Hidden data for variable usage -->
+            <script type="application/json" id="pf-variable-usage-data">
+            <?php echo wp_json_encode($variable_usage); ?>
+            </script>
 
             <div class="pf-variables-note">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
