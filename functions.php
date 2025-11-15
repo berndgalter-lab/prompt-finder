@@ -1135,6 +1135,14 @@ add_action('wp_enqueue_scripts', function () {
     ['pf-workflow-variables'],
     pf_ver('/src/styles/workflows/legacy/workflow-variables-modern.css')
   );
+  
+  // Variables compact (modern row layout - overrides legacy)
+  wp_enqueue_style(
+    'pf-workflow-variables-compact',
+    $uri . '/src/styles/workflows/modern/variables-compact.css',
+    ['pf-workflow-variables-modern'],
+    pf_ver('/src/styles/workflows/modern/variables-compact.css')
+  );
 
   // Steps (depends on workflow-variables-modern to ensure it loads LAST and can override)
   wp_enqueue_style(

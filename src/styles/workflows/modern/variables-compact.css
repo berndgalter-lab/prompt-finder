@@ -1,0 +1,297 @@
+/**
+ * Workflow Variables - Compact Row Layout
+ * Modern, minimal design without heavy cards
+ * 
+ * Structure per variable:
+ * - Row 1: Label + Badge + Status Icon
+ * - Row 2: Input Field
+ * - Row 3: Meta Row (Help Text + Error + Used In)
+ */
+
+/* ========================================
+   VARIABLE ITEM - COMPACT ROW LAYOUT
+   ======================================== */
+
+.pf-var {
+  display: block;
+  padding: 1rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--pf-border) 40%, transparent);
+  transition: opacity 0.2s ease;
+}
+
+.pf-var:last-child {
+  border-bottom: none;
+}
+
+.pf-var:hover {
+  opacity: 0.95;
+}
+
+/* Remove old card styling */
+.pf-var {
+  background: none !important;
+  border-left: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* ========================================
+   ROW 1: LABEL ROW (Label + Badge + Icon)
+   ======================================== */
+
+.pf-var-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.pf-var-label-row-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.pf-var-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--pf-text);
+  margin: 0;
+}
+
+/* Badge (Required/Optional) - Lighter styling */
+.pf-var-required-badge,
+.pf-var-optional-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-radius: 4px;
+  line-height: 1.2;
+}
+
+.pf-var-required-badge {
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  color: #ef4444;
+}
+
+.pf-var-optional-badge {
+  background: color-mix(in srgb, var(--pf-muted) 12%, transparent);
+  color: var(--pf-muted);
+  opacity: 0.7;
+}
+
+/* Status Icon (Right side of label row) */
+.pf-var-status-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--pf-muted);
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+.pf-var[data-status="required-filled"] .pf-var-status-icon,
+.pf-var[data-status="optional-filled"] .pf-var-status-icon {
+  color: #10b981;
+  opacity: 1;
+}
+
+.pf-var[data-status="required-empty"] .pf-var-status-icon,
+.pf-var[data-state="invalid"] .pf-var-status-icon {
+  color: #ef4444;
+  opacity: 1;
+}
+
+/* ========================================
+   ROW 2: INPUT FIELD
+   ======================================== */
+
+.pf-var-input-wrapper {
+  margin-bottom: 0.5rem;
+}
+
+.pf-var-input,
+.pf-var-textarea,
+.pf-var-select {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--pf-text);
+  background: var(--pf-surface-2);
+  border: 1px solid var(--pf-border);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.pf-var-input:focus,
+.pf-var-textarea:focus,
+.pf-var-select:focus {
+  outline: none;
+  background: var(--pf-surface);
+  border-color: var(--pf-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pf-accent) 12%, transparent);
+}
+
+/* Error state for input */
+.pf-var[data-state="invalid"] .pf-var-input,
+.pf-var[data-state="invalid"] .pf-var-textarea,
+.pf-var[data-state="invalid"] .pf-var-select {
+  border-color: #ef4444;
+}
+
+.pf-var[data-state="invalid"] .pf-var-input:focus,
+.pf-var[data-state="invalid"] .pf-var-textarea:focus,
+.pf-var[data-state="invalid"] .pf-var-select:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, #ef4444 12%, transparent);
+}
+
+/* Textarea specific */
+.pf-var-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* ========================================
+   ROW 3: META ROW (Help + Error + Used In)
+   ======================================== */
+
+.pf-var-meta-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.pf-var-meta-left {
+  flex: 1;
+  min-width: 200px;
+  color: var(--pf-text-dim);
+}
+
+.pf-var-meta-right {
+  flex-shrink: 0;
+}
+
+/* Help text + Error inline */
+.pf-var-hint {
+  display: inline;
+  color: var(--pf-text-dim);
+}
+
+.pf-var-hint-icon {
+  display: none; /* Hide icon in compact layout */
+}
+
+.pf-var__error {
+  display: none;
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.pf-var[data-state="invalid"] .pf-var__error:not(:empty) {
+  display: inline;
+}
+
+.pf-var[data-state="invalid"] .pf-var__error:not(:empty)::before {
+  content: " · ";
+  color: var(--pf-text-dim);
+  font-weight: 400;
+}
+
+/* Used In (Right side of meta row) */
+.pf-var-used-in {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.pf-var-used-in-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--pf-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0;
+}
+
+.pf-var-used-in-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.pf-var-used-in-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--pf-text);
+  background: var(--pf-surface-2);
+  border: 1px solid var(--pf-border);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.pf-var-used-in-chip:hover {
+  background: color-mix(in srgb, var(--pf-accent) 10%, var(--pf-surface-2));
+  border-color: var(--pf-accent);
+  color: var(--pf-accent);
+}
+
+/* ========================================
+   MOBILE RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .pf-var {
+    padding: 0.875rem 0;
+  }
+
+  .pf-var-label-row {
+    flex-wrap: wrap;
+  }
+
+  .pf-var-meta-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .pf-var-meta-left {
+    min-width: 100%;
+  }
+
+  .pf-var-used-in {
+    width: 100%;
+  }
+}
+
+/* ========================================
+   DARK MODE
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .pf-var-input,
+  .pf-var-textarea,
+  .pf-var-select {
+    background: color-mix(in srgb, var(--pf-surface-2) 80%, transparent);
+  }
+}
+
