@@ -40,7 +40,7 @@ if (!$tagline && !$expected_outcome) {
 $access_mode = pf_workflow_mode($post_id);
 $access_labels = [
     'free' => 'Free',
-    'signin' => 'Sign-in required',
+    'signin' => 'Sign-in workflow',
     'pro' => 'Pro only'
 ];
 $access_label = $access_labels[$access_mode] ?? 'Free';
